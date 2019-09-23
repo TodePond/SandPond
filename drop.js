@@ -78,7 +78,7 @@
 		if (!space) return
 		if (space.atom) return
 		const atom = new Atom($AtomType(selectedAtom))
-		space.setAtom(atom)
+		setSpaceAtom(world, space, atom)
 		return atom
 	}
 	

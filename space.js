@@ -82,80 +82,67 @@
 		[1, 1, 1], NEIGHBOUR_UP_BACK_RIGHT,
 	)
 	
-	//=======//
-	// Class //
-	//=======//
-	Space = class Space {
-		constructor(world, id, x, y, z) {
-			this.world = world
-			this.id = id
-			this.x = x
-			this.y = y
-			this.z = z
-			this.atom = undefined
-			this.createIds()
+	//===========//
+	// Functions //
+	//===========//
+	function makeSpace(id) {
+		const space = {
+			id,
+			atom: undefined,
+			colourOffset0: id*4 + 0,
+			colourOffset1: id*4 + 1,
+			colourOffset2: id*4 + 2,
+			colourOffset3: id*4 + 3,
+			emissiveOffset0: id*3 + 0,
+			emissiveOffset1: id*3 + 1,
+			emissiveOffset2: id*3 + 2,
 		}
+		return space
+	}
+	
+	function makeNeighbours (world, space, x, y, z) {
+		const neighbours = [
+			world.$Space(x + -1, y + -1, z + -1),
+			world.$Space(x + 0, y + -1, z + -1),
+			world.$Space(x + 1, y + -1, z + -1),
+			world.$Space(x + -1, y + -1, z + 0),
+			world.$Space(x + 0, y + -1, z + 0),
+			world.$Space(x + 1, y + -1, z + 0),
+			world.$Space(x + -1, y + -1, z + 1),
+			world.$Space(x + 0, y + -1, z + 1),
+			world.$Space(x + 1, y + -1, z + 1),
 		
-		$Space(x, y, z) {
-			return this.world.$Space(this.x + x, this.y + y, this.z + z)
-		}
+			world.$Space(x + -1, y + 0, z + -1),
+			world.$Space(x + 0, y + 0, z + -1),
+			world.$Space(x + 1, y + 0, z + -1),
+			world.$Space(x + -1, y + 0, z + 0),
+			world.$Space(x + 0, y + 0, z + 0),
+			world.$Space(x + 1, y + 0, z + 0),
+			world.$Space(x + -1, y + 0, z + 1),
+			world.$Space(x + 0, y + 0, z + 1),
+			world.$Space(x + 1, y + 0, z + 1),
 		
-		createIds() {
-			this.id0 = this.id*4 + 0
-			this.id1 = this.id*4 + 1
-			this.id2 = this.id*4 + 2
-			this.id3 = this.id*4 + 3
-			
-			this.eid0 = this.id*3 + 0
-			this.eid1 = this.id*3 + 1
-			this.eid2 = this.id*3 + 2
+			world.$Space(x + -1, y + 1, z + -1),
+			world.$Space(x + 0, y + 1, z + -1),
+			world.$Space(x + 1, y + 1, z + -1),
+			world.$Space(x + -1, y + 1, z + 0),
+			world.$Space(x + 0, y + 1, z + 0),
+			world.$Space(x + 1, y + 1, z + 0),
+			world.$Space(x + -1, y + 1, z + 1),
+			world.$Space(x + 0, y + 1, z + 1),
+			world.$Space(x + 1, y + 1, z + 1),
+		]
+		return neighbours
+	}
+	
+	function setSpaceAtom(world, space, atom) {
+		space.atom = atom
+		if (atom == undefined) {
+			world.setSpaceColour(space, false)
+			return
 		}
-		
-		createNeighbours() {
-			this.neighbours = [
-				this.$Space(-1, -1, -1),
-				this.$Space(0, -1, -1),
-				this.$Space(1, -1, -1),
-				this.$Space(-1, -1, 0),
-				this.$Space(0, -1, 0),
-				this.$Space(1, -1, 0),
-				this.$Space(-1, -1, 1),
-				this.$Space(0, -1, 1),
-				this.$Space(1, -1, 1),
-			
-				this.$Space(-1, 0, -1),
-				this.$Space(0, 0, -1),
-				this.$Space(1, 0, -1),
-				this.$Space(-1, 0, 0),
-				this.$Space(0, 0, 0),
-				this.$Space(1, 0, 0),
-				this.$Space(-1, 0, 1),
-				this.$Space(0, 0, 1),
-				this.$Space(1, 0, 1),
-			
-				this.$Space(-1, 1, -1),
-				this.$Space(0, 1, -1),
-				this.$Space(1, 1, -1),
-				this.$Space(-1, 1, 0),
-				this.$Space(0, 1, 0),
-				this.$Space(1, 1, 0),
-				this.$Space(-1, 1, 1),
-				this.$Space(0, 1, 1),
-				this.$Space(1, 1, 1),
-			]
-			
-			//Object.freeze(this.neighbours)
-		}
-		
-		setAtom(atom) {
-			this.atom = atom
-			if (atom == undefined) {
-				this.world.setInstanceColour(this, false)
-				return
-			}
-			atom.space = this
-			this.world.setInstanceColour(this, atom.type.shaderColour, atom.type.shaderEmissive, atom.type.shaderOpacity)
-		}
+		atom.space = space
+		world.setSpaceColour(space, atom.type.shaderColour, atom.type.shaderEmissive, atom.type.shaderOpacity)
 	}
 	
 }

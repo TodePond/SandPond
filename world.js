@@ -25,15 +25,24 @@
 		}
 		
 		createNeighbours() {
-			for (const space of this.spaces) {
-				space.createNeighbours()
+			for (const y of this.yStart.to(this.yEnd)) {
+				for (const x of this.xStart.to(this.xEnd)) {
+					for (const z of this.zStart.to(this.zEnd)) {
+						const space = this.grid[y][x][z]
+						space.neighbours = makeNeighbours(this, space, x, y, z)
+					}
+				}
 			}
 		}
 		
 		positionInstances(cornerNumber) {
-			for (let id = 0; id < this.count; id++) {
-				const space = this.spaces[id]
-				this.setInstancePosition(id, space.x, space.y, space.z)
+			for (const y of this.yStart.to(this.yEnd)) {
+				for (const x of this.xStart.to(this.xEnd)) {
+					for (const z of this.zStart.to(this.zEnd)) {
+						const space = this.grid[y][x][z]
+						this.setInstancePosition(space.id, x, y, z)
+					}
+				}
 			}
 		}
 		
@@ -50,25 +59,25 @@
 			}
 		}
 		
-		setInstanceColour(space, colour, emissive, opacity) {
+		setSpaceColour(space, colour, emissive, opacity) {
 			
 			if (colour == false) {
-				this.colourInstances[space.id0] = 0
-				this.colourInstances[space.id1] = 0
-				this.colourInstances[space.id2] = 0
-				this.colourInstances[space.id3] = 0
+				this.colourInstances[space.colourOffset0] = 0
+				this.colourInstances[space.colourOffset1] = 0
+				this.colourInstances[space.colourOffset2] = 0
+				this.colourInstances[space.colourOffset3] = 0
 				this.colourAttribute.needsUpdate = true
 				return
 			}
 			
-			this.colourInstances[space.id0] = colour.r
-			this.colourInstances[space.id1] = colour.g
-			this.colourInstances[space.id2] = colour.b
-			this.colourInstances[space.id3] = opacity
+			this.colourInstances[space.colourOffset0] = colour.r
+			this.colourInstances[space.colourOffset1] = colour.g
+			this.colourInstances[space.colourOffset2] = colour.b
+			this.colourInstances[space.colourOffset3] = opacity
 			
-			this.emissiveInstances[space.eid0] = emissive.r
-			this.emissiveInstances[space.eid1] = emissive.g
-			this.emissiveInstances[space.eid2] = emissive.b
+			this.emissiveInstances[space.emissiveOffset0] = emissive.r
+			this.emissiveInstances[space.emissiveOffset1] = emissive.g
+			this.emissiveInstances[space.emissiveOffset2] = emissive.b
 			
 			if (paused) return
 			
@@ -99,7 +108,7 @@
 				for (const x of this.xStart.to(this.xEnd)) {
 					this.grid[y][x] = []
 					for (const z of this.zStart.to(this.zEnd)) {
-						const space = new Space(this, id, x, y, z)
+						const space = makeSpace(id)
 						this.grid[y][x][z] = space
 						this.spaces.push(space)
 						id++

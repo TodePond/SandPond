@@ -14,10 +14,10 @@
 	const getInstruction = (output, input) => {
 		if (output == input) return () => {}
 		if (output == ".") return () => {}
-		if (output == "_") return (space) => space.setAtom(undefined)
+		if (output == "_") return (space) => setSpaceAtom(world, space, undefined)
 		if (output == "@") return (space, atom) => {
 			const newAtom = new Atom(atom.type)
-			space.setAtom(newAtom)
+			setSpaceAtom(world, space, newAtom)
 		}
 	}
 	
@@ -139,56 +139,6 @@
 			return chosenSymmetry
 		}
 	}
-	
-	const MAX_INSTANCES = 250000
-	//const MAX_INSTANCES = 600000
-	
-	atomTypes = {}
-	const atomTypesKey = {}
-	AtomType = class AtomType {
-		constructor({name, colour, emissive, rules = [], key, state, scene, opacity = 1.0}) {
-			this.name = name
-			this.rules = rules
-			this.colour = colour
-			this.emissive = emissive
-			this.key = key
-			this.state = state
-			this.scene = scene
-			this.opacity = opacity
-			atomTypes[name] = this
-			atomTypesKey[key] = this
-			this.ruleCount = this.rules.length
-			this.createShaderColours()
-		}
-		
-		createShaderColours() {
-			const colourColour = new THREE.Color(this.colour)
-			const emissiveColour = new THREE.Color(this.emissive)
-			
-			this.shaderColour = {
-				r: colourColour.r * 255,
-				g: colourColour.g * 255,
-				b: colourColour.b * 255,
-			}
-			
-			this.shaderOpacity = this.opacity * 255
-			
-			this.shaderEmissive = {
-				r: emissiveColour.r * 255,
-				g: emissiveColour.g * 255,
-				b: emissiveColour.b * 255,
-			}
-		}
-	}
-	
-	function $AtomType(name) {
-		return atomTypes[name]
-	}
-	
-	function $AtomTypeKey(key) {
-		return atomTypesKey[key]
-	}
-	
 	
 	
 }

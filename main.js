@@ -26,10 +26,6 @@ const SPACES_AREA = {
 	z: [MIN_Z, MAX_Z],
 }
 
-const TRANSPARENT_MATERIAL = new THREE.MeshBasicMaterial({visible: false})
-
-//const SPACES_PER_TICK = 500000
-
 //=============//
 // Stage Setup //
 //=============//
@@ -53,6 +49,7 @@ orbit.mouseButtons.MIDDLE = THREE.MOUSE.DOLLY
 orbit.mouseButtons.RIGHT = THREE.MOUSE.ROTATE
 orbit.enableKeys = true
 orbit.enableDamping = true
+on.process(orbit.o.update)
 
 stage.start()
 
@@ -65,10 +62,6 @@ const spaceCount = world.spaces.length.d
 //=======//
 // Stuff //
 //=======//
-on.process(o=> {
-	orbit.update()
-})
-
 on.process(o=> {
 	dropAtomsMaybe(world, scene, stage.cursor.position3D)
 })
@@ -172,7 +165,8 @@ Floater = new AtomType({
 /*for (const z of MIN_Z.to(MAX_Z)) {
 	for (const y of MIN_Y.to(MAX_Y)) {
 
-		const atom1 = new Atom(ForkBomb)
-		world.$Space(MIN_X, y, z).setAtom(atom1)
+		const atom = new Atom(ForkBomb)
+		const space = world.$Space(MIN_X, y, z)
+		setSpaceAtom(world, space, atom)
 	}
 }*/

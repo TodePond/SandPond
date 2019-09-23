@@ -42,24 +42,6 @@
 			return true
 		}
 		
-		checkSpace(space, type) {
-			if (type == "@") return space.atom == this
-			if (type == "_") return space.atom == undefined
-			if (type == "#") return space.atom != undefined
-			if (type == ".") return true
-			if (type == "s") return space.atom && space.atom.type.state == "solid"
-			if (type == "l") return space.atom && space.atom.type.state == "liquid"
-			if (atomTypesKey[type]) {
-				return space.atom && space.atom.type == atomTypesKey[type]
-			}
-		}
-		
-		changeSpace(newSpace, oldSpace = this.space) {
-			this.space = newSpace
-			if (oldSpace) oldSpace.setAtom(undefined)
-			newSpace.setAtom(this)
-		}
-		
 	}
 	
 	
