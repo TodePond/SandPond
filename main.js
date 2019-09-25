@@ -162,6 +162,28 @@ Floater = new AtomType({
 	scene,
 })
 
+const fall2D = new Rule({y: true, x: true}, [
+	{input: "@", output: "_"},
+	{input: "_", output: "@", x: -1},
+])
+
+const slide2D = new Rule({y: true, x: true}, [
+	{input: "@", output: "_"},
+	{input: "s", output: "s", x: -1},
+	{input: "_", output: "@", x: -1, z: 1},
+])
+ 
+Sandboy2D = new AtomType({
+	name: "Sandboy2D",
+	colour: "darkorange",
+	emissive: "brown",
+	rules: [fall2D, slide2D],
+	key: "C",
+	state: "solid",
+	scene,
+	floor: true,
+})
+
 /*for (const z of MIN_Z.to(MAX_Z)) {
 	for (const y of MIN_Y.to(MAX_Y)) {
 

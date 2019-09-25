@@ -61,6 +61,7 @@
 			const yNew = Math.round(position.y - yInc * i)
 			
 			if (Math.random() < 1) dropAtom(world, xNew, yNew, zNew)
+			if ($AtomType(selectedAtom).precise) continue
 			if (Math.random() < SPREAD_CHANCE) dropAtom(world, xNew + 1, yNew, zNew)
 			if (Math.random() < SPREAD_CHANCE) dropAtom(world, xNew - 1, yNew, zNew)
 			if (Math.random() < SPREAD_CHANCE) dropAtom(world, xNew, yNew, zNew + 1)
@@ -73,11 +74,13 @@
 	}
 	
 	function dropAtom(world, x, y, z) {
-		const alteredY = Math.min(y + MAX_Y - 5, MAX_Y - 5)
+		let alteredY = Math.min(y + MAX_Y - 5, MAX_Y - 5)
+		const atomType = $AtomType(selectedAtom)
+		if (atomType.floor) alteredY = 0
 		const space = world.$Space(x, alteredY, z)
 		if (!space) return
 		if (space.atom) return
-		const atom = new Atom($AtomType(selectedAtom))
+		const atom = new Atom(atomType)
 		setSpaceAtom(world, space, atom)
 		return atom
 	}

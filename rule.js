@@ -29,6 +29,16 @@
 			neighbourNumbers.push(getNeighbourNumber(x, y, z))
 		}
 		
+		if (axes.x && axes.y && !axes.z) {
+			neighbourNumbers.push(getNeighbourNumber(x, y, z))
+			neighbourNumbers.push(getNeighbourNumber(x, y, -z))
+		}
+		
+		if (!axes.x && axes.y && axes.z) {
+			neighbourNumbers.push(getNeighbourNumber(x, y, z))
+			neighbourNumbers.push(getNeighbourNumber(-x, y, z))
+		}
+		
 		if (!axes.x && !axes.y && axes.z) {
 			neighbourNumbers.push(getNeighbourNumber(x, y, z))
 			neighbourNumbers.push(getNeighbourNumber(-x, y, z))
