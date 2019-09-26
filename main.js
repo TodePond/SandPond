@@ -184,6 +184,23 @@ Sandboy2D = new AtomType({
 	floor: true,
 })
 
+const spread2D = new Rule({y: true, x: true}, [
+	{input: "@", output: "_"},
+	{input: "#", output: "#", x: -1},
+	{input: "_", output: "@", z: 1},
+])
+ 
+Water2D = new AtomType({
+	name: "Water2D",
+	colour: "darkblue",
+	emissive: "darkblue",
+	rules: [fall2D, spread2D],
+	key: "w",
+	state: "solid",
+	scene,
+	floor: true,
+})
+
 /*for (const z of MIN_Z.to(MAX_Z)) {
 	for (const y of MIN_Y.to(MAX_Y)) {
 
