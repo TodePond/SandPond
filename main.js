@@ -201,6 +201,21 @@ Water2D = new AtomType({
 	floor: true,
 })
 
+const grow = new Rule({}, [
+	{input: "@", output: "@"},
+	{input: "W", output: "@", x: 1},
+])
+
+Plant = new AtomType({
+	name: "Plant",
+	colour: "green",
+	emissive: "darkgreen",
+	rules: [fallRule, grow],
+	key: "P",
+	state: "solid",
+	scene,
+})
+
 /*for (const z of MIN_Z.to(MAX_Z)) {
 	for (const y of MIN_Y.to(MAX_Y)) {
 

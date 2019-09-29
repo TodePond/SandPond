@@ -9,6 +9,7 @@
 		["."], o=> (space) => space,
 		["#"], o=> (space) => space && space.atom,
 		["s"], o=> (space) => space && space.atom && space.atom.type.state == "solid",
+		["W"], o=> (space) => space && space.atom && space.atom.type == Water,
 	)
 	
 	const getInstruction = (output, input) => {

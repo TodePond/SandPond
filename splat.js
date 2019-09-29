@@ -189,7 +189,7 @@
 			"l", o=> "grey",
 			".", o=> "grey",
 			"#", o=> "grey",
-			Any, o=> $AtomTypeKey(space.type).colour,
+			Any, o=> $AtomTypeKey(space[type]).colour,
 		)
 		
 		const spaceY = space.y || 0
