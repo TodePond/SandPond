@@ -2,6 +2,8 @@
 Sandboys are little atoms that follow simple rules.<br>
 It's inspired by the [T2Tile project](https://t2tile.org/) and [SPLAT](https://github.com/DaveAckley/SPLAT).
 
+I post daily updates [here](https://www.instagram.com/todepond/).
+
 ## Rules
 Sandboys follow simple rules, like this one:
 ```
