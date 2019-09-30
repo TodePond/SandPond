@@ -218,9 +218,10 @@ Plant = new AtomType({
 
 /*for (const z of MIN_Z.to(MAX_Z)) {
 	for (const y of MIN_Y.to(MAX_Y)) {
-
-		const atom = new Atom(ForkBomb)
-		const space = world.$Space(MIN_X, y, z)
-		setSpaceAtom(world, space, atom)
+		for (const x of MIN_X.to(MAX_X)) {
+			const atom = new Atom(ForkBomb)
+			const space = world.$Space(x, y, z)
+			setSpaceAtom(world, space, atom)
+		}
 	}
 }*/

@@ -9,7 +9,7 @@
 		["."], o=> (space) => space,
 		["#"], o=> (space) => space && space.atom,
 		["s"], o=> (space) => space && space.atom && space.atom.type.state == "solid",
-		["W"], o=> (space) => space && space.atom && space.atom.type == Water,
+		["W"], o=> (space) => space && space.atom && (space.atom.type == Water || space.atom.type == Water2D),
 	)
 	
 	const getInstruction = (output, input) => {
@@ -22,93 +22,112 @@
 		}
 	}
 	
-	const getNeighbourNumbers = (axes = {}, x, y, z) => {
+	const getEventWindowNumbers = (axes = {}, x, y, z) => {
 	
-		const neighbourNumbers = []
+		const eventWindowNumbers = []
 		
 		if (axes.x && axes.y && axes.z) {
-			neighbourNumbers.push(getNeighbourNumber(x, y, z))
+			return [
+				getEventWindowNumber(x, y, z),
+			]
 		}
 		
 		if (axes.x && axes.y && !axes.z) {
-			neighbourNumbers.push(getNeighbourNumber(x, y, z))
-			neighbourNumbers.push(getNeighbourNumber(x, y, -z))
+			return [
+				getEventWindowNumber(x, y, z),
+				getEventWindowNumber(x, y, -z),
+			]
 		}
 		
 		if (!axes.x && axes.y && axes.z) {
-			neighbourNumbers.push(getNeighbourNumber(x, y, z))
-			neighbourNumbers.push(getNeighbourNumber(-x, y, z))
+			return [
+				getEventWindowNumber(x, y, z),
+				getEventWindowNumber(-x, y, z),
+			]
+		}
+		
+		if (axes.x && !axes.y && axes.z) {
+			return [
+				getEventWindowNumber(x, y, z),
+				getEventWindowNumber(x, -y, z),
+			]
 		}
 		
 		if (!axes.x && !axes.y && axes.z) {
-			neighbourNumbers.push(getNeighbourNumber(x, y, z))
-			neighbourNumbers.push(getNeighbourNumber(-x, y, z))
-			neighbourNumbers.push(getNeighbourNumber(x, -y, z))
-			neighbourNumbers.push(getNeighbourNumber(-x, -y, z))
+			return [
+				getEventWindowNumber(x, y, z),
+				getEventWindowNumber(-x, y, z),
+				getEventWindowNumber(x, -y, z),
+				getEventWindowNumber(-x, -y, z),
 			
-			neighbourNumbers.push(getNeighbourNumber(y, x, z))
-			neighbourNumbers.push(getNeighbourNumber(-y, x, z))
-			neighbourNumbers.push(getNeighbourNumber(y, -x, z))
-			neighbourNumbers.push(getNeighbourNumber(-y, -x, z))
+				getEventWindowNumber(y, x, z),
+				getEventWindowNumber(-y, x, z),
+				getEventWindowNumber(y, -x, z),
+				getEventWindowNumber(-y, -x, z),
+			]
 		}
 		
 		if (!axes.x && axes.y && !axes.z) {
-			neighbourNumbers.push(getNeighbourNumber(x, y, z))
-			neighbourNumbers.push(getNeighbourNumber(-x, y, z))
-			neighbourNumbers.push(getNeighbourNumber(x, y, -z))
-			neighbourNumbers.push(getNeighbourNumber(-x, y, -z))
+			return [
+				getEventWindowNumber(x, y, z),
+				getEventWindowNumber(-x, y, z),
+				getEventWindowNumber(x, y, -z),
+				getEventWindowNumber(-x, y, -z),
 			
-			neighbourNumbers.push(getNeighbourNumber(z, y, x))
-			neighbourNumbers.push(getNeighbourNumber(-z, y, x))
-			neighbourNumbers.push(getNeighbourNumber(z, y, -x))
-			neighbourNumbers.push(getNeighbourNumber(-z, y, -x))
+				getEventWindowNumber(z, y, x),
+				getEventWindowNumber(-z, y, x),
+				getEventWindowNumber(z, y, -x),
+				getEventWindowNumber(-z, y, -x),
+			]
 		}
 		
 		if (axes.x && !axes.y && !axes.z) {
-			neighbourNumbers.push(getNeighbourNumber(x, y, z))
-			neighbourNumbers.push(getNeighbourNumber(x, y, -z))
-			neighbourNumbers.push(getNeighbourNumber(x, -y, z))
-			neighbourNumbers.push(getNeighbourNumber(x, -y, -z))
+			return [
+				getEventWindowNumber(x, y, z),
+				getEventWindowNumber(x, y, -z),
+				getEventWindowNumber(x, -y, z),
+				getEventWindowNumber(x, -y, -z),
 			
-			neighbourNumbers.push(getNeighbourNumber(x, z, y))
-			neighbourNumbers.push(getNeighbourNumber(x, -z, y))
-			neighbourNumbers.push(getNeighbourNumber(x, z, -y))
-			neighbourNumbers.push(getNeighbourNumber(x, -z, -y))
+				getEventWindowNumber(x, z, y),
+				getEventWindowNumber(x, -z, y),
+				getEventWindowNumber(x, z, -y),
+				getEventWindowNumber(x, -z, -y),
+			]
 		}
 		
 		if (!axes.x && !axes.y && !axes.z) {
-			neighbourNumbers.push(getNeighbourNumber(x, y, z))
-			neighbourNumbers.push(getNeighbourNumber(x, -y, z))
-			neighbourNumbers.push(getNeighbourNumber(x, y, -z))
-			neighbourNumbers.push(getNeighbourNumber(x, -y, -z))
+			return [
+				getEventWindowNumber(x, y, z),
+				getEventWindowNumber(x, -y, z),
+				getEventWindowNumber(x, y, -z),
+				getEventWindowNumber(x, -y, -z),
 			
-			neighbourNumbers.push(getNeighbourNumber(-x, y, z))
-			neighbourNumbers.push(getNeighbourNumber(-x, -y, z))
-			neighbourNumbers.push(getNeighbourNumber(-x, y, -z))
-			neighbourNumbers.push(getNeighbourNumber(-x, -y, -z))
+				getEventWindowNumber(-x, y, z),
+				getEventWindowNumber(-x, -y, z),
+				getEventWindowNumber(-x, y, -z),
+				getEventWindowNumber(-x, -y, -z),
 			
-			neighbourNumbers.push(getNeighbourNumber(z, x, y))
-			neighbourNumbers.push(getNeighbourNumber(z, -x, y))
-			neighbourNumbers.push(getNeighbourNumber(z, x, -y))
-			neighbourNumbers.push(getNeighbourNumber(z, -x, -y))
+				getEventWindowNumber(z, x, y),
+				getEventWindowNumber(z, -x, y),
+				getEventWindowNumber(z, x, -y),
+				getEventWindowNumber(z, -x, -y),
 			
-			neighbourNumbers.push(getNeighbourNumber(-z, x, y))
-			neighbourNumbers.push(getNeighbourNumber(-z, -x, y))
-			neighbourNumbers.push(getNeighbourNumber(-z, x, -y))
-			neighbourNumbers.push(getNeighbourNumber(-z, -x, -y))
+				getEventWindowNumber(-z, x, y),
+				getEventWindowNumber(-z, -x, y),
+				getEventWindowNumber(-z, x, -y),
+				getEventWindowNumber(-z, -x, -y),
 			
-			neighbourNumbers.push(getNeighbourNumber(y, z, x))
-			neighbourNumbers.push(getNeighbourNumber(y, -z, x))
-			neighbourNumbers.push(getNeighbourNumber(y, z, -x))
-			neighbourNumbers.push(getNeighbourNumber(y, -z, -x))
+				getEventWindowNumber(y, z, x),
+				getEventWindowNumber(y, -z, x),
+				getEventWindowNumber(y, z, -x),
+				getEventWindowNumber(y, -z, -x),
 			
-			neighbourNumbers.push(getNeighbourNumber(-y, z, x))
-			neighbourNumbers.push(getNeighbourNumber(-y, -z, x))
-			neighbourNumbers.push(getNeighbourNumber(-y, z, -x))
-			neighbourNumbers.push(getNeighbourNumber(-y, -z, -x))
+				getEventWindowNumber(-y, z, x),
+				getEventWindowNumber(-y, -z, x),
+				getEventWindowNumber(-y, z, -x),
+				getEventWindowNumber(-y, -z, -x),
+			]
 		}
-		
-		return neighbourNumbers
 	}
 	
 	const parseSpaces = (rawSpaces, axes) => {
@@ -118,11 +137,11 @@
 			const x = rawSpace.x | 0
 			const y = rawSpace.y | 0
 			const z = rawSpace.z | 0
-			const neighbourNumbers = getNeighbourNumbers(axes, x, y, z)
+			const eventWindowNumbers = getEventWindowNumbers(axes, x, y, z)
 			
 			const test = getTest(rawSpace.input)
 			const instruction = getInstruction(rawSpace.output, rawSpace.input)
-			const space = {neighbourNumbers, test, instruction}
+			const space = {eventWindowNumbers, test, instruction}
 			spaces.push(space)
 		}
 		return spaces
@@ -133,21 +152,12 @@
 			this.rawSpaces = rawSpaces
 			this.axes = axes
 			this.spaces = parseSpaces(rawSpaces, axes)
-			this.symmetryCount = this.spaces[0].neighbourNumbers.length
+			this.symmetryCount = this.spaces[0].eventWindowNumbers.length
 			this.spaceCount = this.spaces.length
 		}
 		
 		getNewSymmetry() {
-			//return 0
-			const rando = Math.random() * this.symmetryCount
-			let chosenSymmetry
-			for (let i = 0; i < this.symmetryCount; i++) {
-				if (rando < i + 1) {
-					chosenSymmetry = i
-					break
-				}
-			}
-			return chosenSymmetry
+			return Math.floor(Math.random() * this.symmetryCount)
 		}
 	}
 	

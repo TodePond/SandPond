@@ -29,7 +29,7 @@
 				for (const x of this.xStart.to(this.xEnd)) {
 					for (const z of this.zStart.to(this.zEnd)) {
 						const space = this.grid[y][x][z]
-						space.neighbours = makeNeighbours(this, space, x, y, z)
+						space.eventWindow = makeEventWindow(this, space, x, y, z)
 					}
 				}
 			}
@@ -78,9 +78,7 @@
 			this.emissiveInstances[space.emissiveOffset0] = emissive.r
 			this.emissiveInstances[space.emissiveOffset1] = emissive.g
 			this.emissiveInstances[space.emissiveOffset2] = emissive.b
-			
-			if (paused) return
-			
+						
 			this.colourAttribute.needsUpdate = true
 			this.emissiveAttribute.needsUpdate = true
 			
@@ -218,6 +216,19 @@
 			
 			this.mesh = new THREE.Mesh(instancedGeometry, material)
 		}
+	}
+	
+	//===========//
+	// Functions //
+	//===========//
+	function setSpaceAtom(world, space, atom) {
+		space.atom = atom
+		if (atom == undefined) {
+			world.setSpaceColour(space, false)
+			return
+		}
+		atom.space = space
+		world.setSpaceColour(space, atom.type.shaderColour, atom.type.shaderEmissive, atom.type.shaderOpacity)
 	}
 	
 }

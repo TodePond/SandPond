@@ -11,6 +11,7 @@
 		}
 		
 		think(tick) {
+			if (paused) return
 			for (let r = 0; r < this.type.ruleCount; r++) {
 				const rule = this.type.rules[r]
 				const result = this.tryRule(rule)
@@ -24,19 +25,19 @@
 			// Check input
 			for (let s = 0; s < rule.spaceCount; s++) {
 				const ruleSpace = rule.spaces[s]
-				const neighbourNumber = ruleSpace.neighbourNumbers[symmetry]
-				
-				const neighbour = this.space.neighbours[neighbourNumber] // this line here is really slow
-				if (paused) return
+				const eventWindowNumber = ruleSpace.eventWindowNumbers[symmetry]
+				if (paused) continue
+				const neighbour = this.space.eventWindow[eventWindowNumber] // this line here is really slow
 				const result = ruleSpace.test(neighbour, this)
 				if (!result) return false
 			}
+			if (paused) return
 			
 			// Do output
 			for (let s = 0; s < rule.spaceCount; s++) {
 				const ruleSpace = rule.spaces[s]
-				const neighbourNumber = ruleSpace.neighbourNumbers[symmetry]
-				const neighbour = this.space.neighbours[neighbourNumber]
+				const eventWindowNumber = ruleSpace.eventWindowNumbers[symmetry]
+				const neighbour = this.space.eventWindow[eventWindowNumber]
 				ruleSpace.instruction(neighbour, this)
 			}
 			return true
