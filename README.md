@@ -25,11 +25,11 @@ PS: This example has a locked y-axis.
 * Implement Res and DReg in 2D and 3D.
 * Implement demon horde sort in 2D and 3D.
 * Add panning to camera controls.
-* Fix Splat UI for rules that use the z-axis.
-* Implement custom Input and Output class.
+* Fix Splat UI for rules that use the z-axis and negative coordinates.
 * Try making different Worlds resolve rules in different web workers.
 * Randomise the order that spaces process in.
 
 ## Done
+* Implement custom Input and Output class. ✔️
 * Change event window from a 3x3x3 grid into three intersecting 5x5 planes. ✔️
 * Move event window code into its own file. ✔️
