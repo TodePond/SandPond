@@ -95,15 +95,32 @@ on.keydown(e => {
 //============//
 // Atom Types //
 //============//
+const Input = {}
+Input.this = makeInput("@", (space, atom) => space && space.atom && space.atom.type == atom.type)
+Input.empty = makeInput("_", (space) => space && space.atom === undefined)
+Input.any = makeInput(".", (space) => space)
+Input.notEmpty = makeInput("#", (space) => space && space.atom)
+Input.solid = makeInput("s", (space) => space && space.atom && space.atom.type.state == "solid")
+Input.Water = makeInput("W", (space) => space && space.atom && space.atom.type == Water)
+
+const Output = {}
+Output.any = makeOutput(".", () => {})
+Output.empty = makeOutput("_", (space) => setSpaceAtom(world, space, undefined))
+Output.same = makeOutput("^", () => {})
+Output.this = makeOutput("@", (space, atom) => {
+	const newAtom = new Atom(atom.type)
+	setSpaceAtom(world, space, newAtom)
+})
+
 const fallRule = new Rule({y: true}, [
-	{input: "@", output: "_"},
-	{y: -1, input: "_", output: "@"},
+	{input: Input.this, output: Output.empty},
+	{y: -1, input: Input.empty, output: Output.this},
 ])
 
 const slideRule = new Rule({y: true}, [
-	{input: "@", output: "_"},
-	{y: -1, input: "s", output: "s"},
-	{y: -1, x: 1, input: "_", output: "@"},
+	{input: Input.this, output: Output.empty},
+	{y: -1, input: Input.solid, output: Output.same},
+	{y: -1, x: 1, input: Input.empty, output: Output.this},
 ])
 
 Sand = new AtomType({
@@ -117,8 +134,8 @@ Sand = new AtomType({
 })
 
 const bombRule = new Rule({}, [
-	{input: "@", output: "@"},
-	{input: "_", output: "@", x: 1},
+	{input: Input.this, output: Output.same},
+	{input: Input.empty, output: Output.this, x: 1},
 ])
 
 ForkBomb = new AtomType({
@@ -131,9 +148,9 @@ ForkBomb = new AtomType({
 })
 
 const spreadRule = new Rule({y: true}, [
-	{input: "@", output: "_"},
-	{input: "#", output: "#", y: -1},
-	{input: "_", output: "@", x: 1},
+	{input: Input.this, output: Output.empty},
+	{input: Input.notEmpty, output: Output.same, y: -1},
+	{input: Input.empty, output: Output.this, x: 1},
 ])
 
 Water = new AtomType({
@@ -148,8 +165,8 @@ Water = new AtomType({
 })
 
 const floatRule = new Rule({}, [
-	{input: "@", output: "_"},
-	{input: "_", output: "@", x: 1},
+	{input: Input.this, output: Output.empty},
+	{input: Input.empty, output: Output.this, x: 1},
 ])
 
 Floater = new AtomType({
@@ -163,17 +180,17 @@ Floater = new AtomType({
 })
 
 const fall2D = new Rule({y: true, x: true}, [
-	{input: "@", output: "_"},
-	{input: "_", output: "@", x: -1},
+	{input: Input.this, output: Output.empty},
+	{input: Input.empty, output: Output.this, x: -1},
 ])
 
 const slide2D = new Rule({y: true, x: true}, [
-	{input: "@", output: "_"},
-	{input: "s", output: "s", x: -1},
-	{input: "_", output: "@", x: -1, z: 1},
+	{input: Input.this, output: Output.empty},
+	{input: Input.solid, output: Output.same, x: -1},
+	{input: Input.empty, output: Output.this, x: -1, z: 1},
 ])
  
-Sandboy2D = new AtomType({
+/*Sandboy2D = new AtomType({
 	name: "Sandboy2D",
 	colour: "darkorange",
 	emissive: "brown",
@@ -182,15 +199,15 @@ Sandboy2D = new AtomType({
 	state: "solid",
 	scene,
 	floor: true,
-})
+})*/
 
 const spread2D = new Rule({y: true, x: true}, [
-	{input: "@", output: "_"},
-	{input: "#", output: "#", x: -1},
-	{input: "_", output: "@", z: 1},
+	{input: Input.this, output: Output.empty},
+	{input: Input.notEmpty, output: Output.same, x: -1},
+	{input: Input.empty, output: Output.this, z: 1},
 ])
  
-Water2D = new AtomType({
+/*Water2D = new AtomType({
 	name: "Water2D",
 	colour: "darkblue",
 	emissive: "darkblue",
@@ -199,11 +216,11 @@ Water2D = new AtomType({
 	state: "solid",
 	scene,
 	floor: true,
-})
+})*/
 
 const grow = new Rule({}, [
-	{input: "@", output: "@"},
-	{input: "W", output: "@", x: 1},
+	{input: Input.this, output: Output.same},
+	{input: Input.Water, output: Output.this, x: 1},
 ])
 
 Plant = new AtomType({
@@ -212,6 +229,34 @@ Plant = new AtomType({
 	emissive: "darkgreen",
 	rules: [fallRule, grow],
 	key: "P",
+	state: "solid",
+	scene,
+})
+
+Input.maybeEmpty = (chance) => makeInput("?", (space) => space && Math.random() < chance && space.atom == undefined)
+
+const windDown = new Rule({x: true, y: true}, [
+	{input: Input.this, output: Output.empty},
+	{input: Input.maybeEmpty(0.3), output: Output.this, x: -1, y: -1}
+])
+
+const windSide = new Rule({x: true}, [
+	{input: Input.this, output: Output.empty},
+	{input: Input.maybeEmpty(0.2), output: Output.this, x: -1}
+])
+
+const windSlide = new Rule({x: true}, [
+	{input: Input.this, output: Output.empty},
+	{input: Input.solid, output: Output.same},
+	{input: Input.maybeEmpty(0.1), output: Output.this, x: -1, z: 1}
+])
+
+Dust = new AtomType({
+	name: "Dust",
+	colour: "lightgrey",
+	emissive: "brown",
+	rules: [windDown, windSide, windSlide, fallRule, slideRule],
+	key: "L",
 	state: "solid",
 	scene,
 })

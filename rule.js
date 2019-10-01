@@ -2,25 +2,16 @@
 // Rule //
 //======//
 {
-	
-	const getTest = matcher (
-		["@"], o=> (space, atom) => space && space.atom && space.atom.type == atom.type,
-		["_"], o=> (space) => space && space.atom === undefined,
-		["."], o=> (space) => space,
-		["#"], o=> (space) => space && space.atom,
-		["s"], o=> (space) => space && space.atom && space.atom.type.state == "solid",
-		["W"], o=> (space) => space && space.atom && (space.atom.type == Water || space.atom.type == Water2D),
-	)
-	
-	const getInstruction = (output, input) => {
-		if (output == input) return () => {}
-		if (output == ".") return () => {}
-		if (output == "_") return (space) => setSpaceAtom(world, space, undefined)
-		if (output == "@") return (space, atom) => {
-			const newAtom = new Atom(atom.type)
-			setSpaceAtom(world, space, newAtom)
-		}
+	function makeInput(key, test) {
+		return {key, test}
 	}
+	
+	function makeOutput(key, instruction) {
+		return {key, instruction}
+	}
+		
+	const getTest = (input) => input.test
+	const getInstruction = (output) => output.instruction
 	
 	const getEventWindowNumbers = (axes = {}, x, y, z) => {
 	
@@ -140,7 +131,7 @@
 			const eventWindowNumbers = getEventWindowNumbers(axes, x, y, z)
 			
 			const test = getTest(rawSpace.input)
-			const instruction = getInstruction(rawSpace.output, rawSpace.input)
+			const instruction = getInstruction(rawSpace.output)
 			const space = {eventWindowNumbers, test, instruction}
 			spaces.push(space)
 		}

@@ -182,14 +182,17 @@
 	}
 	
 	const makeSpace = (space, type) => {
-		const colour = space[type].match(
+		
+		const colour = space[type].key.match(
 			"@", o=> $AtomType(selectedAtom).colour,
 			"_", o=> "lightgrey",
 			"s", o=> "grey",
 			"l", o=> "grey",
 			".", o=> "grey",
 			"#", o=> "grey",
-			Any, o=> $AtomTypeKey(space[type]).colour,
+			"^", o=> "grey",
+			"?", o=> "grey",
+			Any, o=> $AtomTypeKey(space[type].key).colour,
 		)
 		
 		const spaceY = space.y || 0
@@ -210,7 +213,7 @@
 			transform: translate(${x}px, ${y}px);
 		`
 		const html = HTML `
-			<div class="space" style="${style}">${space[type]}</div>
+			<div class="space" style="${style}">${space[type].key}</div>
 		`
 		return html
 	}
