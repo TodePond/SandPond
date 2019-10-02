@@ -27,6 +27,7 @@ PS: This example has a locked y-axis.
 * Fix Splat UI for rules that use the z-axis and negative coordinates.
 * Try making different Worlds resolve rules in different web workers.
 * Randomise the order that spaces process in.
+* Let the user change the opacity of different elements on the fly.
 
 ## Done
 * Implement Res and DReg. ✔️ 02.10.19
