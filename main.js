@@ -169,7 +169,7 @@ const floatRule = new Rule({}, [
 	{input: Input.empty, output: Output.this, x: 1},
 ])
 
-Floater = new AtomType({
+/*Floater = new AtomType({
 	name: "Floater",
 	colour: "pink",
 	emissive: "deeppink",
@@ -177,7 +177,7 @@ Floater = new AtomType({
 	key: "F",
 	state: "solid",
 	scene,
-})
+})*/
 
 const fall2D = new Rule({y: true, x: true}, [
 	{input: Input.this, output: Output.empty},
@@ -253,12 +253,62 @@ const windSlide = new Rule({x: true}, [
 
 Dust = new AtomType({
 	name: "Dust",
-	colour: "lightgrey",
-	emissive: "brown",
+	colour: "tan",
+	emissive: "sienna",
 	rules: [windDown, windSide, windSlide, fallRule, slideRule],
 	key: "L",
 	state: "solid",
 	scene,
+})
+
+Res = new AtomType({
+	name: "Res",
+	colour: "slategrey",
+	emissive: "grey",
+	rules: [floatRule],
+	key: "R",
+	scene,
+	opacity: 0.35
+})
+
+Output.create = (atomType) => makeOutput(atomType.key, (space) => {
+	const newAtom = new Atom(atomType)
+	setSpaceAtom(world, space, newAtom)
+})
+
+Output.createDReg = makeOutput("D", (space) => {
+	const newAtom = new Atom(DReg)
+	setSpaceAtom(world, space, newAtom)
+})
+
+Input.maybeThis = (chance) => makeInput("@", (space, atom) => {
+	return space && space.atom && space.atom.type == atom.type && Math.random() < chance
+})
+
+spawnRes = new Rule({}, [
+	{input: Input.maybeThis(0.01), output: Output.create(Res)},
+	{input: Input.empty, output: Output.this, x: 1}
+])
+
+spawnDReg = new Rule({}, [
+	{input: Input.maybeThis(0.001), output: Output.createDReg},
+	{input: Input.empty, output: Output.this, x: 1}
+])
+
+deleteSite = new Rule({}, [
+	{input: Input.maybeThis(1), output: Output.empty},
+	{input: Input.any, output: Output.this, x: 1},
+])
+
+DReg = new AtomType({
+	name: "DReg",
+	colour: "brown",
+	emissive: "brown",
+	rules: [spawnRes, spawnDReg, deleteSite, floatRule],
+	key: "D",
+	scene,
+	precise: true,
+	opacity: 0.35,
 })
 
 /*for (const z of MIN_Z.to(MAX_Z)) {
