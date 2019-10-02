@@ -21,7 +21,6 @@ PS: This example has a locked y-axis.
 * Try separating colour and visibility into different attributes.
 * Implement a Universe class that combines separate Worlds together.
 * Implement Conway's game of life in 2D and 3D.
-* Implement randomness of selecting a rule.
 * Implement demon horde sort.
 * Add panning to camera controls.
 * Fix Splat UI for rules that use the z-axis and negative coordinates.
@@ -31,6 +30,7 @@ PS: This example has a locked y-axis.
 
 ## Done
 * Implement Res and DReg. ✔️ 02.10.19
+* Implement randomness of selecting a rule. ❌ Covered by custom inputs and outputs. 01.10.19
 * Implement custom Input and Output class. ✔️ 01.10.19
 * Change event window from a 3x3x3 grid into three intersecting 5x5 planes. ✔️ 30.09.19
 * Move event window code into its own file. ✔️ 30.09.19
