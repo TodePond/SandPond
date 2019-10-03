@@ -57,7 +57,7 @@ stage.start()
 // World Setup //
 //=============//
 const world = new World(scene, SPACES_AREA)
-const spaceCount = world.spaces.length.d
+const spaceCount = world.spaces.length
 
 //=======//
 // Stuff //
