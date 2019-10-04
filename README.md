@@ -27,6 +27,8 @@ PS: This example has a locked y-axis.
 * Try making different Worlds resolve rules in different web workers.
 * Randomise the order that spaces process in.
 * Let the user change the opacity of different elements on the fly.
+* Allow different size atoms.
+* ADD VR SUPPORT.
 
 ## Done
 * Implement Res and DReg. ✔️ 02.10.19
