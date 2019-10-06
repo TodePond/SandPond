@@ -1,16 +1,18 @@
 //===========//
 // Constants //
 //===========//
-const CAMERA_START_X = 0
-const CAMERA_START_Y = 150
-const CAMERA_START_Z = 225
+const debugMode = false
+
+CAMERA_START_X = 0
+CAMERA_START_Y = 150
+CAMERA_START_Z = 225
 
 const CAMERA_FOV = 35
 const CAMERA_SPEED = 2
 
-const MAX_X = 50
-const MAX_Z = MAX_X
-const MAX_Y = 40
+MAX_X = 50
+MAX_Z = MAX_X
+MAX_Y = 40
 
 const MIN_X = -MAX_X
 const MIN_Z = -MAX_Z
@@ -24,6 +26,16 @@ const SPACES_AREA = {
 	x: [MIN_X, MAX_X],
 	y: [MIN_Y, MAX_Y],
 	z: [MIN_Z, MAX_Z],
+}
+
+if (debugMode) {
+	MAX_X = 10
+	MAX_Z = MAX_X
+	MAX_Y = 20
+
+	CAMERA_START_X = 0
+	CAMERA_START_Y = 40
+	CAMERA_START_Z = 50
 }
 
 //=============//
@@ -123,7 +135,7 @@ const slideRule = new Rule({y: true}, [
 	{y: -1, x: 1, input: Input.empty, output: Output.this},
 ])
 
-Sand = new AtomType({
+/*Sand = new AtomType({
 	name: "Sand",
 	colour: "#ffcc00",
 	emissive: "#ffa34d",
@@ -131,7 +143,7 @@ Sand = new AtomType({
 	key: "S",
 	state: "solid",
 	scene,
-})
+})*/
 
 const bombRule = new Rule({}, [
 	{input: Input.this, output: Output.same},
