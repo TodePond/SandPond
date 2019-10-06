@@ -1,6 +1,7 @@
 TodeSPLAT `
 
 element Sand {
+
 	colour #ffcc00
 	emissive #ffa34d
 	
@@ -8,6 +9,7 @@ element Sand {
 	
 	rule fallRule
 	rule slideRule
-}
 	
+}
+
 `

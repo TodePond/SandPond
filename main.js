@@ -14,6 +14,16 @@ MAX_X = 50
 MAX_Z = MAX_X
 MAX_Y = 40
 
+if (debugMode) {
+	MAX_X = 20
+	MAX_Z = MAX_X
+	MAX_Y = 20
+
+	CAMERA_START_X = 0
+	CAMERA_START_Y = 85
+	CAMERA_START_Z = 100
+}
+
 const MIN_X = -MAX_X
 const MIN_Z = -MAX_Z
 const MIN_Y = 0
@@ -26,16 +36,6 @@ const SPACES_AREA = {
 	x: [MIN_X, MAX_X],
 	y: [MIN_Y, MAX_Y],
 	z: [MIN_Z, MAX_Z],
-}
-
-if (debugMode) {
-	MAX_X = 10
-	MAX_Z = MAX_X
-	MAX_Y = 20
-
-	CAMERA_START_X = 0
-	CAMERA_START_Y = 40
-	CAMERA_START_Z = 50
 }
 
 //=============//

@@ -1,11 +1,10 @@
 {
 	function TodeSPLAT([source]) {
 		let input = source
-		let output = ""
 		
-		;[input, output] = doEat(eatWhiteSpace, input, output)
-		;[input, output] = doEat(eatElement, input, output)
-		;[input, output] = doEat(eatWhiteSpace, input, output)
+		input = eatWhiteSpace(input).input
+		input = eatElements(input).input
+		input = eatWhiteSpace(input).input
 		
 	}
 	
@@ -28,8 +27,8 @@
 			i++
 		}
 		return {
-			success: i > 0,
 			input: input.slice(i),
+			success: i > 0,
 		}
 	}
 	
@@ -46,8 +45,8 @@
 		}
 	}
 	
-	const eatKeyword = (keyword) => (input) => {
-		if (input.slice(0, keyword.length) != keyword) return {success: false}
+	const eatKeyword = (keyword, input) => {
+		if (input.slice(0, keyword.length) != keyword) return {input, success: false}
 		else return {
 			success: true,
 			input: input.slice(keyword.length),
@@ -62,108 +61,112 @@
 			i++
 		}
 		return {
-			output: input.slice(0, i),
+			name: input.slice(0, i),
 			success: i > 0,
 			input: input.slice(i),
 		}
 	}
 	
-	const eatProperties = (elementArgs) => (source) => {
-		let input = source
-		let output = ""
-		let success = false
+	const eatElements = (source) => {
 		
-		;[input, output, success] = doEat(eatProperty(elementArgs), input, output)
-		if (!success) return {success: false}
+		const result = eatElement(source)
+		if (!result.success) return result
 		
-		;[input, output, success] = doEat(eatWhiteSpace, input, output)
-		;[input, output, success] = doEat(eatProperties(elementArgs), input, output)
+		let input = result.input
+		input = eatWhiteSpace(result.input).input
+		input = eatElement(result.input).input
 		
-		return {input, output, success}
+		return {input, success: result.success}
 	}
 	
-	const eatProperty = (elementArgs) => (source) => {
+	const eatProperties = (elementArgs, source) => {
+	
+		const result = eatProperty(elementArgs, source)
+		if (!result.success) return result
+		
+		let input = result.input
+		input = eatWhiteSpace(input).input
+		input = eatProperties(elementArgs, input).input
+		
+		return {input, success: result.success}
+	}
+	
+	const eatProperty = (elementArgs, source) => {
 		let input = source
 		let output = ""
 		
-		if (eatKeyword("colour")(input).success) {
-			let colourColour = ""
-			;[input] = doEat(eatKeyword("colour"), input, output)
-			;[input] = doEat(eatGap, input, output)
-			;[input, colourColour] = doEat(eatName, input, output)
-			elementArgs.colour = colourColour
+		if (eatKeyword("colour", input).success) {
+			input = eatKeyword("colour", input).input
+			input = eatGap(input).input
+			const result = eatName(input)
+			input = result.input
+			elementArgs.colour = result.name
 			return {
 				input,
 				success: true,
 			}
 		}
 		
-		else if (eatKeyword("emissive")(input).success) {
-			let emissiveColour = ""
-			;[input] = doEat(eatKeyword("emissive"), input, output)
-			;[input] = doEat(eatGap, input, output)
-			;[input, emissiveColour] = doEat(eatName, input, output)
-			elementArgs.emissive = emissiveColour
+		else if (eatKeyword("emissive", input).success) {
+			input = eatKeyword("emissive", input).input
+			input = eatGap(input).input
+			const result = eatName(input)
+			input = result.input
+			elementArgs.emissive = result.name
 			return {
 				input,
 				success: true,
 			}
 		}
 		
-		else if (eatKeyword("state")(input).success) {
-			let state = ""
-			;[input] = doEat(eatKeyword("state"), input, output)
-			;[input] = doEat(eatGap, input, output)
-			;[input, state] = doEat(eatName, input, output)
-			elementArgs.state = state
+		else if (eatKeyword("state", input).success) {
+			input = eatKeyword("state", input).input
+			input = eatGap(input).input
+			const result = eatName(input)
+			input = result.input
+			elementArgs.state = result.name
 			return {
 				input,
 				success: true,
 			}
 		}
 		
-		else if (eatKeyword("rule")(input).success) {
-			let ruleName = ""
-			;[input] = doEat(eatKeyword("rule"), input, output)
-			;[input] = doEat(eatGap, input, output)
-			;[input, ruleName] = doEat(eatName, input, output)
-			elementArgs.rules.push(eval(ruleName))
+		else if (eatKeyword("rule", input).success) {
+			input = eatKeyword("rule", input).input
+			input = eatGap(input).input
+			const result = eatName(input)
+			input = result.input
+			elementArgs.rules.push(eval(result.name))
 			return {
 				input,
 				success: true,
 			}
 		}
 		
-		else return {success: false}
+		else return {input, success: false}
 		
 	}
 	
 	const eatElement = (source) => {
 	
 		let input = source
-		let output = ""
-		
-		let name = ""
 		const elementArgs = {rules: []}
-		
-		;[input] = doEat(eatKeyword("element"), input, output)
-		;[input] = doEat(eatGap, input, output)
-		;[input, name] = doEat(eatName, input, output)
-		;[input] = doEat(eatGap, input, output)
-		;[input] = doEat(eatKeyword("{"), input, output)
-		;[input] = doEat(eatWhiteSpace, input, output)
-		;[input] = doEat(eatProperties(elementArgs), input, output)
-		;[input] = doEat(eatWhiteSpace, input, output)
-		;[input] = doEat(eatKeyword("}"), input, output)
+		input = eatKeyword("element", input).input
+		input = eatGap(input).input
+		const nameResult = eatName(input)
+		const name = nameResult.name
+		input = nameResult.input
+		input = eatGap(input).input
+		input = eatKeyword("{", input).input
+		input = eatWhiteSpace(input).input
+		input = eatProperties(elementArgs, input).input
+		input = eatWhiteSpace(input).input
+		input = eatKeyword("}", input).input
 		
 		print(elementArgs)
 		window[name] = new AtomType({name, scene, ...elementArgs})
 		
-		return {success: true}
-	}
-	
-	function applyPropertiesToElement(element, ...args) {
-		
+		return {input, success: true}
 	}
 
 }
