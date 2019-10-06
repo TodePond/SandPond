@@ -8,17 +8,6 @@
 		
 	}
 	
-	const doEat = (eat, input, output="") => {
-		const result = eat(input)
-		if (result.input == undefined) result.input = input
-		if (result.output == undefined) result.output = ""
-		return [
-			result.input,
-			result.output,
-			result.success,
-		]
-	}
-	
 	const eatWhiteSpace = (input) => {
 		let i = 0
 		while (i < input.length) {
