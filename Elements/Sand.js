@@ -12,4 +12,16 @@ element Sand {
 	
 }
 
+element GreenSand {
+
+	colour lightgreen
+	emissive green
+	
+	state solid
+	
+	rule fallRule
+	rule slideRule
+	
+}
+
 `

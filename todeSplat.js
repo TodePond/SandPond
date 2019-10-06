@@ -73,8 +73,8 @@
 		if (!result.success) return result
 		
 		let input = result.input
-		input = eatWhiteSpace(result.input).input
-		input = eatElement(result.input).input
+		input = eatWhiteSpace(input).input
+		input = eatElements(input).input
 		
 		return {input, success: result.success}
 	}
@@ -151,17 +151,28 @@
 	
 		let input = source
 		const elementArgs = {rules: []}
-		input = eatKeyword("element", input).input
+		
+		const keywordResult = eatKeyword("element", input)
+		if (!keywordResult.success) return {input, success: false}
+		input = keywordResult.input
+		
 		input = eatGap(input).input
 		const nameResult = eatName(input)
 		const name = nameResult.name
 		input = nameResult.input
 		input = eatGap(input).input
-		input = eatKeyword("{", input).input
+		
+		const openBracketResult = eatKeyword("{", input)
+		if (!openBracketResult.success) return {input, success: false}
+		input = openBracketResult.input
+		
 		input = eatWhiteSpace(input).input
 		input = eatProperties(elementArgs, input).input
 		input = eatWhiteSpace(input).input
-		input = eatKeyword("}", input).input
+		
+		const closeBracketResult = eatKeyword("}", input)
+		if (!closeBracketResult.success) return {input, success: false}
+		input = closeBracketResult.input
 		
 		print(elementArgs)
 		window[name] = new AtomType({name, scene, ...elementArgs})
