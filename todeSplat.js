@@ -168,5 +168,33 @@
 		
 		return {input, success: true}
 	}
+	
+	const eatRule = (source) => {
+		/*
+		
+		// Pseudo-code
+		const inner = getEverythingBetween("{", "}", source)
+		const lines = inner.split("\n")
+		const arrowX = findPositionOf("=>", lines).x
+		const lhs = getEverythingLeftOf(arrowX, lines)
+		const rhs = getEverythingRightOf(arrowX, lines)
+		
+		const origin = findPositionOf("@", lhs)
+		const positions = []
+		for (const position of lhs) {
+			const character = lhs[position]
+			if (character != " ") positions += position
+		}
+		
+		const rawSpaces = []
+		for (const position of positions) {
+			const rawSpace = makeRawSpace(position)
+			rawSpaces.push(rawSpace)
+		}
+		
+		...
+		
+		*/
+	}
 
 }
