@@ -84,46 +84,11 @@
 		let input = source
 		let output = ""
 		
-		if (eatKeyword("colour", input).success) {
-			input = eatKeyword("colour", input).input
-			input = eatGap(input).input
-			const result = eatName(input)
-			input = result.input
-			elementArgs.colour = result.name
-			return {
-				input,
-				success: true,
-			}
-		}
-		
-		else if (eatKeyword("emissive", input).success) {
-			input = eatKeyword("emissive", input).input
-			input = eatGap(input).input
-			const result = eatName(input)
-			input = result.input
-			elementArgs.emissive = result.name
-			return {
-				input,
-				success: true,
-			}
-		}
-		
-		else if (eatKeyword("state", input).success) {
-			input = eatKeyword("state", input).input
-			input = eatGap(input).input
-			const result = eatName(input)
-			input = result.input
-			elementArgs.state = result.name
-			return {
-				input,
-				success: true,
-			}
-		}
-		
-		else if (eatKeyword("rule", input).success) {
+		if (eatKeyword("rule", input).success) {
 			input = eatKeyword("rule", input).input
 			input = eatGap(input).input
 			const result = eatName(input)
+			if (!result.success) return {input: source, success: false}
 			input = result.input
 			elementArgs.rules.push(eval(result.name))
 			return {
@@ -132,7 +97,20 @@
 			}
 		}
 		
-		else return {input, success: false}
+		const propertyNameResult = eatName(input)
+		const propertyName = propertyNameResult.name
+		if (propertyName == "}") return {input, success: false}
+		if (!propertyNameResult.success) return {input: source, success: false}
+		input = propertyNameResult.input
+		input = eatGap(input).input
+		
+		const propertyValueResult = eatName(input)
+		const propertyValue = propertyValueResult.name
+		if (!propertyValueResult.success) return {input: source, success: false}
+		input = propertyValueResult.input
+		
+		elementArgs[propertyName] = propertyValue
+		return {input, success: true}
 		
 	}
 	
