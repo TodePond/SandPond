@@ -7,20 +7,19 @@ element Sand {
 	
 	state solid
 	
-	rule fallRule
-	rule slideRule
+	rule y {
+		
+		@ => _
+		_    @
+		
+	}
 	
-}
-
-element GreenSand {
-
-	colour lightgreen
-	emissive green
-	
-	state solid
-	
-	rule fallRule
-	rule slideRule
+	rule y {
+		
+		@  => _
+		s_    s@
+		
+	}
 	
 }
 

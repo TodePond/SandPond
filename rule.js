@@ -2,12 +2,28 @@
 // Rule //
 //======//
 {
+
+	inputs = new Map()
+	outputs = new Map()
+	
+	function $Input(key) {
+		return inputs.get(key)
+	}
+	
+	function $Output(key) {
+		return outputs.get(key)
+	}
+	
 	function makeInput(key, test) {
-		return {key, test}
+		const input = {key, test}
+		inputs.set(key, input)
+		return input
 	}
 	
 	function makeOutput(key, instruction) {
-		return {key, instruction}
+		const output = {key, instruction}
+		outputs.set(key, output)
+		return output
 	}
 		
 	const getTest = (input) => input.test
