@@ -13,6 +13,13 @@ _    @
 It makes an atom fall down if there's an empty space below it.<br>
 PS: This example has a locked y-axis.
 
+## Getting Started
+Just download it and open index.html in a browser.
+
+## Make your own element
+1. Write some TodeSplat using the TodeSplat function (check out the examples in the `Elements` folder).
+2. Add your TodeSplat function or file to `index.html`.
+
 ## To-Do
 * Reduce scope of Atom object.
 * Reduce scope of World object.
