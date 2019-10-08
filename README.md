@@ -14,7 +14,6 @@ It makes an atom fall down if there's an empty space below it.<br>
 PS: This example has a locked y-axis.
 
 ## To-Do
-* Implement TodeSPLAT language. ⌛ Started 06.10.19
 * Reduce scope of Atom object.
 * Reduce scope of World object.
 * Reduce scope of AtomType.
@@ -32,6 +31,7 @@ PS: This example has a locked y-axis.
 * ADD VR SUPPORT.
 
 ## Done
+* Implement TodeSPLAT language. ✔️ 08.10.19 Needs more work 
 * Implement Res and DReg. ✔️ 02.10.19
 * Implement randomness of selecting a rule. ❌ Covered by custom inputs and outputs. 01.10.19
 * Implement custom Input and Output class. ✔️ 01.10.19
