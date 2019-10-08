@@ -1,20 +1,18 @@
 TodeSPLAT `
 
 
-element Sand {
+element Water {
 
-	colour "#ffcc00"
-	emissive "#ffa34d"
+	colour "lightblue"
+	emissive "blue"
 	
-	state "solid"
-	
+	state "liquid"
+
 	input _ (space) => space && space.atom == undefined
 	input # (space) => space && space.atom != undefined
-	input W (space) => space && space.atom && space.atom.type == Water
 	
 	output _ (space) => setSpaceAtom(space, undefined)
 	output @ (space, self) => setSpaceAtom(space, self)
-	output W (space) => setSpaceAtom(space, new Atom(Water))
 	
 	rule y {
 		
@@ -25,15 +23,8 @@ element Sand {
 	
 	rule y {
 	
-		@  => W
-		W     @
-	
-	}
-	
-	rule y {
-	
-		@  => _
-		#_    #@
+		@_ => _@
+		#     #
 	
 	}
 	

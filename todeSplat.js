@@ -171,7 +171,7 @@
 		input = eatGap(input).input
 		
 		const propertyValueResult = eatName(input)
-		const propertyValue = propertyValueResult.name
+		const propertyValue = eval(propertyValueResult.name)
 		if (!propertyValueResult.success) return {input: source, success: false}
 		input = propertyValueResult.input
 		
@@ -219,8 +219,9 @@
 		if (!closeBracketResult.success) return {input, success: false}
 		input = closeBracketResult.input
 		
+		elementArgs.name = name
 		print(elementArgs)
-		window[name] = new AtomType({name, scene, ...elementArgs})
+		window[name] = new AtomType({scene, ...elementArgs})
 		
 		return {input, success: true}
 	}
@@ -290,7 +291,9 @@
 				}
 				const relativeX = j - originX
 				const relativeY = originY - i
-				rawSpaces.push({x: relativeX, y: relativeY, input: inputs.get(char)})
+				let ruleInput = inputs.get(char)
+				if (ruleInput == undefined) ruleInput = makeInput(char, () => true)
+				rawSpaces.push({x: relativeX, y: relativeY, input: ruleInput})
 			}
 		}
 		
