@@ -21,7 +21,7 @@
 		return space
 	}
 	
-	function setSpaceAtom(world, space, atom) {
+	function setSpaceAtom(space, atom) {
 		space.atom = atom
 		if (atom == undefined) {
 			world.setSpaceColour(space, false)

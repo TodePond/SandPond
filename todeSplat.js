@@ -68,32 +68,93 @@
 		return {input, success: result.success}
 	}
 	
-	const eatProperties = (source, elementArgs) => {
+	const eatProperties = (source, elementArgs, inputs, outputs) => {
 	
-		const result = eatProperty(source, elementArgs)
+		const result = eatProperty(source, elementArgs, inputs, outputs)
 		if (!result.success) return result
 		
 		let input = result.input
 		input = eatWhiteSpace(input).input
-		input = eatProperties(input, elementArgs).input
+		input = eatProperties(input, elementArgs, inputs, outputs).input
 		
 		return {input, success: result.success}
 	}
 	
-	const eatProperty = (source, elementArgs) => {
+	// Currently only supports single line function
+	const eatJavascript = (source) => {
+		let input = source
+		let i = 0
+		while (i < input.length) {
+			const char = input[i]
+			if (char == "\n") break
+			i++
+		}
+		
+		return {
+			success: true, //haha
+			javascript: input.slice(0, i),
+			input: input.slice(i),
+		}
+	}
+	
+	const eatProperty = (source, elementArgs, inputs, outputs) => {
 		let input = source
 		let output = ""
 		
-		if (eatKeyword(input, "rule").success) {
-			input = eatKeyword(input, "rule").input
+		
+		const propertyNameResult = eatName(input)
+		const propertyName = propertyNameResult.name
+		
+		if (propertyName == "input") {
+			input = propertyNameResult.input
+			input = eatGap(input).input
+			const keyResult = eatName(input)
+			const key = keyResult.name
+			input = keyResult.input
+			input = eatGap(input).input
+			
+			const result = eatJavascript(input)
+			if (!result.success) return {input: source, success: false}
+			input = result.input
+			const test = eval(result.javascript)
+			const ruleInput = makeInput(key, test)
+			inputs.set(key, ruleInput)
+			return {
+				input,
+				success: true,
+			}
+		}
+		
+		if (propertyName == "output") {
+			input = propertyNameResult.input
+			input = eatGap(input).input
+			const keyResult = eatName(input)
+			const key = keyResult.name
+			input = keyResult.input
+			input = eatGap(input).input
+			
+			const result = eatJavascript(input)
+			if (!result.success) return {input: source, success: false}
+			input = result.input
+			const instruction = eval(result.javascript)
+			const ruleOutput = makeOutput(key, instruction)
+			outputs.set(key, ruleOutput)
+			return {
+				input,
+				success: true,
+			}
+		}
+		
+		if (propertyName == "rule") {
+			input = propertyNameResult.input
 			input = eatGap(input).input
 			const result = eatName(input)
 			const name = result.name
 			if (name == "{") {
-				return eatRule(input, elementArgs)
+				return eatRule(input, elementArgs, inputs, outputs)
 			}
 			if (isNameSymmetries(name)) {
-				return eatRule(input, elementArgs)
+				return eatRule(input, elementArgs, inputs, outputs)
 			}
 			if (!result.success) return {input: source, success: false}
 			input = result.input
@@ -104,8 +165,6 @@
 			}
 		}
 		
-		const propertyNameResult = eatName(input)
-		const propertyName = propertyNameResult.name
 		if (propertyName == "}") return {input, success: false}
 		if (!propertyNameResult.success) return {input: source, success: false}
 		input = propertyNameResult.input
@@ -135,6 +194,8 @@
 	
 		let input = source
 		const elementArgs = {rules: []}
+		const inputs = new Map()
+		const outputs = new Map()
 		
 		const keywordResult = eatKeyword(input, "element")
 		if (!keywordResult.success) return {input, success: false}
@@ -151,7 +212,7 @@
 		input = openBracketResult.input
 		
 		input = eatWhiteSpace(input).input
-		input = eatProperties(input, elementArgs).input
+		input = eatProperties(input, elementArgs, inputs, outputs).input
 		input = eatWhiteSpace(input).input
 		
 		const closeBracketResult = eatKeyword(input, "}")
@@ -164,12 +225,12 @@
 		return {input, success: true}
 	}
 	
-	const eatRule = (source, elementArgs) => {
+	const eatRule = (source, elementArgs, inputs, outputs) => {
 	
 		// Get axes
-		const name = eatName(source).name
+		const axesName = eatName(source).name
 		const axes = {}
-		for (const c of name) {
+		if (axesName != "{") for (const c of axesName) {
 			axes[c] = true
 		}
 		
@@ -229,7 +290,7 @@
 				}
 				const relativeX = j - originX
 				const relativeY = originY - i
-				rawSpaces.push({x: relativeX, y: relativeY, input: $Input(char)})
+				rawSpaces.push({x: relativeX, y: relativeY, input: inputs.get(char)})
 			}
 		}
 		
@@ -254,7 +315,7 @@
 			const rightCharX = rightFirstX + rawSpace.x - firstSpace.x
 			const rightCharY = rightFirstY - rawSpace.y + firstSpace.y
 			const rightChar = rhs[rightCharY][rightCharX]
-			let output = $Output(rightChar)
+			let output = outputs.get(rightChar)
 			if (output == undefined) output = makeOutput(rightChar, () => {})
 			rawSpace.output = output
 		}

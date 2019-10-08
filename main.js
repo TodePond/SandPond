@@ -107,7 +107,7 @@ on.keydown(e => {
 //============//
 // Atom Types //
 //============//
-const Input = {}
+/*const Input = {}
 Input.this = makeInput("@", (space, atom) => space && space.atom && space.atom.type == atom.type)
 Input.empty = makeInput("_", (space) => space && space.atom === undefined)
 Input.any = makeInput(".", (space) => space)
@@ -133,7 +133,7 @@ const slideRule = new Rule({y: true}, [
 	{input: Input.this, output: Output.empty},
 	{y: -1, input: Input.solid, output: Output.same},
 	{y: -1, x: 1, input: Input.empty, output: Output.this},
-])
+])*/
 
 /*Sand = new AtomType({
 	name: "Sand",
@@ -145,7 +145,7 @@ const slideRule = new Rule({y: true}, [
 	scene,
 })*/
 
-const bombRule = new Rule({}, [
+/*const bombRule = new Rule({}, [
 	{input: Input.this, output: Output.same},
 	{input: Input.empty, output: Output.this, x: 1},
 ])
@@ -179,7 +179,7 @@ Water = new AtomType({
 const floatRule = new Rule({}, [
 	{input: Input.this, output: Output.empty},
 	{input: Input.empty, output: Output.this, x: 1},
-])
+])*/
 
 /*Floater = new AtomType({
 	name: "Floater",
@@ -191,7 +191,7 @@ const floatRule = new Rule({}, [
 	scene,
 })*/
 
-const fall2D = new Rule({y: true, x: true}, [
+/*const fall2D = new Rule({y: true, x: true}, [
 	{input: Input.this, output: Output.empty},
 	{input: Input.empty, output: Output.this, x: -1},
 ])
@@ -200,7 +200,7 @@ const slide2D = new Rule({y: true, x: true}, [
 	{input: Input.this, output: Output.empty},
 	{input: Input.solid, output: Output.same, x: -1},
 	{input: Input.empty, output: Output.this, x: -1, z: 1},
-])
+])*/
  
 /*Sandboy2D = new AtomType({
 	name: "Sandboy2D",
@@ -213,11 +213,11 @@ const slide2D = new Rule({y: true, x: true}, [
 	floor: true,
 })*/
 
-const spread2D = new Rule({y: true, x: true}, [
+/*const spread2D = new Rule({y: true, x: true}, [
 	{input: Input.this, output: Output.empty},
 	{input: Input.notEmpty, output: Output.same, x: -1},
 	{input: Input.empty, output: Output.this, z: 1},
-])
+])*/
  
 /*Water2D = new AtomType({
 	name: "Water2D",
@@ -230,7 +230,7 @@ const spread2D = new Rule({y: true, x: true}, [
 	floor: true,
 })*/
 
-const grow = new Rule({}, [
+/*const grow = new Rule({}, [
 	{input: Input.this, output: Output.same},
 	{input: Input.Water, output: Output.this, x: 1},
 ])
@@ -321,7 +321,7 @@ DReg = new AtomType({
 	scene,
 	precise: true,
 	opacity: 0.35,
-})
+})*/
 
 /*for (const z of MIN_Z.to(MAX_Z)) {
 	for (const y of MIN_Y.to(MAX_Y)) {

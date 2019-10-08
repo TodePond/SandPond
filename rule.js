@@ -3,29 +3,16 @@
 //======//
 {
 
-	inputs = new Map()
-	outputs = new Map()
-	
-	function $Input(key) {
-		return inputs.get(key)
-	}
-	
-	function $Output(key) {
-		return outputs.get(key)
-	}
-	
 	function makeInput(key, test) {
 		const input = {key, test}
-		inputs.set(key, input)
 		return input
 	}
 	
 	function makeOutput(key, instruction) {
 		const output = {key, instruction}
-		outputs.set(key, output)
 		return output
 	}
-		
+	
 	const getTest = (input) => input.test
 	const getInstruction = (output) => output.instruction
 	
@@ -146,7 +133,7 @@
 			const z = rawSpace.z | 0
 			const eventWindowNumbers = getEventWindowNumbers(axes, x, y, z)
 			
-			const test = getTest(rawSpace.input)
+			const test = getTest(rawSpace.d.input)
 			const instruction = getInstruction(rawSpace.output)
 			const space = {eventWindowNumbers, test, instruction}
 			spaces.push(space)
