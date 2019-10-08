@@ -17,8 +17,8 @@ PS: This example has a locked y-axis.
 Just download it and open index.html in a browser.
 
 ## Make your own element
-1. Write some TodeSplat using the TodeSplat function (check out the examples in the `Elements` folder).
-2. Add your TodeSplat function or file to `index.html`.
+1. Write some TodeSplat using the `TodeSplat` function (check out the examples in the `Elements` folder).
+2. Add your TodeSplat function or file to `index.html` in the same place as the other elements.
 
 ## To-Do
 * Reduce scope of Atom object.
