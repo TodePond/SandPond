@@ -27,7 +27,6 @@
 			world.setSpaceColour(space, false)
 			return
 		}
-		atom.space = space
 		world.setSpaceColour(space, atom.type.shaderColour, atom.type.shaderEmissive, atom.type.shaderOpacity)
 	}
 	

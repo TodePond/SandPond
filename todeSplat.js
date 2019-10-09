@@ -174,7 +174,7 @@
 			input = keyResult.input
 			input = eatGap(input).input
 			
-			const result = eatJavascript(input)
+			const result = eatJavascript(input, depth)
 			if (!result.success) return {input: source, success: false}
 			input = result.input
 			const instruction = eval(result.javascript)
@@ -195,6 +195,9 @@
 				return eatRule(input, elementArgs, inputs, outputs)
 			}
 			if (isNameSymmetries(name)) {
+				return eatRule(input, elementArgs, inputs, outputs)
+			}
+			if (isNamePOV(name)) {
 				return eatRule(input, elementArgs, inputs, outputs)
 			}
 			if (!result.success) return {input: source, success: false}
@@ -219,6 +222,10 @@
 		elementArgs[propertyName] = propertyValue
 		return {input, success: true}
 		
+	}
+	
+	const isNamePOV = (name) => {
+		return name == "top" || name == "front" || name == "side"
 	}
 	
 	const isNameSymmetries = (name) => {
@@ -271,11 +278,49 @@
 	
 	const eatRule = (source, elementArgs, inputs, outputs) => {
 	
-		// Get axes
-		const axesName = eatName(source).name
+		// Get first label (could be axes or POV)
+		const firstNameResult = eatName(source)
+		const firstName = firstNameResult.name
 		const axes = {}
-		if (axesName != "{") for (const c of axesName) {
+		let pov = "front"
+		if (isNameSymmetries(firstName)) for (const c of firstName) {
 			axes[c] = true
+		}
+		else if (isNamePOV(firstName)) {
+			pov = firstName
+		}
+		
+		// Get second label (could be axes or POV)
+		if (firstNameResult.success) {
+			let labelInput = firstNameResult.input
+			labelInput = eatGap(labelInput).input
+			const secondNameResult = eatName(labelInput)
+			const secondName = secondNameResult.name
+			if (isNameSymmetries(secondName)) for (const c of secondName) {
+				axes[c] = true
+			}
+			else if (isNamePOV(secondName)) {
+				pov = secondName
+			}
+		}
+		
+		// Decide which axes the diagram follows
+		let xAxis
+		let yAxis
+		if (pov == "front") {
+			xAxis = "x"
+			yAxis = "y"
+		}
+		else if (pov == "top") {
+			xAxis = "x"
+			yAxis = "z"
+		}
+		else if (pov == "side") {
+			xAxis = "z"
+			yAxis = "y"
+		}
+		else {
+			throw new Error("[TodeSplat] That POV is not recognised...")
 		}
 		
 		// Get inner code
@@ -336,7 +381,7 @@
 				const relativeY = originY - i
 				let ruleInput = inputs.get(char)
 				if (ruleInput == undefined) ruleInput = makeInput(char, () => true)
-				rawSpaces.push({x: relativeX, y: relativeY, input: ruleInput})
+				rawSpaces.push({[xAxis]: relativeX, [yAxis]: relativeY, input: ruleInput})
 			}
 		}
 		
@@ -358,8 +403,8 @@
 		// Go through the positions, adding each output 
 		for (const rawSpace of rawSpaces) {
 			const firstSpace = rawSpaces[0]
-			const rightCharX = rightFirstX + rawSpace.x - firstSpace.x
-			const rightCharY = rightFirstY - rawSpace.y + firstSpace.y
+			const rightCharX = rightFirstX + rawSpace[xAxis] - firstSpace[xAxis]
+			const rightCharY = rightFirstY - rawSpace[yAxis] + firstSpace[yAxis]
 			const rightChar = rhs[rightCharY][rightCharX]
 			let output = outputs.get(rightChar)
 			if (output == undefined) output = makeOutput(rightChar, () => {})

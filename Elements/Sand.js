@@ -8,20 +8,21 @@ element Sand {
 	
 	state "solid"
 	
-	input @ (space, args) => args.self = space.atom
+	input @ (space, args) => {
+		args.self = space.atom
+		return true
+	}
 	input _ (space) => space && space.atom == undefined
 	input # (space) => space && space.atom != undefined
-	input W (space, args) => {
-		if (!space) return false
-		if (!space.atom) return false
-		if (space.atom.type.state != "liquid") return false
+	input l (space, args) => {
+		if (!space || !space.atom || space.atom.type.state != "liquid") return false
 		args.liquid = space.atom
 		return true
 	}
 	
 	output _ (space) => setSpaceAtom(space, undefined)
 	output @ (space, {self}) => setSpaceAtom(space, self)
-	output W (space, {liquid}) => setSpaceAtom(space, liquid)
+	output l (space, {liquid}) => setSpaceAtom(space, liquid)
 	
 	rule y {
 		
@@ -32,8 +33,8 @@ element Sand {
 	
 	rule y {
 	
-		@  => W
-		W     @
+		@  => l
+		l     @
 	
 	}
 	
