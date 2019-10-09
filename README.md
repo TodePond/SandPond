@@ -21,8 +21,7 @@ Just download it and open index.html in a browser.
 2. Add your TodeSplat function or file to `index.html` in the same place as the other elements.
 
 ## To-Do
-* Support multi-line functions in TodeSplat.
-* Support custom output arguments.
+* Clean up TodeSplat syntax.
 * Reduce scope of Atom object.
 * Reduce scope of World object.
 * Reduce scope of AtomType.
@@ -40,6 +39,8 @@ Just download it and open index.html in a browser.
 * ADD VR SUPPORT.
 
 ## Done
+* Support custom output arguments. ✔️ 09.10.19
+* Support multi-line functions in TodeSplat. ✔️ 09.10.19
 * Implement TodeSPLAT language. ✔️ 08.10.19 Needs more work 
 * Implement Res and DReg. ✔️ 02.10.19
 * Implement randomness of selecting a rule. ❌ Covered by custom inputs and outputs. 01.10.19
