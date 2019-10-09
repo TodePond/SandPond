@@ -83,7 +83,7 @@ on.process(o=> {
 	for (let i = 0; i < spaceCount; i++) {
 		const space = world.spaces[i]
 		if (space && space.atom) {
-			space.atom.think()
+			space.atom.think(space)
 		}
 	}
 })
