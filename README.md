@@ -21,6 +21,8 @@ Just download it and open index.html in a browser.
 2. Add your TodeSplat function or file to `index.html` in the same place as the other elements.
 
 ## To-Do
+* Support multi-line functions in TodeSplat.
+* Support custom output arguments.
 * Reduce scope of Atom object.
 * Reduce scope of World object.
 * Reduce scope of AtomType.
