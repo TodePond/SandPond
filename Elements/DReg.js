@@ -1,4 +1,4 @@
-TodeSPLAT `
+TodeSPLAT`
 
 
 element DReg {
@@ -12,15 +12,24 @@ element DReg {
 	output _ (space) => setSpaceAtom(space, undefined)
 	output R (space) => setSpaceAtom(space, new Atom(Res))
 	output D (space) => setSpaceAtom(space, new Atom(DReg))
-	output @ (space, self) => setSpaceAtom(space, self)
+	output @ (space, {self}) => setSpaceAtom(space, self)
 	
-	input @ () => Math.random() < 0.01
+	input @ (space, args) => {
+		args.self = space.atom
+		return Math.random() < 0.01
+	}
 	rule { @. => R@ }
 	
-	input @ () => Math.random() < 0.001
+	input @ (space, args) => {
+		args.self = space.atom
+		return Math.random() < 0.001
+	}
 	rule { @. => D@ }
 	
-	input @ () => true
+	input @ (space, args) => {
+		args.self = space.atom
+		return true
+	}
 	rule { @. => _@ }
 	
 }

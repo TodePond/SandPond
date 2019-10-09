@@ -21,6 +21,7 @@
 		
 		tryRule(rule) {
 			const symmetry = rule.getNewSymmetry()
+			const outputArgs = {}
 			
 			// Check input
 			for (let s = 0; s < rule.spaceCount; s++) {
@@ -28,7 +29,7 @@
 				const eventWindowNumber = ruleSpace.eventWindowNumbers[symmetry]
 				if (paused) continue
 				const neighbour = this.space.eventWindow[eventWindowNumber] // this line here is really slow
-				const result = ruleSpace.test(neighbour, this)
+				const result = ruleSpace.test(neighbour, outputArgs)
 				if (!result) return false
 			}
 			if (paused) return
@@ -38,7 +39,7 @@
 				const ruleSpace = rule.spaces[s]
 				const eventWindowNumber = ruleSpace.eventWindowNumbers[symmetry]
 				const neighbour = this.space.eventWindow[eventWindowNumber]
-				ruleSpace.instruction(neighbour, this)
+				ruleSpace.instruction(neighbour, outputArgs)
 			}
 			return true
 		}

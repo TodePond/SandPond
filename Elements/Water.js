@@ -1,4 +1,4 @@
-TodeSPLAT `
+TodeSPLAT`
 
 
 element Water {
@@ -8,11 +8,12 @@ element Water {
 	
 	state "liquid"
 
+	input @ (space, args) => args.self = space.atom
 	input _ (space) => space && space.atom == undefined
 	input # (space) => space && space.atom != undefined
 	
 	output _ (space) => setSpaceAtom(space, undefined)
-	output @ (space, self) => setSpaceAtom(space, self)
+	output @ (space, {self}) => setSpaceAtom(space, self)
 	
 	rule y {
 		

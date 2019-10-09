@@ -1,4 +1,4 @@
-TodeSPLAT `
+TodeSPLAT`
 
 
 element Cloud {
@@ -11,18 +11,28 @@ element Cloud {
 	
 	output _ (space) => setSpaceAtom(space, undefined)
 	output W (space) => setSpaceAtom(space, new Atom(Water))
-	output @ (space, self) => setSpaceAtom(space, self)
+	output @ (space, {self}) => setSpaceAtom(space, self)
 	
-	input @ () => Math.random() < 0.1
+	input @ (space, args) => {
+		args.self = space.atom
+		return Math.random() < 0.1
+	}
 	rule y { 
 		@ => @
 		_    W
 	}
 	
-	input @ () => Math.random() < 0.02
+	input @ (space, args) => {
+		args.self = space.atom
+		return Math.random() < 0.02
+	}
 	rule y { @_ => _@ }
 	
-	input @ () => Math.random() < 0.005
+	
+	input @ (space, args) => {
+		args.self = space.atom
+		return Math.random() < 0.005
+	}
 	rule y { @ => W }
 	
 }
