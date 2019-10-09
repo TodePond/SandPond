@@ -10,7 +10,9 @@ element Sand {
 	
 	input _ (space) => space && space.atom == undefined
 	input # (space) => space && space.atom != undefined
-	input W (space) => space && space.atom && space.atom.type == Water
+	input W (space) => {
+		return space && space.atom && space.atom.type == Water
+	}
 	
 	output _ (space) => setSpaceAtom(space, undefined)
 	output @ (space, self) => setSpaceAtom(space, self)

@@ -10,14 +10,18 @@
 	
 	const eatWhiteSpace = (input) => {
 		let i = 0
+		let depth = 0
 		while (i < input.length) {
 			const char = input[i]
 			if (char != " " && char != "	" && char != "\n") break
+			depth++
+			if (char == "\n") depth = 0
 			i++
 		}
 		return {
 			input: input.slice(i),
 			success: i > 0,
+			depth,
 		}
 	}
 	
@@ -68,20 +72,57 @@
 		return {input, success: result.success}
 	}
 	
-	const eatProperties = (source, elementArgs, inputs, outputs) => {
+	const eatProperties = (source, elementArgs, inputs, outputs, depth) => {
 	
-		const result = eatProperty(source, elementArgs, inputs, outputs)
+		const result = eatProperty(source, elementArgs, inputs, outputs, depth)
 		if (!result.success) return result
 		
 		let input = result.input
-		input = eatWhiteSpace(input).input
-		input = eatProperties(input, elementArgs, inputs, outputs).input
+		const whiteSpaceResult = eatWhiteSpace(input)
+		const propertyDepth = whiteSpaceResult.depth
+		input = whiteSpaceResult.input
+		input = eatProperties(input, elementArgs, inputs, outputs, propertyDepth).input
 		
 		return {input, success: result.success}
 	}
 	
 	// Currently only supports single line function
-	const eatJavascript = (source) => {
+	const eatJavascript = (source, startDepth) => {
+		
+		let input = source
+		const lines = input.split("\n")
+		const endCharacter = lines[0][lines[0].length - 1]
+		if (endCharacter != "{") {
+			const lineResult = eatLine(input)
+			return {
+				success: true,
+				javascript: lineResult.line,
+				input: lineResult.input,
+			}
+		}
+		
+		let lineNumber = 0
+		for (const line of lines) {
+			const lineEndCharacter = line[line.length-1]
+			if (lineEndCharacter == "}") {
+				const lineDepth = eatWhiteSpace(line).depth
+				if (lineDepth == startDepth) break
+			}
+			lineNumber++
+		}
+		
+		const javascript = lines.slice(0, lineNumber + 1).join("\n")
+		input = lines.slice(lineNumber + 1).join("\n")
+		
+		return {
+			success: true,
+			javascript,
+			input, 
+		}
+		
+	}
+	
+	const eatLine = (source) => {
 		let input = source
 		let i = 0
 		while (i < input.length) {
@@ -92,12 +133,12 @@
 		
 		return {
 			success: true, //haha
-			javascript: input.slice(0, i),
+			line: input.slice(0, i),
 			input: input.slice(i),
 		}
 	}
 	
-	const eatProperty = (source, elementArgs, inputs, outputs) => {
+	const eatProperty = (source, elementArgs, inputs, outputs, depth) => {
 		let input = source
 		let output = ""
 		
@@ -113,7 +154,7 @@
 			input = keyResult.input
 			input = eatGap(input).input
 			
-			const result = eatJavascript(input)
+			const result = eatJavascript(input, depth)
 			if (!result.success) return {input: source, success: false}
 			input = result.input
 			const test = eval(result.javascript)
@@ -170,8 +211,8 @@
 		input = propertyNameResult.input
 		input = eatGap(input).input
 		
-		const propertyValueResult = eatName(input)
-		const propertyValue = eval(propertyValueResult.name)
+		const propertyValueResult = eatLine(input)
+		const propertyValue = eval(propertyValueResult.line)
 		if (!propertyValueResult.success) return {input: source, success: false}
 		input = propertyValueResult.input
 		
@@ -211,8 +252,10 @@
 		if (!openBracketResult.success) return {input, success: false}
 		input = openBracketResult.input
 		
-		input = eatWhiteSpace(input).input
-		input = eatProperties(input, elementArgs, inputs, outputs).input
+		const whiteSpaceResult = eatWhiteSpace(input)
+		const propertyDepth = whiteSpaceResult.depth
+		input = whiteSpaceResult.input
+		input = eatProperties(input, elementArgs, inputs, outputs, propertyDepth).input
 		input = eatWhiteSpace(input).input
 		
 		const closeBracketResult = eatKeyword(input, "}")
