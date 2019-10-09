@@ -28,7 +28,6 @@ Just download it and open index.html in a browser.
 * Rename certain things to match T2Tile??? eg: "neighbours" to "event window"✔️, "atomType" to "element", "axes" to "symmetries".
 * Try separating colour and visibility into different attributes.
 * Implement a Universe class that combines separate Worlds together.
-* Implement Conway's game of life in 2D and 3D.
 * Implement demon horde sort.
 * Add panning to camera controls.
 * Fix Splat UI for rules that use the z-axis and negative coordinates.
@@ -39,9 +38,10 @@ Just download it and open index.html in a browser.
 * ADD VR SUPPORT.
 
 ## Done
+* Implement Conway's game of life in 2D and 3D. ❌ I tried it and it was rubbish because the randomness of the machine stopped it working 09.10.19
 * Support custom output arguments. ✔️ 09.10.19
 * Support multi-line functions in TodeSplat. ✔️ 09.10.19
-* Implement TodeSPLAT language. ✔️ 08.10.19 Needs more work 
+* Implement TodeSPLAT language. ✔️ Needs more work 08.10.19
 * Implement Res and DReg. ✔️ 02.10.19
 * Implement randomness of selecting a rule. ❌ Covered by custom inputs and outputs. 01.10.19
 * Implement custom Input and Output class. ✔️ 01.10.19
