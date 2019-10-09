@@ -21,6 +21,8 @@ Just download it and open index.html in a browser.
 2. Add your TodeSplat function or file to `index.html` in the same place as the other elements.
 
 ## To-Do
+* Invert how axes work to match T2Tile project.
+* Implement a symmetry option that transforms a rule to all symmetries, instead of just choosing one randomly.
 * Clean up TodeSplat syntax.
 * Reduce scope of Atom object.
 * Reduce scope of World object.
