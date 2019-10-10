@@ -34,11 +34,29 @@
 			font-family: UbuntuMono;
 			src: url("fonts/UbuntuMono-R.ttf")
 		}
+		
+		#loading {
+			font-family: Rosario;
+			position: absolute;
+			left: 50vw;
+			transform: translateX(-50%);
+			top: 25vh;
+		}
+		
+		#loading img {
+			width: 100px;
+		}
 	
 	</style>
 </head>
 
 <body>
+
+	<div id="loading">
+		<img src="images/RedTode.png">
+		<p>Loading...</p>
+	</div>
+
 	<script src="rule.js"></script>
 	<script src="atomType.js"></script>
 	<script src="atom.js"></script>
