@@ -23,7 +23,8 @@ element Water {
 	}
 	
 	rule xz {
-		@_ => _@
+		@_    _@
+		#  => #
 	}
 	
 }
