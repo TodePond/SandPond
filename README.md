@@ -22,7 +22,6 @@ Just download it and open index.html in a browser.
 
 ## To-Do
 * Flip the z-axis.
-* Invert how axes work to match T2Tile project.
 * Implement a symmetry option that transforms a rule to all symmetries, instead of just choosing one randomly.
 * Clean up TodeSplat syntax.
 * Reduce scope of Atom object.
@@ -41,6 +40,7 @@ Just download it and open index.html in a browser.
 * ADD VR SUPPORT.
 
 ## Done
+* Invert how axes work to match T2Tile project. ✔️ 10.10.19
 * Implement Conway's game of life in 2D and 3D. ❌ I tried it and it was rubbish because the randomness of the machine stopped it working 09.10.19
 * Support custom output arguments. ✔️ 09.10.19
 * Support multi-line functions in TodeSplat. ✔️ 09.10.19
