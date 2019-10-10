@@ -86,7 +86,6 @@
 		return {input, success: result.success}
 	}
 	
-	// Currently only supports single line function
 	const eatJavascript = (source, startDepth) => {
 		
 		let input = source
@@ -232,9 +231,14 @@
 		if (name.length > 3) return false
 		if (name.length <= 0) return false
 		if (name[0] == name[1]) return false
-		if (name[0] != "x" && name[0] != "y" && name[0] != "z") return false
-		if (name.length > 1 && name[1] != "x" && name[1] != "y" && name[1] != "z") return false
-		if (name.length > 2 && name[2] != "x" && name[2] != "y" && name[2] != "z") return false
+		
+		const name0 = name[0].as(LowerCase)
+		const name1 = (name[1] || "").as(LowerCase)
+		const name2 = (name[2] || "").as(LowerCase)
+		
+		if (name0 != "x" && name0 != "y" && name0 != "z") return false
+		if (name.length > 1 && name1 != "x" && name1 != "y" && name1 != "z") return false
+		if (name.length > 2 && name2 != "x" && name2 != "y" && name2 != "z") return false
 		return true
 	}
 	

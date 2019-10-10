@@ -10,7 +10,7 @@ element Cloud {
 	input _ (space) => space && space.atom == undefined
 	
 	output _ (space) => setSpaceAtom(space, undefined)
-	output W (space) => setSpaceAtom(space, new Atom(Water))
+	output W (space) => setSpaceAtom(space, makeAtom(Water))
 	output @ (space, {self}) => setSpaceAtom(space, self)
 	
 	input @ (space, args) => {

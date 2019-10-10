@@ -74,7 +74,7 @@
 	for (const i in eventWindowPositions) {
 		const position = eventWindowPositions[i]
 		const key = getEventWindowKey(...position)
-		eventWindowNumbers[key] = i
+		eventWindowNumbers[key] = parseInt(i)
 	}
 	
 	//===========//

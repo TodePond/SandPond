@@ -80,7 +80,7 @@
 		const space = world.$Space(x, alteredY, z)
 		if (!space) return
 		if (space.atom) return
-		const atom = new Atom(atomType)
+		const atom = makeAtom(atomType)
 		setSpaceAtom(space, atom)
 		return atom
 	}

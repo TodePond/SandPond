@@ -7,7 +7,7 @@ element ForkBomb {
 	emissive "black"
 	
 	input _ (space) => space && space.atom == undefined
-	output @ (space) => setSpaceAtom(space, new Atom(ForkBomb))
+	output @ (space) => setSpaceAtom(space, makeAtom(ForkBomb))
 	
 	rule xyz { @_ => .@ }
 	

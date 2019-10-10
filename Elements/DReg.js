@@ -10,8 +10,8 @@ element DReg {
 	input . (space) => space
 	
 	output _ (space) => setSpaceAtom(space, undefined)
-	output R (space) => setSpaceAtom(space, new Atom(Res))
-	output D (space) => setSpaceAtom(space, new Atom(DReg))
+	output R (space) => setSpaceAtom(space, makeAtom(Res))
+	output D (space) => setSpaceAtom(space, makeAtom(DReg))
 	output @ (space, {self}) => setSpaceAtom(space, self)
 	
 	input @ (space, args) => {
