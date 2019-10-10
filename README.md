@@ -21,13 +21,13 @@ Just download it and open index.html in a browser.
 2. Add your TodeSplat function or file to `index.html` in the same place as the other elements.
 
 ## To-Do
+* Move functions to their appropriate files.
 * Flip the z-axis.
-* Implement a symmetry option that transforms a rule to all symmetries, instead of just choosing one randomly.
+* Implement a symmetry option that transforms a rule to all symmetries, instead of just choosing one randomly. ⏳ Implemented in one way, but I'm going to re-do it a different way 10.10.19
 * Clean up TodeSplat syntax.
-* Reduce scope of Atom object.
 * Reduce scope of World object.
 * Reduce scope of AtomType.
-* Rename certain things to match T2Tile??? eg: "neighbours" to "event window"✔️, "atomType" to "element", "axes" to "symmetries".
+* Rename certain things to match T2Tile. eg: "neighbours" to "event window"✔️, "atomType" to "element", "axes" to "symmetries".
 * Try separating colour and visibility into different attributes.
 * Implement a Universe class that combines separate Worlds together.
 * Implement demon horde sort.
@@ -40,6 +40,8 @@ Just download it and open index.html in a browser.
 * ADD VR SUPPORT.
 
 ## Done
+* Add a loading screen. ✔️ 10.10.19
+* Reduce scope of Atom object. ✔️ 10.10.19
 * Invert how axes work to match T2Tile project. ✔️ 10.10.19
 * Implement Conway's game of life in 2D and 3D. ❌ I tried it and it was rubbish because the randomness of the machine stopped it working 09.10.19
 * Support custom output arguments. ✔️ 09.10.19
