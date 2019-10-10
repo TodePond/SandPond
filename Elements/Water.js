@@ -15,18 +15,15 @@ element Water {
 	output _ (space) => setSpaceAtom(space, undefined)
 	output @ (space, {self}) => setSpaceAtom(space, self)
 	
-	rule y {
+	rule {
 		
 		@ => _
 		_    @
 		
 	}
 	
-	rule y {
-	
+	rule xz {
 		@_ => _@
-		#     #
-	
 	}
 	
 }

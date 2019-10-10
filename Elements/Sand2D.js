@@ -20,12 +20,12 @@ element Sand2D {
 	output _ (space) => setSpaceAtom(space, undefined)
 	output @ (space, {self}) => setSpaceAtom(space, self)
 	
-	rule z top {
+	rule top {
 		@ => _
 		_    @
 	}
 	
-	rule zy top {
+	rule x top {
 		@  => _
 		#_    #@
 	}

@@ -17,7 +17,7 @@ element Cloud {
 		args.self = space.atom
 		return Math.random() < 0.1
 	}
-	rule y { 
+	rule { 
 		@ => @
 		_    W
 	}
@@ -26,14 +26,14 @@ element Cloud {
 		args.self = space.atom
 		return Math.random() < 0.02
 	}
-	rule y { @_ => _@ }
+	rule xz { @_ => _@ }
 	
 	
 	input @ (space, args) => {
 		args.self = space.atom
 		return Math.random() < 0.005
 	}
-	rule y { @ => W }
+	rule { @ => W }
 	
 }
 

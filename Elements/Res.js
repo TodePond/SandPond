@@ -13,7 +13,7 @@ element Res {
 	output _ (space) => setSpaceAtom(space, undefined)
 	output @ (space, {self}) => setSpaceAtom(space, self)
 	
-	rule { @_ => _@ }
+	rule xyz { @_ => _@ }
 	
 }
 

@@ -18,19 +18,19 @@ element DReg {
 		args.self = space.atom
 		return Math.random() < 0.01
 	}
-	rule { @. => R@ }
+	rule xyz { @. => R@ }
 	
 	input @ (space, args) => {
 		args.self = space.atom
 		return Math.random() < 0.001
 	}
-	rule { @. => D@ }
+	rule xyz { @. => D@ }
 	
 	input @ (space, args) => {
 		args.self = space.atom
 		return true
 	}
-	rule { @. => _@ }
+	rule xyz { @. => _@ }
 	
 }
 

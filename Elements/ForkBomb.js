@@ -9,7 +9,7 @@ element ForkBomb {
 	input _ (space) => space && space.atom == undefined
 	output @ (space) => setSpaceAtom(space, new Atom(ForkBomb))
 	
-	rule { @_ => .@ }
+	rule xyz { @_ => .@ }
 	
 }
 

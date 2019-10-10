@@ -24,21 +24,21 @@ element Sand {
 	output @ (space, {self}) => setSpaceAtom(space, self)
 	output l (space, {liquid}) => setSpaceAtom(space, liquid)
 	
-	rule y {
+	rule {
 		
 		@ => _
 		_    @
 		
 	}
 	
-	rule y {
+	rule {
 	
 		@  => l
 		l     @
 	
 	}
 	
-	rule y {
+	rule xz {
 	
 		@  => _
 		#_    #@

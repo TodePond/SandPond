@@ -16,38 +16,38 @@
 	const getTest = (input) => input.test
 	const getInstruction = (output) => output.instruction
 	
-	const getEventWindowNumbers = (axes = {}, x, y, z) => {
+	const getEventWindowNumbers = (symmetries = {}, x, y, z) => {
 	
 		const eventWindowNumbers = []
 		
-		if (axes.x && axes.y && axes.z) {
+		if (!symmetries.x && !symmetries.y && !symmetries.z) {
 			return [
 				getEventWindowNumber(x, y, z),
 			]
 		}
 		
-		if (axes.x && axes.y && !axes.z) {
+		if (!symmetries.x && !symmetries.y && symmetries.z) {
 			return [
 				getEventWindowNumber(x, y, z),
 				getEventWindowNumber(x, y, -z),
 			]
 		}
 		
-		if (!axes.x && axes.y && axes.z) {
+		if (symmetries.x && !symmetries.y && !symmetries.z) {
 			return [
 				getEventWindowNumber(x, y, z),
 				getEventWindowNumber(-x, y, z),
 			]
 		}
 		
-		if (axes.x && !axes.y && axes.z) {
+		if (!symmetries.x && symmetries.y && !symmetries.z) {
 			return [
 				getEventWindowNumber(x, y, z),
 				getEventWindowNumber(x, -y, z),
 			]
 		}
 		
-		if (!axes.x && !axes.y && axes.z) {
+		if (symmetries.x && symmetries.y && !symmetries.z) {
 			return [
 				getEventWindowNumber(x, y, z),
 				getEventWindowNumber(-x, y, z),
@@ -61,7 +61,7 @@
 			]
 		}
 		
-		if (!axes.x && axes.y && !axes.z) {
+		if (symmetries.x && !symmetries.y && symmetries.z) {
 			return [
 				getEventWindowNumber(x, y, z),
 				getEventWindowNumber(-x, y, z),
@@ -75,7 +75,7 @@
 			]
 		}
 		
-		if (axes.x && !axes.y && !axes.z) {
+		if (!symmetries.x && symmetries.y && symmetries.z) {
 			return [
 				getEventWindowNumber(x, y, z),
 				getEventWindowNumber(x, y, -z),
@@ -89,7 +89,7 @@
 			]
 		}
 		
-		if (!axes.x && !axes.y && !axes.z) {
+		if (symmetries.x && symmetries.y && symmetries.z) {
 			return [
 				getEventWindowNumber(x, y, z),
 				getEventWindowNumber(x, -y, z),
