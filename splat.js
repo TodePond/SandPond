@@ -57,6 +57,7 @@
 		`
 		
 		for (const atomType of atomTypes) {
+			if (atomType.hidden) continue
 			const button = makeMenuButton(atomType.name, atomType.colour)
 			topMenu.appendChild(button)
 		}

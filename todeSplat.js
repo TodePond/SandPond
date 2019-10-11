@@ -1,11 +1,103 @@
 {
+	globalInputs = new Map()
+	globalOutputs = new Map()
+	
 	function TodeSplat([source]) {
 		let input = source
 		
-		input = eatWhiteSpace(input).input
-		input = eatElements(input).input
+		const whiteSpaceResult = eatWhiteSpace(input)
+		input = whiteSpaceResult.input
+		const depth = whiteSpaceResult.depth
+		
+		input = eatExpressions(input, depth).input
 		input = eatWhiteSpace(input).input
 		
+	}
+	
+	const eatExpressions = (source, depth) => {
+		
+		const result = eatExpression(source, depth)
+		if (!result.success) return result
+		let input = result.input
+		
+		const whiteSpaceResult = eatWhiteSpace(input)
+		input = whiteSpaceResult.input
+		const nextDepth = whiteSpaceResult.depth
+		
+		input = eatExpressions(input, nextDepth).input
+		
+		return {input, success: result.success}
+	}
+	
+	const eatExpression = (source, depth) => {
+		let input = source
+		const nameResult = eatName(input)
+		const name = nameResult.name
+		if (name == "element") return eatElement(input)
+		if (name == "input") return eatGlobalInput(input)
+		if (name == "output") return eatGlobalOutput(input)
+		return {input, success: false}
+	}
+	
+	const eatGlobalInput = (source, depth) => {
+		let input = source
+		const inputResult = eatInput(input)
+		if (!inputResult.success) return {input, success: false}
+		const ruleInput = inputResult.ruleInput
+		input = inputResult.input
+		globalInputs.set(ruleInput.key, ruleInput)
+		return {input, success: true}
+	}
+	
+	const eatGlobalOutput = (source, depth) => {
+		let input = source
+		const outputResult = eatOutput(input)
+		if (!outputResult.success) return {input, success: false}
+		const ruleOutput = outputResult.ruleOutput
+		input = outputResult.input
+		globalOutputs.set(ruleOutput.key, ruleOutput)
+		return {input, success: true}		
+	}
+	
+	const eatInput = (source, depth) => {
+		let input = source
+		input = eatKeyword(input, "input").input //input input input input (haha great naming, Luke)
+		input = eatGap(input).input
+		const functionResult = eatFunction(input)
+		if (!functionResult.success) return {input: source, success: false}
+		input = functionResult.input
+		const name = functionResult.name
+		const func = functionResult.func
+		const ruleInput = makeInput(name, func)
+		return {input, success: true, ruleInput}
+	}
+	
+	const eatOutput = (source, depth) => {
+		let input = source
+		input = eatKeyword(input, "output").input
+		input = eatGap(input).input
+		const functionResult = eatFunction(input)
+		if (!functionResult.success) return {input: source, success: false}
+		input = functionResult.input
+		const name = functionResult.name
+		const func = functionResult.func
+		const ruleOutput = makeOutput(name, func)
+		return {input, success: true, ruleOutput}
+	}
+	
+	const eatFunction = (source, depth) => {
+		let input = source
+		const nameResult = eatName(input)
+		const name = nameResult.name
+		input = nameResult.input
+		input = eatGap(input).input
+		
+		const result = eatJavascript(input, depth)
+		if (!result.success) return {input: source, success: false}
+		input = result.input
+		const func = eval(result.javascript)
+		
+		return {input, success: true, name, func}
 	}
 	
 	const eatWhiteSpace = (input) => {
@@ -410,6 +502,12 @@
 				
 				let ruleInput = inputs.get(char)
 				
+				if (ruleInput == undefined) {
+					const globalInput = globalInputs.get(char)
+					if (globalInput) ruleInput = globalInput
+					else ruleInput = makeInput(char, () => true)
+				}
+				
 				// Add chance to origin test
 				if (chance != undefined && relativeX == 0 && relativeY == 0) {
 					const test = ruleInput.test
@@ -417,8 +515,6 @@
 					const chanceRuleInput = makeInput(char, chanceTest)
 					ruleInput = chanceRuleInput
 				}
-				
-				if (ruleInput == undefined) ruleInput = makeInput(char, () => true)
 				rawSpaces.push({[xAxis]: relativeX, [yAxis]: relativeY, input: ruleInput})
 			}
 		}
@@ -445,7 +541,11 @@
 			const rightCharY = rightFirstY - rawSpace[yAxis] + firstSpace[yAxis]
 			const rightChar = rhs[rightCharY][rightCharX]
 			let output = outputs.get(rightChar)
-			if (output == undefined) output = makeOutput(rightChar, () => {})
+			if (output == undefined) {
+				const globalOutput = globalOutputs.get(rightChar)
+				if (globalOutput) output = globalOutput
+				else output = makeOutput(rightChar, () => {})
+			}
 			rawSpace.output = output
 		}
 		
