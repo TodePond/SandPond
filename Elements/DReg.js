@@ -1,4 +1,4 @@
-TodeSPLAT`
+TodeSplat`
 
 
 element DReg {
@@ -7,6 +7,7 @@ element DReg {
 	emissive "brown"
 	opacity 0.3
 	
+	input @ (space, args) => args.self = space.atom
 	input . (space) => space
 	
 	output _ (space) => setSpaceAtom(space, undefined)
@@ -14,22 +15,8 @@ element DReg {
 	output D (space) => setSpaceAtom(space, makeAtom(DReg))
 	output @ (space, {self}) => setSpaceAtom(space, self)
 	
-	input @ (space, args) => {
-		args.self = space.atom
-		return Math.random() < 0.01
-	}
-	rule xyz { @. => R@ }
-	
-	input @ (space, args) => {
-		args.self = space.atom
-		return Math.random() < 0.001
-	}
-	rule xyz { @. => D@ }
-	
-	input @ (space, args) => {
-		args.self = space.atom
-		return true
-	}
+	rule xyz 0.01 { @. => R@ }
+	rule xyz 0.001 { @. => D@ }
 	rule xyz { @. => _@ }
 	
 }

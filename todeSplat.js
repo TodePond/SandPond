@@ -1,5 +1,5 @@
 {
-	function TodeSPLAT([source]) {
+	function TodeSplat([source]) {
 		let input = source
 		
 		input = eatWhiteSpace(input).input

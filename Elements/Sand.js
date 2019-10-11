@@ -1,4 +1,4 @@
-TodeSPLAT`
+TodeSplat`
 
 
 element Sand {
@@ -24,7 +24,7 @@ element Sand {
 	output @ (space, {self}) => setSpaceAtom(space, self)
 	output l (space, {liquid}) => setSpaceAtom(space, liquid)
 	
-	rule 0.1 {
+	rule {
 		@ => _
 		_    @
 	}
