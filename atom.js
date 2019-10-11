@@ -26,24 +26,18 @@
 		// Check input
 		for (let i = 0; i < rule.spaceCount; i++) {
 			const ruleSpace = rule.spaces[i]
-			const siteNumbers = ruleSpace.eventWindowNumbers[symmetryNumber]
-			for (let j = 0; j < siteNumbers.length; j++) {
-				const siteNumber = siteNumbers[j]
-				const site = space.eventWindow[siteNumber]
-				const result = ruleSpace.test(site, outputArgs)
-				if (!result) return false
-			}
+			const siteNumber = ruleSpace.eventWindowNumbers[symmetryNumber]
+			const site = space.eventWindow[siteNumber]
+			const result = ruleSpace.test(site, outputArgs)
+			if (!result) return false
 		}
 		
 		// Do output
 		for (let i = 0; i < rule.spaceCount; i++) {
 			const ruleSpace = rule.spaces[i]
-			const siteNumbers = ruleSpace.eventWindowNumbers[symmetryNumber]
-			for (let j = 0; j < siteNumbers.length; j++) {
-				const siteNumber = siteNumbers[j]
-				const site = space.eventWindow[siteNumber]
-				ruleSpace.instruction(site, outputArgs)
-			}
+			const siteNumber = ruleSpace.eventWindowNumbers[symmetryNumber]
+			const site = space.eventWindow[siteNumber]
+			ruleSpace.instruction(site, outputArgs)
 		}
 		
 		return true

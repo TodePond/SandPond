@@ -11,11 +11,11 @@ element SuperForkBomb {
 	output @ (space) => setSpaceAtom(space, makeAtom(SuperForkBomb))
 	output _ (space) => setSpaceAtom(space, undefined)
 	
-	rule XYZ { .@ => @. }
+	rule xyz { .@ => @. }
 	
 }
 
- 
+
 
 
 `

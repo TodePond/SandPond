@@ -16,38 +16,83 @@
 	const getTest = (input) => input.test
 	const getInstruction = (output) => output.instruction
 	
-	const getEventWindowLists = (symmetries, x, y, z) => {
 	
-		if (symmetries.X && !symmetries.Y && !symmetries.Z && !symmetries.x && !symmetries.y && !symmetries.z) {
-			return [
-				[
-					getEventWindowNumber(x, y, z),
-					getEventWindowNumber(-x, y, z),
-				],
-			]
-		}
 	
-		if (!symmetries.X && symmetries.Y && !symmetries.Z && !symmetries.x && !symmetries.y && !symmetries.z) {
-			return [
-				[
-					getEventWindowNumber(x, y, z),
-					getEventWindowNumber(x, -y, z),
-				],
-			]
-		}
+	const getEventWindowNumbers = (symmetries = {}, x, y, z) => {
 	
-		if (!symmetries.X && !symmetries.Y && symmetries.Z && !symmetries.x && !symmetries.y && !symmetries.z) {
+		const eventWindowNumbers = []
+		
+		if (!symmetries.x && !symmetries.y && !symmetries.z) {
 			return [
-				[
-					getEventWindowNumber(x, y, z),
-					getEventWindowNumber(x, y, -z),
-				],
+				getEventWindowNumber(x, y, z),
 			]
 		}
 		
-		if (symmetries.X && symmetries.Y && symmetries.Z && !symmetries.x && !symmetries.y && !symmetries.z) {
+		if (!symmetries.x && !symmetries.y && symmetries.z) {
+			return [
+				getEventWindowNumber(x, y, z),
+				getEventWindowNumber(x, y, -z),
+			]
+		}
 		
-			const siteNumberSet = new Set([
+		if (symmetries.x && !symmetries.y && !symmetries.z) {
+			return [
+				getEventWindowNumber(x, y, z),
+				getEventWindowNumber(-x, y, z),
+			]
+		}
+		
+		if (!symmetries.x && symmetries.y && !symmetries.z) {
+			return [
+				getEventWindowNumber(x, y, z),
+				getEventWindowNumber(x, -y, z),
+			]
+		}
+		
+		if (symmetries.x && symmetries.y && !symmetries.z) {
+			return [
+				getEventWindowNumber(x, y, z),
+				getEventWindowNumber(-x, y, z),
+				getEventWindowNumber(x, -y, z),
+				getEventWindowNumber(-x, -y, z),
+			
+				getEventWindowNumber(y, x, z),
+				getEventWindowNumber(-y, x, z),
+				getEventWindowNumber(y, -x, z),
+				getEventWindowNumber(-y, -x, z),
+			]
+		}
+		
+		if (symmetries.x && !symmetries.y && symmetries.z) {
+			return [
+				getEventWindowNumber(x, y, z),
+				getEventWindowNumber(-x, y, z),
+				getEventWindowNumber(x, y, -z),
+				getEventWindowNumber(-x, y, -z),
+			
+				getEventWindowNumber(z, y, x),
+				getEventWindowNumber(-z, y, x),
+				getEventWindowNumber(z, y, -x),
+				getEventWindowNumber(-z, y, -x),
+			]
+		}
+		
+		if (!symmetries.x && symmetries.y && symmetries.z) {
+			return [
+				getEventWindowNumber(x, y, z),
+				getEventWindowNumber(x, y, -z),
+				getEventWindowNumber(x, -y, z),
+				getEventWindowNumber(x, -y, -z),
+			
+				getEventWindowNumber(x, z, y),
+				getEventWindowNumber(x, -z, y),
+				getEventWindowNumber(x, z, -y),
+				getEventWindowNumber(x, -z, -y),
+			]
+		}
+		
+		if (symmetries.x && symmetries.y && symmetries.z) {
+			return [
 				getEventWindowNumber(x, y, z),
 				getEventWindowNumber(x, -y, z),
 				getEventWindowNumber(x, y, -z),
@@ -77,120 +122,6 @@
 				getEventWindowNumber(-y, -z, x),
 				getEventWindowNumber(-y, z, -x),
 				getEventWindowNumber(-y, -z, -x),
-			])
-			
-			return [Array.from(siteNumberSet.values())]
-		}
-		
-		else throw new Error("[TodeSplat] Sorry, this symmetry combination isn't supported yet.")
-	}
-	
-	const getEventWindowNumbers = (symmetries = {}, x, y, z) => {
-	
-		const eventWindowNumbers = []
-		
-		if (symmetries.X || symmetries.Y || symmetries.Z) return getEventWindowLists(symmetries, x, y, z)
-		
-		if (!symmetries.x && !symmetries.y && !symmetries.z) {
-			return [
-				[getEventWindowNumber(x, y, z)],
-			]
-		}
-		
-		if (!symmetries.x && !symmetries.y && symmetries.z) {
-			return [
-				[getEventWindowNumber(x, y, z)],
-				[getEventWindowNumber(x, y, -z)],
-			]
-		}
-		
-		if (symmetries.x && !symmetries.y && !symmetries.z) {
-			return [
-				[getEventWindowNumber(x, y, z)],
-				[getEventWindowNumber(-x, y, z)],
-			]
-		}
-		
-		if (!symmetries.x && symmetries.y && !symmetries.z) {
-			return [
-				[getEventWindowNumber(x, y, z)],
-				[getEventWindowNumber(x, -y, z)],
-			]
-		}
-		
-		if (symmetries.x && symmetries.y && !symmetries.z) {
-			return [
-				[getEventWindowNumber(x, y, z)],
-				[getEventWindowNumber(-x, y, z)],
-				[getEventWindowNumber(x, -y, z)],
-				[getEventWindowNumber(-x, -y, z)],
-			
-				[getEventWindowNumber(y, x, z)],
-				[getEventWindowNumber(-y, x, z)],
-				[getEventWindowNumber(y, -x, z)],
-				[getEventWindowNumber(-y, -x, z)],
-			]
-		}
-		
-		if (symmetries.x && !symmetries.y && symmetries.z) {
-			return [
-				[getEventWindowNumber(x, y, z)],
-				[getEventWindowNumber(-x, y, z)],
-				[getEventWindowNumber(x, y, -z)],
-				[getEventWindowNumber(-x, y, -z)],
-			
-				[getEventWindowNumber(z, y, x)],
-				[getEventWindowNumber(-z, y, x)],
-				[getEventWindowNumber(z, y, -x)],
-				[getEventWindowNumber(-z, y, -x)],
-			]
-		}
-		
-		if (!symmetries.x && symmetries.y && symmetries.z) {
-			return [
-				[getEventWindowNumber(x, y, z)],
-				[getEventWindowNumber(x, y, -z)],
-				[getEventWindowNumber(x, -y, z)],
-				[getEventWindowNumber(x, -y, -z)],
-			
-				[getEventWindowNumber(x, z, y)],
-				[getEventWindowNumber(x, -z, y)],
-				[getEventWindowNumber(x, z, -y)],
-				[getEventWindowNumber(x, -z, -y)],
-			]
-		}
-		
-		if (symmetries.x && symmetries.y && symmetries.z) {
-			return [
-				[getEventWindowNumber(x, y, z)],
-				[getEventWindowNumber(x, -y, z)],
-				[getEventWindowNumber(x, y, -z)],
-				[getEventWindowNumber(x, -y, -z)],
-			
-				[getEventWindowNumber(-x, y, z)],
-				[getEventWindowNumber(-x, -y, z)],
-				[getEventWindowNumber(-x, y, -z)],
-				[getEventWindowNumber(-x, -y, -z)],
-			
-				[getEventWindowNumber(z, x, y)],
-				[getEventWindowNumber(z, -x, y)],
-				[getEventWindowNumber(z, x, -y)],
-				[getEventWindowNumber(z, -x, -y)],
-			
-				[getEventWindowNumber(-z, x, y)],
-				[getEventWindowNumber(-z, -x, y)],
-				[getEventWindowNumber(-z, x, -y)],
-				[getEventWindowNumber(-z, -x, -y)],
-			
-				[getEventWindowNumber(y, z, x)],
-				[getEventWindowNumber(y, -z, x)],
-				[getEventWindowNumber(y, z, -x)],
-				[getEventWindowNumber(y, -z, -x)],
-				
-				[getEventWindowNumber(-y, z, x)],
-				[getEventWindowNumber(-y, -z, x)],
-				[getEventWindowNumber(-y, z, -x)],
-				[getEventWindowNumber(-y, -z, -x)],
 			]
 		}
 	}
