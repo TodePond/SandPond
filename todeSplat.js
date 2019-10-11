@@ -190,15 +190,7 @@
 			input = eatGap(input).input
 			const result = eatName(input)
 			const name = result.name
-			if (name == "{") {
-				return eatRule(input, elementArgs, inputs, outputs)
-			}
-			if (isNameSymmetries(name)) {
-				return eatRule(input, elementArgs, inputs, outputs)
-			}
-			if (isNamePOV(name)) {
-				return eatRule(input, elementArgs, inputs, outputs)
-			}
+			return eatRule(input, elementArgs, inputs, outputs)
 			if (!result.success) return {input: source, success: false}
 			input = result.input
 			elementArgs.rules.push(eval(name))
@@ -280,33 +272,65 @@
 		return {input, success: true}
 	}
 	
-	const eatRule = (source, elementArgs, inputs, outputs) => {
-	
-		// Get first label (could be axes or POV)
-		const firstNameResult = eatName(source)
-		const firstName = firstNameResult.name
-		const axes = {}
-		let pov = "front"
-		if (isNameSymmetries(firstName)) for (const c of firstName) {
-			axes[c] = true
-		}
-		else if (isNamePOV(firstName)) {
-			pov = firstName
-		}
+	const eatRuleLabels = (source) => {
 		
-		// Get second label (could be axes or POV)
-		if (firstNameResult.success) {
-			let labelInput = firstNameResult.input
-			labelInput = eatGap(labelInput).input
-			const secondNameResult = eatName(labelInput)
-			const secondName = secondNameResult.name
-			if (isNameSymmetries(secondName)) for (const c of secondName) {
+		let input = source
+		if (source[0] == "{") return {input, success: false, labels: {}}
+		
+		const result = eatRuleLabel(source)
+		if (!result.success) return result
+		
+		input = result.input
+		input = eatGap(input).input
+		const secondResult = eatRuleLabels(input)
+		input = secondResult.input
+		
+		const labels = {...result.labels, ...secondResult.labels}
+		
+		return {input, success: result.success, labels}
+	}
+	
+	const eatRuleLabel = (source) => {
+		let input = source
+		const nameResult = eatName(source)
+		const name = nameResult.name
+		input = nameResult.input
+		
+		if (isNameSymmetries(name)) {
+			const axes = {}
+			for (const c of name) {
 				axes[c] = true
 			}
-			else if (isNamePOV(secondName)) {
-				pov = secondName
-			}
+			return {input, success: true, labels: {axes}}
 		}
+		
+		if (isNamePOV(name)) {
+			const pov = name
+			return {input, success: true, labels: {pov}}
+		}
+		
+		else {
+			const chanceString = name
+			const chance = chanceString.as(Number)
+			return {input, success: true, labels: {chance}}
+		}
+		
+		throw new Error(`[TodeSplat] Couldn't recognise that rule label...`)
+	}
+	
+	const eatRule = (source, elementArgs, inputs, outputs) => {
+	
+		// Read the meta labels before the rule
+		const labelsResult = eatRuleLabels(source)
+		const labels = labelsResult.labels
+		
+		let axes = {}
+		let pov = "front"
+		let chance = undefined
+		
+		if (labels.axes) axes = labels.axes
+		if (labels.pov) pov = labels.pov
+		if (labels.chance) chance = labels.chance
 		
 		// Decide which axes the diagram follows
 		let xAxis
@@ -383,7 +407,17 @@
 				}
 				const relativeX = j - originX
 				const relativeY = originY - i
+				
 				let ruleInput = inputs.get(char)
+				
+				// Add chance to origin test
+				if (chance != undefined && relativeX == 0 && relativeY == 0) {
+					const test = ruleInput.test
+					const chanceTest = (...args) => Math.random() < chance && test(...args)
+					const chanceRuleInput = makeInput(char, chanceTest)
+					ruleInput = chanceRuleInput
+				}
+				
 				if (ruleInput == undefined) ruleInput = makeInput(char, () => true)
 				rawSpaces.push({[xAxis]: relativeX, [yAxis]: relativeY, input: ruleInput})
 			}
@@ -415,6 +449,7 @@
 			rawSpace.output = output
 		}
 		
+		// Make the rule
 		const rule = new Rule(axes, rawSpaces)
 		elementArgs.rules.push(rule)
 		
