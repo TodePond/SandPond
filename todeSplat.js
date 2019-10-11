@@ -359,8 +359,9 @@
 		
 		elementArgs.name = name
 		print(elementArgs)
-		window[name] = new AtomType({scene, ...elementArgs})
-		
+		const element = new AtomType({scene, ...elementArgs})
+		element.source = source.slice(0, source.length - input.length)
+		window[name] = element
 		return {input, success: true}
 	}
 	

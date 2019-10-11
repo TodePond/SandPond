@@ -56,6 +56,9 @@
 			<div id="topMenu" style="${style}"></div>
 		`
 		
+		const menuMenuButton = makeMenuMenuButton()
+		topMenu.appendChild(menuMenuButton)
+		
 		for (const atomType of atomTypes) {
 			if (atomType.hidden) continue
 			const button = makeMenuButton(atomType.name, atomType.colour)
@@ -66,22 +69,61 @@
 		return topMenu
 	}
 	
+	const makeMenuMenuButton = () => {
+		const style = `
+			padding: 5px 5px;
+			background-color: black;
+			opacity: ${BUTTON_OPACITY};
+			display: block;
+			margin: 10px;
+			font-family: Rosario;
+			cursor: default;
+			color: white;
+			font-size: 30px;
+		`
+		const menuButton = HTML `
+			<div id="menuMenuButton" style="${style}">&#9776;</div>
+		`
+		return menuButton
+	}
+	
 	const makeMenuButton = (name, colour) => {
 		const style = `
-			height: 40px;
-			width: 40px;
+			padding: 10px 5px;
 			background-color: ${colour};
 			opacity: ${BUTTON_OPACITY};
 			display: block;
 			margin: 10px;
+			font-family: Rosario;
+			cursor: default;
+			width: 75px;
 		`
 		const menuButton = HTML `
-			<div class="menuButton" id="${name}" style="${style}"></div>
+			<div class="menuButton" id="${name}" style="${style}">${name}</div>
 		`
 		return menuButton
 	}
 	
 	const makeRules = () => {
+		const style = `
+			position: absolute;
+			left: 110px;
+			right: 0px;
+			top: 0px;
+			vertical-align: top;
+			font-family: UbuntuMono;
+			text-align: left;
+			font-size: 25px; 
+			background-color: grey;
+		`
+		const atomType = $AtomType(selectedAtom)
+		const html = HTML `
+			<pre id="rules" style="${style}">${atomType.source}</pre>
+		`
+		return html
+	}
+	
+	const makeRulesOld = () => {
 	
 		const style = `
 			margin-bottom: 20px;
@@ -280,6 +322,26 @@
 		selectedAtom = e.target.id
 		e.target.style.outline = "2px solid black"
 		updateRules()
+	})
+	
+	$("#menuMenuButton").on.mouseover(e => {
+		e.target.style.outline = `2px solid black`
+	})
+	
+	$("#menuMenuButton").on.mouseout(e => {
+		e.target.style.outline = `0px`
+	})
+	
+	let menuOpen = true
+	$("#menuMenuButton").on.mousedown(e => {
+		if (menuOpen) {
+			menuOpen = false
+			$$(".menuButton").forEach(button => button.style.visibility = "hidden")
+		}
+		else {
+			menuOpen = true
+			$$(".menuButton").forEach(button => button.style.visibility = "visible")
+		}
 	})
 	
 	//==================//
