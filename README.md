@@ -21,10 +21,10 @@ Just download it and open index.html in a browser.
 2. Add your TodeSplat function or file to `index.html` in the same place as the other elements.
 
 ## To-Do
+* Put menu items into categories.
 * Move functions to their appropriate files.
 * Flip the z-axis.
 * Implement a symmetry option that transforms a rule to all symmetries, instead of just choosing one randomly. ⏳ Implemented in one way, but I'm going to re-do it a different way 10.10.19
-* Clean up TodeSplat syntax.
 * Reduce scope of World object.
 * Reduce scope of AtomType.
 * Rename certain things to match T2Tile. eg: "neighbours" to "event window"✔️, "atomType" to "element", "axes" to "symmetries".
@@ -40,6 +40,9 @@ Just download it and open index.html in a browser.
 * ADD VR SUPPORT.
 
 ## Done
+* Implement randomness of selecting a rule. ✔️ Implemented as syntax sugar 11.10.19
+* Give menu items names. ✔️ 11.10.19
+* Clean up TodeSplat syntax. ✔️ globals and "chance" label helped this 11.10.19
 * Add a loading screen. ✔️ 10.10.19
 * Reduce scope of Atom object. ✔️ 10.10.19
 * Invert how axes work to match T2Tile project. ✔️ 10.10.19
@@ -48,7 +51,6 @@ Just download it and open index.html in a browser.
 * Support multi-line functions in TodeSplat. ✔️ 09.10.19
 * Implement TodeSPLAT language. ✔️ Needs more work 08.10.19
 * Implement Res and DReg. ✔️ 02.10.19
-* Implement randomness of selecting a rule. ❌ Covered by custom inputs and outputs. 01.10.19
 * Implement custom Input and Output class. ✔️ 01.10.19
 * Change event window from a 3x3x3 grid into three intersecting 5x5 planes. ✔️ 30.09.19
 * Move event window code into its own file. ✔️ 30.09.19
