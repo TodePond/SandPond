@@ -15,9 +15,7 @@
 	
 	const getTest = (input) => input.test
 	const getInstruction = (output) => output.instruction
-	
-	
-	
+		
 	const getEventWindowNumbers = (symmetries = {}, x, y, z) => {
 	
 		const eventWindowNumbers = []

@@ -94,7 +94,7 @@
 			this.camera.updateProjectionMatrix()
 		}
 		
-		getCursorPosition3D(filter) {
+		getCursorPosition3D(filter = () => true) {
 			this.raycaster.setFromCamera(this.cursor.position2D, this.camera)
 			const intersects = this.raycaster.intersectObjects(this.scene.children.filter(filter))
 			if (intersects.length == 0) return

@@ -1,28 +1,19 @@
 //===========//
 // Constants //
 //===========//
-const debugMode = false
+const SMALL_MODE = false
+const D2_MODE = false
 
-CAMERA_START_X = 0
-CAMERA_START_Y = 150
-CAMERA_START_Z = 225
+const CAMERA_START_X = 0
+const CAMERA_START_Y = SMALL_MODE? 85 : 150
+const CAMERA_START_Z = SMALL_MODE? 100 : 225
 
 const CAMERA_FOV = 35
 const CAMERA_SPEED = 2
 
-MAX_X = 50
-MAX_Z = MAX_X
-MAX_Y = 40
-
-if (debugMode) {
-	MAX_X = 20
-	MAX_Z = MAX_X
-	MAX_Y = 20
-
-	CAMERA_START_X = 0
-	CAMERA_START_Y = 85
-	CAMERA_START_Z = 100
-}
+const MAX_X = (SMALL_MODE? 20 : 40) * (D2_MODE? 4 : 1)
+const MAX_Z = MAX_X
+const MAX_Y = D2_MODE? 1 : SMALL_MODE? 20 : 40
 
 const MIN_X = -MAX_X
 const MIN_Z = -MAX_Z
@@ -70,6 +61,12 @@ stage.start()
 //=============//
 const world = new World(scene, SPACES_AREA)
 const spaceCount = world.spaces.length
+
+const MIN_SPACE = 0
+const MAX_SPACE = spaceCount - 1
+
+const spaces = shuffleArray(world.spaces)
+
 $("#loading").innerHTML = ""
 
 //=======//
