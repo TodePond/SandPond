@@ -21,6 +21,8 @@ Just download it and open index.html in a browser.
 2. Add your TodeSplat function or file to `index.html` in the same place as the other elements.
 
 ## To-Do
+* Allow mode selection via URL parameters.
+* Make the dropper place atoms on top of other atoms if it is being blocked.
 * Put menu items into categories.
 * Move functions to their appropriate files.
 * Flip the z-axis.
