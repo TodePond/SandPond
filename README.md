@@ -16,8 +16,11 @@ It makes an atom fall down if there's an empty space below it.<br>
 Just download it and open `index.html` in a browser.
 
 ## Make your own element
-1. Write some TodeSplat using the `TodeSplat` function (check out the examples in the `Elements` folder).
+1. Write some TodeSplat using the `TodeSplat` function.
 2. Add your TodeSplat function or file to `index.html` in the same place as the other elements.
+
+To learn more, check out the [TodeSplat Tutorial](https://github.com/l2wilson94/Sandboys/wiki/TodeSplat-Tutorial).<br>
+Or check out the examples in the [Elements](https://github.com/l2wilson94/Sandboys/tree/master/Elements) folder.
 
 ## To-Do
 * Fix mobile and touchscreen controls.
