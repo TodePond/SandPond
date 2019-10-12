@@ -11,7 +11,6 @@ Sandboys follow simple rules, like this one:
 _    @
 ```
 It makes an atom fall down if there's an empty space below it.<br>
-PS: This example has a locked y-axis.
 
 ## Getting Started
 Just download it and open index.html in a browser.
@@ -21,6 +20,7 @@ Just download it and open index.html in a browser.
 2. Add your TodeSplat function or file to `index.html` in the same place as the other elements.
 
 ## To-Do
+* Fix mobile and touchscreen controls.
 * Allow mode selection via URL parameters.
 * Make the dropper place atoms on top of other atoms if it is being blocked.
 * Put menu items into categories.
@@ -34,7 +34,6 @@ Just download it and open index.html in a browser.
 * Implement a Universe class that combines separate Worlds together.
 * Implement demon horde sort.
 * Add panning to camera controls.
-* Fix Splat UI for rules that use the z-axis and negative coordinates.
 * Try making different Worlds resolve rules in different web workers.
 * Let the user change the opacity of different elements on the fly.
 * Allow different size atoms.
@@ -45,6 +44,7 @@ Just download it and open index.html in a browser.
 * Randomise the order that spaces process in. ✔️ 12.10.19
 * Implement randomness of selecting a rule. ✔️ Implemented as syntax sugar 11.10.19
 * Give menu items names. ✔️ 11.10.19
+* Fix Splat UI for rules that use the z-axis and negative coordinates. ❌ Replaced with source code viewer 11.10.19
 * Clean up TodeSplat syntax. ✔️ globals and "chance" label helped this 11.10.19
 * Add a loading screen. ✔️ 10.10.19
 * Reduce scope of Atom object. ✔️ 10.10.19
