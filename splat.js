@@ -71,7 +71,7 @@
 	
 	const makeMenuMenuButton = () => {
 		const style = `
-			padding: 5px 5px;
+			padding: 7px 5px;
 			background-color: black;
 			opacity: ${BUTTON_OPACITY};
 			display: block;
@@ -79,17 +79,17 @@
 			font-family: Rosario;
 			cursor: default;
 			color: white;
-			font-size: 30px;
+			font-size: 16px;
 		`
 		const menuButton = HTML `
-			<div id="menuMenuButton" style="${style}">&#9776;</div>
+			<div id="menuMenuButton" style="${style}">Elements</div>
 		`
 		return menuButton
 	}
 	
 	const makeMenuButton = (name, colour) => {
 		const style = `
-			padding: 10px 5px;
+			padding: 7px 5px;
 			background-color: ${colour};
 			opacity: ${BUTTON_OPACITY};
 			display: block;
@@ -97,6 +97,7 @@
 			font-family: Rosario;
 			cursor: default;
 			width: 75px;
+			font-size: 16px;
 		`
 		const menuButton = HTML `
 			<div class="menuButton" id="${name}" style="${style}">${name}</div>

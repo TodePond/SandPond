@@ -1,8 +1,10 @@
 //===========//
 // Constants //
 //===========//
-const SMALL_MODE = false
-const D2_MODE = false
+const urlParams = new URLSearchParams(window.location.search)
+
+const SMALL_MODE = urlParams.has("small")
+const D2_MODE = urlParams.has("2d")
 
 const CAMERA_START_X = 0
 const CAMERA_START_Y = SMALL_MODE? 85 : 150
