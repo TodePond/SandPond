@@ -41,7 +41,48 @@
 		const rules = makeRules()
 		splat.appendChild(rules)
 		
+		const modeMenu = makeModeMenu()
+		splat.appendChild(modeMenu)
+		
 		return splat
+	}
+	
+	const makeModeMenu = () => {
+		const style = `
+			/*border-right: 4px solid rgba(0, 0, 0, 0.2);*/
+			/*background-color: rgba(0, 0, 0, 0.1);*/
+			vertical-align: top;
+			height: 100vh;
+			display: inline-block;
+		`
+		const modeMenu = HTML `
+			<div id="modeMenu" style="${style}"></div>
+		`
+		
+		const menuMenuButton = makeMenuMenuButton("Modes")
+		modeMenu.appendChild(menuMenuButton)
+		
+		const normalButton = makeMenuButton("Normal", "lightgrey")
+		normalButton.id = "normalMode"
+		normalButton.classList.add("mode")
+		modeMenu.appendChild(normalButton)
+		
+		const smallButton = makeMenuButton("Small", "lightgrey")
+		smallButton.id = "smallMode"
+		smallButton.classList.add("mode")
+		modeMenu.appendChild(smallButton)
+		
+		const d2Button = makeMenuButton("2D", "lightgrey")
+		d2Button.id = "d2Mode"
+		d2Button.classList.add("mode")
+		modeMenu.appendChild(d2Button)
+		
+		const smallD2Mode = makeMenuButton("Small2D", "lightgrey")
+		smallD2Mode.id = "smallD2Mode"
+		smallD2Mode.classList.add("mode")
+		modeMenu.appendChild(smallD2Mode)
+		
+		return modeMenu
 	}
 	
 	const makeTopMenu = () => {
@@ -56,33 +97,34 @@
 			<div id="topMenu" style="${style}"></div>
 		`
 		
-		const menuMenuButton = makeMenuMenuButton()
+		const menuMenuButton = makeMenuMenuButton("Elements")
 		topMenu.appendChild(menuMenuButton)
 		
 		for (const atomType of atomTypes) {
 			if (atomType.hidden) continue
 			const button = makeMenuButton(atomType.name, atomType.colour)
+			button.classList.add("element")
 			topMenu.appendChild(button)
 		}
-		
 		
 		return topMenu
 	}
 	
-	const makeMenuMenuButton = () => {
+	const makeMenuMenuButton = (name) => {
 		const style = `
 			padding: 7px 5px;
 			background-color: black;
 			opacity: ${BUTTON_OPACITY};
 			display: block;
-			margin: 10px;
+			margin: 5px;
 			font-family: Rosario;
 			cursor: default;
 			color: white;
 			font-size: 16px;
+			width: 75px;
 		`
 		const menuButton = HTML `
-			<div id="menuMenuButton" style="${style}">Elements</div>
+			<div class="${name} menuMenuButton menuButton" id="" style="${style}">${name}</div>
 		`
 		return menuButton
 	}
@@ -93,7 +135,7 @@
 			background-color: ${colour};
 			opacity: ${BUTTON_OPACITY};
 			display: block;
-			margin: 10px;
+			margin: 5px;
 			font-family: Rosario;
 			cursor: default;
 			width: 75px;
@@ -110,167 +152,16 @@
 			position: absolute;
 			left: 110px;
 			right: 0px;
-			top: 0px;
+			top: 25px;
 			vertical-align: top;
 			font-family: UbuntuMono;
 			text-align: left;
 			font-size: 25px; 
-			background-color: grey;
 			cursor: default;
 		`
 		const atomType = $AtomType(selectedAtom)
 		const html = HTML `
 			<pre id="rules" style="${style}">${atomType.source}</pre>
-		`
-		return html
-	}
-	
-	const makeRulesOld = () => {
-	
-		const style = `
-			margin-bottom: 20px;
-			vertical-align: top;
-			display: inline-block;
-		`
-		const html = HTML `
-			<div id="rules" style="${style}"></div>
-		`
-		
-		const atomType = $AtomType(selectedAtom)
-		if (!atomType) return HTML `<div id="rules"></div>`
-		const atomRules = atomType.rules
-		for (const rule of atomRules) {
-			const ruleElement = makeRule(rule)
-			html.appendChild(ruleElement)
-		}
-		return html
-	}
-	
-	const makeRule = (rule) => {
-		const style = `
-			margin-right: 40px;
-			margin-left: 40px;
-			margin-top: 20px;
-			margin-bottom: 20px;
-		`
-		const html = HTML `
-			<div class="rule" style="${style}"></div>
-		`
-		
-		const axes = makeAxes(rule.axes)
-		html.appendChild(axes)
-		
-		const input = makeSide(rule.rawSpaces, "input")
-		html.appendChild(input)
-		
-		const arrow = makeArrow()
-		html.appendChild(arrow)
-		
-		const output = makeSide(rule.rawSpaces, "output")
-		html.appendChild(output)
-		
-		return html
-	}
-	
-	const makeAxes = (axes = {}) => {
-		const style = `
-			font-family: UbuntuMono;
-			font-weight: boldest;
-			font-size: 300%;
-			display: inline-block;
-			left: -30px;
-			position: relative;
-			opacity: 0.8;
-		`
-		let text = ""
-		if (axes.y) text += "&#8597;<br>"
-		if (axes.x) text += "&#8596;"
-		const html = HTML `
-			<div class="axes" style="${style}">${text}</div>
-		`
-		return html
-	}
-	
-	const makeSide = (side, type) => {
-		const style = `
-			display: inline-block;
-			margin: 10px;
-			vertical-align: middle;
-			position: relative
-		`
-		const html = HTML `
-			<div class="side" style="${style}"></div>
-		`
-		
-		let xMin = 0
-		let yMin = 0
-		
-		let xMax = 0
-		let yMax = 0
-		
-		for (const space of side) {
-			if (space.y != undefined && space.y < yMin) yMin = space.y
-			if (space.y != undefined && space.y > yMax) yMax = space.y
-			if (space.x != undefined && space.x < xMin) xMin = space.x
-			if (space.x != undefined && space.x > xMax) xMax = space.x
-			const spaceElement = makeSpace(space, type)
-			html.appendChild(spaceElement)
-		}
-		
-		const xDiff = xMax - xMin
-		const yDiff = yMax - yMin
-		
-		html.style.width = `${xDiff * SPACE_SIZE_TOTAL}px`
-		html.style.height = `${yDiff * SPACE_SIZE_TOTAL}px`
-		
-		return html
-	}
-	
-	const makeSpace = (space, type) => {
-		
-		const colour = space[type].key.match(
-			"@", o=> $AtomType(selectedAtom).colour,
-			"_", "lightgrey",
-			"W", "lightblue",
-			Any, "grey",
-		)
-		
-		const spaceY = space.y || 0
-		const spaceX = space.x || 0
-		
-		let y = -(SPACE_SIZE_TOTAL/2) - spaceY * SPACE_SIZE_TOTAL
-		let x = -(SPACE_SIZE_TOTAL/2) + spaceX * SPACE_SIZE_TOTAL
-		
-		const style = `
-			background-color: ${colour};
-			padding: ${SPACE_PADDING}px;
-			font-family: UbuntuMono;
-			width: ${SPACE_SIZE}px;
-			height: ${SPACE_SIZE}px;
-			font-size: ${SPACE_SIZE * 4/5}px;
-			opacity: 0.8;
-			position: absolute;
-			transform: translate(${x}px, ${y}px);
-		`
-		const html = HTML `
-			<div class="space" style="${style}">${space[type].key}</div>
-		`
-		return html
-	}
-	
-	const makeArrow = () => {
-		const style = `
-			display: inline-block;
-			font-family: UbuntuMono;
-			/*font-weight: bold;*/
-			font-size: 50px;
-			margin: 50px;
-			color: black;
-			vertical-align: middle;
-			opacity: 0.8;
-		`
-		const html = HTML `
-			<div style="${style}">&#129094;</div>
 		`
 		return html
 	}
@@ -305,19 +196,19 @@
 	//========//
 	// Events //
 	//========//
-	$$(".menuButton").on.mouseover(e => {
+	$$(".element").on.mouseover(e => {
 		e.target.style.opacity = BUTTON_OPACITY_HOVER
 		if ($("#" + selectedAtom) == e.target) return
 		e.target.style.outline = `2px solid ${$AtomType(e.target.id).colour}`
 	})
 	
-	$$(".menuButton").on.mouseout(e => {
+	$$(".element").on.mouseout(e => {
 		e.target.style.opacity = BUTTON_OPACITY
 		e.target.style.outline = ""
 		updateOutline()
 	})
 	
-	$$(".menuButton").on.mousedown(e => {
+	$$(".element").on.mousedown(e => {
 		if (selectedAtom) {
 			$("#" + selectedAtom).style.outline = ""
 		}
@@ -326,24 +217,54 @@
 		updateRules()
 	})
 	
-	$("#menuMenuButton").on.mouseover(e => {
+	$$(".menuButton:not(.element)").on.mouseover(e => {
 		e.target.style.outline = `2px solid black`
 	})
 	
-	$("#menuMenuButton").on.mouseout(e => {
+	$$(".menuButton:not(.element)").on.mouseout(e => {
 		e.target.style.outline = `0px`
 	})
 	
-	let menuOpen = true
-	$("#menuMenuButton").on.mousedown(e => {
-		if (menuOpen) {
-			menuOpen = false
-			$$(".menuButton").forEach(button => button.style.visibility = "hidden")
-		}
-		else {
-			menuOpen = true
-			$$(".menuButton").forEach(button => button.style.visibility = "visible")
-		}
+	let menuOpen = false
+	const updateElements = () => {
+		if (!menuOpen) $$(".element").forEach(button => button.style.visibility = "hidden")
+		else $$(".element").forEach(button => button.style.visibility = "visible")
+	}
+	updateElements()
+	$(".elements").on.mousedown(e => {
+		menuOpen = !menuOpen
+		updateElements()
+	})
+	
+	let modeMenuOpen = false
+	const updateModes = () => {
+		if (!modeMenuOpen) $$(".mode").forEach(button => button.style.visibility = "hidden")
+		else $$(".mode").forEach(button => button.style.visibility = "visible")
+	}
+	updateModes()
+	$(".Modes").on.mousedown(e => {
+		modeMenuOpen = !modeMenuOpen
+		updateModes()
+	})
+	
+	$("#smallMode").on.click(e => { 
+		const baseUrl = `${window.location.protocol}//${window.location.host}${window.location.pathname}`
+		window.location = `${baseUrl}?small`
+	})
+	
+	$("#normalMode").on.click(e => {
+		const baseUrl = `${window.location.protocol}//${window.location.host}${window.location.pathname}`
+		window.location = `${baseUrl}`
+	})
+	
+	$("#d2Mode").on.click(e => {
+		const baseUrl = `${window.location.protocol}//${window.location.host}${window.location.pathname}`
+		window.location = `${baseUrl}?2d`
+	})
+	
+	$("#smallD2Mode").on.click(e => {
+		const baseUrl = `${window.location.protocol}//${window.location.host}${window.location.pathname}`
+		window.location = `${baseUrl}?2d&small`
 	})
 	
 	//==================//
