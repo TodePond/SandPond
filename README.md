@@ -34,12 +34,13 @@ Just download it and open index.html in a browser.
 * Add panning to camera controls.
 * Fix Splat UI for rules that use the z-axis and negative coordinates.
 * Try making different Worlds resolve rules in different web workers.
-* Randomise the order that spaces process in.
 * Let the user change the opacity of different elements on the fly.
 * Allow different size atoms.
 * ADD VR SUPPORT.
 
 ## Done
+* Added 2D Mode. ✔️ 12.10.19
+* Randomise the order that spaces process in. ✔️ 12.10.19
 * Implement randomness of selecting a rule. ✔️ Implemented as syntax sugar 11.10.19
 * Give menu items names. ✔️ 11.10.19
 * Clean up TodeSplat syntax. ✔️ globals and "chance" label helped this 11.10.19
