@@ -23,9 +23,8 @@ To learn more, check out the [TodeSplat Tutorial](https://github.com/l2wilson94/
 Or check out the examples in the [Elements](https://github.com/l2wilson94/Sandboys/tree/master/Elements) folder.
 
 ## To-Do
+* Fix 2D elements not working in 2D mode.
 * Fix mobile and touchscreen controls.
-* Add menu for changing mode.
-* Allow mode selection via URL parameters.
 * Make the dropper place atoms on top of other atoms if it is being blocked.
 * Put menu items into categories.
 * Move functions to their appropriate files.
@@ -44,6 +43,8 @@ Or check out the examples in the [Elements](https://github.com/l2wilson94/Sandbo
 * ADD VR SUPPORT.
 
 ## Done
+* Add menu for changing mode. ✔️ 12.10.19
+* Allow mode selection via URL parameters. ✔️ 12.10.19
 * Added 2D Mode. ✔️ 12.10.19
 * Randomise the order that spaces process in. ✔️ 12.10.19
 * Implement randomness of selecting a rule. ✔️ Implemented as syntax sugar 11.10.19
