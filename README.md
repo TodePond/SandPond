@@ -42,7 +42,7 @@ Or check out the examples in the [Elements](https://github.com/l2wilson94/Sandbo
 * ADD VR SUPPORT.
 
 ## Done
-* Fix 2D elements not working in 2D mode. ✔️ 12.10.19
+* Fix 3D elements not working in 2D mode. ✔️ 12.10.19
 * Add menu for changing mode. ✔️ 12.10.19
 * Allow mode selection via URL parameters. ✔️ 12.10.19
 * Added 2D Mode. ✔️ 12.10.19
