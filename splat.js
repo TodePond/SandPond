@@ -115,6 +115,7 @@
 			text-align: left;
 			font-size: 25px; 
 			background-color: grey;
+			cursor: default;
 		`
 		const atomType = $AtomType(selectedAtom)
 		const html = HTML `
