@@ -225,7 +225,7 @@
 		e.target.style.outline = `0px`
 	})
 	
-	let menuOpen = false
+	let menuOpen = true
 	const updateElements = () => {
 		if (!menuOpen) $$(".element").forEach(button => button.style.visibility = "hidden")
 		else $$(".element").forEach(button => button.style.visibility = "visible")

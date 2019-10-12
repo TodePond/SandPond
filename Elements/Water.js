@@ -13,6 +13,11 @@ element Water {
 	}
 	
 	rule xz {
+		@  => _
+		#_    #@
+	}
+	
+	rule xz {
 		@_    _@
 		#  => #
 	}
