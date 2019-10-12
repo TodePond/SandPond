@@ -13,7 +13,7 @@ _    @
 It makes an atom fall down if there's an empty space below it.<br>
 
 ## Getting Started
-Just download it and open index.html in a browser.
+Just download it and open `index.html` in a browser.
 
 ## Make your own element
 1. Write some TodeSplat using the `TodeSplat` function (check out the examples in the `Elements` folder).
@@ -21,6 +21,7 @@ Just download it and open index.html in a browser.
 
 ## To-Do
 * Fix mobile and touchscreen controls.
+* Add menu for changing mode.
 * Allow mode selection via URL parameters.
 * Make the dropper place atoms on top of other atoms if it is being blocked.
 * Put menu items into categories.
@@ -35,7 +36,7 @@ Just download it and open index.html in a browser.
 * Implement demon horde sort.
 * Add panning to camera controls.
 * Try making different Worlds resolve rules in different web workers.
-* Let the user change the opacity of different elements on the fly.
+* Let the user change the opacity of different elements on the fly. Highlight elements that you hover over in the menu.
 * Allow different size atoms.
 * ADD VR SUPPORT.
 
