@@ -1,10 +1,10 @@
 TodeSplat`
 
 input @ (space, args) => args.self = space.atom
-input _ (space) => space && !space.atom
-input # (space) => space && space.atom
-input . (space) => space
-input x (space) => !space
+input _ (space) => space != undefined && space.atom == undefined
+input # (space) => space != undefined && space.atom != undefined
+input . (space) => space != undefined
+input x (space) => space == undefined
 
 output @ (space, {self}) => setSpaceAtom(space, self)
 output _ (space) => setSpaceAtom(space, undefined)
