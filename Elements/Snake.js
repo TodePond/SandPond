@@ -7,7 +7,6 @@ element Snake {
 	precise true
 	
 	property score 0
-	property eggs 14
 	property leader true
 	
 	//===========//
@@ -44,20 +43,6 @@ element Snake {
 		setSpaceAtom(space, trail)
 	}
 	
-	// Give birth to snakes
-	output S (space, {self}) => {
-		const snake = makeAtom(Snake, {eggs: self.eggs - 1, leader: false})
-		setSpaceAtom(space, snake)
-		self.score = self.eggs
-		self.eggs = 0
-	}
-	
-	// Can I give birth here?
-	input e (space, {self}) => {
-		if (!space || space.atom) return false
-		return self.eggs > 0
-	}
-	
 	// Am I NOT next to my previous snake
 	input * (space, {self}) => {
 		if (self.score <= 0) return false
@@ -73,12 +58,21 @@ element Snake {
 		if (space.atom.score > self.score) return true
 	}
 	
+	// Is it Res?
+	input R (space) => {
+		if (!space || !space.atom) return false
+		return space.atom.type == Res
+	}
+	
+	// Make new leader
+	output l (space, {self}) => {
+		const leader = makeAtom(Snake, {score: self.score + 1})
+		setSpaceAtom(space, leader)
+	}
+	
 	//=======//
 	// RULES //
 	//=======//
-	// Give birth if I can
-	rule xyz { @e => @S }
-	
 	// Wait for snakes to catch up
 	rule XYZ { @* => .. }
 	
@@ -88,7 +82,10 @@ element Snake {
 	// If not the highest score, do nothing
 	rule XYZ { @^ => .. }
 	
-	// Otherwise, assume I am the leader:	
+	// Otherwise, assume I am the leader:		
+	// Eat Res
+	rule xyz { @R => @l }
+	
 	// Move into empty space
 	rule xyz { @_ => T@ }
 	
