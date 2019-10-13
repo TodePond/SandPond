@@ -23,12 +23,13 @@ To learn more, check out the [TodeSplat Tutorial](https://github.com/l2wilson94/
 Or check out the examples in the [Elements](https://github.com/l2wilson94/Sandboys/tree/master/Elements) folder.
 
 ## To-Do
+* Make input and output arguments all named.
+* Support multiple layers of inputs.
 * Fix mobile and touchscreen controls.
 * Make the dropper place atoms on top of other atoms if it is being blocked.
 * Put menu items into categories.
 * Move functions to their appropriate files.
 * Flip the z-axis.
-* Implement a symmetry option that transforms a rule to all symmetries, instead of just choosing one randomly. ⏳ Implemented in one way, but I'm going to re-do it a different way 10.10.19
 * Reduce scope of World object.
 * Reduce scope of AtomType.
 * Rename certain things to match T2Tile. eg: "neighbours" to "event window"✔️, "atomType" to "element", "axes" to "symmetries".
@@ -42,6 +43,7 @@ Or check out the examples in the [Elements](https://github.com/l2wilson94/Sandbo
 * ADD VR SUPPORT.
 
 ## Done
+* Implement a symmetry option that transforms a rule to all symmetries, instead of just choosing one randomly. ✔️ 13.10.19
 * Fix 3D elements not working in 2D mode. ✔️ 12.10.19
 * Add menu for changing mode. ✔️ 12.10.19
 * Allow mode selection via URL parameters. ✔️ 12.10.19
