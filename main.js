@@ -13,9 +13,9 @@ const CAMERA_START_Z = SMALL_MODE? 100 : 225
 const CAMERA_FOV = 35
 const CAMERA_SPEED = 2
 
-const MAX_X = (SMALL_MODE? 20 : 50) * (D2_MODE? 4 : 1)
+const MAX_X = (SMALL_MODE? 30 : 50) * (D2_MODE? 4 : 1)
 const MAX_Z = MAX_X
-const MAX_Y = D2_MODE? 1 : SMALL_MODE? 20 : 40
+const MAX_Y = D2_MODE? 0 : SMALL_MODE? 30 : 40
 
 const MIN_X = -MAX_X
 const MIN_Z = -MAX_Z

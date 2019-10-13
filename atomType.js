@@ -5,7 +5,7 @@
 	atomTypes = {}
 	const atomTypesKey = {}
 	AtomType = class AtomType {
-		constructor({name, colour, emissive, rules = [], key, state, scene, opacity = 1.0, precise, floor, hidden}) {
+		constructor({name, colour, emissive, rules = [], key, state, scene, opacity = 1.0, precise, floor, hidden, properties, ...args}) {
 			this.name = name
 			this.rules = rules
 			this.colour = colour
@@ -17,6 +17,10 @@
 			this.precise = precise
 			this.floor = floor
 			this.hidden = hidden
+			this.properties = properties
+			for (const propertyName in args) {
+				this[propertyName] = args[propertyName]
+			}
 			atomTypes[name] = this
 			atomTypesKey[key] = this
 			this.ruleCount = this.rules.length

@@ -103,8 +103,44 @@
 	const eatWhiteSpace = (input) => {
 		let i = 0
 		let depth = 0
+		let isComment = false
+		let isBlockComment = false
 		while (i < input.length) {
+		
 			const char = input[i]
+			const nextChar = input[i+1]
+			
+			if (isComment) {
+				if (char == "\n") {
+					isComment = false
+					depth = 0
+				}
+				i++
+				continue
+			}
+			
+			if (isBlockComment) {
+				if (char == "*" && nextChar == "/") {
+					isBlockComment = false
+					i += 2
+					continue
+				}
+				i++
+				continue
+			}
+			
+			if (char == "/" && nextChar == "/") {
+				isComment = true
+				i += 2
+				continue
+			}
+			
+			if (char == "/" && nextChar == "*") {
+				isBlockComment = true
+				i += 2
+				continue
+			}
+			
 			if (char != " " && char != "	" && char != "\n") break
 			depth++
 			if (char == "\n") depth = 0
@@ -292,6 +328,28 @@
 			}
 		}
 		
+		if (propertyName == "property") {
+			input = propertyNameResult.input
+			input = eatGap(input).input
+			
+			const result = eatName(input)
+			const name = result.name
+			input = result.input
+			input = eatGap(input).input
+			
+			const lineResult = eatLine(input)
+			const line = lineResult.line
+			input = lineResult.input
+			
+			elementArgs.properties[name] = eval(line)
+			
+			return {
+				input,
+				success: true,
+			}
+		}
+		
+		
 		if (propertyName == "}") return {input, success: false}
 		if (!propertyNameResult.success) return {input: source, success: false}
 		input = propertyNameResult.input
@@ -314,11 +372,10 @@
 	const isNameSymmetries = (name) => {
 		if (name.length > 3) return false
 		if (name.length <= 0) return false
-		if (name[0] == name[1]) return false
 		
-		const name0 = name[0].as(LowerCase)
-		const name1 = (name[1] || "").as(LowerCase)
-		const name2 = (name[2] || "").as(LowerCase)
+		const name0 = name[0]
+		const name1 = (name[1] || "")
+		const name2 = (name[2] || "")
 		
 		if (name0 != "x" && name0 != "y" && name0 != "z") return false
 		if (name.length > 1 && name1 != "x" && name1 != "y" && name1 != "z") return false
@@ -326,10 +383,24 @@
 		return true
 	}
 	
+	const isNameSuperSymmetries = (name) => {
+		if (name.length > 3) return false
+		if (name.length <= 0) return false
+		
+		const name0 = name[0]
+		const name1 = (name[1] || "")
+		const name2 = (name[2] || "")
+		
+		if (name0 != "X" && name0 != "Y" && name0 != "Z") return false
+		if (name.length > 1 && name1 != "X" && name1 != "Y" && name1 != "Z") return false
+		if (name.length > 2 && name2 != "X" && name2 != "Y" && name2 != "Z") return false
+		return true
+	}
+	
 	const eatElement = (source) => {
 	
 		let input = source
-		const elementArgs = {rules: []}
+		const elementArgs = {rules: [], properties: []}
 		const inputs = new Map()
 		const outputs = new Map()
 		
@@ -397,6 +468,14 @@
 			return {input, success: true, labels: {axes}}
 		}
 		
+		if (isNameSuperSymmetries(name)) {
+			const superSymmetries = {}
+			for (const c of name) {
+				superSymmetries[c] = true
+			}
+			return {input, success: true, labels: {superSymmetries}}
+		}
+		
 		if (isNamePOV(name)) {
 			const pov = name
 			return {input, success: true, labels: {pov}}
@@ -420,10 +499,12 @@
 		let axes = {}
 		let pov = "front"
 		let chance = undefined
+		let superSymmetries = undefined
 		
 		if (labels.axes) axes = labels.axes
 		if (labels.pov) pov = labels.pov
 		if (labels.chance) chance = labels.chance
+		if (labels.superSymmetries) superSymmetries = labels.superSymmetries
 		
 		// Decide which axes the diagram follows
 		let xAxis
@@ -551,7 +632,7 @@
 		}
 		
 		// Make the rule
-		const rule = new Rule(axes, rawSpaces)
+		const rule = new Rule(axes, rawSpaces, superSymmetries)
 		elementArgs.rules.push(rule)
 		
 		return {

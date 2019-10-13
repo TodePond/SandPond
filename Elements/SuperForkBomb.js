@@ -6,9 +6,9 @@ element SuperForkBomb {
 	colour "grey"
 	emissive "black"
 	
-	hidden true
+	//hidden true
 	
-	rule xyz { .@ => @. }
+	rule XYZ { @. => .@ }
 	
 }
 

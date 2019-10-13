@@ -140,6 +140,7 @@
 			cursor: default;
 			width: 75px;
 			font-size: 16px;
+			overflow: hidden;
 		`
 		const menuButton = HTML `
 			<div class="menuButton" id="${name}" style="${style}">${name}</div>
