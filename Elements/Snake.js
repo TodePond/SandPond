@@ -14,19 +14,24 @@ element Snake {
 	// Is it the next trail?
 	input t (space, args) => {
 		const self = args.self
-		if (!space || !space.atom) return
-		if (space.atom.type != SnakeTrail) return
+		const tests = args.tests
+		if (tests.length == 0) tests[0] = ({isTrail}) => isTrail
+		
+		if (!space || !space.atom) return true
+		if (space.atom.type != SnakeTrail) return true
+		
 		const trail = space.atom
 		if (trail.score == self.score + 1) {
-			args.trail = trail
+			args.isTrail = true
+			args.trail = space.atom
 			args.trailSpace = space
-			return true
 		}
+		return true
 	}
 	
 	// Place the trail that I ate
 	output t (space, {self, trail}) => {
-		setSpaceAtom(space, trail)
+		setSpaceAtom(space, trail.d)
 		trail.score = self.score
 	}
 	
@@ -42,19 +47,36 @@ element Snake {
 		setSpaceAtom(space, trail)
 	}
 	
-	// Am I isolated from my next snake?
-	input * (space, {self}) => {
-		if (self.score <= 0) return false
+	// Am I waiting for my trail to be caught up on?
+	input * (space, args) => {
+		const self = args.self
+		const tests = args.tests
+		if (tests.length == 0) tests[0] = ({isWaiting}) => isWaiting
+		
 		if (!space || !space.atom) return true
-		if (space.atom.type != Snake) return true
-		return space.atom.score != self.score - 1
+		if (space.atom.type != SnakeTrail) return true
+		const trail = space.atom
+		
+		if (trail.score == self.score) {
+			args.isWaiting = true
+		}
+		
+		return true
 	}
 	
 	// Are there higher scoring snakes around me?
-	input ^ (space, {self}) => {
-		if (!space || !space.atom) return
-		if (space.atom.type != Snake && space.atom.type != SnakeTrail) return
-		if (space.atom.score > self.score) return true
+	input ^ (space, args) => {
+		const self = args.self
+		const tests = args.tests
+		if (tests.length == 0) tests[0] = ({isObeying}) => isObeying
+		
+		if (!space || !space.atom) return true
+		if (space.atom.type != Snake && space.atom.type != SnakeTrail) return true
+		
+		if (space.atom.score == self.score + 1) {
+			args.isObeying = true
+		}
+		return true
 	}
 	
 	// Is it Res?
@@ -66,6 +88,7 @@ element Snake {
 	// Make a new leader
 	output l (space, {self}) => {
 		const leader = makeAtom(Snake, {score: self.score + 1})
+		self.leader = false
 		setSpaceAtom(space, leader)
 	}
 	
@@ -78,7 +101,7 @@ element Snake {
 	// Move up trail
 	rule XYZ { @t => to }
 	
-	// If not the highest score, do nothing
+	// If there is a higher score snake/trail nearby, do nothing
 	rule XYZ { @^ => .. }
 	
 	// Otherwise, assume I am the leader:		
@@ -94,10 +117,15 @@ element SnakeTrail {
 	
 	colour "blue"
 	emissive "darkblue"
-	hidden true
 	
-	input ? (space, {self}) => self.score <= 0
-	rule { @? => _. }
+	// Can I die?
+	input * (space, {self}) => {
+		if (!space || !space.atom) return true
+		if (space.atom.type != Snake && space.atom.type != SnakeTrail) return true
+		if (space.atom.score != self.score - 1) return true
+		return false
+	}
+	rule XYZ { @* => _. }
 	
 }
 

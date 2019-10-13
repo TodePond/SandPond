@@ -19,23 +19,29 @@
 		}
 	}
 	
+	function vote(name, max) {
+		return {vote: {name, max}}
+	}
+	
 	function tryRule(rule, space) {
 	
 		const symmetryNumber = rule.getNewSymmetryNumber()
-		const outputArgs = {}
+		const outputArgs = {tests: []}
 		
 		// Check input
-		let hasBeenTrue = false
 		for (let i = 0; i < rule.spaceCount; i++) {
 			const ruleSpace = rule.spaces[i]
 			const siteNumber = ruleSpace.eventWindowNumbers[symmetryNumber]
 			const site = space.eventWindow[siteNumber]
 			const result = ruleSpace.test(site, outputArgs)
-			if (result == false) return false
-			if (result == true) hasBeenTrue = true
+			if (!result) return false
 		}
 		
-		if (!hasBeenTrue) return false
+		for (let i = 0; i < outputArgs.tests.length; i++) {
+			const test = outputArgs.tests[i]
+			const result = test(outputArgs)
+			if (!result) return false
+		}
 		
 		// Do output
 		for (let i = 0; i < rule.spaceCount; i++) {
