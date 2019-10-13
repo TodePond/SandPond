@@ -31,7 +31,7 @@ element Snake {
 	
 	// Place the trail that I ate
 	output t (space, {self, trail}) => {
-		setSpaceAtom(space, trail.d)
+		setSpaceAtom(space, trail)
 		trail.score = self.score
 	}
 	
