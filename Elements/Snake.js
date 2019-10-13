@@ -7,7 +7,6 @@ element Snake {
 	precise true
 	
 	property score 0
-	property leader true
 	
 	//===========//
 	// FUNCTIONS //
