@@ -26,20 +26,20 @@
 	function tryRule(rule, space) {
 	
 		const symmetryNumber = rule.getNewSymmetryNumber()
-		const outputArgs = {tests: []}
+		const args = {tests: []}
 		
 		// Check input
 		for (let i = 0; i < rule.spaceCount; i++) {
 			const ruleSpace = rule.spaces[i]
 			const siteNumber = ruleSpace.eventWindowNumbers[symmetryNumber]
 			const site = space.eventWindow[siteNumber]
-			const result = ruleSpace.test(site, outputArgs)
+			const result = ruleSpace.test(site, args)
 			if (!result) return false
 		}
 		
-		for (let i = 0; i < outputArgs.tests.length; i++) {
-			const test = outputArgs.tests[i]
-			const result = test(outputArgs)
+		for (let i = 0; i < args.tests.length; i++) {
+			const test = args.tests[i]
+			const result = test(args)
 			if (!result) return false
 		}
 		
@@ -48,7 +48,7 @@
 			const ruleSpace = rule.spaces[i]
 			const siteNumber = ruleSpace.eventWindowNumbers[symmetryNumber]
 			const site = space.eventWindow[siteNumber]
-			ruleSpace.instruction(site, outputArgs)
+			ruleSpace.instruction(site, args)
 		}
 		
 		return true

@@ -62,7 +62,7 @@
 		const menuMenuButton = makeMenuMenuButton("Modes")
 		modeMenu.appendChild(menuMenuButton)
 		
-		const normalButton = makeMenuButton("Normal", "lightgrey")
+		const normalButton = makeMenuButton("Big", "lightgrey")
 		normalButton.id = "normalMode"
 		normalButton.classList.add("mode")
 		modeMenu.appendChild(normalButton)
@@ -72,15 +72,20 @@
 		smallButton.classList.add("mode")
 		modeMenu.appendChild(smallButton)
 		
-		const d2Button = makeMenuButton("2D", "lightgrey")
+		const d2Button = makeMenuButton("Big 2D", "lightgrey")
 		d2Button.id = "d2Mode"
 		d2Button.classList.add("mode")
 		modeMenu.appendChild(d2Button)
 		
-		const smallD2Mode = makeMenuButton("Small2D", "lightgrey")
+		const smallD2Mode = makeMenuButton("Small 2D", "lightgrey")
 		smallD2Mode.id = "smallD2Mode"
 		smallD2Mode.classList.add("mode")
 		modeMenu.appendChild(smallD2Mode)
+		
+		const smallD1Mode = makeMenuButton("1D", "lightgrey")
+		smallD1Mode.id = "smallD1Mode"
+		smallD1Mode.classList.add("mode")
+		modeMenu.appendChild(smallD1Mode)
 		
 		return modeMenu
 	}
@@ -266,6 +271,11 @@
 	$("#smallD2Mode").on.click(e => {
 		const baseUrl = `${window.location.protocol}//${window.location.host}${window.location.pathname}`
 		window.location = `${baseUrl}?2d&small`
+	})
+	
+	$("#smallD1Mode").on.click(e => {
+		const baseUrl = `${window.location.protocol}//${window.location.host}${window.location.pathname}`
+		window.location = `${baseUrl}?1d`
 	})
 	
 	//==================//
