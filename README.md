@@ -23,8 +23,7 @@ To learn more, check out the [TodeSplat Tutorial](https://github.com/l2wilson94/
 Or check out the examples in the [Elements](https://github.com/l2wilson94/Sandboys/tree/master/Elements) folder.
 
 ## To-Do
-* Make input and output arguments all named.
-* Support multiple layers of inputs.
+* Support multiple layers of inputs. ⏳ WIP 15.10.19
 * Fix mobile and touchscreen controls.
 * Make the dropper place atoms on top of other atoms if it is being blocked.
 * Put menu items into categories.
@@ -43,6 +42,7 @@ Or check out the examples in the [Elements](https://github.com/l2wilson94/Sandbo
 * ADD VR SUPPORT.
 
 ## Done
+* Make input and output arguments all named. ✔️ 15.10.19
 * Implement a symmetry option that transforms a rule to all symmetries, instead of just choosing one randomly. ✔️ 13.10.19
 * Fix 3D elements not working in 2D mode. ✔️ 12.10.19
 * Add menu for changing mode. ✔️ 12.10.19
