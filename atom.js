@@ -14,7 +14,7 @@
 		if (paused) return
 		for (let r = 0; r < atom.type.ruleCount; r++) {
 			const rule = atom.type.rules[r]
-			const result = tryRule(rule, space)
+			const result = tryRule(atom, rule, space)
 			if (result) return
 		}
 	}
@@ -23,17 +23,18 @@
 		return {vote: {name, max}}
 	}
 	
-	function tryRule(rule, space) {
+	function tryRule(atom, rule, space) {
 	
 		const symmetryNumber = rule.getNewSymmetryNumber()
-		const args = {tests: []}
+		const args = {tests: [], self: atom}
+		args.args = args //args
 		
 		// Check input
 		for (let i = 0; i < rule.spaceCount; i++) {
 			const ruleSpace = rule.spaces[i]
 			const siteNumber = ruleSpace.eventWindowNumbers[symmetryNumber]
 			const site = space.eventWindow[siteNumber]
-			const result = ruleSpace.test(site, args)
+			const result = ruleSpace.test({space: site, ...args})
 			if (!result) return false
 		}
 		
@@ -48,7 +49,7 @@
 			const ruleSpace = rule.spaces[i]
 			const siteNumber = ruleSpace.eventWindowNumbers[symmetryNumber]
 			const site = space.eventWindow[siteNumber]
-			ruleSpace.instruction(site, args)
+			ruleSpace.instruction({space: site, ...args})
 		}
 		
 		return true

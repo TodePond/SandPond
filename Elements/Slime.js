@@ -7,14 +7,14 @@ element Slime {
 	
 	state "liquid"
 	
-	input w (space, args) => {
+	input w ({space, args}) => {
 		if (!space) return false
 		if (!space.atom) return true
 		if (space.atom.type != Water) return false
 		return args.swap = space.atom
 	}
 	
-	output w (space, {swap}) => setSpaceAtom(space, swap)
+	output w ({space, swap}) => setSpaceAtom(space, swap)
 	
 	rule {
 		@ => w

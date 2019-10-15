@@ -12,9 +12,7 @@ element Snake {
 	// FUNCTIONS //
 	//===========//
 	// Is it the next trail?
-	input t (space, args) => {
-		const self = args.self
-		const tests = args.tests
+	input t ({space, args, self, tests}) => {
 		if (tests.length == 0) tests[0] = ({isTrail}) => isTrail
 		
 		if (!space || !space.atom) return true
@@ -30,27 +28,25 @@ element Snake {
 	}
 	
 	// Place the trail that I ate
-	output t (space, {self, trail}) => {
+	output t ({space, self, trail}) => {
 		setSpaceAtom(space, trail)
 		trail.score = self.score
 	}
 	
 	// Place me in the place the trail was
-	output o (space, {self, trailSpace}) => {
+	output o ({space, self, trailSpace}) => {
 		if (space != trailSpace) return
 		setSpaceAtom(space, self)
 	}
 	
 	// Create new trail
-	output T (space, {self}) => {
+	output T ({space, self}) => {
 		const trail = makeAtom(SnakeTrail, {score: self.score})
 		setSpaceAtom(space, trail)
 	}
 	
 	// Am I waiting for my trail to be caught up on?
-	input * (space, args) => {
-		const self = args.self
-		const tests = args.tests
+	input * ({space, args, self, tests}) => {
 		if (tests.length == 0) tests[0] = ({isWaiting}) => isWaiting
 		
 		if (!space || !space.atom) return true
@@ -65,9 +61,8 @@ element Snake {
 	}
 	
 	// Are there higher scoring snakes around me?
-	input ^ (space, args) => {
-		const self = args.self
-		const tests = args.tests
+	input ^ ({space, self, tests, args}) => {
+	
 		if (tests.length == 0) tests[0] = ({isObeying}) => isObeying
 		
 		if (!space || !space.atom) return true
@@ -80,13 +75,13 @@ element Snake {
 	}
 	
 	// Is it Res?
-	input R (space) => {
+	input R ({space}) => {
 		if (!space || !space.atom) return false
 		return space.atom.type == Res
 	}
 	
 	// Make a new leader
-	output l (space, {self}) => {
+	output l ({space, self}) => {
 		const leader = makeAtom(Snake, {score: self.score + 1})
 		self.leader = false
 		setSpaceAtom(space, leader)
@@ -119,7 +114,7 @@ element SnakeTrail {
 	emissive "darkblue"
 	
 	// Can I die?
-	input * (space, {self}) => {
+	input * ({space, self}) => {
 		if (!space || !space.atom) return true
 		if (space.atom.type != Snake && space.atom.type != SnakeTrail) return true
 		if (space.atom.score != self.score - 1) return true

@@ -13,6 +13,11 @@ element Fire {
 		@    _
 	}
 	
+	rule {
+		x => x
+		@    _
+	}
+	
 }
 
 `
