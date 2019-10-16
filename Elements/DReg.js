@@ -20,19 +20,15 @@ element DReg {
 	
 	// Aspirational code
 	/*
-	rule xyz {
-		@_ => {
-			rule xyz 0.001 { @_ => @D }
-			rule xyz 0.005 { @_ => @R }
-		}
-	}
+	rule xyz { @_ => {
+		rule xyz 0.001 { @_ => @D }
+		rule xyz 0.005 { @_ => @R }
+	}}
 	
-	rule xyz {
-		@# => {
-			rule xyz 0.1 { @D => @_ }
-			rule xyz 0.1 { @n => @_ }
-		}
-	}
+	rule xyz { @# => {
+		rule xyz 0.1 { @D => @_ }
+		rule xyz 0.1 { @n => @_ }
+	}}
 	*/
 	
 }
