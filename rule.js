@@ -13,7 +13,11 @@
 		return output
 	}
 	
-	const getTest = (input) => input.test
+	const getTest = (inputs) => {
+		const miniTests = inputs.map(input => input.test)
+		const test = (...args) => miniTests.every(miniTest => miniTest(...args))
+		return test
+	}
 	const getInstruction = (output) => output.instruction
 	
 	const getEventWindowNumbers = (symmetries = {}, x, y, z) => {
@@ -263,7 +267,7 @@
 			const z = rawSpace.z | 0
 			const eventWindowNumbers = getEventWindowNumbers(axes, x, y, z)
 			
-			const test = getTest(rawSpace.input[0])
+			const test = getTest(rawSpace.input)
 			const instruction = getInstruction(rawSpace.output)
 			const space = {eventWindowNumbers, test, instruction}
 			spaces.push(space)

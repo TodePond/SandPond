@@ -514,6 +514,52 @@
 		return {lhs, nextSide}
 	}
 	
+	const getFirstCharPos = (lines) => {
+		for (let y = 0; y < lines.length; y++) {
+			const line = lines[y]
+			for (let x = 0; x < line.length; x++) {
+				const char = line[x]
+				if (char == " " || char == "	") continue
+				return {x, y}
+			}
+		}
+	}
+	
+	const readSides = (sides, rawSpaces, xAxis, yAxis, inputs, outputs) => {
+		const sideLines = sides.lhs
+		const firstCharPos = getFirstCharPos(sideLines)
+		for (const rawSpace of rawSpaces) {
+			const firstSpace = rawSpaces[0]
+			const charX = firstCharPos.x + rawSpace[xAxis] - firstSpace[xAxis]
+			const charY = firstCharPos.y - rawSpace[yAxis] + firstSpace[yAxis]
+			const char = sideLines[charY][charX]
+			
+			// Is this the final diagram? ie: the output
+			if (sides.nextSide == undefined) {
+				let output = outputs.get(char)
+				if (output == undefined) {
+					const globalOutput = globalOutputs.get(char)
+					if (globalOutput) output = globalOutput
+					else output = makeOutput(char, () => {})
+				}
+				rawSpace.output = output
+			}
+			
+			// Otherwise, it must be an input
+			else {
+				let input = inputs.get(char)
+				if (input == undefined) {
+					const globalInput = globalInputs.get(char)
+					if (globalInput) input = globalInput
+					else input = makeInput(char, () => true)
+				}
+				rawSpace.input.push(input)
+			}
+		}
+		
+		if (sides.nextSide != undefined) readSides(sides.nextSide, rawSpaces, xAxis, yAxis, inputs, outputs)
+	}
+	
 	const eatRule = (source, elementArgs, inputs, outputs) => {
 	
 		// Read the meta labels before the rule
@@ -559,7 +605,7 @@
 		const splitResult = splitRuleLinesWithArrow(lines)
 		const lhs = splitResult.lhs
 		const nextSide = splitResult.nextSide
-		const rhs = nextSide.lhs
+		//const rhs = nextSide.lhs
 		if (lhs == undefined) throw new Error(`[TodeSplat] Failed to split rule with arrow(s)...`)
 		
 		// Find the "@" symbol on the left-hand-side
@@ -612,34 +658,8 @@
 		}
 		
 		// Get the first space on the right-hand-side (we will use it as an anchor for the other spaces)
-		let rightFirstX
-		let rightFirstY
-		for (let i = 0; i < rhs.length; i++) {
-			const rightLine = rhs[i]
-			for (let j = 0; j < rightLine.length; j++) {
-				const char = rightLine[j]
-				if (char == " " || char == "	") continue
-				rightFirstX = j
-				rightFirstY = i
-				break
-			}
-			if (rightFirstX != undefined) break
-		}
-		
-		// Go through the positions, adding each output 
-		for (const rawSpace of rawSpaces) {
-			const firstSpace = rawSpaces[0]
-			const rightCharX = rightFirstX + rawSpace[xAxis] - firstSpace[xAxis]
-			const rightCharY = rightFirstY - rawSpace[yAxis] + firstSpace[yAxis]
-			const rightChar = rhs[rightCharY][rightCharX]
-			let output = outputs.get(rightChar)
-			if (output == undefined) {
-				const globalOutput = globalOutputs.get(rightChar)
-				if (globalOutput) output = globalOutput
-				else output = makeOutput(rightChar, () => {})
-			}
-			rawSpace.output = output
-		}
+		// Go through the positions, adding each output
+		readSides(nextSide, rawSpaces, xAxis, yAxis, inputs, outputs)
 		
 		// Make the rule
 		const rule = new Rule(axes, rawSpaces, superSymmetries)
