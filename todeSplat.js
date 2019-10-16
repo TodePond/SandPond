@@ -490,6 +490,30 @@
 		throw new Error(`[TodeSplat] Couldn't recognise that rule label...`)
 	}
 	
+	const getFirstArrowIndex = (lines) => {
+		for (const line of lines) {
+			const arrowIndex = line.indexOf("=>")
+			if (arrowIndex != -1) return arrowIndex
+		}
+		return -1
+	}
+	
+	const splitRuleLinesWithArrow = (lines) => {
+		const arrowX = getFirstArrowIndex(lines)
+		if (arrowX == -1) return {lhs: lines}
+		const lhs = []
+		const rhs = []
+		for (const line of lines) {
+			const leftLine = line.slice(0, arrowX)
+			const rightLine = line.slice(arrowX + 2)
+			lhs.push(leftLine)
+			rhs.push(rightLine)
+		}
+		
+		const nextSide = splitRuleLinesWithArrow(rhs)
+		return {lhs, nextSide}
+	}
+	
 	const eatRule = (source, elementArgs, inputs, outputs) => {
 	
 		// Read the meta labels before the rule
@@ -531,26 +555,12 @@
 		const inner = source.slice(openBracketIndex + 1, closeBracketIndex)
 		const lines = inner.split("\n")
 		
-		// Find the middle arrow
-		let arrowX = -1
-		for (const line of lines) {
-			const arrowIndex = line.indexOf("=>")
-			if (arrowIndex != -1) {
-				arrowX = arrowIndex
-				break
-			}
-		}
-		if (arrowX == -1) throw new Error("[TodeSplat] Couldn't find an arrow in rule")
-		
 		// Split into left-hand-side and right-hand-side
-		const lhs = []
-		const rhs = []
-		for (const line of lines) {
-			const leftLine = line.slice(0, arrowX)
-			const rightLine = line.slice(arrowX + 2)
-			lhs.push(leftLine)
-			rhs.push(rightLine)
-		}
+		const splitResult = splitRuleLinesWithArrow(lines)
+		const lhs = splitResult.lhs
+		const nextSide = splitResult.nextSide
+		const rhs = nextSide.lhs
+		if (lhs == undefined) throw new Error(`[TodeSplat] Failed to split rule with arrow(s)...`)
 		
 		// Find the "@" symbol on the left-hand-side
 		let originX = -1
@@ -597,7 +607,7 @@
 					const chanceRuleInput = makeInput(char, chanceTest)
 					ruleInput = chanceRuleInput
 				}
-				rawSpaces.push({[xAxis]: relativeX, [yAxis]: relativeY, input: ruleInput})
+				rawSpaces.push({[xAxis]: relativeX, [yAxis]: relativeY, input: [ruleInput]})
 			}
 		}
 		

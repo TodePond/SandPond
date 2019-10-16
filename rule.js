@@ -263,7 +263,7 @@
 			const z = rawSpace.z | 0
 			const eventWindowNumbers = getEventWindowNumbers(axes, x, y, z)
 			
-			const test = getTest(rawSpace.input)
+			const test = getTest(rawSpace.input[0])
 			const instruction = getInstruction(rawSpace.output)
 			const space = {eventWindowNumbers, test, instruction}
 			spaces.push(space)
