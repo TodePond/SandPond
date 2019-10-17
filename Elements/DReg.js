@@ -27,7 +27,7 @@ element DReg {
 	
 	rule xyz { @# => {
 		rule xyz 0.1 { @D => @_ }
-		rule xyz 0.1 { @n => @_ }
+		rule xyz 0.01 { @n => @_ }
 	}}
 	*/
 	
