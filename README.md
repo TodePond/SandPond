@@ -40,6 +40,7 @@ Or check out the examples in the [Elements](https://github.com/l2wilson94/Sandbo
 * Let the user change the opacity of different elements on the fly.
 * Highlight elements that you hover over in the menu.
 * Allow different size atoms.
+* Try out managing spaces and atoms in WebAssembly.
 * ADD VR SUPPORT.
 
 ## Done
