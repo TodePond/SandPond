@@ -23,7 +23,7 @@ To learn more, check out the [TodeSplat Tutorial](https://github.com/l2wilson94/
 Or check out the examples in the [Elements](https://github.com/l2wilson94/Sandboys/tree/master/Elements) folder.
 
 ## To-Do
-* Support multiple layers of inputs. ⏳ WIP 15.10.19
+* When an atom chooses a symmetry for that tick, make it choose the same symmetry for each rule that has the same symmetries.
 * Fix mobile and touchscreen controls.
 * Make the dropper place atoms on top of other atoms if it is being blocked.
 * Put menu items into categories.
@@ -37,11 +37,13 @@ Or check out the examples in the [Elements](https://github.com/l2wilson94/Sandbo
 * Implement demon horde sort.
 * Add panning to camera controls.
 * Try making different Worlds resolve rules in different web workers.
-* Let the user change the opacity of different elements on the fly. Highlight elements that you hover over in the menu.
+* Let the user change the opacity of different elements on the fly.
+* Highlight elements that you hover over in the menu.
 * Allow different size atoms.
 * ADD VR SUPPORT.
 
 ## Done
+* Support multiple layers of inputs. ✔️ 16.10.19
 * Make input and output arguments all named. ✔️ 15.10.19
 * Implement a symmetry option that transforms a rule to all symmetries, instead of just choosing one randomly. ✔️ 13.10.19
 * Fix 3D elements not working in 2D mode. ✔️ 12.10.19
