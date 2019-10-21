@@ -6,6 +6,7 @@ element SleepyFly {
 	colour "grey"
 	emissive "black"
 	precise true
+	hidden true
 	
 	property sleeping false
 	
