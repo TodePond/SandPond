@@ -23,6 +23,8 @@ To learn more, check out the [TodeSplat Tutorial](https://github.com/l2wilson94/
 Or check out the examples in the [Elements](https://github.com/l2wilson94/Sandboys/tree/master/Elements) folder.
 
 ## To-Do
+* Rotate 2D mode so that it shows an upright flat plane when looking from the front.
+* Change atom `property` keyword to atom `data` to distinguish it from element properties.
 * Implement extending inputs and outputs to combine them together.
 * Make different input layers test in succession instead of at the same time.
 * Put all global functions into interface objects. ⏳ Started 22.10.19
