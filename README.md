@@ -23,16 +23,21 @@ To learn more, check out the [TodeSplat Tutorial](https://github.com/l2wilson94/
 Or check out the examples in the [Elements](https://github.com/l2wilson94/Sandboys/tree/master/Elements) folder.
 
 ## To-Do
+* Implement extending inputs and outputs to combine them together.
+* Make different input layers test in succession instead of at the same time.
+* Put all global functions into interface objects. ⏳ Started 22.10.19
+* Let rules choose to allow other rules to match afterwards.
+* Let rule inputs lead into another set of rules to match.
 * When an atom chooses a symmetry for that tick, make it choose the same symmetry for each rule that has the same symmetries.
 * Fix mobile and touchscreen controls.
 * Make the dropper place atoms on top of other atoms if it is being blocked.
 * Put menu items into categories.
-* Move functions to their appropriate files.
+* Move functions to their appropriate files. ⏳ Started 22.10.19
 * Flip the z-axis.
-* Reduce scope of World object.
+* Reduce scope of World object. ⏳ Started 22.10.19
 * Reduce scope of AtomType.
-* Rename certain things to match T2Tile. eg: "neighbours" to "event window"✔️, "atomType" to "element", "axes" to "symmetries".
-* Try separating colour and visibility into different attributes.
+* Rename certain things to match T2Tile. eg: "neighbours" to "event window"✔️, "atomType" to "element", "axes" to "symmetries". ⏳ Started 22.10.19
+* Try separating colour and visibility into different attributes. 
 * Implement a Universe class that combines separate Worlds together.
 * Implement demon horde sort.
 * Add panning to camera controls.
