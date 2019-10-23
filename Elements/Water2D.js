@@ -7,6 +7,7 @@ element Water2D {
 	
 	floor true
 	state "liquid"
+	hidden true
 	
 	rule top {
 		@ => _

@@ -21,14 +21,10 @@ element Ant {
 	rule xyz 0.02 { @F => @@ }
 	rule xyz { @F => _@ }
 	
-	rule xz { @_ => _@ }
 	rule xz {
 		 _ =>  @
-		@#    _#
+		@.    _.
 	}
-	
-	
-		
 	
 }
 

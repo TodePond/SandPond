@@ -14,9 +14,9 @@ const CAMERA_START_Z = SMALL_MODE? 100 : 225
 const CAMERA_FOV = 35
 const CAMERA_SPEED = 2
 
-const MAX_X = (SMALL_MODE? 30 : 50) * (D1_MODE? 1.5 : 1) * (D2_MODE? 4 : 1)
-const MAX_Z = D1_MODE? 0 : MAX_X
-const MAX_Y = D1_MODE? 0 : (D2_MODE? 0 : (SMALL_MODE? 30 : 40))
+const MAX_X = (SMALL_MODE? 30 : 50) * (D1_MODE? 1.5 : 1) * (D2_MODE? 2 : 1)
+const MAX_Z = D1_MODE? 0 : (D2_MODE? 0 : MAX_X)
+const MAX_Y = D1_MODE? 0 : (SMALL_MODE? 30 : 40) * (D2_MODE? 3 : 1)
 
 const MIN_X = -MAX_X
 const MIN_Z = -MAX_Z
@@ -43,10 +43,10 @@ camera.position.set(CAMERA_START_X, CAMERA_START_Y, CAMERA_START_Z)
 const background = makeBackground()
 scene.background = background
 
-const sun = makeSun()
+const sun = makeSun(D2_MODE)
 scene.add(sun)
 
-const floor = makeFloor(WORLD_WIDTH, WORLD_DEPTH)
+const floor = D2_MODE? make2DFloor(WORLD_WIDTH, WORLD_HEIGHT) : makeFloor(WORLD_WIDTH, WORLD_DEPTH)
 scene.add(floor)
 
 const orbit = new THREE.OrbitControls(camera)

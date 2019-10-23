@@ -21,5 +21,12 @@
 		//floor.receiveShadow = true
 		return floor
 	}
+	
+	function make2DFloor(width, height) {
+		const floorGeometry = new THREE.BoxGeometry(width, height, 1)
+		const floor = new THREE.Mesh(floorGeometry, floorMaterials)
+		floor.position.set(0, height / 2, -1)
+		return floor
+	}
 
 }

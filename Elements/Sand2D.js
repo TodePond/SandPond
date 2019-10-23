@@ -7,6 +7,7 @@ element Sand2D {
 	
 	floor true
 	state "solid"
+	hidden true
 	
 	input l ({space, args}) => {
 		if (!space) return false

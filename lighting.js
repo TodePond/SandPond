@@ -1,9 +1,10 @@
 //==========//
 // Lighting //
 //==========//
-function makeSun() {
+function makeSun(is2D = false) {
 	const sun = new THREE.DirectionalLight()
 	sun.position.set(-200, 400, 100)
+	if (is2D) sun.position.set(-200, 100, 400)
 	return sun
 }
 

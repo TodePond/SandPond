@@ -76,7 +76,8 @@
 	function dropAtom(world, x, y, z) {
 		let alteredY = Math.min(y + MAX_Y - 5, MAX_Y - 5)
 		const atomType = $AtomType(selectedAtom)
-		if (atomType.floor || D2_MODE || D1_MODE) alteredY = 0
+		if (atomType.floor || D1_MODE) alteredY = 0
+		if (D2_MODE) alteredY = y
 		const space = World.selectSpace(world, x, alteredY, z)
 		if (!space) return
 		if (space.atom) return
