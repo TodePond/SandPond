@@ -2,16 +2,6 @@
 // Rule //
 //======//
 {
-
-	function makeInput(key, test) {
-		const input = {key, test}
-		return input
-	}
-	
-	function makeOutput(key, instruction) {
-		const output = {key, instruction}
-		return output
-	}
 	
 	const getTest = (inputs) => {
 		const miniTests = inputs.map(input => input.test)

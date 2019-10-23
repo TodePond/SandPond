@@ -8,9 +8,10 @@ element Ant {
 	precise true
 	
 	input F ({space}) => space && space.atom && space.atom.type == Food
+	output F ({space}) => setSpaceAtom(space, makeAtom(Food))
 	
 	
-	rule 0.001 { @ => _ }
+	rule 0.001 { @ => F }
 	
 	rule {
 		@ => _

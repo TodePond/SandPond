@@ -43,9 +43,10 @@
 		let input = source
 		const inputResult = eatInput(input)
 		if (!inputResult.success) return {input, success: false}
+		const name = inputResult.name
 		const ruleInput = inputResult.ruleInput
 		input = inputResult.input
-		globalInputs.set(ruleInput.key, ruleInput)
+		globalInputs.set(name, ruleInput)
 		return {input, success: true}
 	}
 	
@@ -53,9 +54,10 @@
 		let input = source
 		const outputResult = eatOutput(input)
 		if (!outputResult.success) return {input, success: false}
+		const name = outputResult.name
 		const ruleOutput = outputResult.ruleOutput
 		input = outputResult.input
-		globalOutputs.set(ruleOutput.key, ruleOutput)
+		globalOutputs.set(name, ruleOutput)
 		return {input, success: true}		
 	}
 	
@@ -69,7 +71,7 @@
 		const name = functionResult.name
 		const func = functionResult.func
 		const ruleInput = makeInput(name, func)
-		return {input, success: true, ruleInput}
+		return {input, success: true, ruleInput, name}
 	}
 	
 	const eatOutput = (source, depth) => {
@@ -82,7 +84,7 @@
 		const name = functionResult.name
 		const func = functionResult.func
 		const ruleOutput = makeOutput(name, func)
-		return {input, success: true, ruleOutput}
+		return {input, success: true, ruleOutput, name}
 	}
 	
 	const eatFunction = (source, depth) => {

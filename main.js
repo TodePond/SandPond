@@ -26,7 +26,7 @@ const WORLD_WIDTH = MAX_X * 2 + 1
 const WORLD_DEPTH = MAX_Z * 2 + 1
 const WORLD_HEIGHT = MAX_Y
 
-const SPACES_AREA = {
+const WORLD_AREA = {
 	x: [MIN_X, MAX_X],
 	y: [MIN_Y, MAX_Y],
 	z: [MIN_Z, MAX_Z],
@@ -62,7 +62,7 @@ stage.start()
 //=============//
 // World Setup //
 //=============//
-const world = new World(scene, SPACES_AREA)
+const world = World.make(WORLD_AREA)
 const spaceCount = world.spaces.length
 
 const MIN_SPACE = 0

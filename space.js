@@ -1,12 +1,14 @@
 //=======//
 // Space //
 //=======//
+const Space = {}
+
 {
 
 	//===========//
 	// Functions //
 	//===========//
-	function makeSpace(id) {
+	Space.make = (id) => {
 		const space = {
 			id,
 			atom: undefined,
@@ -24,10 +26,10 @@
 	function setSpaceAtom(space, atom) {
 		space.atom = atom
 		if (atom == undefined) {
-			world.setSpaceColour(space, false)
+			World.setSpaceColour(world, space, false)
 			return
 		}
-		world.setSpaceColour(space, atom.type.shaderColour, atom.type.shaderEmissive, atom.type.shaderOpacity)
+		World.setSpaceColour(world, space, atom.type.shaderColour, atom.type.shaderEmissive, atom.type.shaderOpacity)
 	}
 	
 }
