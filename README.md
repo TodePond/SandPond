@@ -23,7 +23,6 @@ To learn more, check out the [TodeSplat Tutorial](https://github.com/l2wilson94/
 Or check out the examples in the [Elements](https://github.com/l2wilson94/Sandboys/tree/master/Elements) folder.
 
 ## To-Do
-* Rotate 2D mode so that it shows an upright flat plane when looking from the front.
 * Change atom `property` keyword to atom `data` to distinguish it from element properties.
 * Implement extending inputs and outputs to combine them together.
 * Make different input layers test in succession instead of at the same time.
@@ -36,7 +35,6 @@ Or check out the examples in the [Elements](https://github.com/l2wilson94/Sandbo
 * Put menu items into categories.
 * Move functions to their appropriate files. ⏳ Started 22.10.19
 * Flip the z-axis.
-* Reduce scope of World object. ⏳ Started 22.10.19
 * Reduce scope of AtomType.
 * Rename certain things to match T2Tile. eg: "neighbours" to "event window"✔️, "atomType" to "element", "axes" to "symmetries". ⏳ Started 22.10.19
 * Try separating colour and visibility into different attributes. 
@@ -51,13 +49,15 @@ Or check out the examples in the [Elements](https://github.com/l2wilson94/Sandbo
 * ADD VR SUPPORT.
 
 ## Done
+* Reduce scope of World object. ✔️ 23.10.19
+* Rotate 2D mode so that it shows an upright flat plane when looking from the front. ✔️ 23.10.19
 * Support multiple layers of inputs. ✔️ 16.10.19
 * Make input and output arguments all named. ✔️ 15.10.19
 * Implement a symmetry option that transforms a rule to all symmetries, instead of just choosing one randomly. ✔️ 13.10.19
 * Fix 3D elements not working in 2D mode. ✔️ 12.10.19
 * Add menu for changing mode. ✔️ 12.10.19
 * Allow mode selection via URL parameters. ✔️ 12.10.19
-* Added 2D Mode. ✔️ 12.10.19
+* Add 2D Mode. ✔️ 12.10.19
 * Randomise the order that spaces process in. ✔️ 12.10.19
 * Implement randomness of selecting a rule. ✔️ Implemented as syntax sugar 11.10.19
 * Give menu items names. ✔️ 11.10.19
