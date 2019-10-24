@@ -7,7 +7,7 @@ element Steam {
 	
 	floor true
 	
-	output W ({space}) => setSpaceAtom(space, makeAtom(Water))
+	output W ({space}) => Space.setAtom(space, makeAtom(Water))
 	
 	rule 0.0002 { @ => W }
 	

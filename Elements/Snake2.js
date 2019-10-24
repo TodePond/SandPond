@@ -52,20 +52,20 @@ element Snake {
 	// Create new trail
 	output T ({space, self}) => {
 		const trail = makeAtom(SnakeTrail, {score: self.score})
-		setSpaceAtom(space, trail)
+		Space.setAtom(space, trail)
 	}
 	
 	// Place me in the place where the trail was
 	output s ({space, self, trailSpace}) => {
 		if (space == trailSpace) {
-			setSpaceAtom(space, self)
+			Space.setAtom(space, self)
 		}
 	}
 	
 	// Make a new leader
 	output L (space, {self}) => {
 		const leader = makeAtom(Snake, {score: self.score + 1})
-		setSpaceAtom(space, leader)
+		Space.setAtom(space, leader)
 	}
 	
 	//=======//

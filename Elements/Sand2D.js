@@ -16,7 +16,7 @@ element Sand2D {
 		return args.swap = space.atom
 	}
 	
-	output l ({space, swap}) => setSpaceAtom(space, swap)
+	output l ({space, swap}) => Space.setAtom(space, swap)
 	
 	rule top {
 		@ => l

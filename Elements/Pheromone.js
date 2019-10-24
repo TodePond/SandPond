@@ -11,7 +11,7 @@ element Pheromone {
 	property distance 0
 	
 	output m ({space, self}) => {
-		setSpaceAtom(space, undefined)
+		Space.setAtom(space, undefined)
 		self.distance++
 	}
 	

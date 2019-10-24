@@ -14,8 +14,8 @@ element Lava {
 		return args.swap = space.atom
 	}
 	
-	output w ({space, swap}) => setSpaceAtom(space, swap)
-	output F ({space}) => setSpaceAtom(space, makeAtom(Fire))
+	output w ({space, swap}) => Space.setAtom(space, swap)
+	output F ({space}) => Space.setAtom(space, makeAtom(Fire))
 	
 	rule {
 		@ => F

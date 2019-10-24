@@ -82,7 +82,7 @@
 		if (!space) return
 		if (space.atom) return
 		const atom = makeAtom(atomType)
-		setSpaceAtom(space, atom)
+		Space.setAtom(space, atom)
 		return atom
 	}
 	

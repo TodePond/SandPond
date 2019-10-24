@@ -5,7 +5,7 @@ element Cloud {
 	colour "lightgrey"
 	emissive "grey"
 	
-	output W ({space}) => setSpaceAtom(space, makeAtom(Water))
+	output W ({space}) => Space.setAtom(space, makeAtom(Water))
 	
 	rule 0.1 { 
 		@ => @

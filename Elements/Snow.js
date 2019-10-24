@@ -21,8 +21,8 @@ element Snow {
 		return false
 	}
 	
-	output l ({space, swap}) => setSpaceAtom(space, swap)
-	output W ({space}) => setSpaceAtom(space, makeAtom(Water))
+	output l ({space, swap}) => Space.setAtom(space, swap)
+	output W ({space}) => Space.setAtom(space, makeAtom(Water))
 	
 	rule 0.0005 { @ => W }
 	rule xyz { @h => Wh }

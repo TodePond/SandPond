@@ -5,9 +5,9 @@ const Space = {}
 
 {
 
-	//===========//
-	// Functions //
-	//===========//
+	//========//
+	// Public //
+	//========//
 	Space.make = (id) => {
 		const space = {
 			id,
@@ -23,7 +23,7 @@ const Space = {}
 		return space
 	}
 	
-	function setSpaceAtom(space, atom) {
+	Space.setAtom = (space, atom) => {
 		space.atom = atom
 		if (atom == undefined) {
 			World.setSpaceColour(world, space, false)
