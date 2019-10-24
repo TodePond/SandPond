@@ -23,9 +23,9 @@ To learn more, check out the [TodeSplat Tutorial](https://github.com/l2wilson94/
 Or check out the examples in the [Elements](https://github.com/l2wilson94/Sandboys/tree/master/Elements) folder.
 
 ## To-Do
+* [Minor clean up](https://app.milanote.com/1Imjt71qhPkY5L) ⏳ Started 22.10.19
 * Change atom `property` keyword to atom `data` to distinguish it from element properties.
 * Implement extending inputs and outputs to combine them together.
-* Make different input layers test in succession instead of at the same time.
 * Put all global functions into interface objects. ⏳ Started 22.10.19
 * Let rules choose to allow other rules to match afterwards.
 * Let rule inputs lead into another set of rules to match.
@@ -38,7 +38,7 @@ Or check out the examples in the [Elements](https://github.com/l2wilson94/Sandbo
 * Reduce scope of AtomType.
 * Rename certain things to match T2Tile. eg: "neighbours" to "event window"✔️, "atomType" to "element", "axes" to "symmetries". ⏳ Started 22.10.19
 * Try separating colour and visibility into different attributes. 
-* Implement a Universe class that combines separate Worlds together.
+* Implement a Universe class that combines separate Worlds together. ⏳ Started 24.10.19
 * Implement demon horde sort.
 * Add panning to camera controls.
 * Try making different Worlds resolve rules in different web workers.
@@ -49,6 +49,7 @@ Or check out the examples in the [Elements](https://github.com/l2wilson94/Sandbo
 * ADD VR SUPPORT.
 
 ## Done
+* Make different input layers test in succession instead of at the same time. ✔️ 24.10.19
 * Reduce scope of World object. ✔️ 23.10.19
 * Rotate 2D mode so that it shows an upright flat plane when looking from the front. ✔️ 23.10.19
 * Support multiple layers of inputs. ✔️ 16.10.19
