@@ -8,8 +8,9 @@ const Space = {}
 	//========//
 	// Public //
 	//========//
-	Space.make = (id) => {
+	Space.make = (world, id) => {
 		const space = {
+			world,
 			id,
 			atom: undefined,
 			colourOffset0: id*4 + 0,
@@ -26,10 +27,14 @@ const Space = {}
 	Space.setAtom = (space, atom) => {
 		space.atom = atom
 		if (atom == undefined) {
-			Universe.setSpaceColour(universe, space, false)
+			Space.setColour(space, false)
 			return
 		}
-		Universe.setSpaceColour(universe, space, atom.type.shaderColour, atom.type.shaderEmissive, atom.type.shaderOpacity)
+		Space.setColour(space, atom.type.shaderColour, atom.type.shaderEmissive, atom.type.shaderOpacity)
+	}
+	
+	Space.setColour = (space, colour, emissive, opacity) => {
+		World.setSpaceColour(space.world, space, colour, emissive, opacity)
 	}
 	
 }

@@ -30,18 +30,21 @@
 		args.args = args //args
 		
 		// Check input
-		for (let i = 0; i < rule.spaceCount; i++) {
-			const ruleSpace = rule.spaces[i]
-			const siteNumber = ruleSpace.eventWindowNumbers[symmetryNumber]
-			const site = space.eventWindow[siteNumber]
-			const result = ruleSpace.test({space: site, ...args})
-			if (!result) return false
-		}
-		
-		for (let i = 0; i < args.tests.length; i++) {
-			const test = args.tests[i]
-			const result = test(args)
-			if (!result) return false
+		for (let layer = 0; layer < rule.layers; layer++) {
+			for (let i = 0; i < rule.spaceCount; i++) {
+				const ruleSpace = rule.spaces[i]
+				const siteNumber = ruleSpace.eventWindowNumbers[symmetryNumber]
+				const site = space.eventWindow[siteNumber]
+				const test = ruleSpace.tests[layer]
+				const result = test({space: site, ...args})
+				if (!result) return false
+			}
+			
+			for (let i = 0; i < args.tests.length; i++) {
+				const test = args.tests[i]
+				const result = test(args)
+				if (!result) return false
+			}
 		}
 		
 		// Do output

@@ -17,8 +17,4 @@ const Universe = {}
 		return World.selectSpace(universe.world, x, y, z)
 	}
 	
-	Universe.setSpaceColour = (universe, space, colour, emissive, opacity) => {
-		World.setSpaceColour(universe.world, space, colour, emissive, opacity)
-	}
-	
 }

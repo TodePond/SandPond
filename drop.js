@@ -88,10 +88,12 @@ const Dropper = {}
 	//=========//
 	const dropAtom = (x, y, z) => {
 		let alteredY = Math.min(y + MAX_Y - 5, MAX_Y - 5)
+		let alteredZ = z
 		const atomType = $AtomType(selectedAtom)
 		if (atomType.floor || D1_MODE) alteredY = 0
 		if (D2_MODE) alteredY = y
-		const space = Universe.selectSpace(universe, x, alteredY, z)
+		if (D2_MODE) alteredZ = 0
+		const space = Universe.selectSpace(universe, x, alteredY, alteredZ)
 		if (!space) return
 		if (space.atom) return
 		const atom = makeAtom(atomType)

@@ -3,10 +3,11 @@
 //======//
 {
 	
-	const getTest = (inputs) => {
+	const getTests = (inputs) => {
 		const miniTests = inputs.map(input => input.test)
-		const test = (...args) => miniTests.every(miniTest => miniTest(...args))
-		return test
+		//const test = (...args) => miniTests.every(miniTest => miniTest(...args))
+		//return test
+		return miniTests
 	}
 	const getInstruction = (output) => output.instruction
 	
@@ -257,9 +258,9 @@
 			const z = rawSpace.z | 0
 			const eventWindowNumbers = getEventWindowNumbers(axes, x, y, z)
 			
-			const test = getTest(rawSpace.input)
+			const tests = getTests(rawSpace.input)
 			const instruction = getInstruction(rawSpace.output)
-			const space = {eventWindowNumbers, test, instruction}
+			const space = {eventWindowNumbers, tests, instruction}
 			spaces.push(space)
 		}
 		
@@ -271,6 +272,7 @@
 			this.rawSpaces = rawSpaces
 			this.axes = axes
 			this.spaces = parseSpaces(rawSpaces, axes, superSymmetries)
+			this.layers = this.spaces[0].tests.length
 			this.symmetryCount = this.spaces[0].eventWindowNumbers.length
 			this.spaceCount = this.spaces.length
 		}

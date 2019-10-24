@@ -8,8 +8,10 @@ const World = {}
 	// Public //
 	//========//
 	World.make = (rawArea) => {
+	
+		const world = {}
 		const area = readArea(rawArea)
-		const grid = makeSpacesGrid(area)
+		const grid = makeSpacesGrid(world, area)
 		const spaces = getSpacesArray(grid, area)
 		const count = spaces.length
 		createEventWindows(grid, area)
@@ -29,10 +31,9 @@ const World = {}
 		const mesh = makeMesh(geometry, MATERIAL)
 		
 		positionInstances(matrixInstances, matrixAttributes, grid, area)
-		
 		scene.add(mesh)
 		
-		return {
+		world.o={
 			colourAttribute,
 			colourInstances,
 			emissiveAttribute,
@@ -40,6 +41,7 @@ const World = {}
 			spaces,
 			grid,
 		}
+		return world
 	}
 	
 	World.selectGridSpace = (grid, x, y, z) => {
@@ -156,7 +158,7 @@ const World = {}
 		}
 	}
 	
-	const makeSpacesGrid = (area) => {
+	const makeSpacesGrid = (world, area) => {
 		const grid = []
 		let id = 0
 		for (const y of area.yStart.to(area.yEnd)) {
@@ -164,7 +166,7 @@ const World = {}
 			for (const x of area.xStart.to(area.xEnd)) {
 				grid[y][x] = []
 				for (const z of area.zStart.to(area.zEnd)) {
-					const space = Space.make(id)
+					const space = Space.make(world, id)
 					grid[y][x][z] = space
 					id++
 				}
