@@ -1,12 +1,23 @@
 //======//
 // Drop //
 //======//
+const Dropper = {}
 {
 
+	//===========//
+	// Constants //
+	//===========//
 	const SPREAD_CHANCE = 0.5
+	
+	//=========//
+	// Globals //
+	//=========//
 	let previousPosition
 
-	function dropAtomsMaybe(world, scene, position) {
+	//========//
+	// Public //
+	//========//
+	Dropper.tryDrop = (position) => {
 	
 		if (!Mouse.down || !position) {
 			previousPosition = undefined
@@ -72,6 +83,9 @@
 		previousPosition = position
 	}
 	
+	//=========//
+	// Private //
+	//=========//
 	const dropAtom = (x, y, z) => {
 		let alteredY = Math.min(y + MAX_Y - 5, MAX_Y - 5)
 		const atomType = $AtomType(selectedAtom)

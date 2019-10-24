@@ -76,12 +76,12 @@ $("#loading").innerHTML = ""
 //=======//
 // Stuff //
 //=======//
-on.process(o=> {
-	dropAtomsMaybe(world, scene, stage.cursor.position3D)
+on.process(() => {
+	Dropper.tryDrop(stage.cursor.position3D)
 })
 
 let currentSpaceId = 0
-on.process(o=> {
+on.process(() => {
 	for (let i = 0; i < spaceCount; i++) {
 		const space = world.spaces[i]
 		if (space && space.atom) {
@@ -105,7 +105,6 @@ on.keydown(e => {
 		paused = !paused
 	}
 })
-
 
 function measureConcentration() {
 	let atomCount = 0
