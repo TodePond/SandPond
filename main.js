@@ -62,7 +62,8 @@ stage.start()
 //=============//
 // World Setup //
 //=============//
-const world = World.make(WORLD_AREA)
+const universe = Universe.make(WORLD_AREA)
+const world = universe.world
 const spaceCount = world.spaces.length
 
 const MIN_SPACE = 0

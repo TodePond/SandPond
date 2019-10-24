@@ -26,10 +26,10 @@ const Space = {}
 	Space.setAtom = (space, atom) => {
 		space.atom = atom
 		if (atom == undefined) {
-			World.setSpaceColour(world, space, false)
+			Universe.setSpaceColour(universe, space, false)
 			return
 		}
-		World.setSpaceColour(world, space, atom.type.shaderColour, atom.type.shaderEmissive, atom.type.shaderOpacity)
+		Universe.setSpaceColour(universe, space, atom.type.shaderColour, atom.type.shaderEmissive, atom.type.shaderOpacity)
 	}
 	
 }

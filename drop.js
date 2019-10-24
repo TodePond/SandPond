@@ -4,7 +4,6 @@
 {
 
 	const SPREAD_CHANCE = 0.5
-
 	let previousPosition
 
 	function dropAtomsMaybe(world, scene, position) {
@@ -60,25 +59,25 @@
 			const zNew = Math.round(position.z - zInc * i)
 			const yNew = Math.round(position.y - yInc * i)
 			
-			if (Math.random() < 1) dropAtom(world, xNew, yNew, zNew)
+			if (Math.random() < 1) dropAtom(xNew, yNew, zNew)
 			if ($AtomType(selectedAtom).precise) continue
-			if (Math.random() < SPREAD_CHANCE) dropAtom(world, xNew + 1, yNew, zNew)
-			if (Math.random() < SPREAD_CHANCE) dropAtom(world, xNew - 1, yNew, zNew)
-			if (Math.random() < SPREAD_CHANCE) dropAtom(world, xNew, yNew, zNew + 1)
-			if (Math.random() < SPREAD_CHANCE) dropAtom(world, xNew, yNew, zNew - 1)
-			if (Math.random() < SPREAD_CHANCE) dropAtom(world, xNew, yNew + 1, zNew)
-			if (Math.random() < SPREAD_CHANCE) dropAtom(world, xNew, yNew - 1, zNew)
+			if (Math.random() < SPREAD_CHANCE) dropAtom(xNew + 1, yNew, zNew)
+			if (Math.random() < SPREAD_CHANCE) dropAtom(xNew - 1, yNew, zNew)
+			if (Math.random() < SPREAD_CHANCE) dropAtom(xNew, yNew, zNew + 1)
+			if (Math.random() < SPREAD_CHANCE) dropAtom(xNew, yNew, zNew - 1)
+			if (Math.random() < SPREAD_CHANCE) dropAtom(xNew, yNew + 1, zNew)
+			if (Math.random() < SPREAD_CHANCE) dropAtom(xNew, yNew - 1, zNew)
 		}
 		
 		previousPosition = position
 	}
 	
-	function dropAtom(world, x, y, z) {
+	const dropAtom = (x, y, z) => {
 		let alteredY = Math.min(y + MAX_Y - 5, MAX_Y - 5)
 		const atomType = $AtomType(selectedAtom)
 		if (atomType.floor || D1_MODE) alteredY = 0
 		if (D2_MODE) alteredY = y
-		const space = World.selectSpace(world, x, alteredY, z)
+		const space = Universe.selectSpace(universe, x, alteredY, z)
 		if (!space) return
 		if (space.atom) return
 		const atom = makeAtom(atomType)
