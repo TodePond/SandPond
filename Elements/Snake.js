@@ -5,6 +5,7 @@ element Snake {
 	colour "green"
 	emissive "darkgreen"
 	precise true
+	pour false
 	
 	property score 0
 	

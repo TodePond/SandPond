@@ -7,6 +7,7 @@ element SleepyFly {
 	emissive "black"
 	precise true
 	hidden true
+	pour false
 	
 	property sleeping false
 	

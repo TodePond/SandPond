@@ -13,12 +13,28 @@ const Dropper = {}
 	// Globals //
 	//=========//
 	let previousPosition
-
+	let down
+	let started = false
+	
 	//========//
 	// Public //
 	//========//
 	Dropper.tryDrop = (position) => {
 	
+		if (!started && !Mouse.down) return
+		started = true
+		
+		const previousDown = down
+		down = Mouse.down
+		
+		if (!$AtomType(selectedAtom).pour) {
+			if (!position) return
+			if (down && !previousDown) {
+				dropAtom(Math.round(position.x), Math.round(position.y), Math.round(position.z))
+			}
+			return 
+		}
+		
 		if (!Mouse.down || !position) {
 			previousPosition = undefined
 			return

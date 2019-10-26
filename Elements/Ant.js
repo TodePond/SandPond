@@ -6,6 +6,7 @@ element Ant {
 	colour "grey"
 	emissive "black"
 	precise true
+	pour false
 	
 	input F ({space}) => space && space.atom && space.atom.type == Food
 	output F ({space}) => Space.setAtom(space, makeAtom(Food))

@@ -5,7 +5,7 @@
 	atomTypes = {}
 	const atomTypesKey = {}
 	AtomType = class AtomType {
-		constructor({name, colour, emissive, rules = [], key, state, scene, opacity = 1.0, precise, floor, hidden, properties, ...args}) {
+		constructor({name, colour, emissive, rules = [], key, state, scene, opacity = 1.0, precise, floor, hidden, properties, pour=true, ...args}) {
 			this.name = name
 			this.rules = rules
 			this.colour = colour
@@ -18,6 +18,7 @@
 			this.floor = floor
 			this.hidden = hidden
 			this.properties = properties
+			this.pour = pour
 			for (const propertyName in args) {
 				this[propertyName] = args[propertyName]
 			}
