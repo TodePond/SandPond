@@ -9,7 +9,7 @@ const UI = {}
 	//=========//
 	UI.selectedElement = Sand
 	UI.selectedSize = SMALL_MODE? "small" : "big"
-	UI.selectedDimensions = D1_MODE? "1d" : (D2_MODE? "2d" : "3d")
+	UI.selectedDimensions = D1_MODE? "d1" : (D2_MODE? "d2" : "d3")
 	
 	//======//
 	// HTML //
@@ -218,9 +218,9 @@ const UI = {}
 	if (UI.selectedSize == "small") $("#smallOption").classList.add("selected")
 	else if (UI.selectedSize == "big") $("#bigOption").classList.add("selected")
 	
-	if (UI.selectedDimensions == "1d") $("#d1Option").classList.add("selected")
-	else if (UI.selectedDimensions == "2d") $("#d2Option").classList.add("selected")
-	else if (UI.selectedDimensions == "3d") $("#d3Option").classList.add("selected")
+	if (UI.selectedDimensions == "d1") $("#d1Option").classList.add("selected")
+	else if (UI.selectedDimensions == "d2") $("#d2Option").classList.add("selected")
+	else if (UI.selectedDimensions == "d3") $("#d3Option").classList.add("selected")
 	
 	//========//
 	// Events //
