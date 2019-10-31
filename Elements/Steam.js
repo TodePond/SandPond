@@ -4,7 +4,7 @@ element Steam {
 
 	colour "lightgrey"
 	emissive "darkgrey"
-	
+	category "sandbox"
 	floor true
 	
 	output W ({space}) => Space.setAtom(space, makeAtom(Water))

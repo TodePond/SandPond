@@ -5,6 +5,7 @@ element DReg {
 	colour "brown"
 	emissive "brown"
 	opacity 0.3
+	category "t2tile"
 	
 	input D ({space}) => space && space.atom && space.atom.type == DReg
 	input n ({space}) => space && space.atom && space.atom.type != DReg

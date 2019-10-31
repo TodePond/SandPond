@@ -6,6 +6,7 @@ element Snake {
 	emissive "darkgreen"
 	precise true
 	pour false
+	category "life"
 	
 	property score 0
 	

@@ -4,6 +4,7 @@ element Lava {
 
 	colour "red"
 	emissive "darkred"
+	category "sandbox"
 	
 	state "liquid"
 	

@@ -5,6 +5,7 @@ element Clear {
 	colour "brown"
 	emissive "brown"
 	precise true
+	category "clear"
 	
 	input t ({space, args}) => {
 		if (space && space.atom && space.atom.type == ClearDone) {

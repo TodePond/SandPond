@@ -23,7 +23,8 @@
 		const style = `
 			width: 100%;
 			height: 100%;
-			display: block;
+			position: absolute;
+			z-index: -1;
 		`
 		return HTML `<canvas style="${style}"></canvas>`
 	}
@@ -33,7 +34,7 @@
 		camera.fov = 30
 		camera.position.set(0, 50, 75)
 		camera.lookAt(0, 0, 0)
-		camera.far = 99999999
+		//camera.far = 99999999
 		return camera
 	}
 	

@@ -4,6 +4,7 @@ element Water {
 
 	colour "lightblue"
 	emissive "blue"
+	category "sandbox"
 	
 	state "liquid"
 	

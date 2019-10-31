@@ -27,7 +27,7 @@ const Dropper = {}
 		const previousDown = down
 		down = Mouse.down
 		
-		if (!$AtomType(selectedAtom).pour) {
+		if (!UI.selectedElement.pour) {
 			if (!position) return
 			if (down && !previousDown) {
 				dropAtom(Math.round(position.x), Math.round(position.y), Math.round(position.z))
@@ -87,7 +87,7 @@ const Dropper = {}
 			const yNew = Math.round(position.y - yInc * i)
 			
 			if (Math.random() < 1) dropAtom(xNew, yNew, zNew)
-			if ($AtomType(selectedAtom).precise) continue
+			if (UI.selectedElement.precise) continue
 			if (Math.random() < SPREAD_CHANCE) dropAtom(xNew + 1, yNew, zNew)
 			if (Math.random() < SPREAD_CHANCE) dropAtom(xNew - 1, yNew, zNew)
 			if (Math.random() < SPREAD_CHANCE) dropAtom(xNew, yNew, zNew + 1)
@@ -105,7 +105,7 @@ const Dropper = {}
 	const dropAtom = (x, y, z) => {
 		let alteredY = Math.min(y + MAX_Y - 5, MAX_Y - 5)
 		let alteredZ = z
-		const atomType = $AtomType(selectedAtom)
+		const atomType = UI.selectedElement
 		if (atomType.floor || D1_MODE) alteredY = 0
 		if (D2_MODE) alteredY = y
 		if (D2_MODE) alteredZ = 0

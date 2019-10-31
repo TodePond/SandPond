@@ -4,6 +4,7 @@ element Cloud {
 
 	colour "lightgrey"
 	emissive "grey"
+	category "sandbox"
 	
 	output W ({space}) => Space.setAtom(space, makeAtom(Water))
 	

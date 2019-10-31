@@ -7,6 +7,7 @@ element Fly {
 	emissive "black"
 	precise true
 	pour false
+	category "life"
 
 	rule xyz { @_ => _@ }
 	

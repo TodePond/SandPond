@@ -6,6 +6,7 @@ element Snow {
 	colour "white"
 	emissive "grey"
 	
+	category "sandbox"
 	state "solid"
 	
 	input l ({space, args}) => {

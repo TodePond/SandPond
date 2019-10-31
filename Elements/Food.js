@@ -5,6 +5,7 @@ element Food {
 
 	colour "brown"
 	emissive "brown"
+	category "life"
 
 	state "solid"
 	

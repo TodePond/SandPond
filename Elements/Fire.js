@@ -4,6 +4,7 @@ element Fire {
 
 	colour "orange"
 	emissive "red"
+	category "sandbox"
 	
 	floor true
 	

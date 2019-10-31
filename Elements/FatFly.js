@@ -7,6 +7,7 @@ element FatFly {
 	emissive "black"
 	precise true
 	pour false
+	category "life"
 	
 	input e ({space, args}) => {
 		if (space && !space.atom) args.success = true

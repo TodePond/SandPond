@@ -5,6 +5,7 @@ element SuperDReg {
 	colour "brown"
 	emissive "brown"
 	opacity 0.3
+	category "t2tile"
 	
 	output R ({space}) => Space.setAtom(space, makeAtom(Res))
 	output D ({space}) => Space.setAtom(space, makeAtom(DReg))

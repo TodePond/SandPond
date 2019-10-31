@@ -1,26 +1,212 @@
-//=======//
-// Splat //
-//=======//
+//====//
+// UI //
+//====//
+const UI = {}
 {
-
-	//===========//
-	// Constants //
-	//===========//
-	const BUTTON_OPACITY = 1.0
-	const BUTTON_OPACITY_HOVER = 1.0
 	
-	const SPACE_SIZE = 55
-	const SPACE_PADDING = 2
-	const SPACE_SIZE_TOTAL = SPACE_SIZE + SPACE_PADDING * 2
-
 	//=========//
 	// Globals //
 	//=========//
-	selectedAtom = "Sand"
+	UI.selectedElement = Sand
+	
+	//======//
+	// HTML //
+	//======//
+	const STYLE = HTML `
+		<style>
+			
+			.menu {
+				font-size: 0px;
+				height: 35px;
+				position: relative;
+			}
+			
+			.box {
+				text-align: center;
+				width: 75px;
+				height: 100%;
+				vertical-align: top;
+				cursor: default;
+				display: inline-block;
+				overflow: hidden;
+			}
+			
+			.box.vertical {
+				width: 75px;
+				height: 35px;
+				display: block;
+			}
+			
+			.elementButton {
+				margin: 5px;
+			}
+			
+			.elementButton > .label {
+				font-size: 14px;
+			}
+			
+			.heading {
+				background-color: black;
+				color: white;
+			}
+			
+			.label {
+				font-family: Rosario;
+				font-size: 16px;
+				position: relative;
+				top: 50%;
+				transform: translateY(-50%);
+				margin: 0px 5px;
+			}
+			
+			.heading:hover {
+				background-color: white;
+				color: black;
+			}
+			
+			.heading.selected {
+				color: #ffcc00;
+			}
+			
+			.search.heading {
+				width: auto;
+				padding: 0px 6px;
+			}
+			
+			.search.heading > .label {
+				font-size: 40px;
+				transform: translateY(-55%);
+			}
+			
+			.minimised {
+				position: absolute;
+				visibility: hidden;
+			}
+			
+		</style>
+	`
+	
+	const ELEMENT = HTML `
+		<div id="ui">
+		
+			<div id="menu" class="menu">
+				<div class="heading box" id="elementsHeading"><div class="label">Elements</div></div>
+				<!--<div class="heading box" id="configHeading"><div class="label">Config</div></div>
+				<div class="heading box" id="sourceHeading"><div class="label">Source</div></div>
+				<div class="heading box" id="controlsHeading"><div class="label">Controls</div></div>
+				<div class="heading box" id="modeHeading"><div class="label">Mode</div></div>-->
+			</div>
+			
+			<div class="windowContainer">
+				<div id="elements" class="minimised">
+					<div class="menu">
+						<div class="heading box search" id="searchHeading"><div class="label">&#8981;</div></div>
+						<div class="heading box" id="sandboxHeading"><div class="label">Sandbox</div></div>
+						<div class="heading box" id="lifeHeading"><div class="label">Life</div></div>
+						<div class="heading box" id="t2tileHeading"><div class="label">T2Tile</div></div>
+						<div class="heading box" id="clearHeading"><div class="label">Clear</div></div>
+					</div>
+					<div class="windowContainer">
+						<div id="search" class="minimised">
+							COMING SOON
+						</div>
+						<div id="sandbox" class="elementList minimised"></div>
+						<div id="life" class="elementList minimised"></div>
+						<div id="t2tile" class="elementList minimised"></div>
+						<div id="clear" class="elementList minimised"></div>
+					</div>
+				</div>
+			</div>
+			
+		</div>
+	`
+	
+	const makeElementButton = (element) => HTML `
+		<div id="${element.name}Button" class="elementButton box vertical"><div class="label">${element.name}</div></div>
+	`
+	
+	//=======//
+	// Setup //
+	//=======//
+	document.head.appendChild(STYLE)
+	document.body.appendChild(ELEMENT)
+	
+	for (const element of atomTypes) {
+		if (element.hidden) continue
+		if (!element.category) continue
+		const elementButton = makeElementButton(element)
+		const category = $("#" + element.category)
+		category.appendChild(elementButton)
+		const style = HTML `
+			<style>
+				#${element.name}Button {
+					background-color: ${element.colour};
+				}
+				
+				#${element.name}Button:hover {
+					outline: 2px solid ${element.colour};
+					overflow: visible;
+				}
+				
+				#${element.name}Button.selected {
+					outline: 2px solid black;
+				}
+			</style>
+		`
+		document.head.appendChild(style)
+	}
+	
+	//========//
+	// Events //
+	//========//
+	$$(".elementButton").on.click(function() {
+		const button = this
+		const name = button.id.slice(0, button.id.length - "Button".length)
+		const newElement = $AtomType(name)
+		const oldElement = UI.selectedElement
+		
+		if (oldElement) {
+			$("#" + oldElement.name + "Button").classList.remove("selected")
+		}
+		
+		if (newElement) {
+			$("#" + newElement.name + "Button").classList.add("selected")
+			UI.selectedElement = newElement
+		}
+	})
+	
+	$$(".menu > .heading").on.click(function() {
+	
+		const menu = this.parentElement
+		const menuContainer = menu.parentElement
+		const windowContainer = menuContainer.$(".windowContainer")
+		const oldHeading = menu.selectedHeading
+		const newHeading = oldHeading != this? this : undefined
+		
+		if (newHeading) newHeading.classList.add("selected")
+		if (oldHeading) oldHeading.classList.remove("selected")
+		menu.selectedHeading = newHeading
+		
+		if (oldHeading) {
+			const id = oldHeading.id
+			const name = id.slice(0, id.length - "Heading".length)
+			const window = windowContainer.$("#" + name)
+			if (window) window.classList.add("minimised")
+		}
+		
+		if (newHeading) {		
+			const id = newHeading.id
+			const name = id.slice(0, id.length - "Heading".length)
+			const window = windowContainer.$("#" + name)
+			if (window) window.classList.remove("minimised")
+		}
+	})
+	
+	/*===========*/
 	
 	//=================//
 	// Making Elements //
-	//=================//
+	//=================//	
 	const makeSplat = () => {
 		const style = `
 			position: absolute;
@@ -29,14 +215,15 @@
 			left: 0%;
 			/*transform: translateX(-50%);*/
 			/*visibility: hidden;*/
+			margin: 2px;
 		`
 		
 		const splat = HTML `
 			<div id="splat" style="${style}"></div>
 		`
 		
-		const topMenu = makeTopMenu()
-		splat.appendChild(topMenu)
+		const elementsMenu = makeElementsMenu()
+		splat.appendChild(elementsMenu)
 		
 		const rules = makeRules()
 		splat.appendChild(rules)
@@ -45,6 +232,24 @@
 		splat.appendChild(modeMenu)
 		
 		return splat
+	}
+	
+	const makeElementsMenu = () => {
+		const style = `
+			display: inline-block;
+			background-color: rgba(0, 0, 128, 0.0);
+			/*transform: translateX(-50%);*/
+			/*visibility: hidden;*/
+		`
+		
+		const menu = HTML `
+			<div id="elementsMenu" style="${style}"></div>
+		`
+		
+		const topMenu = makeTopMenu()
+		menu.appendChild(topMenu)
+		
+		return menu
 	}
 	
 	const makeModeMenu = () => {
@@ -194,15 +399,15 @@
 	//=======//
 	// Setup //
 	//=======//
-	const splatElement = makeSplat()
-	document.body.appendChild(splatElement)
-	updateRules()
-	hideSplat()
+	//const splatElement = makeSplat()
+	//document.body.appendChild(splatElement)
+	//updateRules()
+	//hideSplat()
 	
 	//========//
 	// Events //
 	//========//
-	$$(".element").on.mouseover(e => {
+	/*$$(".element").on.mouseover(e => {
 		e.target.style.opacity = BUTTON_OPACITY_HOVER
 		if ($("#" + selectedAtom) == e.target) return
 		e.target.style.outline = `2px solid ${$AtomType(e.target.id).colour}`
@@ -287,6 +492,6 @@
 	
 	function hideSplat() {
 		$("#rules").style.visibility = "hidden"
-	}
+	}*/
 }
 

@@ -7,6 +7,7 @@ input . ({space}) => space != undefined
 input x ({space}) => space == undefined
 input ! ({failure}) => failure != true
 input ? ({success}) => success == true
+input ^ ({score, threshold}) => score >= threshold
 
 output @ ({space, self}) => Space.setAtom(space, self)
 output _ ({space}) => Space.setAtom(space, undefined)
