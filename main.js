@@ -53,7 +53,7 @@ const orbit = new THREE.OrbitControls(camera)
 orbit.mouseButtons.LEFT = undefined
 orbit.mouseButtons.MIDDLE = THREE.MOUSE.DOLLY
 orbit.mouseButtons.RIGHT = THREE.MOUSE.ROTATE
-orbit.enableKeys = true
+orbit.enableKeys = false
 orbit.enableDamping = true
 orbit.target.set(0, MAX_Y/2, 0)
 on.process(orbit.o.update)

@@ -124,6 +124,12 @@ const UI = {}
 				outline: 2px solid lightgreen;
 			}
 			
+			#searchBar {
+				margin: 5px;
+				font-size: 16px;
+				font-family: Rosario;
+			}
+			
 		</style>
 	`
 	
@@ -150,7 +156,8 @@ const UI = {}
 					</div>
 					<div class="windowContainer">
 						<div id="search" class="minimised">
-							COMING SOON
+							<input type="text" id="searchBar">
+							<div id="searchItems" class="elementList"></div>
 						</div>
 						<div id="sandbox" class="elementList minimised"></div>
 						<div id="life" class="elementList minimised"></div>
@@ -192,7 +199,13 @@ const UI = {}
 	
 	for (const element of atomTypes) {
 		if (element.hidden) continue
+		
+		const searchItemButton = makeElementButton(element)
+		const searchItems = $("#searchItems")
+		searchItems.appendChild(searchItemButton)
+		
 		if (!element.category) continue
+		
 		const elementButton = makeElementButton(element)
 		const category = $("#" + element.category)
 		category.appendChild(elementButton)
@@ -225,6 +238,26 @@ const UI = {}
 	//========//
 	// Events //
 	//========//
+	on.keydown(() => {
+		const searchWindow = $("#search")
+		if (!searchWindow.classList.contains("minimised")) {
+			const searchBar = $("#searchBar")
+			searchBar.focus()
+		}
+	})
+	
+	$("#searchBar").on.input(function() {
+		const matches = []
+		const query = this.value.as(LowerCase)
+		for (const elementButton of $$("#searchItems > .elementButton")) {
+			const id = elementButton.id
+			const name = id.slice(0, id.length - "Button".length).as(LowerCase)
+			const index = name.indexOf(query)
+			if (index >= 0) elementButton.classList.remove("minimised")
+			else elementButton.classList.add("minimised")
+		}
+	})
+	
 	$("#modeGo").on.click(() => {
 		let params = ""
 		if (UI.selectedSize == "small") params += "small&"
