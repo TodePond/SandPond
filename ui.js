@@ -8,6 +8,8 @@ const UI = {}
 	// Globals //
 	//=========//
 	UI.selectedElement = Sand
+	UI.selectedSize = SMALL_MODE? "small" : "big"
+	UI.selectedDimensions = D1_MODE? "1d" : (D2_MODE? "2d" : "3d")
 	
 	//======//
 	// HTML //
@@ -24,7 +26,7 @@ const UI = {}
 			.box {
 				text-align: center;
 				width: 75px;
-				height: 100%;
+				height: 35px;
 				vertical-align: top;
 				cursor: default;
 				display: inline-block;
@@ -83,6 +85,45 @@ const UI = {}
 				visibility: hidden;
 			}
 			
+			.miniTitle {
+				font-family: Rosario;
+				font-size: 14px;
+			}
+			
+			#mode {
+				margin: 10px;
+				cursor: default;
+			}
+			
+			#mode > section {
+				margin-top: 10px;
+			}
+			
+			.box.option {
+				background-color: white;
+				color: black;
+			}
+			
+			.box.option:hover {
+				outline: 2px solid white;
+			}
+			
+			.box.option.selected {
+				outline: 2px solid black;
+			}
+			
+			#modeGo {
+				background-color: lightgreen;
+			}
+			
+			#modeGo > .label {
+				font-size: 14px;
+			}
+			
+			#modeGo:hover {
+				outline: 2px solid lightgreen;
+			}
+			
 		</style>
 	`
 	
@@ -91,10 +132,11 @@ const UI = {}
 		
 			<div id="menu" class="menu">
 				<div class="heading box" id="elementsHeading"><div class="label">Elements</div></div>
+				<div class="heading box" id="modeHeading"><div class="label">Mode</div></div>
 				<!--<div class="heading box" id="configHeading"><div class="label">Config</div></div>
 				<div class="heading box" id="sourceHeading"><div class="label">Source</div></div>
 				<div class="heading box" id="controlsHeading"><div class="label">Controls</div></div>
-				<div class="heading box" id="modeHeading"><div class="label">Mode</div></div>-->
+				-->
 			</div>
 			
 			<div class="windowContainer">
@@ -115,6 +157,23 @@ const UI = {}
 						<div id="t2tile" class="elementList minimised"></div>
 						<div id="clear" class="elementList minimised"></div>
 					</div>
+				</div>
+				
+				<div id="mode" class="minimised">
+					<section>
+						<div class="miniTitle">SIZE</div>
+						<div id="smallOption" class="sizeOption option box"><div class="label">Small</div></div>
+						<div id="bigOption" class="sizeOption option box"><div class="label">Big</div></div>
+					</section>
+					<section>
+						<div class="miniTitle">DIMENSIONS</div>
+						<div id="d1Option" class="dimensionOption option box"><div class="label">1D</div></div>
+						<div id="d2Option" class="dimensionOption option box"><div class="label">2D</div></div>
+						<div id="d3Option" class="dimensionOption option box"><div class="label">3D</div></div>
+					</section>
+					<section>
+						<div id="modeGo" class="box option"><div class="label">SUBMIT</div></div>
+					</section>
 				</div>
 			</div>
 			
@@ -156,9 +215,41 @@ const UI = {}
 		document.head.appendChild(style)
 	}
 	
+	if (UI.selectedSize == "small") $("#smallOption").classList.add("selected")
+	else if (UI.selectedSize == "big") $("#bigOption").classList.add("selected")
+	
+	if (UI.selectedDimensions == "1d") $("#d1Option").classList.add("selected")
+	else if (UI.selectedDimensions == "2d") $("#d2Option").classList.add("selected")
+	else if (UI.selectedDimensions == "3d") $("#d3Option").classList.add("selected")
+	
 	//========//
 	// Events //
 	//========//
+	$("#modeGo").on.click(() => {
+		let params = ""
+		if (UI.selectedSize == "small") params += "small&"
+		if (UI.selectedDimensions == "d1") params += "1d&"
+		else if (UI.selectedDimensions == "d2") params += "2d&"
+		const baseUrl = `${window.location.protocol}//${window.location.host}${window.location.pathname}`
+		window.location = `${baseUrl}?${params}`
+	})
+	
+	$$(".sizeOption").on.click(function() {
+		for (const sizeOption of $$(".sizeOption")) sizeOption.classList.remove("selected")
+		this.classList.add("selected")
+		const id = this.id
+		const sizeName = id.slice(0, id.length - "Option".length)
+		UI.selectedSize = sizeName
+	})
+	
+	$$(".dimensionOption").on.click(function() {
+		for (const dimensionOption of $$(".dimensionOption")) dimensionOption.classList.remove("selected")
+		this.classList.add("selected")
+		const id = this.id
+		const dimensionName = id.slice(0, id.length - "Option".length)
+		UI.selectedDimensions = dimensionName
+	})
+	
 	$$(".elementButton").on.click(function() {
 		const button = this
 		const name = button.id.slice(0, button.id.length - "Button".length)
@@ -202,296 +293,5 @@ const UI = {}
 		}
 	})
 	
-	/*===========*/
-	
-	//=================//
-	// Making Elements //
-	//=================//	
-	const makeSplat = () => {
-		const style = `
-			position: absolute;
-			background-color: rgba(0, 0, 128, 0.0);
-			top: 0%;
-			left: 0%;
-			/*transform: translateX(-50%);*/
-			/*visibility: hidden;*/
-			margin: 2px;
-		`
-		
-		const splat = HTML `
-			<div id="splat" style="${style}"></div>
-		`
-		
-		const elementsMenu = makeElementsMenu()
-		splat.appendChild(elementsMenu)
-		
-		const rules = makeRules()
-		splat.appendChild(rules)
-		
-		const modeMenu = makeModeMenu()
-		splat.appendChild(modeMenu)
-		
-		return splat
-	}
-	
-	const makeElementsMenu = () => {
-		const style = `
-			display: inline-block;
-			background-color: rgba(0, 0, 128, 0.0);
-			/*transform: translateX(-50%);*/
-			/*visibility: hidden;*/
-		`
-		
-		const menu = HTML `
-			<div id="elementsMenu" style="${style}"></div>
-		`
-		
-		const topMenu = makeTopMenu()
-		menu.appendChild(topMenu)
-		
-		return menu
-	}
-	
-	const makeModeMenu = () => {
-		const style = `
-			/*border-right: 4px solid rgba(0, 0, 0, 0.2);*/
-			/*background-color: rgba(0, 0, 0, 0.1);*/
-			vertical-align: top;
-			height: 100vh;
-			display: inline-block;
-		`
-		const modeMenu = HTML `
-			<div id="modeMenu" style="${style}"></div>
-		`
-		
-		const menuMenuButton = makeMenuMenuButton("Modes")
-		modeMenu.appendChild(menuMenuButton)
-		
-		const normalButton = makeMenuButton("Big", "lightgrey")
-		normalButton.id = "normalMode"
-		normalButton.classList.add("mode")
-		modeMenu.appendChild(normalButton)
-		
-		const smallButton = makeMenuButton("Small", "lightgrey")
-		smallButton.id = "smallMode"
-		smallButton.classList.add("mode")
-		modeMenu.appendChild(smallButton)
-		
-		const d2Button = makeMenuButton("Big 2D", "lightgrey")
-		d2Button.id = "d2Mode"
-		d2Button.classList.add("mode")
-		modeMenu.appendChild(d2Button)
-		
-		const smallD2Mode = makeMenuButton("Small 2D", "lightgrey")
-		smallD2Mode.id = "smallD2Mode"
-		smallD2Mode.classList.add("mode")
-		modeMenu.appendChild(smallD2Mode)
-		
-		const smallD1Mode = makeMenuButton("1D", "lightgrey")
-		smallD1Mode.id = "smallD1Mode"
-		smallD1Mode.classList.add("mode")
-		modeMenu.appendChild(smallD1Mode)
-		
-		return modeMenu
-	}
-	
-	const makeTopMenu = () => {
-		const style = `
-			/*border-right: 4px solid rgba(0, 0, 0, 0.2);*/
-			/*background-color: rgba(0, 0, 0, 0.1);*/
-			vertical-align: top;
-			height: 100vh;
-			display: inline-block;
-		`
-		const topMenu = HTML `
-			<div id="topMenu" style="${style}"></div>
-		`
-		
-		const menuMenuButton = makeMenuMenuButton("Elements")
-		topMenu.appendChild(menuMenuButton)
-		
-		for (const atomType of atomTypes) {
-			if (atomType.hidden) continue
-			const button = makeMenuButton(atomType.name, atomType.colour)
-			button.classList.add("element")
-			topMenu.appendChild(button)
-		}
-		
-		return topMenu
-	}
-	
-	const makeMenuMenuButton = (name) => {
-		const style = `
-			padding: 7px 5px;
-			background-color: black;
-			opacity: ${BUTTON_OPACITY};
-			display: block;
-			margin: 5px;
-			font-family: Rosario;
-			cursor: default;
-			color: white;
-			font-size: 16px;
-			width: 75px;
-		`
-		const menuButton = HTML `
-			<div class="${name} menuMenuButton menuButton" id="" style="${style}">${name}</div>
-		`
-		return menuButton
-	}
-	
-	const makeMenuButton = (name, colour) => {
-		const style = `
-			padding: 7px 5px;
-			background-color: ${colour};
-			opacity: ${BUTTON_OPACITY};
-			display: block;
-			margin: 5px;
-			font-family: Rosario;
-			cursor: default;
-			width: 75px;
-			font-size: 16px;
-			overflow: hidden;
-		`
-		const menuButton = HTML `
-			<div class="menuButton" id="${name}" style="${style}">${name}</div>
-		`
-		return menuButton
-	}
-	
-	const makeRules = () => {
-		const style = `
-			position: absolute;
-			left: 110px;
-			right: 0px;
-			top: 25px;
-			vertical-align: top;
-			font-family: UbuntuMono;
-			text-align: left;
-			font-size: 25px; 
-			cursor: default;
-		`
-		const atomType = $AtomType(selectedAtom)
-		const html = HTML `
-			<pre id="rules" style="${style}">${atomType.source}</pre>
-		`
-		return html
-	}
-	
-	//====================//
-	// Updating and Stuff //
-	//====================//
-	const updateOutline = () => {
-		$("#" + selectedAtom).style.outline = "2px solid black"
-	}
-	
-	const removeRules = () => {
-		$("#rules").remove()
-	}
-	
-	const updateRules = () => {
-		removeRules()
-		const rules = makeRules()
-		$("#splat").appendChild(rules)
-		if (splatHidden) hideSplat()
-		updateOutline()
-	}
-	
-	//=======//
-	// Setup //
-	//=======//
-	//const splatElement = makeSplat()
-	//document.body.appendChild(splatElement)
-	//updateRules()
-	//hideSplat()
-	
-	//========//
-	// Events //
-	//========//
-	/*$$(".element").on.mouseover(e => {
-		e.target.style.opacity = BUTTON_OPACITY_HOVER
-		if ($("#" + selectedAtom) == e.target) return
-		e.target.style.outline = `2px solid ${$AtomType(e.target.id).colour}`
-	})
-	
-	$$(".element").on.mouseout(e => {
-		e.target.style.opacity = BUTTON_OPACITY
-		e.target.style.outline = ""
-		updateOutline()
-	})
-	
-	$$(".element").on.mousedown(e => {
-		if (selectedAtom) {
-			$("#" + selectedAtom).style.outline = ""
-		}
-		selectedAtom = e.target.id
-		e.target.style.outline = "2px solid black"
-		updateRules()
-	})
-	
-	$$(".menuButton:not(.element)").on.mouseover(e => {
-		e.target.style.outline = `2px solid black`
-	})
-	
-	$$(".menuButton:not(.element)").on.mouseout(e => {
-		e.target.style.outline = `0px`
-	})
-	
-	let menuOpen = true
-	const updateElements = () => {
-		if (!menuOpen) $$(".element").forEach(button => button.style.visibility = "hidden")
-		else $$(".element").forEach(button => button.style.visibility = "visible")
-	}
-	updateElements()
-	$(".elements").on.mousedown(e => {
-		menuOpen = !menuOpen
-		updateElements()
-	})
-	
-	let modeMenuOpen = false
-	const updateModes = () => {
-		if (!modeMenuOpen) $$(".mode").forEach(button => button.style.visibility = "hidden")
-		else $$(".mode").forEach(button => button.style.visibility = "visible")
-	}
-	updateModes()
-	$(".Modes").on.mousedown(e => {
-		modeMenuOpen = !modeMenuOpen
-		updateModes()
-	})
-	
-	$("#smallMode").on.click(e => { 
-		const baseUrl = `${window.location.protocol}//${window.location.host}${window.location.pathname}`
-		window.location = `${baseUrl}?small`
-	})
-	
-	$("#normalMode").on.click(e => {
-		const baseUrl = `${window.location.protocol}//${window.location.host}${window.location.pathname}`
-		window.location = `${baseUrl}`
-	})
-	
-	$("#d2Mode").on.click(e => {
-		const baseUrl = `${window.location.protocol}//${window.location.host}${window.location.pathname}`
-		window.location = `${baseUrl}?2d`
-	})
-	
-	$("#smallD2Mode").on.click(e => {
-		const baseUrl = `${window.location.protocol}//${window.location.host}${window.location.pathname}`
-		window.location = `${baseUrl}?2d&small`
-	})
-	
-	$("#smallD1Mode").on.click(e => {
-		const baseUrl = `${window.location.protocol}//${window.location.host}${window.location.pathname}`
-		window.location = `${baseUrl}?1d`
-	})
-	
-	//==================//
-	// Public Functions //
-	//==================//
-	function showSplat() {
-		$("#rules").style.visibility = "visible"
-	}
-	
-	function hideSplat() {
-		$("#rules").style.visibility = "hidden"
-	}*/
 }
 
