@@ -2,16 +2,13 @@
 // Atom //
 //======//
 
-{
-	paused = false
-	
+{	
 	function makeAtom(type, args) {
 		const atom = {type, ...type.properties, ...args}
 		return atom
 	}
 	
 	function atomThink(atom, space) {
-		if (paused) return
 		for (let r = 0; r < atom.type.ruleCount; r++) {
 			const rule = atom.type.rules[r]
 			const result = tryRule(atom, rule, space)

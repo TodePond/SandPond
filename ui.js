@@ -70,6 +70,10 @@ const UI = {}
 				color: #ffcc00;
 			}
 			
+			.small.box {
+				width: 45px;
+			}
+			
 			.search.heading {
 				width: auto;
 				padding: 0px 6px;
@@ -90,12 +94,12 @@ const UI = {}
 				font-size: 14px;
 			}
 			
-			#mode {
+			.form {
 				margin: 10px;
 				cursor: default;
 			}
 			
-			#mode > section {
+			.form > section {
 				margin-top: 10px;
 			}
 			
@@ -126,6 +130,7 @@ const UI = {}
 			
 			#searchBar {
 				margin: 5px;
+				margin-bottom: 0px;
 				font-size: 16px;
 				font-family: Rosario;
 			}
@@ -138,10 +143,10 @@ const UI = {}
 		
 			<div id="menu" class="menu">
 				<div class="heading box" id="elementsHeading"><div class="label">Elements</div></div>
+				<div class="heading box" id="controlsHeading"><div class="label">Controls</div></div>
 				<div class="heading box" id="modeHeading"><div class="label">Mode</div></div>
 				<!--<div class="heading box" id="configHeading"><div class="label">Config</div></div>
 				<div class="heading box" id="sourceHeading"><div class="label">Source</div></div>
-				<div class="heading box" id="controlsHeading"><div class="label">Controls</div></div>
 				-->
 			</div>
 			
@@ -166,7 +171,7 @@ const UI = {}
 					</div>
 				</div>
 				
-				<div id="mode" class="minimised">
+				<div id="mode" class="form minimised">
 					<section>
 						<div class="miniTitle">SIZE</div>
 						<div id="smallOption" class="sizeOption option box"><div class="label">Small</div></div>
@@ -182,6 +187,14 @@ const UI = {}
 						<div id="modeGo" class="box option"><div class="label">SUBMIT</div></div>
 					</section>
 				</div>
+				
+				<div id="controls" class="form minimised">
+					<section>
+						<div class="miniTitle">PLAYBACK</div>
+						<div id="playPause" class="option small box"><div class="label"></div></div>
+						<div id="stepControl" class="option small box"><div class="label">&#10074;&#9658;</div></div>
+					</section>
+				</div>
 			</div>
 			
 		</div>
@@ -191,11 +204,18 @@ const UI = {}
 		<div id="${element.name}Button" class="elementButton box vertical"><div class="label">${element.name}</div></div>
 	`
 	
+	const updatePauseUI = () => {
+		if (!paused) $("#playPause > .label").innerHTML = "&#10074;&#10074;"
+		else $("#playPause > .label").innerHTML = "&#9658;"
+	}
+	
 	//=======//
 	// Setup //
 	//=======//
 	document.head.appendChild(STYLE)
 	document.body.appendChild(ELEMENT)
+	
+	updatePauseUI()
 	
 	for (const element of atomTypes) {
 		if (element.hidden) continue
@@ -238,12 +258,30 @@ const UI = {}
 	//========//
 	// Events //
 	//========//
-	on.keydown(() => {
+	on.keydown(e => {
 		const searchWindow = $("#search")
 		if (!searchWindow.classList.contains("minimised")) {
 			const searchBar = $("#searchBar")
 			searchBar.focus()
 		}
+		else {
+			if (e.key == "p") {
+				paused = !paused
+				updatePauseUI()
+			}
+			else if (e.key == "ArrowRight") {
+				stepCount++
+			}
+		}
+	})
+	
+	$("#stepControl").on.click(() => {
+		stepCount++
+	})
+	
+	$("#playPause").on.click(() => {
+		paused = !paused
+		updatePauseUI()
 	})
 	
 	$("#searchBar").on.input(function() {

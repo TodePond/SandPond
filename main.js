@@ -81,29 +81,18 @@ on.process(() => {
 	Dropper.tryDrop(stage.cursor.position3D)
 })
 
-let currentSpaceId = 0
+let paused = false
+let stepCount = 0
 on.process(() => {
+	if (paused) {
+		if (stepCount <= 0) return
+		stepCount--
+	}
 	for (let i = 0; i < spaceCount; i++) {
 		const space = world.spaces[i]
 		if (space && space.atom) {
 			atomThink(space.atom, space)
 		}
-	}
-})
-
-let splatHidden = true
-on.keydown(e => {
-	if (e.key == " ") {
-		if (splatHidden) {
-			showSplat()
-		}
-		else {
-			hideSplat()
-		}
-		splatHidden = !splatHidden
-	}
-	else if (e.key == "p") {
-		paused = !paused
 	}
 })
 
