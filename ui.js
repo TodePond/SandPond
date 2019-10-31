@@ -154,20 +154,14 @@ const UI = {}
 				<div id="elements" class="minimised">
 					<div class="menu">
 						<div class="heading box search" id="searchHeading"><div class="label">&#8981;</div></div>
-						<div class="heading box" id="sandboxHeading"><div class="label">Sandbox</div></div>
-						<div class="heading box" id="lifeHeading"><div class="label">Life</div></div>
-						<div class="heading box" id="t2tileHeading"><div class="label">T2Tile</div></div>
-						<div class="heading box" id="clearHeading"><div class="label">Clear</div></div>
+						<div class="category heading box" id="sandboxHeading"><div class="label">Sandbox</div></div>
+						<div class="category heading box" id="lifeHeading"><div class="label">Life</div></div>
+						<div class="category heading box" id="t2tileHeading"><div class="label">T2Tile</div></div>
+						<div class="category heading box" id="clearHeading"><div class="label">Clear</div></div>
 					</div>
-					<div class="windowContainer">
-						<div id="search" class="minimised">
-							<input type="text" id="searchBar">
-							<div id="searchItems" class="elementList"></div>
-						</div>
-						<div id="sandbox" class="elementList minimised"></div>
-						<div id="life" class="elementList minimised"></div>
-						<div id="t2tile" class="elementList minimised"></div>
-						<div id="clear" class="elementList minimised"></div>
+					<div id="search">
+						<input class="minimised" type="text" id="searchBar">
+						<div id="searchItems" class="elementList"></div>
 					</div>
 				</div>
 				
@@ -201,7 +195,7 @@ const UI = {}
 	`
 	
 	const makeElementButton = (element) => HTML `
-		<div id="${element.name}Button" class="elementButton box vertical"><div class="label">${element.name}</div></div>
+		<div id="${element.name}Button" class="${element.name}Button elementButton box vertical"><div class="label">${element.name}</div></div>
 	`
 	
 	const updatePauseUI = () => {
@@ -217,6 +211,7 @@ const UI = {}
 	
 	updatePauseUI()
 	
+	let firstElementDone = false
 	for (const element of atomTypes) {
 		if (element.hidden) continue
 		
@@ -224,28 +219,32 @@ const UI = {}
 		const searchItems = $("#searchItems")
 		searchItems.appendChild(searchItemButton)
 		
-		if (!element.category) continue
-		
-		const elementButton = makeElementButton(element)
-		const category = $("#" + element.category)
-		category.appendChild(elementButton)
 		const style = HTML `
 			<style>
-				#${element.name}Button {
+				
+				.${element.name}Button {
 					background-color: ${element.colour};
 				}
 				
-				#${element.name}Button:hover {
+				.${element.name}Button:hover {
 					outline: 2px solid ${element.colour};
 					overflow: visible;
 				}
 				
-				#${element.name}Button.selected {
+				.${element.name}Button.selected {
 					outline: 2px solid black;
 				}
+				
 			</style>
 		`
 		document.head.appendChild(style)
+		
+		if (!firstElementDone) {
+			searchItemButton.classList.add("selected")
+			UI.selectedElement = element
+			firstElementDone = true
+		}
+
 	}
 	
 	if (UI.selectedSize == "small") $("#smallOption").classList.add("selected")
@@ -284,16 +283,38 @@ const UI = {}
 		updatePauseUI()
 	})
 	
-	$("#searchBar").on.input(function() {
-		const matches = []
-		const query = this.value.as(LowerCase)
+	const updateSearch = () => {
+		const query = $("#searchBar").value.as(LowerCase)
+		const categories = []
+		for (const category of $$(".category")) {
+			if (!category.classList.contains("selected")) continue
+			const categoryName = category.id.slice(0, category.id.length - "Heading".length)
+			categories.push(categoryName)
+		}
+		
 		for (const elementButton of $$("#searchItems > .elementButton")) {
 			const id = elementButton.id
-			const name = id.slice(0, id.length - "Button".length).as(LowerCase)
-			const index = name.indexOf(query)
-			if (index >= 0) elementButton.classList.remove("minimised")
-			else elementButton.classList.add("minimised")
+			const name = id.slice(0, id.length - "Button".length)
+			const element = $AtomType(name)
+			const index = name.as(LowerCase).indexOf(query)
+			
+			elementButton.classList.add("minimised")
+			
+			if (index >= 0) {
+				if (categories.length == 0 && $("#searchHeading").classList.contains("selected")) {
+					elementButton.classList.remove("minimised")
+				}
+				else if (categories.some(category => category == element.category)) {
+					elementButton.classList.remove("minimised")
+				}
+			}
 		}
+	}
+	
+	updateSearch()
+	
+	$("#searchBar").on.input(function() {
+		updateSearch()
 	})
 	
 	$("#modeGo").on.click(() => {
@@ -322,18 +343,26 @@ const UI = {}
 	})
 	
 	$$(".elementButton").on.click(function() {
-		const button = this
-		const name = button.id.slice(0, button.id.length - "Button".length)
+		const newButton = this
+		const newId = newButton.id
+		
+		const idEnd = "Button"
+		
+		const name = newId.slice(0, newId.length - idEnd.length)
 		const newElement = $AtomType(name)
 		const oldElement = UI.selectedElement
 		
+		const oldId = oldElement.name + idEnd
+		const oldButton = $("#" + oldId)
+		
 		if (oldElement) {
-			$("#" + oldElement.name + "Button").classList.remove("selected")
+			oldButton.classList.remove("selected")
 		}
 		
 		if (newElement) {
-			$("#" + newElement.name + "Button").classList.add("selected")
+			newButton.classList.add("selected")
 			UI.selectedElement = newElement
+			newButton.style.outline = ""
 		}
 	})
 	
@@ -344,6 +373,8 @@ const UI = {}
 		const windowContainer = menuContainer.$(".windowContainer")
 		const oldHeading = menu.selectedHeading
 		const newHeading = oldHeading != this? this : undefined
+		
+		if (!windowContainer) return
 		
 		if (newHeading) newHeading.classList.add("selected")
 		if (oldHeading) oldHeading.classList.remove("selected")
@@ -363,6 +394,18 @@ const UI = {}
 			if (window) window.classList.remove("minimised")
 		}
 	})
+	
+	$("#searchHeading").on.click(function() {
+		$("#searchBar").classList.toggle("minimised")
+		this.classList.toggle("selected")
+		updateSearch()
+	})
+	
+	$$(".category").on.click(function() {
+		this.classList.toggle("selected")
+		updateSearch()
+	})
+	
 	
 }
 
