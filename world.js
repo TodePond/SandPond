@@ -4,6 +4,18 @@
 const World = {}
 {
 	
+	// World Job Description
+	//======================
+	// "I store my SPACES."
+	// "I draw myself."
+	//
+	// GRID: keep a huge 3D grid of spaces
+	// MESH: keep one giant mesh that renders to display all spaces in this world
+	// ATTRIBUTES and INSTANCES: a fancy way of telling the renderer how to render the mesh
+	//
+	// I am NOT responsible for events, event windows, sites
+	// I am NOT responsible for atoms - I just deal with Spaces
+	
 	//========//
 	// Public //
 	//========//
@@ -14,7 +26,6 @@ const World = {}
 		const grid = makeSpacesGrid(world, area)
 		const spaces = getSpacesArray(grid, area)
 		const count = spaces.length
-		createEventWindows(grid, area)
 		
 		const matrixInstances = makeMatrixInstances(count)
 		const colourInstances = makeColourInstances(count)
@@ -28,8 +39,8 @@ const World = {}
 		addMatrixAttributes(geometry, matrixAttributes)
 		addColourAttribute(geometry, colourAttribute)
 		addEmissiveAttribute(geometry, emissiveAttribute)
-		const mesh = makeMesh(geometry, MATERIAL)
 		
+		const mesh = makeMesh(geometry, MATERIAL)
 		positionInstances(matrixInstances, matrixAttributes, grid, area)
 		scene.add(mesh)
 		
@@ -40,20 +51,13 @@ const World = {}
 			emissiveInstances,
 			spaces,
 			grid,
+			area,
 		}
 		return world
 	}
 	
-	World.selectGridSpace = (grid, x, y, z) => {
-		const gridy = grid[y]
-		if (!gridy) return
-		const gridyx = gridy[x]
-		if (!gridyx) return
-		return gridyx[z]
-	}
-	
 	World.selectSpace = (world, x, y, z) => {
-		return World.selectGridSpace(world.grid, x, y, z)
+		return selectGridSpace(world.grid, x, y, z)
 	}
 	
 	World.setSpaceColour = (world, space, colour, emissive, opacity) => {
@@ -189,15 +193,12 @@ const World = {}
 		return spaces
 	}
 	
-	const createEventWindows = (grid, area) => {
-		for (const y of area.yStart.to(area.yEnd)) {
-			for (const x of area.xStart.to(area.xEnd)) {
-				for (const z of area.zStart.to(area.zEnd)) {
-					const space = grid[y][x][z]
-					space.eventWindow = makeEventWindow(grid, x, y, z)
-				}
-			}
-		}
+	const selectGridSpace = (grid, x, y, z) => {
+		const gridy = grid[y]
+		if (!gridy) return
+		const gridyx = gridy[x]
+		if (!gridyx) return
+		return gridyx[z]
 	}
 	
 	//===========//

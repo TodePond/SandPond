@@ -4,6 +4,8 @@
 const UI = {}
 {
 	
+	console.log(atomTypes)
+	
 	//=========//
 	// Globals //
 	//=========//
@@ -117,7 +119,7 @@ const UI = {}
 			}
 			
 			#modeGo {
-				background-color: lightgreen;
+				background-color: #ffcc00;
 			}
 			
 			#modeGo > .label {
@@ -125,7 +127,7 @@ const UI = {}
 			}
 			
 			#modeGo:hover {
-				outline: 2px solid lightgreen;
+				outline: 2px solid #ffcc00;
 			}
 			
 			#searchBar {
@@ -135,6 +137,11 @@ const UI = {}
 				font-family: Rosario;
 			}
 			
+			#sourceBox {
+				font-family: UbuntuMono;
+				font-size: 18px;
+			}
+			
 		</style>
 	`
 	
@@ -142,25 +149,30 @@ const UI = {}
 		<div id="ui">
 		
 			<div id="menu" class="menu">
-				<div class="heading box" id="elementsHeading"><div class="label">Elements</div></div>
-				<div class="heading box" id="controlsHeading"><div class="label">Controls</div></div>
-				<div class="heading box" id="modeHeading"><div class="label">Mode</div></div>
-				<!--<div class="heading box" id="configHeading"><div class="label">Config</div></div>
-				<div class="heading box" id="sourceHeading"><div class="label">Source</div></div>
+				<div class="heading box clickable" id="elementsHeading"><div class="label">Elements</div></div>
+				<div class="heading box clickable" id="sourceHeading"><div class="label">Source</div></div>
+				<div class="heading box clickable" id="controlsHeading"><div class="label">Controls</div></div>
+				<div class="heading box clickable" id="modeHeading"><div class="label">Mode</div></div>
+				<!--<div class="heading box clickable" id="configHeading"><div class="label">Config</div></div>
 				-->
 			</div>
 			
 			<div class="windowContainer">
+			
+				<div id="source" class="minimised form">
+					<pre id="sourceBox"></pre>
+				</div>
+			
 				<div id="elements" class="minimised">
 					<div class="menu">
-						<div class="heading box search" id="searchHeading"><div class="label">&#8981;</div></div>
-						<div class="category heading box" id="sandboxHeading"><div class="label">Sandbox</div></div>
-						<div class="category heading box" id="lifeHeading"><div class="label">Life</div></div>
-						<div class="category heading box" id="t2tileHeading"><div class="label">T2Tile</div></div>
-						<div class="category heading box" id="clearHeading"><div class="label">Clear</div></div>
+						<div class="heading box search clickable" id="searchHeading"><div class="label">&#8981;</div></div>
+						<div class="category heading box clickable" id="sandboxHeading"><div class="label">Sandbox</div></div>
+						<div class="category heading box clickable" id="lifeHeading"><div class="label">Life</div></div>
+						<div class="category heading box clickable" id="t2tileHeading"><div class="label">T2Tile</div></div>
+						<div class="category heading box clickable" id="clearHeading"><div class="label">Clear</div></div>
 					</div>
 					<div id="search">
-						<input class="minimised" type="text" id="searchBar">
+						<input class="minimised clickable" type="text" id="searchBar">
 						<div id="searchItems" class="elementList"></div>
 					</div>
 				</div>
@@ -168,25 +180,25 @@ const UI = {}
 				<div id="mode" class="form minimised">
 					<section>
 						<div class="miniTitle">SIZE</div>
-						<div id="smallOption" class="sizeOption option box"><div class="label">Small</div></div>
-						<div id="bigOption" class="sizeOption option box"><div class="label">Big</div></div>
+						<div id="smallOption" class="sizeOption option box clickable"><div class="label">Small</div></div>
+						<div id="bigOption" class="sizeOption option box clickable"><div class="label">Big</div></div>
 					</section>
 					<section>
 						<div class="miniTitle">DIMENSIONS</div>
-						<div id="d1Option" class="dimensionOption option box"><div class="label">1D</div></div>
-						<div id="d2Option" class="dimensionOption option box"><div class="label">2D</div></div>
-						<div id="d3Option" class="dimensionOption option box"><div class="label">3D</div></div>
+						<div id="d1Option" class="dimensionOption option box clickable"><div class="label">1D</div></div>
+						<div id="d2Option" class="dimensionOption option box clickable"><div class="label">2D</div></div>
+						<div id="d3Option" class="dimensionOption option box clickable"><div class="label">3D</div></div>
 					</section>
 					<section>
-						<div id="modeGo" class="box option"><div class="label">SUBMIT</div></div>
+						<div id="modeGo" class="box option clickable"><div class="label">SUBMIT</div></div>
 					</section>
 				</div>
 				
 				<div id="controls" class="form minimised">
 					<section>
 						<div class="miniTitle">PLAYBACK</div>
-						<div id="playPause" class="option small box"><div class="label"></div></div>
-						<div id="stepControl" class="option small box"><div class="label">&#10074;&#9658;</div></div>
+						<div id="playPause" class="option small box clickable"><div class="label"></div></div>
+						<div id="stepControl" class="option small box clickable"><div class="label">&#10074;&#9658;</div></div>
 					</section>
 				</div>
 			</div>
@@ -195,7 +207,7 @@ const UI = {}
 	`
 	
 	const makeElementButton = (element) => HTML `
-		<div id="${element.name}Button" class="${element.name}Button elementButton box vertical"><div class="label">${element.name}</div></div>
+		<div id="${element.name}Button" class="${element.name}Button elementButton box vertical clickable"><div class="label">${element.name}</div></div>
 	`
 	
 	const updatePauseUI = () => {
@@ -203,14 +215,17 @@ const UI = {}
 		else $("#playPause > .label").innerHTML = "&#9658;"
 	}
 	
+	const updateSourceUI = () => {
+		const source = UI.selectedElement.source
+		$("#sourceBox").textContent = source
+	}
+	
 	//=======//
 	// Setup //
 	//=======//
 	document.head.appendChild(STYLE)
 	document.body.appendChild(ELEMENT)
-	
-	updatePauseUI()
-	
+		
 	let firstElementDone = false
 	for (const element of atomTypes) {
 		if (element.hidden) continue
@@ -247,6 +262,9 @@ const UI = {}
 
 	}
 	
+	updatePauseUI()
+	updateSourceUI()
+	
 	if (UI.selectedSize == "small") $("#smallOption").classList.add("selected")
 	else if (UI.selectedSize == "big") $("#bigOption").classList.add("selected")
 	
@@ -273,6 +291,10 @@ const UI = {}
 			}
 		}
 	})
+	
+	UI.clicking = false
+	$$(".clickable").on.mousedown(() => UI.clicking = true)
+	on.mouseup(() => UI.clicking = false)
 	
 	$("#stepControl").on.click(() => {
 		stepCount++
@@ -363,6 +385,7 @@ const UI = {}
 			newButton.classList.add("selected")
 			UI.selectedElement = newElement
 			newButton.style.outline = ""
+			updateSourceUI()
 		}
 	})
 	

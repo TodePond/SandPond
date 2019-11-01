@@ -1,49 +1,40 @@
 //=============//
 // EventWindow //
 //=============//
+const EventWindow = {}
+
 {
 
+	// Event Window Job Description
+	//=============================
+	// "I am responsible for my SITES."
+
+	//========//
+	// Public //
+	//========//
+	EventWindow.getSiteNumber = (x, y, z) => {
+		const key = getSiteKey(x, y, z)
+		return SITE_NUMBERS[key]
+	}
+	
+	EventWindow.updateUniverse = (universe) => {
+		const world = universe.world
+		const area = world.area
+		const grid = world.grid
+		for (const y of area.yStart.to(area.yEnd)) {
+			for (const x of area.xStart.to(area.xEnd)) {
+				for (const z of area.zStart.to(area.zEnd)) {
+					const space = grid[y][x][z]
+					space.eventWindow = makeEventWindow(universe, x, y, z)
+				}
+			}
+		}
+	}
+	
 	//===========//
 	// Constants //
-	//===========//
-	// Event Window 3.0
-	// >x ^y
-	// looking from the front
-	// 00  01 |02| 03  04
-	//        |  |
-	// 05  06 |07| 08  09
-	// _______|__|_______
-	// 10  11 |12| 13  14
-	// _______|__|_______
-	// 15  16 |17| 18  19
-	//        |  |
-	// 20  21 |22| 23  24
-	
-	// >x ^z
-	// looking from the top
-	// 25  26 |27| 28  29
-	//        |  |
-	// 30  31 |32| 33  34
-	// _______|__|_______
-	// 10  11 |12| 13  14
-	// _______|__|_______
-	// 35  36 |37| 38  39
-	//        |  |
-	// 40  41 |42| 43  44
-	
-	// >z ^y
-	// looking from the side
-	// 45  46 |02| 47  48
-	//        |  |
-	// 49  50 |07| 51  52
-	// _______|__|_______
-	// 42  37 |12| 32  27	//???
-	// _______|__|_______
-	// 53  54 |37| 55  56
-	//        |  |
-	// 57  58 |42| 59  60
-	
-	const eventWindowPositions = [
+	//===========//	
+	const SITE_POSITIONS = [
 		// >x ^y
 		// looking from the front
 		[-2,2,0],  [-1,2,0],  [0,2,0],  [1,2,0],  [2,2,0],
@@ -70,116 +61,117 @@
 		
 	]
 	
-	const eventWindowNumbers = []
-	for (const i in eventWindowPositions) {
-		const position = eventWindowPositions[i]
-		const key = getEventWindowKey(...position)
-		eventWindowNumbers[key] = parseInt(i)
+	const SITE_NUMBERS = []
+	
+	//=======//
+	// Setup //
+	//=======//
+	const getSiteKey = (x, y, z) => {
+		return `${x}${y}${z}`
+	}
+	
+	for (const i in SITE_POSITIONS) {
+		const position = SITE_POSITIONS[i]
+		const key = getSiteKey(...position)
+		SITE_NUMBERS[key] = parseInt(i)
 	}
 	
 	//===========//
 	// Functions //
-	//===========//	
-	function getEventWindowKey(x, y, z) {
-		return `${x}${y}${z}`
-	}
+	//===========//
+	const makeEventWindow = (universe, x, y, z) => {
 	
-	function getEventWindowNumber(x, y, z) {
-		const key = getEventWindowKey(x, y, z)
-		return eventWindowNumbers[key]
-	}
-	
-	function makeEventWindow(grid, x, y, z) {
+		// Written by hand because it made lookup faster compared to dynamically filling the array
 		return [
-			World.selectGridSpace(grid, x + -2, y + 2, z + 0),
-			World.selectGridSpace(grid, x + -1, y + 2, z + 0),
-			World.selectGridSpace(grid, x + 0, y + 2, z + 0),
-			World.selectGridSpace(grid, x + 1, y + 2, z + 0),
-			World.selectGridSpace(grid, x + 2, y + 2, z + 0),
+			Site.make(Universe.selectSpace(universe, x + -2, y + 2, z + 0), x + -2, y + 2, z + 0),
+			Site.make(Universe.selectSpace(universe, x + -1, y + 2, z + 0), x + -1, y + 2, z + 0),
+			Site.make(Universe.selectSpace(universe, x + 0, y + 2, z + 0), x + 0, y + 2, z + 0),
+			Site.make(Universe.selectSpace(universe, x + 1, y + 2, z + 0), x + 1, y + 2, z + 0),
+			Site.make(Universe.selectSpace(universe, x + 2, y + 2, z + 0), x + 2, y + 2, z + 0),
 			
-			World.selectGridSpace(grid, x + -2, y + 1, z + 0),
-			World.selectGridSpace(grid, x + -1, y + 1, z + 0),
-			World.selectGridSpace(grid, x + 0, y + 1, z + 0),
-			World.selectGridSpace(grid, x + 1, y + 1, z + 0),
-			World.selectGridSpace(grid, x + 2, y + 1, z + 0),
+			Site.make(Universe.selectSpace(universe, x + -2, y + 1, z + 0), x + -2, y + 1, z + 0),
+			Site.make(Universe.selectSpace(universe, x + -1, y + 1, z + 0), x + -1, y + 1, z + 0),
+			Site.make(Universe.selectSpace(universe, x + 0, y + 1, z + 0), x + 0, y + 1, z + 0),
+			Site.make(Universe.selectSpace(universe, x + 1, y + 1, z + 0), x + 1, y + 1, z + 0),
+			Site.make(Universe.selectSpace(universe, x + 2, y + 1, z + 0), x + 2, y + 1, z + 0),
 			
-			World.selectGridSpace(grid, x + -2, y + 0, z + 0),
-			World.selectGridSpace(grid, x + -1, y + 0, z + 0),
-			World.selectGridSpace(grid, x + 0, y + 0, z + 0),
-			World.selectGridSpace(grid, x + 1, y + 0, z + 0),
-			World.selectGridSpace(grid, x + 2, y + 0, z + 0),
+			Site.make(Universe.selectSpace(universe, x + -2, y + 0, z + 0), x + -2, y + 0, z + 0),
+			Site.make(Universe.selectSpace(universe, x + -1, y + 0, z + 0), x + -1, y + 0, z + 0),
+			Site.make(Universe.selectSpace(universe, x + 0, y + 0, z + 0), x + 0, y + 0, z + 0),
+			Site.make(Universe.selectSpace(universe, x + 1, y + 0, z + 0), x + 1, y + 0, z + 0),
+			Site.make(Universe.selectSpace(universe, x + 2, y + 0, z + 0), x + 2, y + 0, z + 0),
 			
-			World.selectGridSpace(grid, x + -2, y + -1, z + 0),
-			World.selectGridSpace(grid, x + -1, y + -1, z + 0),
-			World.selectGridSpace(grid, x + 0, y + -1, z + 0),
-			World.selectGridSpace(grid, x + 1, y + -1, z + 0),
-			World.selectGridSpace(grid, x + 2, y + -1, z + 0),
+			Site.make(Universe.selectSpace(universe, x + -2, y + -1, z + 0), x + -2, y + -1, z + 0),
+			Site.make(Universe.selectSpace(universe, x + -1, y + -1, z + 0), x + -1, y + -1, z + 0),
+			Site.make(Universe.selectSpace(universe, x + 0, y + -1, z + 0), x + 0, y + -1, z + 0),
+			Site.make(Universe.selectSpace(universe, x + 1, y + -1, z + 0), x + 1, y + -1, z + 0),
+			Site.make(Universe.selectSpace(universe, x + 2, y + -1, z + 0), x + 2, y + -1, z + 0),
 			
-			World.selectGridSpace(grid, x + -2, y + -2, z + 0),
-			World.selectGridSpace(grid, x + -1, y + -2, z + 0),
-			World.selectGridSpace(grid, x + 0, y + -2, z + 0),
-			World.selectGridSpace(grid, x + 1, y + -2, z + 0),
-			World.selectGridSpace(grid, x + 2, y + -2, z + 0),
+			Site.make(Universe.selectSpace(universe, x + -2, y + -2, z + 0), x + -2, y + -2, z + 0),
+			Site.make(Universe.selectSpace(universe, x + -1, y + -2, z + 0), x + -1, y + -2, z + 0),
+			Site.make(Universe.selectSpace(universe, x + 0, y + -2, z + 0), x + 0, y + -2, z + 0),
+			Site.make(Universe.selectSpace(universe, x + 1, y + -2, z + 0), x + 1, y + -2, z + 0),
+			Site.make(Universe.selectSpace(universe, x + 2, y + -2, z + 0), x + 2, y + -2, z + 0),
 			
-			World.selectGridSpace(grid, x + -2, y + 0, z + 2),
-			World.selectGridSpace(grid, x + -1, y + 0, z + 2),
-			World.selectGridSpace(grid, x + 0, y + 0, z + 2),
-			World.selectGridSpace(grid, x + 1, y + 0, z + 2),
-			World.selectGridSpace(grid, x + 2, y + 0, z + 2),
+			Site.make(Universe.selectSpace(universe, x + -2, y + 0, z + 2), x + -2, y + 0, z + 2),
+			Site.make(Universe.selectSpace(universe, x + -1, y + 0, z + 2), x + -1, y + 0, z + 2),
+			Site.make(Universe.selectSpace(universe, x + 0, y + 0, z + 2), x + 0, y + 0, z + 2),
+			Site.make(Universe.selectSpace(universe, x + 1, y + 0, z + 2), x + 1, y + 0, z + 2),
+			Site.make(Universe.selectSpace(universe, x + 2, y + 0, z + 2), x + 2, y + 0, z + 2),
 			
-			World.selectGridSpace(grid, x + -2, y + 0, z + 1),
-			World.selectGridSpace(grid, x + -1, y + 0, z + 1),
-			World.selectGridSpace(grid, x + 0, y + 0, z + 1),
-			World.selectGridSpace(grid, x + 1, y + 0, z + 1),
-			World.selectGridSpace(grid, x + 2, y + 0, z + 1),
+			Site.make(Universe.selectSpace(universe, x + -2, y + 0, z + 1), x + -2, y + 0, z + 1),
+			Site.make(Universe.selectSpace(universe, x + -1, y + 0, z + 1), x + -1, y + 0, z + 1),
+			Site.make(Universe.selectSpace(universe, x + 0, y + 0, z + 1), x + 0, y + 0, z + 1),
+			Site.make(Universe.selectSpace(universe, x + 1, y + 0, z + 1), x + 1, y + 0, z + 1),
+			Site.make(Universe.selectSpace(universe, x + 2, y + 0, z + 1), x + 2, y + 0, z + 1),
 			/*
-			World.selectGridSpace(grid, x + -2, y + 0, z + 0),
-			World.selectGridSpace(grid, x + -1, y + 0, z + 0),
-			World.selectGridSpace(grid, x + 0, y + 0, z + 0),
-			World.selectGridSpace(grid, x + 1, y + 0, z + 0),
-			World.selectGridSpace(grid, x + 2, y + 0, z + 0),
+			Site.make(Universe.selectSpace(universe, x + -2, y + 0, z + 0), x + -2, y + 0, z + 0),
+			Site.make(Universe.selectSpace(universe, x + -1, y + 0, z + 0), x + -1, y + 0, z + 0),
+			Site.make(Universe.selectSpace(universe, x + 0, y + 0, z + 0), x + 0, y + 0, z + 0),
+			Site.make(Universe.selectSpace(universe, x + 1, y + 0, z + 0), x + 1, y + 0, z + 0),
+			Site.make(Universe.selectSpace(universe, x + 2, y + 0, z + 0), x + 2, y + 0, z + 0),
 			*/
-			World.selectGridSpace(grid, x + -2, y + 0, z + -1),
-			World.selectGridSpace(grid, x + -1, y + 0, z + -1),
-			World.selectGridSpace(grid, x + 0, y + 0, z + -1),
-			World.selectGridSpace(grid, x + 1, y + 0, z + -1),
-			World.selectGridSpace(grid, x + 2, y + 0, z + -1),
+			Site.make(Universe.selectSpace(universe, x + -2, y + 0, z + -1), x + -2, y + 0, z + -1),
+			Site.make(Universe.selectSpace(universe, x + -1, y + 0, z + -1), x + -1, y + 0, z + -1),
+			Site.make(Universe.selectSpace(universe, x + 0, y + 0, z + -1), x + 0, y + 0, z + -1),
+			Site.make(Universe.selectSpace(universe, x + 1, y + 0, z + -1), x + 1, y + 0, z + -1),
+			Site.make(Universe.selectSpace(universe, x + 2, y + 0, z + -1), x + 2, y + 0, z + -1),
 			
-			World.selectGridSpace(grid, x + -2, y + 0, z + -2),
-			World.selectGridSpace(grid, x + -1, y + 0, z + -2),
-			World.selectGridSpace(grid, x + 0, y + 0, z + -2),
-			World.selectGridSpace(grid, x + 1, y + 0, z + -2),
-			World.selectGridSpace(grid, x + 2, y + 0, z + -2),
+			Site.make(Universe.selectSpace(universe, x + -2, y + 0, z + -2), x + -2, y + 0, z + -2),
+			Site.make(Universe.selectSpace(universe, x + -1, y + 0, z + -2), x + -1, y + 0, z + -2),
+			Site.make(Universe.selectSpace(universe, x + 0, y + 0, z + -2), x + 0, y + 0, z + -2),
+			Site.make(Universe.selectSpace(universe, x + 1, y + 0, z + -2), x + 1, y + 0, z + -2),
+			Site.make(Universe.selectSpace(universe, x + 2, y + 0, z + -2), x + 2, y + 0, z + -2),
 			
-			World.selectGridSpace(grid, x + 0, y + 2, z + -2),
-			World.selectGridSpace(grid, x + 0, y + 2, z + -1),
-			/*World.selectGridSpace(grid, x + 0, y + 2, z + 0),*/
-			World.selectGridSpace(grid, x + 0, y + 2, z + 1),
-			World.selectGridSpace(grid, x + 0, y + 2, z + 2),
+			Site.make(Universe.selectSpace(universe, x + 0, y + 2, z + -2), x + 0, y + 2, z + -2),
+			Site.make(Universe.selectSpace(universe, x + 0, y + 2, z + -1), x + 0, y + 2, z + -1),
+			/*Universe.selectSpace(universe, x + 0, y + 2, z + 0),*/
+			Site.make(Universe.selectSpace(universe, x + 0, y + 2, z + 1), x + 0, y + 2, z + 1),
+			Site.make(Universe.selectSpace(universe, x + 0, y + 2, z + 2), x + 0, y + 2, z + 2),
 			
-			World.selectGridSpace(grid, x + 0, y + 1, z + -2),
-			World.selectGridSpace(grid, x + 0, y + 1, z + -1),
-			/*World.selectGridSpace(grid, x + 0, y + 1, z + 0),*/
-			World.selectGridSpace(grid, x + 0, y + 1, z + 1),
-			World.selectGridSpace(grid, x + 0, y + 1, z + 2),
+			Site.make(Universe.selectSpace(universe, x + 0, y + 1, z + -2), x + 0, y + 1, z + -2),
+			Site.make(Universe.selectSpace(universe, x + 0, y + 1, z + -1), x + 0, y + 1, z + -1),
+			/*Universe.selectSpace(universe, x + 0, y + 1, z + 0),*/
+			Site.make(Universe.selectSpace(universe, x + 0, y + 1, z + 1), x + 0, y + 1, z + 1),
+			Site.make(Universe.selectSpace(universe, x + 0, y + 1, z + 2), x + 0, y + 1, z + 2),
 			/*
-			World.selectGridSpace(grid, x + 0, y + 0, z + -2),
-			World.selectGridSpace(grid, x + 0, y + 0, z + -1),
-			World.selectGridSpace(grid, x + 0, y + 0, z + 0),
-			World.selectGridSpace(grid, x + 0, y + 0, z + 1),
-			World.selectGridSpace(grid, x + 0, y + 0, z + 2),
+			Site.make(Universe.selectSpace(universe, x + 0, y + 0, z + -2), x + 0, y + 0, z + -2),
+			Site.make(Universe.selectSpace(universe, x + 0, y + 0, z + -1), x + 0, y + 0, z + -1),
+			Site.make(Universe.selectSpace(universe, x + 0, y + 0, z + 0), x + 0, y + 0, z + 0),
+			Site.make(Universe.selectSpace(universe, x + 0, y + 0, z + 1), x + 0, y + 0, z + 1),
+			Site.make(Universe.selectSpace(universe, x + 0, y + 0, z + 2), x + 0, y + 0, z + 2),
 			*/
-			World.selectGridSpace(grid, x + 0, y + -1, z + -2),
-			World.selectGridSpace(grid, x + 0, y + -1, z + -1),
-			/*World.selectGridSpace(grid, x + 0, y + -1, z + 0),*/
-			World.selectGridSpace(grid, x + 0, y + -1, z + 1),
-			World.selectGridSpace(grid, x + 0, y + -1, z + 2),
+			Site.make(Universe.selectSpace(universe, x + 0, y + -1, z + -2), x + 0, y + -1, z + -2),
+			Site.make(Universe.selectSpace(universe, x + 0, y + -1, z + -1), x + 0, y + -1, z + -1),
+			/*Universe.selectSpace(universe, x + 0, y + -1, z + 0),*/
+			Site.make(Universe.selectSpace(universe, x + 0, y + -1, z + 1), x + 0, y + -1, z + 1),
+			Site.make(Universe.selectSpace(universe, x + 0, y + -1, z + 2), x + 0, y + -1, z + 2),
 			
-			World.selectGridSpace(grid, x + 0, y + -2, z + -2),
-			World.selectGridSpace(grid, x + 0, y + -2, z + -1),
-			/*World.selectGridSpace(grid, x + 0, y + -2, z + 0),*/
-			World.selectGridSpace(grid, x + 0, y + -2, z + 1),
-			World.selectGridSpace(grid, x + 0, y + -2, z + 2),
+			Site.make(Universe.selectSpace(universe, x + 0, y + -2, z + -2), x + 0, y + -2, z + -2),
+			Site.make(Universe.selectSpace(universe, x + 0, y + -2, z + -1), x + 0, y + -2, z + -1),
+			/*Universe.selectSpace(universe, x + 0, y + -2, z + 0),*/
+			Site.make(Universe.selectSpace(universe, x + 0, y + -2, z + 1), x + 0, y + -2, z + 1),
+			Site.make(Universe.selectSpace(universe, x + 0, y + -2, z + 2), x + 0, y + -2, z + 2),
 		]
 	}
 	

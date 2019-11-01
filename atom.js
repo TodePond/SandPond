@@ -1,13 +1,22 @@
 //======//
 // Atom //
 //======//
+const Atom = {}
 
-{	
+{
+
+	// Atom Job Description
+	//=====================
+	// "I keep my TYPE and DATA."
+	//
+	// I am NOT responsible for my behaviour!
+	
 	function makeAtom(type, args) {
 		const atom = {type, ...type.properties, ...args}
 		return atom
 	}
 	
+	// Not my job (move to RuleExecute.js)
 	function atomThink(atom, space) {
 		for (let r = 0; r < atom.type.ruleCount; r++) {
 			const rule = atom.type.rules[r]
@@ -16,10 +25,7 @@
 		}
 	}
 	
-	function vote(name, max) {
-		return {vote: {name, max}}
-	}
-	
+	// Not my job (move to RuleExecute.js)
 	function tryRule(atom, rule, space) {
 	
 		const symmetryNumber = rule.getNewSymmetryNumber()
@@ -33,7 +39,7 @@
 				const siteNumber = ruleSpace.eventWindowNumbers[symmetryNumber]
 				const site = space.eventWindow[siteNumber]
 				const test = ruleSpace.tests[layer]
-				const result = test({space: site, ...args})
+				const result = test({space: site.space, ...args})
 				if (!result) return false
 			}
 			
@@ -49,7 +55,7 @@
 			const ruleSpace = rule.spaces[i]
 			const siteNumber = ruleSpace.eventWindowNumbers[symmetryNumber]
 			const site = space.eventWindow[siteNumber]
-			ruleSpace.instruction({space: site, ...args})
+			ruleSpace.instruction({space: site.space, ...args})
 		}
 		
 		return true

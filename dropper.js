@@ -22,6 +22,7 @@ const Dropper = {}
 	Dropper.tryDrop = (position) => {
 	
 		if (!started && !Mouse.down) return
+		if (UI.clicking) return
 		started = true
 		
 		const previousDown = down
@@ -109,7 +110,8 @@ const Dropper = {}
 		if (atomType.floor || D1_MODE) alteredY = 0
 		if (D2_MODE) alteredY = y
 		if (D2_MODE) alteredZ = 0
-		const space = Universe.selectSpace(universe, x, alteredY, alteredZ)
+		const world = Universe.selectWorld(universe, x, alteredY, alteredZ)
+		const space = World.selectSpace(world, x, alteredY, alteredZ)
 		if (!space) return
 		if (space.atom) return
 		const atom = makeAtom(atomType)

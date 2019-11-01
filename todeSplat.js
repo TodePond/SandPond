@@ -431,7 +431,6 @@
 		input = closeBracketResult.input
 		
 		elementArgs.name = name
-		print(elementArgs)
 		const element = new AtomType({scene, ...elementArgs})
 		element.source = source.slice(0, source.length - input.length)
 		window[name] = element
