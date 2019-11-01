@@ -7,7 +7,7 @@ const Atom = {}
 
 	// Atom Job Description
 	//=====================
-	// "I keep my TYPE and DATA."
+	// "I keep my ELEMENT and DATA."
 	//
 	// I am NOT responsible for my behaviour!
 	
@@ -16,7 +16,7 @@ const Atom = {}
 		return atom
 	}
 	
-	// Not my job (move to RuleExecute.js)
+	// Not my job (move to Event.js)
 	function atomThink(atom, space) {
 		for (let r = 0; r < atom.type.ruleCount; r++) {
 			const rule = atom.type.rules[r]
@@ -25,7 +25,7 @@ const Atom = {}
 		}
 	}
 	
-	// Not my job (move to RuleExecute.js)
+	// Not my job (move to Event.js)
 	function tryRule(atom, rule, space) {
 	
 		const symmetryNumber = rule.getNewSymmetryNumber()
