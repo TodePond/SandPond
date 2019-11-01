@@ -9,7 +9,7 @@ const Atom = {}
 	//=====================
 	// "I keep my ELEMENT and DATA."
 	//
-	// I am NOT responsible for my behaviour!
+	// I am NOT responsible for my events!
 	
 	function makeAtom(type, args) {
 		const atom = {type, ...type.properties, ...args}
