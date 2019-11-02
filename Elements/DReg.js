@@ -10,26 +10,36 @@ element DReg {
 	input D ({space}) => space && space.atom && space.atom.type == DReg
 	input n ({space}) => space && space.atom && space.atom.type != DReg
 	
-	output R ({space}) => Space.setAtom(space, makeAtom(Res))
-	output D ({space}) => Space.setAtom(space, makeAtom(DReg))
+	output R ({space}) => Space.setAtom(space, Atom.make(Res))
+	output D ({space}) => Space.setAtom(space, Atom.make(DReg))
 	
-	rule xyz 0.001 { @_ => D@ }
-	rule xyz 0.005 { @_ => R@ }
-	rule xyz 0.1 { @D => _@ }
-	rule xyz 0.01 { @n => _@ }
-	rule xyz { @_ => _@ }
+	rule xyz 0.001 { @_ => @D }
+	rule xyz 0.005 { @_ => @R }
+	rule xyz 0.1 { @D => @_ }
+	rule xyz 0.01 { @n => @_ }
+	action xyz { @_ => _@ }
 	
 	// Aspirational code
 	/*
+	
+	input D extends # ({space}) => space.atom.element == DReg
+	input n extends # ({space}) => space.atom.element != DReg
+	
+	output R ({space}) => Space.setAtom(space, Atom.make(Res))
+	output D ({space}) => Space.setAtom(space, Atom.make(DReg))
+	
 	rule xyz { @_ => {
-		rule xyz 0.001 { @_ => @D }
-		rule xyz 0.005 { @_ => @R }
+		rule xyz 0.001 { => @D }
+		rule xyz 0.005 { => @R }
 	}}
 	
 	rule xyz { @# => {
-		rule xyz 0.1 { @D => @_ }
-		rule xyz 0.01 { @n => @_ }
+		rule xyz 0.1 { *D => @_ }
+		rule xyz 0.01 { *n => @_ }
 	}}
+	
+	action xyz { @_ => _@ }
+	
 	*/
 	
 }

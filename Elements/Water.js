@@ -13,7 +13,7 @@ element Water {
 		if (space.atom.type == Lava || space.atom.type == Fire) return true
 		return false
 	}
-	output S ({space}) => Space.setAtom(space, makeAtom(Steam))
+	output S ({space}) => Space.setAtom(space, Atom.make(Steam))
 	
 	rule xyz { @h => Sh }
 	

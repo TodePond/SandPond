@@ -268,9 +268,10 @@
 	}
 	
 	Rule = class Rule {
-		constructor(axes, rawSpaces, superSymmetries) {
+		constructor(axes, rawSpaces, superSymmetries, isAction) {
 			this.rawSpaces = rawSpaces
 			this.axes = axes
+			this.isAction = isAction
 			this.spaces = parseSpaces(rawSpaces, axes, superSymmetries)
 			this.layers = this.spaces[0].tests.length
 			this.symmetryCount = this.spaces[0].eventWindowNumbers.length

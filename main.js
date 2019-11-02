@@ -3,7 +3,7 @@
 //===========//
 const urlParams = new URLSearchParams(window.location.search)
 
-const SMALL_MODE = urlParams.has("small")
+const SMALL_MODE = urlParams.has("small") || !urlParams.has("big")
 const D2_MODE = urlParams.has("2d")
 const D1_MODE = urlParams.has("1d")
 
@@ -90,9 +90,7 @@ on.process(() => {
 	}
 	for (let i = 0; i < spaceCount; i++) {
 		const space = world.spaces[i]
-		if (space && space.atom) {
-			atomThink(space.atom, space)
-		}
+		if (space) Behave.spaceBehave(space)
 	}
 })
 

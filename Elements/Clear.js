@@ -22,8 +22,8 @@ element Clear {
 	}
 	
 	input D ({space}) => space && space.atom && space.atom.type == ClearDone
-	output D ({space}) => Space.setAtom(space, makeAtom(ClearDone))
-	output c ({space}) => { if (space) Space.setAtom(space, makeAtom(Clear)) }
+	output D ({space}) => Space.setAtom(space, Atom.make(ClearDone))
+	output c ({space}) => { if (space) Space.setAtom(space, Atom.make(Clear)) }
 	
 	rule XYZ { @t => ?? => D. }
 	rule XY { @e => ?? => D. }
@@ -39,12 +39,12 @@ element ClearDone {
 	
 	input c ({space, args}) => {
 		if (space && space.atom && space.atom.type == Clear) {
-			args.failure = true
+			args.success = false
 		}
 		return true
 	}
 	
-	output B ({space}) => Space.setAtom(space, makeAtom(ClearBomb))
+	output B ({space}) => Space.setAtom(space, Atom.make(ClearBomb))
 	
 	rule XYZ { @c => !! => B. }
 	

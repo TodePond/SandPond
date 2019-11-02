@@ -10,7 +10,7 @@ element Ant {
 	category "life"
 	
 	input F ({space}) => space && space.atom && space.atom.type == Food
-	output F ({space}) => Space.setAtom(space, makeAtom(Food))
+	output F ({space}) => Space.setAtom(space, Atom.make(Food))
 	
 	
 	rule 0.001 { @ => F }

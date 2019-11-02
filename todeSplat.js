@@ -315,19 +315,13 @@
 			}
 		}
 		
-		if (propertyName == "rule") {
+		if (propertyName == "rule" || propertyName == "action") {
 			input = propertyNameResult.input
 			input = eatGap(input).input
 			const result = eatName(input)
 			const name = result.name
-			return eatRule(input, elementArgs, inputs, outputs)
-			if (!result.success) return {input: source, success: false}
-			input = result.input
-			elementArgs.rules.push(eval(name))
-			return {
-				input,
-				success: true,
-			}
+			const isAction = propertyName == "action"? true : false
+			return eatRule(input, elementArgs, inputs, outputs, isAction)
 		}
 		
 		if (propertyName == "property") {
@@ -561,7 +555,7 @@
 		if (sides.nextSide != undefined) readSides(sides.nextSide, rawSpaces, xAxis, yAxis, inputs, outputs)
 	}
 	
-	const eatRule = (source, elementArgs, inputs, outputs) => {
+	const eatRule = (source, elementArgs, inputs, outputs, isAction) => {
 	
 		// Read the meta labels before the rule
 		const labelsResult = eatRuleLabels(source)
@@ -663,7 +657,7 @@
 		readSides(nextSide, rawSpaces, xAxis, yAxis, inputs, outputs)
 		
 		// Make the rule
-		const rule = new Rule(axes, rawSpaces, superSymmetries)
+		const rule = new Rule(axes, rawSpaces, superSymmetries, isAction)
 		elementArgs.rules.push(rule)
 		
 		return {

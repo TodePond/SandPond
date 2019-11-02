@@ -342,6 +342,7 @@ const UI = {}
 	$("#modeGo").on.click(() => {
 		let params = ""
 		if (UI.selectedSize == "small") params += "small&"
+		else if (UI.selectedSize == "big") params += "big&"
 		if (UI.selectedDimensions == "d1") params += "1d&"
 		else if (UI.selectedDimensions == "d2") params += "2d&"
 		const baseUrl = `${window.location.protocol}//${window.location.host}${window.location.pathname}`

@@ -43,7 +43,7 @@ element Snake {
 	
 	// Create new trail
 	output T ({space, self}) => {
-		const trail = makeAtom(SnakeTrail, {score: self.score})
+		const trail = Atom.make(SnakeTrail, {score: self.score})
 		Space.setAtom(space, trail)
 	}
 	
@@ -84,7 +84,7 @@ element Snake {
 	
 	// Make a new leader
 	output l ({space, self}) => {
-		const leader = makeAtom(Snake, {score: self.score + 1})
+		const leader = Atom.make(Snake, {score: self.score + 1})
 		self.leader = false
 		Space.setAtom(space, leader)
 	}

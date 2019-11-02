@@ -8,7 +8,7 @@ element EdgeClear {
 	family "EdgeClear"
 	category "clear"
 	
-	output E ({space}) => Space.setAtom(space, makeAtom(EdgeClearEdge))
+	output E ({space}) => Space.setAtom(space, Atom.make(EdgeClearEdge))
 	input N ({space}) => {
 		if (!space) return false
 		if (!space.atom) return true
@@ -31,7 +31,7 @@ element EdgeClearEdge {
 		if (space.atom && space.atom.type.family == "EdgeClear") return true
 	}
 	
-	output B ({space}) => Space.setAtom(space, makeAtom(EdgeClearBomb))
+	output B ({space}) => Space.setAtom(space, Atom.make(EdgeClearBomb))
 	
 	rule Y {
 		@ => B
@@ -61,7 +61,7 @@ element EdgeClearBomb {
 	
 	input B ({space}) => space && space.atom && space.atom.type == EdgeClearBomb
 	input D ({space}) => space && space.atom && space.atom.type == EdgeClearDone
-	output D ({space}) => Space.setAtom(space, makeAtom(EdgeClearDone))
+	output D ({space}) => Space.setAtom(space, Atom.make(EdgeClearDone))
 	
 	
 	rule { NN@ => @@@ }
@@ -82,7 +82,7 @@ element EdgeClearDone {
 	input b ({space, args}) => {
 		if (!space) return true
 		if (!space.atom) return true
-		if (space.atom.type == EdgeClearBomb) args.failure = true
+		if (space.atom.type == EdgeClearBomb) args.success = false
 		return true
 	}
 	

@@ -6,8 +6,9 @@ element SleepyFly {
 	colour "grey"
 	emissive "black"
 	precise true
-	hidden true
+	//hidden true
 	pour false
+	category "life"
 	
 	property sleeping false
 	

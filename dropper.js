@@ -106,6 +106,7 @@ const Dropper = {}
 	const dropAtom = (x, y, z) => {
 		let alteredY = Math.min(y + MAX_Y - 5, MAX_Y - 5)
 		let alteredZ = z
+		if (!UI) return
 		const atomType = UI.selectedElement
 		if (atomType.floor || D1_MODE) alteredY = 0
 		if (D2_MODE) alteredY = y
@@ -114,7 +115,7 @@ const Dropper = {}
 		const space = World.selectSpace(world, x, alteredY, alteredZ)
 		if (!space) return
 		if (space.atom) return
-		const atom = makeAtom(atomType)
+		const atom = Atom.make(atomType)
 		Space.setAtom(space, atom)
 		return atom
 	}
