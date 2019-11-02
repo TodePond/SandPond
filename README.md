@@ -1,5 +1,6 @@
 # Sandboys
 Sandboys are little atoms that follow simple rules.<br>
+Try it out [here](http://sandboysland.topwilson.com/?small). 
 It's inspired by the [T2Tile project](https://t2tile.org/) and [SPLAT](https://github.com/DaveAckley/SPLAT).
 
 I post daily updates [here](https://www.instagram.com/todepond/).
@@ -13,7 +14,8 @@ _    @
 It makes an atom fall down if there's an empty space below it.<br>
 
 ## Getting Started
-Just download it and open `index.html` in a browser.
+Just download it and open `index.html` in a browser.<br>
+Or try out the [live demo](http://sandboysland.topwilson.com/?small).
 
 ## Make your own element
 1. Write some TodeSplat using the `TodeSplat` function.
