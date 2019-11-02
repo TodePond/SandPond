@@ -19,7 +19,7 @@ element DReg {
 	rule xyz 0.01 { @n => @_ }
 	action xyz { @_ => _@ }
 	
-	// Aspirational code
+	// Aspirational Code
 	/*
 	
 	input D extends # ({space}) => space.atom.element == DReg
