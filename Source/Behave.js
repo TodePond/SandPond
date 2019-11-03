@@ -16,7 +16,7 @@ const BEHAVE = {}
 		const atom = space.atom
 		if (!atom) return
 		let ruleDone = false
-		for (let r = 0; r < atom.type.ruleCount; r++) {
+		for (let r = 0; r < atom.type.rules.length; r++) {
 			const rule = atom.type.rules[r]
 			if (ruleDone && !rule.isAction) continue
 			const result = tryRule(atom, rule, space)

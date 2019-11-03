@@ -12,61 +12,41 @@ const ELEMENT = {}
 	// Public //
 	//========//
 	ELEMENT.globalElements = {}
-	
-	ELEMENT.make = ({...args}) => {
-		//todo
+	ELEMENT.make = ({
+		name, colour = "white", emissive = "grey", opacity = 1.0,
+		precise = false, floor = false, hidden = false, pour = true,
+		rules = [], properties = {}, ...args
+	}) => {
+		const element = {
+			name, colour, emissive, opacity,
+			precise, floor, hidden, pour,
+			rules, properties, ...args
+		}
+		ELEMENT.globalElements[name] = element
+		createShaderColours(element)
+		return element
 	}
 	
 	//===========//
 	// Functions //
-	//===========//
-	const atomTypesKey = {}
-	AtomType = class AtomType {
-		constructor({name, colour, emissive, rules = [], key, state, scene, opacity = 1.0, precise, floor, hidden, properties, pour=true, ...args}) {
-			this.name = name
-			this.rules = rules
-			this.colour = colour
-			this.emissive = emissive
-			this.key = key
-			this.state = state
-			this.scene = scene
-			this.opacity = opacity
-			this.precise = precise
-			this.floor = floor
-			this.hidden = hidden
-			this.properties = properties
-			this.pour = pour
-			for (const propertyName in args) {
-				this[propertyName] = args[propertyName]
-			}
-			ELEMENT.globalElements[name] = this
-			atomTypesKey[key] = this
-			this.ruleCount = this.rules.length
-			this.createShaderColours()
+	//===========//	
+	const createShaderColours = (element) => {
+		const colourColour = new THREE.Color(element.colour)
+		const emissiveColour = new THREE.Color(element.emissive)
+		
+		element.shaderColour = {
+			r: colourColour.r * 255,
+			g: colourColour.g * 255,
+			b: colourColour.b * 255,
 		}
 		
-		createShaderColours() {
-			const colourColour = new THREE.Color(this.colour)
-			const emissiveColour = new THREE.Color(this.emissive)
-			
-			this.shaderColour = {
-				r: colourColour.r * 255,
-				g: colourColour.g * 255,
-				b: colourColour.b * 255,
-			}
-			
-			this.shaderOpacity = this.opacity * 255
-			
-			this.shaderEmissive = {
-				r: emissiveColour.r * 255,
-				g: emissiveColour.g * 255,
-				b: emissiveColour.b * 255,
-			}
+		element.shaderOpacity = element.opacity * 255
+		
+		element.shaderEmissive = {
+			r: emissiveColour.r * 255,
+			g: emissiveColour.g * 255,
+			b: emissiveColour.b * 255,
 		}
-	}
-	
-	function $AtomTypeKey(key) {
-		return atomTypesKey[key]
 	}
 	
 }
