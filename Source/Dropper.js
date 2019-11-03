@@ -1,7 +1,7 @@
 //======//
 // Drop //
 //======//
-const Dropper = {}
+const DROPPER = {}
 {
 
 	//===========//
@@ -19,7 +19,7 @@ const Dropper = {}
 	//========//
 	// Public //
 	//========//
-	Dropper.tryDrop = (position) => {
+	DROPPER.tryDrop = (position) => {
 	
 		if (!started && !Mouse.down) return
 		if (UI.clicking) return
@@ -111,12 +111,12 @@ const Dropper = {}
 		if (atomType.floor || D1_MODE) alteredY = 0
 		if (D2_MODE) alteredY = y
 		if (D2_MODE) alteredZ = 0
-		const world = Universe.selectWorld(universe, x, alteredY, alteredZ)
-		const space = World.selectSpace(world, x, alteredY, alteredZ)
+		const world = UNIVERSE.selectWorld(universe, x, alteredY, alteredZ)
+		const space = WORLD.selectSpace(world, x, alteredY, alteredZ)
 		if (!space) return
 		if (space.atom) return
-		const atom = Atom.make(atomType)
-		Space.setAtom(space, atom)
+		const atom = ATOM.make(atomType)
+		SPACE.setAtom(space, atom)
 		return atom
 	}
 	

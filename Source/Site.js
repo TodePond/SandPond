@@ -1,7 +1,7 @@
 //======//
 // Site //
 //======//
-const Site = {}
+const SITE = {}
 
 {
 
@@ -13,7 +13,7 @@ const Site = {}
 	//========//
 	// Public //
 	//========//
-	Site.make = (space, x, y, z) => {
+	SITE.make = (space, x, y, z) => {
 		const site = {
 			space,
 			x,

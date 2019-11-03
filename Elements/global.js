@@ -10,8 +10,8 @@ input ! ({success}) => success != false
 input ^ ({score, threshold}) => score >= threshold
 input * () => true
 
-output @ ({space, self}) => Space.setAtom(space, self)
-output _ ({space}) => Space.setAtom(space, undefined)
+output @ ({space, self}) => SPACE.setAtom(space, self)
+output _ ({space}) => SPACE.setAtom(space, undefined)
 output . () => {}
 
 `

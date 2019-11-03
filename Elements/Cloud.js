@@ -6,7 +6,7 @@ element Cloud {
 	emissive "grey"
 	category "sandbox"
 	
-	output W ({space}) => Space.setAtom(space, Atom.make(Water))
+	output W ({space}) => SPACE.setAtom(space, ATOM.make(Water))
 	
 	rule 0.1 { 
 		@ => @

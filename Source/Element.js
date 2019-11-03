@@ -1,8 +1,25 @@
-//==========//
-// AtomType //
-//==========//
+//=========//
+// Element //
+//=========//
+const ELEMENT = {}
+
 {
-	atomTypes = {}
+	// Element Job Description
+	//========================
+	// "I describe how I look and behave."
+
+	//========//
+	// Public //
+	//========//
+	ELEMENT.globalElements = {}
+	
+	ELEMENT.make = ({...args}) => {
+		//todo
+	}
+	
+	//===========//
+	// Functions //
+	//===========//
 	const atomTypesKey = {}
 	AtomType = class AtomType {
 		constructor({name, colour, emissive, rules = [], key, state, scene, opacity = 1.0, precise, floor, hidden, properties, pour=true, ...args}) {
@@ -22,7 +39,7 @@
 			for (const propertyName in args) {
 				this[propertyName] = args[propertyName]
 			}
-			atomTypes[name] = this
+			ELEMENT.globalElements[name] = this
 			atomTypesKey[key] = this
 			this.ruleCount = this.rules.length
 			this.createShaderColours()
@@ -48,15 +65,9 @@
 		}
 	}
 	
-	function $AtomType(name) {
-		return atomTypes[name]
-	}
-	
 	function $AtomTypeKey(key) {
 		return atomTypesKey[key]
 	}
-	
-	
 	
 }
 

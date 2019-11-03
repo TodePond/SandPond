@@ -8,7 +8,7 @@ element EdgeClear {
 	family "EdgeClear"
 	category "clear"
 	
-	output E ({space}) => Space.setAtom(space, Atom.make(EdgeClearEdge))
+	output E ({space}) => SPACE.setAtom(space, ATOM.make(EdgeClearEdge))
 	input N ({space}) => {
 		if (!space) return false
 		if (!space.atom) return true
@@ -31,7 +31,7 @@ element EdgeClearEdge {
 		if (space.atom && space.atom.type.family == "EdgeClear") return true
 	}
 	
-	output B ({space}) => Space.setAtom(space, Atom.make(EdgeClearBomb))
+	output B ({space}) => SPACE.setAtom(space, ATOM.make(EdgeClearBomb))
 	
 	rule Y {
 		@ => B
@@ -44,7 +44,6 @@ element EdgeClearEdge {
 	}
 	
 }
-
 
 element EdgeClearBomb {
 	colour "grey"
@@ -61,7 +60,7 @@ element EdgeClearBomb {
 	
 	input B ({space}) => space && space.atom && space.atom.type == EdgeClearBomb
 	input D ({space}) => space && space.atom && space.atom.type == EdgeClearDone
-	output D ({space}) => Space.setAtom(space, Atom.make(EdgeClearDone))
+	output D ({space}) => SPACE.setAtom(space, ATOM.make(EdgeClearDone))
 	
 	
 	rule { NN@ => @@@ }

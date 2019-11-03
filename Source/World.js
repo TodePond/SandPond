@@ -1,7 +1,7 @@
 //=======//
 // World //
 //=======//
-const World = {}
+const WORLD = {}
 {
 	
 	// World Job Description
@@ -19,7 +19,7 @@ const World = {}
 	//========//
 	// Public //
 	//========//
-	World.make = (rawArea) => {
+	WORLD.make = (rawArea) => {
 	
 		const world = {}
 		const area = readArea(rawArea)
@@ -56,11 +56,11 @@ const World = {}
 		return world
 	}
 	
-	World.selectSpace = (world, x, y, z) => {
+	WORLD.selectSpace = (world, x, y, z) => {
 		return selectGridSpace(world.grid, x, y, z)
 	}
 	
-	World.setSpaceColour = (world, space, colour, emissive, opacity) => {
+	WORLD.setSpaceColour = (world, space, colour, emissive, opacity) => {
 		
 		if (colour == false) {
 			world.colourInstances[space.colourOffset0] = 0
@@ -170,7 +170,7 @@ const World = {}
 			for (const x of area.xStart.to(area.xEnd)) {
 				grid[y][x] = []
 				for (const z of area.zStart.to(area.zEnd)) {
-					const space = Space.make(world, id)
+					const space = SPACE.make(world, id)
 					grid[y][x][z] = space
 					id++
 				}

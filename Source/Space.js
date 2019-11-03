@@ -1,7 +1,7 @@
 //=======//
 // Space //
 //=======//
-const Space = {}
+const SPACE = {}
 
 {
 
@@ -13,7 +13,7 @@ const Space = {}
 	//========//
 	// Public //
 	//========//
-	Space.make = (world, id) => {
+	SPACE.make = (world, id) => {
 		const space = {
 		
 			// Real Data
@@ -34,13 +34,13 @@ const Space = {}
 		return space
 	}
 	
-	Space.setAtom = (space, atom) => {
+	SPACE.setAtom = (space, atom) => {
 		space.atom = atom
 		if (atom == undefined) {
-			World.setSpaceColour(space.world, space, false)
+			WORLD.setSpaceColour(space.world, space, false)
 			return
 		}
-		World.setSpaceColour(space.world, space, atom.type.shaderColour, atom.type.shaderEmissive, atom.type.shaderOpacity)
+		WORLD.setSpaceColour(space.world, space, atom.type.shaderColour, atom.type.shaderEmissive, atom.type.shaderOpacity)
 	}
 	
 }

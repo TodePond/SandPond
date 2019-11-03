@@ -15,7 +15,7 @@ element Slime {
 		return args.swap = space.atom
 	}
 	
-	output w ({space, swap}) => Space.setAtom(space, swap)
+	output w ({space, swap}) => SPACE.setAtom(space, swap)
 	
 	rule {
 		@ => w

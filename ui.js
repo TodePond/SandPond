@@ -1,11 +1,10 @@
+"use strict";
 //====//
 // UI //
 //====//
 const UI = {}
+
 {
-	
-	console.log(atomTypes)
-	
 	//=========//
 	// Globals //
 	//=========//
@@ -16,7 +15,7 @@ const UI = {}
 	//======//
 	// HTML //
 	//======//
-	const STYLE = HTML `
+	const UI_STYLE = HTML `
 		<style>
 			
 			.menu {
@@ -145,7 +144,7 @@ const UI = {}
 		</style>
 	`
 	
-	const ELEMENT = HTML `
+	const UI_ELEMENT = HTML `
 		<div id="ui">
 		
 			<div id="menu" class="menu">
@@ -223,11 +222,11 @@ const UI = {}
 	//=======//
 	// Setup //
 	//=======//
-	document.head.appendChild(STYLE)
-	document.body.appendChild(ELEMENT)
+	document.head.appendChild(UI_STYLE)
+	document.body.appendChild(UI_ELEMENT)
 		
 	let firstElementDone = false
-	for (const element of atomTypes) {
+	for (const element of ELEMENT.globalElements) {
 		if (element.hidden) continue
 		
 		const searchItemButton = makeElementButton(element)
@@ -317,7 +316,7 @@ const UI = {}
 		for (const elementButton of $$("#searchItems > .elementButton")) {
 			const id = elementButton.id
 			const name = id.slice(0, id.length - "Button".length)
-			const element = $AtomType(name)
+			const element = ELEMENT.globalElements[name]
 			const index = name.as(LowerCase).indexOf(query)
 			
 			elementButton.classList.add("minimised")
@@ -372,7 +371,7 @@ const UI = {}
 		const idEnd = "Button"
 		
 		const name = newId.slice(0, newId.length - idEnd.length)
-		const newElement = $AtomType(name)
+		const newElement = ELEMENT.globalElements[name]
 		const oldElement = UI.selectedElement
 		
 		const oldId = oldElement.name + idEnd

@@ -31,20 +31,20 @@ element Snake {
 	
 	// Place the trail that I ate
 	output t ({space, self, trail}) => {
-		Space.setAtom(space, trail)
+		SPACE.setAtom(space, trail)
 		trail.score = self.score
 	}
 	
 	// Place me in the place the trail was
 	output o ({space, self, trailSpace}) => {
 		if (space != trailSpace) return
-		Space.setAtom(space, self)
+		SPACE.setAtom(space, self)
 	}
 	
 	// Create new trail
 	output T ({space, self}) => {
 		const trail = Atom.make(SnakeTrail, {score: self.score})
-		Space.setAtom(space, trail)
+		SPACE.setAtom(space, trail)
 	}
 	
 	// Am I waiting for my trail to be caught up on?
@@ -86,7 +86,7 @@ element Snake {
 	output l ({space, self}) => {
 		const leader = Atom.make(Snake, {score: self.score + 1})
 		self.leader = false
-		Space.setAtom(space, leader)
+		SPACE.setAtom(space, leader)
 	}
 	
 	//=======//

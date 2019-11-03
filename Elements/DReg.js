@@ -10,8 +10,8 @@ element DReg {
 	input D ({space}) => space && space.atom && space.atom.type == DReg
 	input n ({space}) => space && space.atom && space.atom.type != DReg
 	
-	output R ({space}) => Space.setAtom(space, Atom.make(Res))
-	output D ({space}) => Space.setAtom(space, Atom.make(DReg))
+	output R ({space}) => SPACE.setAtom(space, ATOM.make(Res))
+	output D ({space}) => SPACE.setAtom(space, ATOM.make(DReg))
 	
 	rule xyz 0.001 { @_ => @D }
 	rule xyz 0.005 { @_ => @R }
@@ -25,8 +25,8 @@ element DReg {
 	input D extends # ({space}) => space.atom.element == DReg
 	input n extends # ({space}) => space.atom.element != DReg
 	
-	output R ({space}) => Space.setAtom(space, Atom.make(Res))
-	output D ({space}) => Space.setAtom(space, Atom.make(DReg))
+	output R ({space}) => SPACE.setAtom(space, ATOM.make(Res))
+	output D ({space}) => SPACE.setAtom(space, ATOM.make(DReg))
 	
 	rule xyz { @_ => {
 		rule xyz 0.001 { => @D }

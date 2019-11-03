@@ -1,7 +1,7 @@
 //==========//
 // Universe //
 //==========//
-const Universe = {}
+const UNIVERSE = {}
 {
 	
 	// Universe Job Description
@@ -17,20 +17,20 @@ const Universe = {}
 	//========//
 	// Public //
 	//========//
-	Universe.make = (rawArea) => {
-		const world = World.make(rawArea)
+	UNIVERSE.make = (rawArea) => {
+		const world = WORLD.make(rawArea)
 		const universe = {world}
-		EventWindow.updateUniverse(universe)
+		EVENTWINDOW.updateUniverse(universe)
 		return universe
 	}
 	
-	Universe.selectWorld = (universe, x, y, z) => {
+	UNIVERSE.selectWorld = (universe, x, y, z) => {
 		return universe.world
 	}
 	
-	Universe.selectSpace = (universe, x, y, z) => {
-		const world = Universe.selectWorld(universe, x, y, z)
-		const space = World.selectSpace(world, x, y, z)
+	UNIVERSE.selectSpace = (universe, x, y, z) => {
+		const world = UNIVERSE.selectWorld(universe, x, y, z)
+		const space = WORLD.selectSpace(world, x, y, z)
 		return space
 	}
 	

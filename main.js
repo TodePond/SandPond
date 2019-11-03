@@ -63,7 +63,7 @@ stage.start()
 //=============//
 // World Setup //
 //=============//
-const universe = Universe.make(WORLD_AREA)
+const universe = UNIVERSE.make(WORLD_AREA)
 const world = universe.world
 const spaceCount = world.spaces.length
 
@@ -78,7 +78,7 @@ $("#loading").innerHTML = ""
 // Stuff //
 //=======//
 on.process(() => {
-	Dropper.tryDrop(stage.cursor.position3D)
+	DROPPER.tryDrop(stage.cursor.position3D)
 })
 
 let paused = false
@@ -90,7 +90,7 @@ on.process(() => {
 	}
 	for (let i = 0; i < spaceCount; i++) {
 		const space = world.spaces[i]
-		if (space) Behave.spaceBehave(space)
+		if (space) BEHAVE.spaceBehave(space)
 	}
 })
 

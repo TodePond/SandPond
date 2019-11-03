@@ -1,7 +1,7 @@
 //======//
 // Atom //
 //======//
-const Atom = {}
+const ATOM = {}
 
 {
 
@@ -12,7 +12,7 @@ const Atom = {}
 	//========//
 	// Public //
 	//========//
-	Atom.make = (type, args) => {
+	ATOM.make = (type, args) => {
 		const atom = {type, ...type.properties, ...args}
 		return atom
 	}

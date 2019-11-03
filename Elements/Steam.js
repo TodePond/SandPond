@@ -7,7 +7,7 @@ element Steam {
 	category "sandbox"
 	floor true
 	
-	output W ({space}) => Space.setAtom(space, Atom.make(Water))
+	output W ({space}) => SPACE.setAtom(space, ATOM.make(Water))
 	
 	rule 0.0002 { @ => W }
 	

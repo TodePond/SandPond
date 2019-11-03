@@ -16,7 +16,7 @@ element Food {
 		return args.swap = space.atom
 	}
 	
-	output l ({space, swap}) => Space.setAtom(space, swap)
+	output l ({space, swap}) => SPACE.setAtom(space, swap)
 	
 	rule {
 		@ => l

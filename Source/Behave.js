@@ -1,7 +1,7 @@
 //=======//
 // Event //
 //=======//
-const Behave = {}
+const BEHAVE = {}
 
 {
 
@@ -12,7 +12,7 @@ const Behave = {}
 	//========//
 	// Public //
 	//========//
-	Behave.spaceBehave = (space) => {
+	BEHAVE.spaceBehave = (space) => {
 		const atom = space.atom
 		if (!atom) return
 		let ruleDone = false

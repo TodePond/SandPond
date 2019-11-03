@@ -1,7 +1,7 @@
 //=============//
 // EventWindow //
 //=============//
-const EventWindow = {}
+const EVENTWINDOW = {}
 
 {
 
@@ -12,12 +12,12 @@ const EventWindow = {}
 	//========//
 	// Public //
 	//========//
-	EventWindow.getSiteNumber = (x, y, z) => {
+	EVENTWINDOW.getSiteNumber = (x, y, z) => {
 		const key = getSiteKey(x, y, z)
 		return SITE_NUMBERS[key]
 	}
 	
-	EventWindow.updateUniverse = (universe) => {
+	EVENTWINDOW.updateUniverse = (universe) => {
 		const world = universe.world
 		const area = world.area
 		const grid = world.grid
@@ -83,95 +83,95 @@ const EventWindow = {}
 	
 		// Written by hand because it made lookup faster compared to dynamically filling the array
 		return [
-			Site.make(Universe.selectSpace(universe, x + -2, y + 2, z + 0), x + -2, y + 2, z + 0),
-			Site.make(Universe.selectSpace(universe, x + -1, y + 2, z + 0), x + -1, y + 2, z + 0),
-			Site.make(Universe.selectSpace(universe, x + 0, y + 2, z + 0), x + 0, y + 2, z + 0),
-			Site.make(Universe.selectSpace(universe, x + 1, y + 2, z + 0), x + 1, y + 2, z + 0),
-			Site.make(Universe.selectSpace(universe, x + 2, y + 2, z + 0), x + 2, y + 2, z + 0),
+			SITE.make(UNIVERSE.selectSpace(universe, x + -2, y + 2, z + 0), x + -2, y + 2, z + 0),
+			SITE.make(UNIVERSE.selectSpace(universe, x + -1, y + 2, z + 0), x + -1, y + 2, z + 0),
+			SITE.make(UNIVERSE.selectSpace(universe, x + 0, y + 2, z + 0), x + 0, y + 2, z + 0),
+			SITE.make(UNIVERSE.selectSpace(universe, x + 1, y + 2, z + 0), x + 1, y + 2, z + 0),
+			SITE.make(UNIVERSE.selectSpace(universe, x + 2, y + 2, z + 0), x + 2, y + 2, z + 0),
 			
-			Site.make(Universe.selectSpace(universe, x + -2, y + 1, z + 0), x + -2, y + 1, z + 0),
-			Site.make(Universe.selectSpace(universe, x + -1, y + 1, z + 0), x + -1, y + 1, z + 0),
-			Site.make(Universe.selectSpace(universe, x + 0, y + 1, z + 0), x + 0, y + 1, z + 0),
-			Site.make(Universe.selectSpace(universe, x + 1, y + 1, z + 0), x + 1, y + 1, z + 0),
-			Site.make(Universe.selectSpace(universe, x + 2, y + 1, z + 0), x + 2, y + 1, z + 0),
+			SITE.make(UNIVERSE.selectSpace(universe, x + -2, y + 1, z + 0), x + -2, y + 1, z + 0),
+			SITE.make(UNIVERSE.selectSpace(universe, x + -1, y + 1, z + 0), x + -1, y + 1, z + 0),
+			SITE.make(UNIVERSE.selectSpace(universe, x + 0, y + 1, z + 0), x + 0, y + 1, z + 0),
+			SITE.make(UNIVERSE.selectSpace(universe, x + 1, y + 1, z + 0), x + 1, y + 1, z + 0),
+			SITE.make(UNIVERSE.selectSpace(universe, x + 2, y + 1, z + 0), x + 2, y + 1, z + 0),
 			
-			Site.make(Universe.selectSpace(universe, x + -2, y + 0, z + 0), x + -2, y + 0, z + 0),
-			Site.make(Universe.selectSpace(universe, x + -1, y + 0, z + 0), x + -1, y + 0, z + 0),
-			Site.make(Universe.selectSpace(universe, x + 0, y + 0, z + 0), x + 0, y + 0, z + 0),
-			Site.make(Universe.selectSpace(universe, x + 1, y + 0, z + 0), x + 1, y + 0, z + 0),
-			Site.make(Universe.selectSpace(universe, x + 2, y + 0, z + 0), x + 2, y + 0, z + 0),
+			SITE.make(UNIVERSE.selectSpace(universe, x + -2, y + 0, z + 0), x + -2, y + 0, z + 0),
+			SITE.make(UNIVERSE.selectSpace(universe, x + -1, y + 0, z + 0), x + -1, y + 0, z + 0),
+			SITE.make(UNIVERSE.selectSpace(universe, x + 0, y + 0, z + 0), x + 0, y + 0, z + 0),
+			SITE.make(UNIVERSE.selectSpace(universe, x + 1, y + 0, z + 0), x + 1, y + 0, z + 0),
+			SITE.make(UNIVERSE.selectSpace(universe, x + 2, y + 0, z + 0), x + 2, y + 0, z + 0),
 			
-			Site.make(Universe.selectSpace(universe, x + -2, y + -1, z + 0), x + -2, y + -1, z + 0),
-			Site.make(Universe.selectSpace(universe, x + -1, y + -1, z + 0), x + -1, y + -1, z + 0),
-			Site.make(Universe.selectSpace(universe, x + 0, y + -1, z + 0), x + 0, y + -1, z + 0),
-			Site.make(Universe.selectSpace(universe, x + 1, y + -1, z + 0), x + 1, y + -1, z + 0),
-			Site.make(Universe.selectSpace(universe, x + 2, y + -1, z + 0), x + 2, y + -1, z + 0),
+			SITE.make(UNIVERSE.selectSpace(universe, x + -2, y + -1, z + 0), x + -2, y + -1, z + 0),
+			SITE.make(UNIVERSE.selectSpace(universe, x + -1, y + -1, z + 0), x + -1, y + -1, z + 0),
+			SITE.make(UNIVERSE.selectSpace(universe, x + 0, y + -1, z + 0), x + 0, y + -1, z + 0),
+			SITE.make(UNIVERSE.selectSpace(universe, x + 1, y + -1, z + 0), x + 1, y + -1, z + 0),
+			SITE.make(UNIVERSE.selectSpace(universe, x + 2, y + -1, z + 0), x + 2, y + -1, z + 0),
 			
-			Site.make(Universe.selectSpace(universe, x + -2, y + -2, z + 0), x + -2, y + -2, z + 0),
-			Site.make(Universe.selectSpace(universe, x + -1, y + -2, z + 0), x + -1, y + -2, z + 0),
-			Site.make(Universe.selectSpace(universe, x + 0, y + -2, z + 0), x + 0, y + -2, z + 0),
-			Site.make(Universe.selectSpace(universe, x + 1, y + -2, z + 0), x + 1, y + -2, z + 0),
-			Site.make(Universe.selectSpace(universe, x + 2, y + -2, z + 0), x + 2, y + -2, z + 0),
+			SITE.make(UNIVERSE.selectSpace(universe, x + -2, y + -2, z + 0), x + -2, y + -2, z + 0),
+			SITE.make(UNIVERSE.selectSpace(universe, x + -1, y + -2, z + 0), x + -1, y + -2, z + 0),
+			SITE.make(UNIVERSE.selectSpace(universe, x + 0, y + -2, z + 0), x + 0, y + -2, z + 0),
+			SITE.make(UNIVERSE.selectSpace(universe, x + 1, y + -2, z + 0), x + 1, y + -2, z + 0),
+			SITE.make(UNIVERSE.selectSpace(universe, x + 2, y + -2, z + 0), x + 2, y + -2, z + 0),
 			
-			Site.make(Universe.selectSpace(universe, x + -2, y + 0, z + 2), x + -2, y + 0, z + 2),
-			Site.make(Universe.selectSpace(universe, x + -1, y + 0, z + 2), x + -1, y + 0, z + 2),
-			Site.make(Universe.selectSpace(universe, x + 0, y + 0, z + 2), x + 0, y + 0, z + 2),
-			Site.make(Universe.selectSpace(universe, x + 1, y + 0, z + 2), x + 1, y + 0, z + 2),
-			Site.make(Universe.selectSpace(universe, x + 2, y + 0, z + 2), x + 2, y + 0, z + 2),
+			SITE.make(UNIVERSE.selectSpace(universe, x + -2, y + 0, z + 2), x + -2, y + 0, z + 2),
+			SITE.make(UNIVERSE.selectSpace(universe, x + -1, y + 0, z + 2), x + -1, y + 0, z + 2),
+			SITE.make(UNIVERSE.selectSpace(universe, x + 0, y + 0, z + 2), x + 0, y + 0, z + 2),
+			SITE.make(UNIVERSE.selectSpace(universe, x + 1, y + 0, z + 2), x + 1, y + 0, z + 2),
+			SITE.make(UNIVERSE.selectSpace(universe, x + 2, y + 0, z + 2), x + 2, y + 0, z + 2),
 			
-			Site.make(Universe.selectSpace(universe, x + -2, y + 0, z + 1), x + -2, y + 0, z + 1),
-			Site.make(Universe.selectSpace(universe, x + -1, y + 0, z + 1), x + -1, y + 0, z + 1),
-			Site.make(Universe.selectSpace(universe, x + 0, y + 0, z + 1), x + 0, y + 0, z + 1),
-			Site.make(Universe.selectSpace(universe, x + 1, y + 0, z + 1), x + 1, y + 0, z + 1),
-			Site.make(Universe.selectSpace(universe, x + 2, y + 0, z + 1), x + 2, y + 0, z + 1),
+			SITE.make(UNIVERSE.selectSpace(universe, x + -2, y + 0, z + 1), x + -2, y + 0, z + 1),
+			SITE.make(UNIVERSE.selectSpace(universe, x + -1, y + 0, z + 1), x + -1, y + 0, z + 1),
+			SITE.make(UNIVERSE.selectSpace(universe, x + 0, y + 0, z + 1), x + 0, y + 0, z + 1),
+			SITE.make(UNIVERSE.selectSpace(universe, x + 1, y + 0, z + 1), x + 1, y + 0, z + 1),
+			SITE.make(UNIVERSE.selectSpace(universe, x + 2, y + 0, z + 1), x + 2, y + 0, z + 1),
 			/*
-			Site.make(Universe.selectSpace(universe, x + -2, y + 0, z + 0), x + -2, y + 0, z + 0),
-			Site.make(Universe.selectSpace(universe, x + -1, y + 0, z + 0), x + -1, y + 0, z + 0),
-			Site.make(Universe.selectSpace(universe, x + 0, y + 0, z + 0), x + 0, y + 0, z + 0),
-			Site.make(Universe.selectSpace(universe, x + 1, y + 0, z + 0), x + 1, y + 0, z + 0),
-			Site.make(Universe.selectSpace(universe, x + 2, y + 0, z + 0), x + 2, y + 0, z + 0),
+			SITE.make(UNIVERSE.selectSpace(universe, x + -2, y + 0, z + 0), x + -2, y + 0, z + 0),
+			SITE.make(UNIVERSE.selectSpace(universe, x + -1, y + 0, z + 0), x + -1, y + 0, z + 0),
+			SITE.make(UNIVERSE.selectSpace(universe, x + 0, y + 0, z + 0), x + 0, y + 0, z + 0),
+			SITE.make(UNIVERSE.selectSpace(universe, x + 1, y + 0, z + 0), x + 1, y + 0, z + 0),
+			SITE.make(UNIVERSE.selectSpace(universe, x + 2, y + 0, z + 0), x + 2, y + 0, z + 0),
 			*/
-			Site.make(Universe.selectSpace(universe, x + -2, y + 0, z + -1), x + -2, y + 0, z + -1),
-			Site.make(Universe.selectSpace(universe, x + -1, y + 0, z + -1), x + -1, y + 0, z + -1),
-			Site.make(Universe.selectSpace(universe, x + 0, y + 0, z + -1), x + 0, y + 0, z + -1),
-			Site.make(Universe.selectSpace(universe, x + 1, y + 0, z + -1), x + 1, y + 0, z + -1),
-			Site.make(Universe.selectSpace(universe, x + 2, y + 0, z + -1), x + 2, y + 0, z + -1),
+			SITE.make(UNIVERSE.selectSpace(universe, x + -2, y + 0, z + -1), x + -2, y + 0, z + -1),
+			SITE.make(UNIVERSE.selectSpace(universe, x + -1, y + 0, z + -1), x + -1, y + 0, z + -1),
+			SITE.make(UNIVERSE.selectSpace(universe, x + 0, y + 0, z + -1), x + 0, y + 0, z + -1),
+			SITE.make(UNIVERSE.selectSpace(universe, x + 1, y + 0, z + -1), x + 1, y + 0, z + -1),
+			SITE.make(UNIVERSE.selectSpace(universe, x + 2, y + 0, z + -1), x + 2, y + 0, z + -1),
 			
-			Site.make(Universe.selectSpace(universe, x + -2, y + 0, z + -2), x + -2, y + 0, z + -2),
-			Site.make(Universe.selectSpace(universe, x + -1, y + 0, z + -2), x + -1, y + 0, z + -2),
-			Site.make(Universe.selectSpace(universe, x + 0, y + 0, z + -2), x + 0, y + 0, z + -2),
-			Site.make(Universe.selectSpace(universe, x + 1, y + 0, z + -2), x + 1, y + 0, z + -2),
-			Site.make(Universe.selectSpace(universe, x + 2, y + 0, z + -2), x + 2, y + 0, z + -2),
+			SITE.make(UNIVERSE.selectSpace(universe, x + -2, y + 0, z + -2), x + -2, y + 0, z + -2),
+			SITE.make(UNIVERSE.selectSpace(universe, x + -1, y + 0, z + -2), x + -1, y + 0, z + -2),
+			SITE.make(UNIVERSE.selectSpace(universe, x + 0, y + 0, z + -2), x + 0, y + 0, z + -2),
+			SITE.make(UNIVERSE.selectSpace(universe, x + 1, y + 0, z + -2), x + 1, y + 0, z + -2),
+			SITE.make(UNIVERSE.selectSpace(universe, x + 2, y + 0, z + -2), x + 2, y + 0, z + -2),
 			
-			Site.make(Universe.selectSpace(universe, x + 0, y + 2, z + -2), x + 0, y + 2, z + -2),
-			Site.make(Universe.selectSpace(universe, x + 0, y + 2, z + -1), x + 0, y + 2, z + -1),
-			/*Universe.selectSpace(universe, x + 0, y + 2, z + 0),*/
-			Site.make(Universe.selectSpace(universe, x + 0, y + 2, z + 1), x + 0, y + 2, z + 1),
-			Site.make(Universe.selectSpace(universe, x + 0, y + 2, z + 2), x + 0, y + 2, z + 2),
+			SITE.make(UNIVERSE.selectSpace(universe, x + 0, y + 2, z + -2), x + 0, y + 2, z + -2),
+			SITE.make(UNIVERSE.selectSpace(universe, x + 0, y + 2, z + -1), x + 0, y + 2, z + -1),
+			/*UNIVERSE.selectSpace(universe, x + 0, y + 2, z + 0),*/
+			SITE.make(UNIVERSE.selectSpace(universe, x + 0, y + 2, z + 1), x + 0, y + 2, z + 1),
+			SITE.make(UNIVERSE.selectSpace(universe, x + 0, y + 2, z + 2), x + 0, y + 2, z + 2),
 			
-			Site.make(Universe.selectSpace(universe, x + 0, y + 1, z + -2), x + 0, y + 1, z + -2),
-			Site.make(Universe.selectSpace(universe, x + 0, y + 1, z + -1), x + 0, y + 1, z + -1),
-			/*Universe.selectSpace(universe, x + 0, y + 1, z + 0),*/
-			Site.make(Universe.selectSpace(universe, x + 0, y + 1, z + 1), x + 0, y + 1, z + 1),
-			Site.make(Universe.selectSpace(universe, x + 0, y + 1, z + 2), x + 0, y + 1, z + 2),
+			SITE.make(UNIVERSE.selectSpace(universe, x + 0, y + 1, z + -2), x + 0, y + 1, z + -2),
+			SITE.make(UNIVERSE.selectSpace(universe, x + 0, y + 1, z + -1), x + 0, y + 1, z + -1),
+			/*UNIVERSE.selectSpace(universe, x + 0, y + 1, z + 0),*/
+			SITE.make(UNIVERSE.selectSpace(universe, x + 0, y + 1, z + 1), x + 0, y + 1, z + 1),
+			SITE.make(UNIVERSE.selectSpace(universe, x + 0, y + 1, z + 2), x + 0, y + 1, z + 2),
 			/*
-			Site.make(Universe.selectSpace(universe, x + 0, y + 0, z + -2), x + 0, y + 0, z + -2),
-			Site.make(Universe.selectSpace(universe, x + 0, y + 0, z + -1), x + 0, y + 0, z + -1),
-			Site.make(Universe.selectSpace(universe, x + 0, y + 0, z + 0), x + 0, y + 0, z + 0),
-			Site.make(Universe.selectSpace(universe, x + 0, y + 0, z + 1), x + 0, y + 0, z + 1),
-			Site.make(Universe.selectSpace(universe, x + 0, y + 0, z + 2), x + 0, y + 0, z + 2),
+			SITE.make(UNIVERSE.selectSpace(universe, x + 0, y + 0, z + -2), x + 0, y + 0, z + -2),
+			SITE.make(UNIVERSE.selectSpace(universe, x + 0, y + 0, z + -1), x + 0, y + 0, z + -1),
+			SITE.make(UNIVERSE.selectSpace(universe, x + 0, y + 0, z + 0), x + 0, y + 0, z + 0),
+			SITE.make(UNIVERSE.selectSpace(universe, x + 0, y + 0, z + 1), x + 0, y + 0, z + 1),
+			SITE.make(UNIVERSE.selectSpace(universe, x + 0, y + 0, z + 2), x + 0, y + 0, z + 2),
 			*/
-			Site.make(Universe.selectSpace(universe, x + 0, y + -1, z + -2), x + 0, y + -1, z + -2),
-			Site.make(Universe.selectSpace(universe, x + 0, y + -1, z + -1), x + 0, y + -1, z + -1),
-			/*Universe.selectSpace(universe, x + 0, y + -1, z + 0),*/
-			Site.make(Universe.selectSpace(universe, x + 0, y + -1, z + 1), x + 0, y + -1, z + 1),
-			Site.make(Universe.selectSpace(universe, x + 0, y + -1, z + 2), x + 0, y + -1, z + 2),
+			SITE.make(UNIVERSE.selectSpace(universe, x + 0, y + -1, z + -2), x + 0, y + -1, z + -2),
+			SITE.make(UNIVERSE.selectSpace(universe, x + 0, y + -1, z + -1), x + 0, y + -1, z + -1),
+			/*UNIVERSE.selectSpace(universe, x + 0, y + -1, z + 0),*/
+			SITE.make(UNIVERSE.selectSpace(universe, x + 0, y + -1, z + 1), x + 0, y + -1, z + 1),
+			SITE.make(UNIVERSE.selectSpace(universe, x + 0, y + -1, z + 2), x + 0, y + -1, z + 2),
 			
-			Site.make(Universe.selectSpace(universe, x + 0, y + -2, z + -2), x + 0, y + -2, z + -2),
-			Site.make(Universe.selectSpace(universe, x + 0, y + -2, z + -1), x + 0, y + -2, z + -1),
-			/*Universe.selectSpace(universe, x + 0, y + -2, z + 0),*/
-			Site.make(Universe.selectSpace(universe, x + 0, y + -2, z + 1), x + 0, y + -2, z + 1),
-			Site.make(Universe.selectSpace(universe, x + 0, y + -2, z + 2), x + 0, y + -2, z + 2),
+			SITE.make(UNIVERSE.selectSpace(universe, x + 0, y + -2, z + -2), x + 0, y + -2, z + -2),
+			SITE.make(UNIVERSE.selectSpace(universe, x + 0, y + -2, z + -1), x + 0, y + -2, z + -1),
+			/*UNIVERSE.selectSpace(universe, x + 0, y + -2, z + 0),*/
+			SITE.make(UNIVERSE.selectSpace(universe, x + 0, y + -2, z + 1), x + 0, y + -2, z + 1),
+			SITE.make(UNIVERSE.selectSpace(universe, x + 0, y + -2, z + 2), x + 0, y + -2, z + 2),
 		]
 	}
 	

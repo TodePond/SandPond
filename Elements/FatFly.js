@@ -20,12 +20,12 @@ element FatFly {
 	}
 	
 	output L ({space, args}) => {
-		Space.setAtom(space, Atom.make(FatFlyLimb))
+		SPACE.setAtom(space, ATOM.make(FatFlyLimb))
 	}
 	
 	output l ({space}) => {
 		if (space && !space.atom) {
-			Space.setAtom(space, Atom.make(FatFlyLimb))
+			SPACE.setAtom(space, ATOM.make(FatFlyLimb))
 		}
 	}
 	
