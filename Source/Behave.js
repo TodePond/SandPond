@@ -21,7 +21,7 @@ const BEHAVE = {}
 			if (ruleDone && !rule.isAction) continue
 			const result = tryRule(atom, rule, space)
 			if (result) {
-				ruleDone = true
+				if (!rule.isAction)	ruleDone = true
 			}
 		}
 	}
