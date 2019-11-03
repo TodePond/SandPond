@@ -10,7 +10,7 @@ element SleepyFly {
 	pour false
 	category "life"
 	
-	property sleeping false
+	data sleeping false
 	
 	input s ({self}) => self.sleeping
 	input a ({self}) => !self.sleeping

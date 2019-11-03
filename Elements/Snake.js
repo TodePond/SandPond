@@ -8,7 +8,7 @@ element Snake {
 	pour false
 	category "life"
 	
-	property score 0
+	data score 0
 	
 	//===========//
 	// FUNCTIONS //
@@ -43,7 +43,7 @@ element Snake {
 	
 	// Create new trail
 	output T ({space, self}) => {
-		const trail = Atom.make(SnakeTrail, {score: self.score})
+		const trail = ATOM.make(SnakeTrail, {score: self.score})
 		SPACE.setAtom(space, trail)
 	}
 	
@@ -84,7 +84,7 @@ element Snake {
 	
 	// Make a new leader
 	output l ({space, self}) => {
-		const leader = Atom.make(Snake, {score: self.score + 1})
+		const leader = ATOM.make(Snake, {score: self.score + 1})
 		self.leader = false
 		SPACE.setAtom(space, leader)
 	}

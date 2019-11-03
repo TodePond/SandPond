@@ -15,12 +15,12 @@ const ELEMENT = {}
 	ELEMENT.make = ({
 		name, colour = "white", emissive = "grey", opacity = 1.0,
 		precise = false, floor = false, hidden = false, pour = true,
-		rules = [], properties = {}, ...args
+		rules = [], data = {}, ...properties
 	}) => {
 		const element = {
 			name, colour, emissive, opacity,
 			precise, floor, hidden, pour,
-			rules, properties, ...args
+			rules, data, ...properties
 		}
 		ELEMENT.globalElements[name] = element
 		createShaderColours(element)

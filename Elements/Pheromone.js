@@ -8,7 +8,7 @@ element Pheromone {
 	opacity 0.3
 
 	hidden true
-	property distance 0
+	data distance 0
 	
 	output m ({space, self}) => {
 		SPACE.setAtom(space, undefined)

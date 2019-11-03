@@ -324,7 +324,7 @@
 			return eatRule(input, elementArgs, inputs, outputs, isAction)
 		}
 		
-		if (propertyName == "property") {
+		if (propertyName == "data") {
 			input = propertyNameResult.input
 			input = eatGap(input).input
 			
@@ -337,14 +337,13 @@
 			const line = lineResult.line
 			input = lineResult.input
 			
-			elementArgs.properties[name] = eval(line)
+			elementArgs.data[name] = eval(line)
 			
 			return {
 				input,
 				success: true,
 			}
 		}
-		
 		
 		if (propertyName == "}") return {input, success: false}
 		if (!propertyNameResult.success) return {input: source, success: false}
@@ -396,7 +395,7 @@
 	const eatElement = (source) => {
 	
 		let input = source
-		const elementArgs = {rules: [], properties: []}
+		const elementArgs = {rules: [], data: []}
 		const inputs = new Map()
 		const outputs = new Map()
 		

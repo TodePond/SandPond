@@ -13,7 +13,7 @@ const ATOM = {}
 	// Public //
 	//========//
 	ATOM.make = (type, args) => {
-		const atom = {type, ...type.properties, ...args}
+		const atom = {type, ...type.data, ...args}
 		return atom
 	}
 	
