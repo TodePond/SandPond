@@ -167,6 +167,7 @@ const UI = {}
 						<div class="heading box search clickable" id="searchHeading"><div class="label">&#8981;</div></div>
 						<div class="category heading box clickable" id="sandboxHeading"><div class="label">Sandbox</div></div>
 						<div class="category heading box clickable" id="lifeHeading"><div class="label">Life</div></div>
+						<div class="category heading box clickable" id="playerHeading"><div class="label">Player</div></div>
 						<div class="category heading box clickable" id="t2tileHeading"><div class="label">T2Tile</div></div>
 						<div class="category heading box clickable" id="clearHeading"><div class="label">Clear</div></div>
 					</div>
@@ -425,6 +426,9 @@ const UI = {}
 	})
 	
 	$$(".category").on.click(function() {
+		$$(".category").forEach(category => {
+			if (category != this) category.classList.remove("selected")
+		})
 		this.classList.toggle("selected")
 		updateSearch()
 	})

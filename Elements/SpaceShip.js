@@ -1,19 +1,18 @@
 TodeSplat`
 
-
 element SpaceShip {
 
 	colour "pink"
 	emissive "purple"
 	precise true
 	pour false
-	category "life"
+	category "player"
 	
 	input r () => Keyboard.ArrowRight
 	input l () => Keyboard.ArrowLeft
 	input f () => Keyboard.ArrowUp
 	input b () => Keyboard.ArrowDown
-	input d () => Keyboard.t
+	input d () => Keyboard[" "]
 	
 	output S ({space}) => SPACE.setAtom(space, ATOM.make(Sand))
 	
