@@ -13,7 +13,7 @@ element Ant {
 	output F ({space}) => SPACE.setAtom(space, ATOM.make(Food))
 	
 	
-	rule 0.001 { @ => F }
+	//rule 0.001 { @ => F }
 	
 	rule {
 		@ => _

@@ -9,7 +9,7 @@ element Snake {
 	category "life"
 	
 	data score 0
-	
+
 	//===========//
 	// FUNCTIONS //
 	//===========//
@@ -79,7 +79,7 @@ element Snake {
 	// Is it Res?
 	input R ({space}) => {
 		if (!space || !space.atom) return false
-		return space.atom.type == Res
+		return space.atom.type.isFood
 	}
 	
 	// Make a new leader

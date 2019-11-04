@@ -3,8 +3,8 @@ TodeSplat`
 
 element Fly {
 
-	colour "grey"
-	emissive "black"
+	colour "royalblue"
+	emissive "darkblue"
 	precise true
 	pour false
 	category "life"

@@ -3,8 +3,8 @@ TodeSplat`
 
 element FatFly {
 
-	colour "grey"
-	emissive "black"
+	colour "royalblue"
+	emissive "darkblue"
 	precise true
 	pour false
 	category "life"
@@ -41,7 +41,7 @@ element FatFly {
 
 element FatFlyLimb {
 	hidden true
-	colour "blue"
+	colour "royalblue"
 	emissive "darkblue"
 	
 	input f ({space, args}) => {

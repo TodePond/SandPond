@@ -3,8 +3,8 @@ TodeSplat`
 
 element SleepyFly {
 
-	colour "grey"
-	emissive "black"
+	colour "royalblue"
+	emissive "darkblue"
 	precise true
 	//hidden true
 	pour false
