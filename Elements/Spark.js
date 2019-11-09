@@ -18,6 +18,84 @@ element Spark {
 	
 }
 
+element Explosion {
+
+	colour "lightyellow"
+	emissive "orange"
+	
+	data timer 1000
+	
+	output t ({self}) => self.timer--
+	input d ({self}) => self.timer <= 0
+	
+	output e ({space, self}) => {
+		if (space) SPACE.setAtom(space, self)
+	}
+	
+	
+	action { @ => t }
+	rule { @d => _. }
+	
+	rule xyz { @* => @e }
+	rule xyz { @* => @e }
+	rule xyz { @* => @e }
+	rule xyz { @* => @e }
+	
+	
+}
+
+element RedExplosion {
+
+	colour "red"
+	emissive "darkred"
+	
+	data timer 1000
+	
+	output t ({self}) => self.timer--
+	input d ({self}) => self.timer <= 0
+	
+	output e ({space, self}) => {
+		if (space) SPACE.setAtom(space, self)
+	}
+	
+	
+	action { @ => t }
+	rule { @d => _. }
+	
+	rule xyz { @* => @e }
+	rule xyz { @* => @e }
+	rule xyz { @* => @e }
+	rule xyz { @* => @e }
+	
+	
+}
+
+element BlueExplosion {
+
+	colour "blue"
+	emissive "darkblue"
+	
+	data timer 1000
+	
+	output t ({self}) => self.timer--
+	input d ({self}) => self.timer <= 0
+	
+	output e ({space, self}) => {
+		if (space) SPACE.setAtom(space, self)
+	}
+	
+	
+	action { @ => t }
+	rule { @d => _. }
+	
+	rule xyz { @* => @e }
+	rule xyz { @* => @e }
+	rule xyz { @* => @e }
+	rule xyz { @* => @e }
+	
+	
+}
+
 element BlueSpark {
 
 	colour "lightblue"
