@@ -5,7 +5,7 @@ element Water {
 	colour "lightblue"
 	emissive "blue"
 	category "sandbox"
-	
+	opacity 0.4
 	state "liquid"
 	
 	input h ({space}) => {
