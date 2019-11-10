@@ -2,7 +2,6 @@ let fireworkColour = 0
 
 TodeSplat`
 
-
 element Firework {
 
 	colour "grey"
@@ -36,6 +35,24 @@ element Firework {
 		_ => @
 		@    F
 	}
+	
+}
+
+element Gunpowder {
+
+	colour "grey"
+	emissive "black"
+	category "sandbox"
+	
+	input f ({space, args}) => {
+		if (space && space.atom && (space.atom.element == Fire || space.atom.element == Lava || space.atom.element == Explosion)) args.success = true
+		return true
+	}
+	
+	output E ({space}) => SPACE.setAtom(space, ATOM.make(Explosion))
+	
+	rule XYZ { @f => ?? => E* }
+	ruleset Sand
 	
 }
 

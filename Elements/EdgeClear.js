@@ -12,7 +12,7 @@ element EdgeClear {
 	input N ({space}) => {
 		if (!space) return false
 		if (!space.atom) return true
-		if (space.atom.type.family != "EdgeClear") return true
+		if (space.atom.element.family != "EdgeClear") return true
 	}
 	
 	rule { @NN => @@@ }
@@ -28,7 +28,7 @@ element EdgeClearEdge {
 	
 	input E ({space}) => {
 		if (!space) return true
-		if (space.atom && space.atom.type.family == "EdgeClear") return true
+		if (space.atom && space.atom.element.family == "EdgeClear") return true
 	}
 	
 	output B ({space}) => SPACE.setAtom(space, ATOM.make(EdgeClearBomb))
@@ -54,12 +54,12 @@ element EdgeClearBomb {
 	input N ({space}) => {
 		if (!space) return false
 		if (!space.atom) return true
-		if (space.atom.type == EdgeClear) return true
-		if (space.atom.type.family != "EdgeClear") return true
+		if (space.atom.element == EdgeClear) return true
+		if (space.atom.element.family != "EdgeClear") return true
 	}
 	
-	input B ({space}) => space && space.atom && space.atom.type == EdgeClearBomb
-	input D ({space}) => space && space.atom && space.atom.type == EdgeClearDone
+	input B ({space}) => space && space.atom && space.atom.element == EdgeClearBomb
+	input D ({space}) => space && space.atom && space.atom.element == EdgeClearDone
 	output D ({space}) => SPACE.setAtom(space, ATOM.make(EdgeClearDone))
 	
 	
@@ -81,7 +81,7 @@ element EdgeClearDone {
 	input b ({space, args}) => {
 		if (!space) return true
 		if (!space.atom) return true
-		if (space.atom.type == EdgeClearBomb) args.success = false
+		if (space.atom.element == EdgeClearBomb) args.success = false
 		return true
 	}
 	

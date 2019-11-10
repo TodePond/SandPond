@@ -271,7 +271,6 @@
 		let input = source
 		let output = ""
 		
-		
 		const propertyNameResult = eatName(input)
 		const propertyName = propertyNameResult.name
 		
@@ -322,6 +321,23 @@
 			const name = result.name
 			const isAction = propertyName == "action"? true : false
 			return eatRule(input, elementArgs, inputs, outputs, isAction)
+		}
+		
+		if (propertyName == "ruleset") {
+			input = propertyNameResult.input
+			input = eatGap(input).input
+			
+			const result = eatName(input)
+			input = result.input
+			const elementName = result.name
+			
+			const element = ELEMENT.globalElements[elementName]
+			if (!element) throw new Error(`[TodeSplat] Can't find element '${elementName}'`)
+			elementArgs.rules.push(...element.rules)
+			return {
+				input,
+				success: true,
+			}
 		}
 		
 		if (propertyName == "data") {

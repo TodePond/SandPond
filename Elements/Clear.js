@@ -8,7 +8,7 @@ element Clear {
 	category "clear"
 	
 	input t ({space, args}) => {
-		if (space && space.atom && space.atom.type == ClearDone) {
+		if (space && space.atom && space.atom.element == ClearDone) {
 			args.success = true
 		}
 		return true
@@ -21,7 +21,7 @@ element Clear {
 		return true
 	}
 	
-	input D ({space}) => space && space.atom && space.atom.type == ClearDone
+	input D ({space}) => space && space.atom && space.atom.element == ClearDone
 	output D ({space}) => SPACE.setAtom(space, ATOM.make(ClearDone))
 	output c ({space}) => { if (space) SPACE.setAtom(space, ATOM.make(Clear)) }
 	
@@ -38,7 +38,7 @@ element ClearDone {
 	hidden true
 	
 	input c ({space, args}) => {
-		if (space && space.atom && space.atom.type == Clear) {
+		if (space && space.atom && space.atom.element == Clear) {
 			args.success = false
 		}
 		return true

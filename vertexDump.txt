@@ -1,0 +1,722 @@
+1: precision highp float;
+2: precision highp int;
+3: #define HIGH_PRECISION
+4: #define SHADER_NAME MeshLambertMaterial
+5: #define VERTEX_TEXTURES
+6: #define GAMMA_FACTOR 2
+7: #define MAX_BONES 0
+8: #define BONE_TEXTURE
+9: uniform mat4 modelMatrix;
+10: uniform mat4 modelViewMatrix;
+11: uniform mat4 projectionMatrix;
+12: uniform mat4 viewMatrix;
+13: uniform mat3 normalMatrix;
+14: uniform vec3 cameraPosition;
+15: uniform bool isOrthographic;
+16: #ifdef USE_INSTANCING
+17:  attribute mat4 instanceMatrix;
+18: #endif
+19: attribute vec3 position;
+20: attribute vec3 normal;
+21: attribute vec2 uv;
+22: #ifdef USE_TANGENT
+23: 	attribute vec4 tangent;
+24: #endif
+25: #ifdef USE_COLOR
+26: 	attribute vec3 color;
+27: #endif
+28: #ifdef USE_MORPHTARGETS
+29: 	attribute vec3 morphTarget0;
+30: 	attribute vec3 morphTarget1;
+31: 	attribute vec3 morphTarget2;
+32: 	attribute vec3 morphTarget3;
+33: 	#ifdef USE_MORPHNORMALS
+34: 		attribute vec3 morphNormal0;
+35: 		attribute vec3 morphNormal1;
+36: 		attribute vec3 morphNormal2;
+37: 		attribute vec3 morphNormal3;
+38: 	#else
+39: 		attribute vec3 morphTarget4;
+40: 		attribute vec3 morphTarget5;
+41: 		attribute vec3 morphTarget6;
+42: 		attribute vec3 morphTarget7;
+43: 	#endif
+44: #endif
+45: #ifdef USE_SKINNING
+46: 	attribute vec4 skinIndex;
+47: 	attribute vec4 skinWeight;
+48: #endif
+49: 
+50: 
+51: 				attribute vec4 aInstanceMatrix0;
+52: 				attribute vec4 aInstanceMatrix1;
+53: 				attribute vec4 aInstanceMatrix2;
+54: 				attribute vec4 aInstanceMatrix3;
+55: 				
+56: 				attribute vec4 aInstanceColor;
+57: 				attribute vec3 aInstanceEmissive;
+58: 				
+59: 				attribute float aVisible;
+60: 				
+61: 				varying vec4 vInstanceColor;
+62: 				varying vec3 vInstanceEmissive;
+63: 				
+64: 				const mat4 mHidden = mat4(1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, -10.0, 0.0, 1.0);
+65: 				
+66: 			#define LAMBERT
+67: varying vec3 vLightFront;
+68: varying vec3 vIndirectFront;
+69: #ifdef DOUBLE_SIDED
+70: 	varying vec3 vLightBack;
+71: 	varying vec3 vIndirectBack;
+72: #endif
+73: #define PI 3.14159265359
+74: #define PI2 6.28318530718
+75: #define PI_HALF 1.5707963267949
+76: #define RECIPROCAL_PI 0.31830988618
+77: #define RECIPROCAL_PI2 0.15915494
+78: #define LOG2 1.442695
+79: #define EPSILON 1e-6
+80: #ifndef saturate
+81: #define saturate(a) clamp( a, 0.0, 1.0 )
+82: #endif
+83: #define whiteComplement(a) ( 1.0 - saturate( a ) )
+84: float pow2( const in float x ) { return x*x; }
+85: float pow3( const in float x ) { return x*x*x; }
+86: float pow4( const in float x ) { float x2 = x*x; return x2*x2; }
+87: float average( const in vec3 color ) { return dot( color, vec3( 0.3333 ) ); }
+88: highp float rand( const in vec2 uv ) {
+89: 	const highp float a = 12.9898, b = 78.233, c = 43758.5453;
+90: 	highp float dt = dot( uv.xy, vec2( a,b ) ), sn = mod( dt, PI );
+91: 	return fract(sin(sn) * c);
+92: }
+93: #ifdef HIGH_PRECISION
+94: 	float precisionSafeLength( vec3 v ) { return length( v ); }
+95: #else
+96: 	float max3( vec3 v ) { return max( max( v.x, v.y ), v.z ); }
+97: 	float precisionSafeLength( vec3 v ) {
+98: 		float maxComponent = max3( abs( v ) );
+99: 		return length( v / maxComponent ) * maxComponent;
+100: 	}
+101: #endif
+102: struct IncidentLight {
+103: 	vec3 color;
+104: 	vec3 direction;
+105: 	bool visible;
+106: };
+107: struct ReflectedLight {
+108: 	vec3 directDiffuse;
+109: 	vec3 directSpecular;
+110: 	vec3 indirectDiffuse;
+111: 	vec3 indirectSpecular;
+112: };
+113: struct GeometricContext {
+114: 	vec3 position;
+115: 	vec3 normal;
+116: 	vec3 viewDir;
+117: #ifdef CLEARCOAT
+118: 	vec3 clearcoatNormal;
+119: #endif
+120: };
+121: vec3 transformDirection( in vec3 dir, in mat4 matrix ) {
+122: 	return normalize( ( matrix * vec4( dir, 0.0 ) ).xyz );
+123: }
+124: vec3 inverseTransformDirection( in vec3 dir, in mat4 matrix ) {
+125: 	return normalize( ( vec4( dir, 0.0 ) * matrix ).xyz );
+126: }
+127: vec3 projectOnPlane(in vec3 point, in vec3 pointOnPlane, in vec3 planeNormal ) {
+128: 	float distance = dot( planeNormal, point - pointOnPlane );
+129: 	return - distance * planeNormal + point;
+130: }
+131: float sideOfPlane( in vec3 point, in vec3 pointOnPlane, in vec3 planeNormal ) {
+132: 	return sign( dot( point - pointOnPlane, planeNormal ) );
+133: }
+134: vec3 linePlaneIntersect( in vec3 pointOnLine, in vec3 lineDirection, in vec3 pointOnPlane, in vec3 planeNormal ) {
+135: 	return lineDirection * ( dot( planeNormal, pointOnPlane - pointOnLine ) / dot( planeNormal, lineDirection ) ) + pointOnLine;
+136: }
+137: mat3 transposeMat3( const in mat3 m ) {
+138: 	mat3 tmp;
+139: 	tmp[ 0 ] = vec3( m[ 0 ].x, m[ 1 ].x, m[ 2 ].x );
+140: 	tmp[ 1 ] = vec3( m[ 0 ].y, m[ 1 ].y, m[ 2 ].y );
+141: 	tmp[ 2 ] = vec3( m[ 0 ].z, m[ 1 ].z, m[ 2 ].z );
+142: 	return tmp;
+143: }
+144: float linearToRelativeLuminance( const in vec3 color ) {
+145: 	vec3 weights = vec3( 0.2126, 0.7152, 0.0722 );
+146: 	return dot( weights, color.rgb );
+147: }
+148: bool isPerspectiveMatrix( mat4 m ) {
+149:   return m[ 2 ][ 3 ] == - 1.0;
+150: }
+151: #ifdef USE_UV
+152: 	#ifdef UVS_VERTEX_ONLY
+153: 		vec2 vUv;
+154: 	#else
+155: 		varying vec2 vUv;
+156: 	#endif
+157: 	uniform mat3 uvTransform;
+158: #endif
+159: #if defined( USE_LIGHTMAP ) || defined( USE_AOMAP )
+160: 	attribute vec2 uv2;
+161: 	varying vec2 vUv2;
+162: #endif
+163: #ifdef USE_ENVMAP
+164: 	#if defined( USE_BUMPMAP ) || defined( USE_NORMALMAP ) ||defined( PHONG )
+165: 		#define ENV_WORLDPOS
+166: 	#endif
+167: 	#ifdef ENV_WORLDPOS
+168: 		
+169: 		varying vec3 vWorldPosition;
+170: 	#else
+171: 		varying vec3 vReflect;
+172: 		uniform float refractionRatio;
+173: 	#endif
+174: #endif
+175: vec2 integrateSpecularBRDF( const in float dotNV, const in float roughness ) {
+176: 	const vec4 c0 = vec4( - 1, - 0.0275, - 0.572, 0.022 );
+177: 	const vec4 c1 = vec4( 1, 0.0425, 1.04, - 0.04 );
+178: 	vec4 r = roughness * c0 + c1;
+179: 	float a004 = min( r.x * r.x, exp2( - 9.28 * dotNV ) ) * r.x + r.y;
+180: 	return vec2( -1.04, 1.04 ) * a004 + r.zw;
+181: }
+182: float punctualLightIntensityToIrradianceFactor( const in float lightDistance, const in float cutoffDistance, const in float decayExponent ) {
+183: #if defined ( PHYSICALLY_CORRECT_LIGHTS )
+184: 	float distanceFalloff = 1.0 / max( pow( lightDistance, decayExponent ), 0.01 );
+185: 	if( cutoffDistance > 0.0 ) {
+186: 		distanceFalloff *= pow2( saturate( 1.0 - pow4( lightDistance / cutoffDistance ) ) );
+187: 	}
+188: 	return distanceFalloff;
+189: #else
+190: 	if( cutoffDistance > 0.0 && decayExponent > 0.0 ) {
+191: 		return pow( saturate( -lightDistance / cutoffDistance + 1.0 ), decayExponent );
+192: 	}
+193: 	return 1.0;
+194: #endif
+195: }
+196: vec3 BRDF_Diffuse_Lambert( const in vec3 diffuseColor ) {
+197: 	return RECIPROCAL_PI * diffuseColor;
+198: }
+199: vec3 F_Schlick( const in vec3 specularColor, const in float dotLH ) {
+200: 	float fresnel = exp2( ( -5.55473 * dotLH - 6.98316 ) * dotLH );
+201: 	return ( 1.0 - specularColor ) * fresnel + specularColor;
+202: }
+203: vec3 F_Schlick_RoughnessDependent( const in vec3 F0, const in float dotNV, const in float roughness ) {
+204: 	float fresnel = exp2( ( -5.55473 * dotNV - 6.98316 ) * dotNV );
+205: 	vec3 Fr = max( vec3( 1.0 - roughness ), F0 ) - F0;
+206: 	return Fr * fresnel + F0;
+207: }
+208: float G_GGX_Smith( const in float alpha, const in float dotNL, const in float dotNV ) {
+209: 	float a2 = pow2( alpha );
+210: 	float gl = dotNL + sqrt( a2 + ( 1.0 - a2 ) * pow2( dotNL ) );
+211: 	float gv = dotNV + sqrt( a2 + ( 1.0 - a2 ) * pow2( dotNV ) );
+212: 	return 1.0 / ( gl * gv );
+213: }
+214: float G_GGX_SmithCorrelated( const in float alpha, const in float dotNL, const in float dotNV ) {
+215: 	float a2 = pow2( alpha );
+216: 	float gv = dotNL * sqrt( a2 + ( 1.0 - a2 ) * pow2( dotNV ) );
+217: 	float gl = dotNV * sqrt( a2 + ( 1.0 - a2 ) * pow2( dotNL ) );
+218: 	return 0.5 / max( gv + gl, EPSILON );
+219: }
+220: float D_GGX( const in float alpha, const in float dotNH ) {
+221: 	float a2 = pow2( alpha );
+222: 	float denom = pow2( dotNH ) * ( a2 - 1.0 ) + 1.0;
+223: 	return RECIPROCAL_PI * a2 / pow2( denom );
+224: }
+225: vec3 BRDF_Specular_GGX( const in IncidentLight incidentLight, const in vec3 viewDir, const in vec3 normal, const in vec3 specularColor, const in float roughness ) {
+226: 	float alpha = pow2( roughness );
+227: 	vec3 halfDir = normalize( incidentLight.direction + viewDir );
+228: 	float dotNL = saturate( dot( normal, incidentLight.direction ) );
+229: 	float dotNV = saturate( dot( normal, viewDir ) );
+230: 	float dotNH = saturate( dot( normal, halfDir ) );
+231: 	float dotLH = saturate( dot( incidentLight.direction, halfDir ) );
+232: 	vec3 F = F_Schlick( specularColor, dotLH );
+233: 	float G = G_GGX_SmithCorrelated( alpha, dotNL, dotNV );
+234: 	float D = D_GGX( alpha, dotNH );
+235: 	return F * ( G * D );
+236: }
+237: vec2 LTC_Uv( const in vec3 N, const in vec3 V, const in float roughness ) {
+238: 	const float LUT_SIZE  = 64.0;
+239: 	const float LUT_SCALE = ( LUT_SIZE - 1.0 ) / LUT_SIZE;
+240: 	const float LUT_BIAS  = 0.5 / LUT_SIZE;
+241: 	float dotNV = saturate( dot( N, V ) );
+242: 	vec2 uv = vec2( roughness, sqrt( 1.0 - dotNV ) );
+243: 	uv = uv * LUT_SCALE + LUT_BIAS;
+244: 	return uv;
+245: }
+246: float LTC_ClippedSphereFormFactor( const in vec3 f ) {
+247: 	float l = length( f );
+248: 	return max( ( l * l + f.z ) / ( l + 1.0 ), 0.0 );
+249: }
+250: vec3 LTC_EdgeVectorFormFactor( const in vec3 v1, const in vec3 v2 ) {
+251: 	float x = dot( v1, v2 );
+252: 	float y = abs( x );
+253: 	float a = 0.8543985 + ( 0.4965155 + 0.0145206 * y ) * y;
+254: 	float b = 3.4175940 + ( 4.1616724 + y ) * y;
+255: 	float v = a / b;
+256: 	float theta_sintheta = ( x > 0.0 ) ? v : 0.5 * inversesqrt( max( 1.0 - x * x, 1e-7 ) ) - v;
+257: 	return cross( v1, v2 ) * theta_sintheta;
+258: }
+259: vec3 LTC_Evaluate( const in vec3 N, const in vec3 V, const in vec3 P, const in mat3 mInv, const in vec3 rectCoords[ 4 ] ) {
+260: 	vec3 v1 = rectCoords[ 1 ] - rectCoords[ 0 ];
+261: 	vec3 v2 = rectCoords[ 3 ] - rectCoords[ 0 ];
+262: 	vec3 lightNormal = cross( v1, v2 );
+263: 	if( dot( lightNormal, P - rectCoords[ 0 ] ) < 0.0 ) return vec3( 0.0 );
+264: 	vec3 T1, T2;
+265: 	T1 = normalize( V - N * dot( V, N ) );
+266: 	T2 = - cross( N, T1 );
+267: 	mat3 mat = mInv * transposeMat3( mat3( T1, T2, N ) );
+268: 	vec3 coords[ 4 ];
+269: 	coords[ 0 ] = mat * ( rectCoords[ 0 ] - P );
+270: 	coords[ 1 ] = mat * ( rectCoords[ 1 ] - P );
+271: 	coords[ 2 ] = mat * ( rectCoords[ 2 ] - P );
+272: 	coords[ 3 ] = mat * ( rectCoords[ 3 ] - P );
+273: 	coords[ 0 ] = normalize( coords[ 0 ] );
+274: 	coords[ 1 ] = normalize( coords[ 1 ] );
+275: 	coords[ 2 ] = normalize( coords[ 2 ] );
+276: 	coords[ 3 ] = normalize( coords[ 3 ] );
+277: 	vec3 vectorFormFactor = vec3( 0.0 );
+278: 	vectorFormFactor += LTC_EdgeVectorFormFactor( coords[ 0 ], coords[ 1 ] );
+279: 	vectorFormFactor += LTC_EdgeVectorFormFactor( coords[ 1 ], coords[ 2 ] );
+280: 	vectorFormFactor += LTC_EdgeVectorFormFactor( coords[ 2 ], coords[ 3 ] );
+281: 	vectorFormFactor += LTC_EdgeVectorFormFactor( coords[ 3 ], coords[ 0 ] );
+282: 	float result = LTC_ClippedSphereFormFactor( vectorFormFactor );
+283: 	return vec3( result );
+284: }
+285: vec3 BRDF_Specular_GGX_Environment( const in vec3 viewDir, const in vec3 normal, const in vec3 specularColor, const in float roughness ) {
+286: 	float dotNV = saturate( dot( normal, viewDir ) );
+287: 	vec2 brdf = integrateSpecularBRDF( dotNV, roughness );
+288: 	return specularColor * brdf.x + brdf.y;
+289: }
+290: void BRDF_Specular_Multiscattering_Environment( const in GeometricContext geometry, const in vec3 specularColor, const in float roughness, inout vec3 singleScatter, inout vec3 multiScatter ) {
+291: 	float dotNV = saturate( dot( geometry.normal, geometry.viewDir ) );
+292: 	vec3 F = F_Schlick_RoughnessDependent( specularColor, dotNV, roughness );
+293: 	vec2 brdf = integrateSpecularBRDF( dotNV, roughness );
+294: 	vec3 FssEss = F * brdf.x + brdf.y;
+295: 	float Ess = brdf.x + brdf.y;
+296: 	float Ems = 1.0 - Ess;
+297: 	vec3 Favg = specularColor + ( 1.0 - specularColor ) * 0.047619;	vec3 Fms = FssEss * Favg / ( 1.0 - Ems * Favg );
+298: 	singleScatter += FssEss;
+299: 	multiScatter += Fms * Ems;
+300: }
+301: float G_BlinnPhong_Implicit( ) {
+302: 	return 0.25;
+303: }
+304: float D_BlinnPhong( const in float shininess, const in float dotNH ) {
+305: 	return RECIPROCAL_PI * ( shininess * 0.5 + 1.0 ) * pow( dotNH, shininess );
+306: }
+307: vec3 BRDF_Specular_BlinnPhong( const in IncidentLight incidentLight, const in GeometricContext geometry, const in vec3 specularColor, const in float shininess ) {
+308: 	vec3 halfDir = normalize( incidentLight.direction + geometry.viewDir );
+309: 	float dotNH = saturate( dot( geometry.normal, halfDir ) );
+310: 	float dotLH = saturate( dot( incidentLight.direction, halfDir ) );
+311: 	vec3 F = F_Schlick( specularColor, dotLH );
+312: 	float G = G_BlinnPhong_Implicit( );
+313: 	float D = D_BlinnPhong( shininess, dotNH );
+314: 	return F * ( G * D );
+315: }
+316: float GGXRoughnessToBlinnExponent( const in float ggxRoughness ) {
+317: 	return ( 2.0 / pow2( ggxRoughness + 0.0001 ) - 2.0 );
+318: }
+319: float BlinnExponentToGGXRoughness( const in float blinnExponent ) {
+320: 	return sqrt( 2.0 / ( blinnExponent + 2.0 ) );
+321: }
+322: #if defined( USE_SHEEN )
+323: float D_Charlie(float roughness, float NoH) {
+324: 	float invAlpha  = 1.0 / roughness;
+325: 	float cos2h = NoH * NoH;
+326: 	float sin2h = max(1.0 - cos2h, 0.0078125);	return (2.0 + invAlpha) * pow(sin2h, invAlpha * 0.5) / (2.0 * PI);
+327: }
+328: float V_Neubelt(float NoV, float NoL) {
+329: 	return saturate(1.0 / (4.0 * (NoL + NoV - NoL * NoV)));
+330: }
+331: vec3 BRDF_Specular_Sheen( const in float roughness, const in vec3 L, const in GeometricContext geometry, vec3 specularColor ) {
+332: 	vec3 N = geometry.normal;
+333: 	vec3 V = geometry.viewDir;
+334: 	vec3 H = normalize( V + L );
+335: 	float dotNH = saturate( dot( N, H ) );
+336: 	return specularColor * D_Charlie( roughness, dotNH ) * V_Neubelt( dot(N, V), dot(N, L) );
+337: }
+338: #endif
+339: uniform bool receiveShadow;
+340: uniform vec3 ambientLightColor;
+341: uniform vec3 lightProbe[ 9 ];
+342: vec3 shGetIrradianceAt( in vec3 normal, in vec3 shCoefficients[ 9 ] ) {
+343: 	float x = normal.x, y = normal.y, z = normal.z;
+344: 	vec3 result = shCoefficients[ 0 ] * 0.886227;
+345: 	result += shCoefficients[ 1 ] * 2.0 * 0.511664 * y;
+346: 	result += shCoefficients[ 2 ] * 2.0 * 0.511664 * z;
+347: 	result += shCoefficients[ 3 ] * 2.0 * 0.511664 * x;
+348: 	result += shCoefficients[ 4 ] * 2.0 * 0.429043 * x * y;
+349: 	result += shCoefficients[ 5 ] * 2.0 * 0.429043 * y * z;
+350: 	result += shCoefficients[ 6 ] * ( 0.743125 * z * z - 0.247708 );
+351: 	result += shCoefficients[ 7 ] * 2.0 * 0.429043 * x * z;
+352: 	result += shCoefficients[ 8 ] * 0.429043 * ( x * x - y * y );
+353: 	return result;
+354: }
+355: vec3 getLightProbeIrradiance( const in vec3 lightProbe[ 9 ], const in GeometricContext geometry ) {
+356: 	vec3 worldNormal = inverseTransformDirection( geometry.normal, viewMatrix );
+357: 	vec3 irradiance = shGetIrradianceAt( worldNormal, lightProbe );
+358: 	return irradiance;
+359: }
+360: vec3 getAmbientLightIrradiance( const in vec3 ambientLightColor ) {
+361: 	vec3 irradiance = ambientLightColor;
+362: 	#ifndef PHYSICALLY_CORRECT_LIGHTS
+363: 		irradiance *= PI;
+364: 	#endif
+365: 	return irradiance;
+366: }
+367: #if 1 > 0
+368: 	struct DirectionalLight {
+369: 		vec3 direction;
+370: 		vec3 color;
+371: 		int shadow;
+372: 		float shadowBias;
+373: 		float shadowRadius;
+374: 		vec2 shadowMapSize;
+375: 	};
+376: 	uniform DirectionalLight directionalLights[ 1 ];
+377: 	void getDirectionalDirectLightIrradiance( const in DirectionalLight directionalLight, const in GeometricContext geometry, out IncidentLight directLight ) {
+378: 		directLight.color = directionalLight.color;
+379: 		directLight.direction = directionalLight.direction;
+380: 		directLight.visible = true;
+381: 	}
+382: #endif
+383: #if 0 > 0
+384: 	struct PointLight {
+385: 		vec3 position;
+386: 		vec3 color;
+387: 		float distance;
+388: 		float decay;
+389: 		int shadow;
+390: 		float shadowBias;
+391: 		float shadowRadius;
+392: 		vec2 shadowMapSize;
+393: 		float shadowCameraNear;
+394: 		float shadowCameraFar;
+395: 	};
+396: 	uniform PointLight pointLights[ 0 ];
+397: 	void getPointDirectLightIrradiance( const in PointLight pointLight, const in GeometricContext geometry, out IncidentLight directLight ) {
+398: 		vec3 lVector = pointLight.position - geometry.position;
+399: 		directLight.direction = normalize( lVector );
+400: 		float lightDistance = length( lVector );
+401: 		directLight.color = pointLight.color;
+402: 		directLight.color *= punctualLightIntensityToIrradianceFactor( lightDistance, pointLight.distance, pointLight.decay );
+403: 		directLight.visible = ( directLight.color != vec3( 0.0 ) );
+404: 	}
+405: #endif
+406: #if 0 > 0
+407: 	struct SpotLight {
+408: 		vec3 position;
+409: 		vec3 direction;
+410: 		vec3 color;
+411: 		float distance;
+412: 		float decay;
+413: 		float coneCos;
+414: 		float penumbraCos;
+415: 		int shadow;
+416: 		float shadowBias;
+417: 		float shadowRadius;
+418: 		vec2 shadowMapSize;
+419: 	};
+420: 	uniform SpotLight spotLights[ 0 ];
+421: 	void getSpotDirectLightIrradiance( const in SpotLight spotLight, const in GeometricContext geometry, out IncidentLight directLight  ) {
+422: 		vec3 lVector = spotLight.position - geometry.position;
+423: 		directLight.direction = normalize( lVector );
+424: 		float lightDistance = length( lVector );
+425: 		float angleCos = dot( directLight.direction, spotLight.direction );
+426: 		if ( angleCos > spotLight.coneCos ) {
+427: 			float spotEffect = smoothstep( spotLight.coneCos, spotLight.penumbraCos, angleCos );
+428: 			directLight.color = spotLight.color;
+429: 			directLight.color *= spotEffect * punctualLightIntensityToIrradianceFactor( lightDistance, spotLight.distance, spotLight.decay );
+430: 			directLight.visible = true;
+431: 		} else {
+432: 			directLight.color = vec3( 0.0 );
+433: 			directLight.visible = false;
+434: 		}
+435: 	}
+436: #endif
+437: #if 0 > 0
+438: 	struct RectAreaLight {
+439: 		vec3 color;
+440: 		vec3 position;
+441: 		vec3 halfWidth;
+442: 		vec3 halfHeight;
+443: 	};
+444: 	uniform sampler2D ltc_1;	uniform sampler2D ltc_2;
+445: 	uniform RectAreaLight rectAreaLights[ 0 ];
+446: #endif
+447: #if 0 > 0
+448: 	struct HemisphereLight {
+449: 		vec3 direction;
+450: 		vec3 skyColor;
+451: 		vec3 groundColor;
+452: 	};
+453: 	uniform HemisphereLight hemisphereLights[ 0 ];
+454: 	vec3 getHemisphereLightIrradiance( const in HemisphereLight hemiLight, const in GeometricContext geometry ) {
+455: 		float dotNL = dot( geometry.normal, hemiLight.direction );
+456: 		float hemiDiffuseWeight = 0.5 * dotNL + 0.5;
+457: 		vec3 irradiance = mix( hemiLight.groundColor, hemiLight.skyColor, hemiDiffuseWeight );
+458: 		#ifndef PHYSICALLY_CORRECT_LIGHTS
+459: 			irradiance *= PI;
+460: 		#endif
+461: 		return irradiance;
+462: 	}
+463: #endif
+464: #ifdef USE_COLOR
+465: 	varying vec3 vColor;
+466: #endif
+467: #ifdef USE_FOG
+468: 	varying float fogDepth;
+469: #endif
+470: #ifdef USE_MORPHTARGETS
+471: 	#ifndef USE_MORPHNORMALS
+472: 	uniform float morphTargetInfluences[ 8 ];
+473: 	#else
+474: 	uniform float morphTargetInfluences[ 4 ];
+475: 	#endif
+476: #endif
+477: #ifdef USE_SKINNING
+478: 	uniform mat4 bindMatrix;
+479: 	uniform mat4 bindMatrixInverse;
+480: 	#ifdef BONE_TEXTURE
+481: 		uniform highp sampler2D boneTexture;
+482: 		uniform int boneTextureSize;
+483: 		mat4 getBoneMatrix( const in float i ) {
+484: 			float j = i * 4.0;
+485: 			float x = mod( j, float( boneTextureSize ) );
+486: 			float y = floor( j / float( boneTextureSize ) );
+487: 			float dx = 1.0 / float( boneTextureSize );
+488: 			float dy = 1.0 / float( boneTextureSize );
+489: 			y = dy * ( y + 0.5 );
+490: 			vec4 v1 = texture2D( boneTexture, vec2( dx * ( x + 0.5 ), y ) );
+491: 			vec4 v2 = texture2D( boneTexture, vec2( dx * ( x + 1.5 ), y ) );
+492: 			vec4 v3 = texture2D( boneTexture, vec2( dx * ( x + 2.5 ), y ) );
+493: 			vec4 v4 = texture2D( boneTexture, vec2( dx * ( x + 3.5 ), y ) );
+494: 			mat4 bone = mat4( v1, v2, v3, v4 );
+495: 			return bone;
+496: 		}
+497: 	#else
+498: 		uniform mat4 boneMatrices[ MAX_BONES ];
+499: 		mat4 getBoneMatrix( const in float i ) {
+500: 			mat4 bone = boneMatrices[ int(i) ];
+501: 			return bone;
+502: 		}
+503: 	#endif
+504: #endif
+505: #ifdef USE_SHADOWMAP
+506: 	#if 0 > 0
+507: 		uniform mat4 directionalShadowMatrix[ 0 ];
+508: 		varying vec4 vDirectionalShadowCoord[ 0 ];
+509: 	#endif
+510: 	#if 0 > 0
+511: 		uniform mat4 spotShadowMatrix[ 0 ];
+512: 		varying vec4 vSpotShadowCoord[ 0 ];
+513: 	#endif
+514: 	#if 0 > 0
+515: 		uniform mat4 pointShadowMatrix[ 0 ];
+516: 		varying vec4 vPointShadowCoord[ 0 ];
+517: 	#endif
+518: #endif
+519: #ifdef USE_LOGDEPTHBUF
+520: 	#ifdef USE_LOGDEPTHBUF_EXT
+521: 		varying float vFragDepth;
+522: 		varying float vIsPerspective;
+523: 	#else
+524: 		uniform float logDepthBufFC;
+525: 	#endif
+526: #endif
+527: #if 0 > 0 && ! defined( STANDARD ) && ! defined( PHONG ) && ! defined( MATCAP )
+528: 	varying vec3 vViewPosition;
+529: #endif
+530: void main() {
+531: #ifdef USE_UV
+532: 	vUv = ( uvTransform * vec3( uv, 1 ) ).xy;
+533: #endif
+534: #if defined( USE_LIGHTMAP ) || defined( USE_AOMAP )
+535: 	vUv2 = uv2;
+536: #endif
+537: 	
+538: #ifdef USE_COLOR
+539: 	vColor.xyz = color.xyz;
+540: #endif
+541: 				vInstanceColor = aInstanceColor;
+542: 				vInstanceEmissive = aInstanceEmissive;
+543: 			
+544: vec3 objectNormal = vec3( normal );
+545: #ifdef USE_TANGENT
+546: 	vec3 objectTangent = vec3( tangent.xyz );
+547: #endif
+548: #ifdef USE_MORPHNORMALS
+549: 	objectNormal += ( morphNormal0 - normal ) * morphTargetInfluences[ 0 ];
+550: 	objectNormal += ( morphNormal1 - normal ) * morphTargetInfluences[ 1 ];
+551: 	objectNormal += ( morphNormal2 - normal ) * morphTargetInfluences[ 2 ];
+552: 	objectNormal += ( morphNormal3 - normal ) * morphTargetInfluences[ 3 ];
+553: #endif
+554: #ifdef USE_SKINNING
+555: 	mat4 boneMatX = getBoneMatrix( skinIndex.x );
+556: 	mat4 boneMatY = getBoneMatrix( skinIndex.y );
+557: 	mat4 boneMatZ = getBoneMatrix( skinIndex.z );
+558: 	mat4 boneMatW = getBoneMatrix( skinIndex.w );
+559: #endif
+560: #ifdef USE_SKINNING
+561: 	mat4 skinMatrix = mat4( 0.0 );
+562: 	skinMatrix += skinWeight.x * boneMatX;
+563: 	skinMatrix += skinWeight.y * boneMatY;
+564: 	skinMatrix += skinWeight.z * boneMatZ;
+565: 	skinMatrix += skinWeight.w * boneMatW;
+566: 	skinMatrix  = bindMatrixInverse * skinMatrix * bindMatrix;
+567: 	objectNormal = vec4( skinMatrix * vec4( objectNormal, 0.0 ) ).xyz;
+568: 	#ifdef USE_TANGENT
+569: 		objectTangent = vec4( skinMatrix * vec4( objectTangent, 0.0 ) ).xyz;
+570: 	#endif
+571: #endif
+572: vec3 transformedNormal = objectNormal;
+573: #ifdef USE_INSTANCING
+574: 	transformedNormal = mat3( instanceMatrix ) * transformedNormal;
+575: #endif
+576: transformedNormal = normalMatrix * transformedNormal;
+577: #ifdef FLIP_SIDED
+578: 	transformedNormal = - transformedNormal;
+579: #endif
+580: #ifdef USE_TANGENT
+581: 	vec3 transformedTangent = normalMatrix * objectTangent;
+582: 	#ifdef FLIP_SIDED
+583: 		transformedTangent = - transformedTangent;
+584: 	#endif
+585: #endif
+586: 	
+587: 				
+588: 				vec3 transformed;
+589: 				
+590: 				if (aVisible <= 0.0) transformed = (mHidden * vec4(position, 1)).xyz;
+591: 				else {
+592: 					mat4 aInstanceMatrix = mat4(
+593: 						aInstanceMatrix0,
+594: 						aInstanceMatrix1,
+595: 						aInstanceMatrix2,
+596: 						aInstanceMatrix3
+597: 					);
+598: 					
+599: 					transformed = (aInstanceMatrix * vec4(position, 1)).xyz;
+600: 				}
+601: 				
+602: 				position = vec3(10, 10, 10)
+603: 			
+604: #ifdef USE_MORPHTARGETS
+605: 	transformed += ( morphTarget0 - position ) * morphTargetInfluences[ 0 ];
+606: 	transformed += ( morphTarget1 - position ) * morphTargetInfluences[ 1 ];
+607: 	transformed += ( morphTarget2 - position ) * morphTargetInfluences[ 2 ];
+608: 	transformed += ( morphTarget3 - position ) * morphTargetInfluences[ 3 ];
+609: 	#ifndef USE_MORPHNORMALS
+610: 	transformed += ( morphTarget4 - position ) * morphTargetInfluences[ 4 ];
+611: 	transformed += ( morphTarget5 - position ) * morphTargetInfluences[ 5 ];
+612: 	transformed += ( morphTarget6 - position ) * morphTargetInfluences[ 6 ];
+613: 	transformed += ( morphTarget7 - position ) * morphTargetInfluences[ 7 ];
+614: 	#endif
+615: #endif
+616: #ifdef USE_SKINNING
+617: 	vec4 skinVertex = bindMatrix * vec4( transformed, 1.0 );
+618: 	vec4 skinned = vec4( 0.0 );
+619: 	skinned += boneMatX * skinVertex * skinWeight.x;
+620: 	skinned += boneMatY * skinVertex * skinWeight.y;
+621: 	skinned += boneMatZ * skinVertex * skinWeight.z;
+622: 	skinned += boneMatW * skinVertex * skinWeight.w;
+623: 	transformed = ( bindMatrixInverse * skinned ).xyz;
+624: #endif
+625: vec4 mvPosition = vec4( transformed, 1.0 );
+626: #ifdef USE_INSTANCING
+627: 	mvPosition = instanceMatrix * mvPosition;
+628: #endif
+629: mvPosition = modelViewMatrix * mvPosition;
+630: gl_Position = projectionMatrix * mvPosition;
+631: #ifdef USE_LOGDEPTHBUF
+632: 	#ifdef USE_LOGDEPTHBUF_EXT
+633: 		vFragDepth = 1.0 + gl_Position.w;
+634: 		vIsPerspective = float( isPerspectiveMatrix( projectionMatrix ) );
+635: 	#else
+636: 		if ( isPerspectiveMatrix( projectionMatrix ) ) {
+637: 			gl_Position.z = log2( max( EPSILON, gl_Position.w + 1.0 ) ) * logDepthBufFC - 1.0;
+638: 			gl_Position.z *= gl_Position.w;
+639: 		}
+640: 	#endif
+641: #endif
+642: #if 0 > 0 && ! defined( STANDARD ) && ! defined( PHONG ) && ! defined( MATCAP )
+643: 	vViewPosition = - mvPosition.xyz;
+644: #endif
+645: #if defined( USE_ENVMAP ) || defined( DISTANCE ) || defined ( USE_SHADOWMAP )
+646: 	vec4 worldPosition = vec4( transformed, 1.0 );
+647: 	#ifdef USE_INSTANCING
+648: 		worldPosition = instanceMatrix * worldPosition;
+649: 	#endif
+650: 	worldPosition = modelMatrix * worldPosition;
+651: #endif
+652: #ifdef USE_ENVMAP
+653: 	#ifdef ENV_WORLDPOS
+654: 		vWorldPosition = worldPosition.xyz;
+655: 	#else
+656: 		vec3 cameraToVertex;
+657: 		if ( isOrthographic ) { 
+658: 			cameraToVertex = normalize( vec3( - viewMatrix[ 0 ][ 2 ], - viewMatrix[ 1 ][ 2 ], - viewMatrix[ 2 ][ 2 ] ) );
+659: 		} else {
+660: 			cameraToVertex = normalize( worldPosition.xyz - cameraPosition );
+661: 		}
+662: 		vec3 worldNormal = inverseTransformDirection( transformedNormal, viewMatrix );
+663: 		#ifdef ENVMAP_MODE_REFLECTION
+664: 			vReflect = reflect( cameraToVertex, worldNormal );
+665: 		#else
+666: 			vReflect = refract( cameraToVertex, worldNormal, refractionRatio );
+667: 		#endif
+668: 	#endif
+669: #endif
+670: vec3 diffuse = vec3( 1.0 );
+671: GeometricContext geometry;
+672: geometry.position = mvPosition.xyz;
+673: geometry.normal = normalize( transformedNormal );
+674: geometry.viewDir = ( isOrthographic ) ? vec3( 0, 0, 1 ) : normalize( -mvPosition.xyz );
+675: GeometricContext backGeometry;
+676: backGeometry.position = geometry.position;
+677: backGeometry.normal = -geometry.normal;
+678: backGeometry.viewDir = geometry.viewDir;
+679: vLightFront = vec3( 0.0 );
+680: vIndirectFront = vec3( 0.0 );
+681: #ifdef DOUBLE_SIDED
+682: 	vLightBack = vec3( 0.0 );
+683: 	vIndirectBack = vec3( 0.0 );
+684: #endif
+685: IncidentLight directLight;
+686: float dotNL;
+687: vec3 directLightColor_Diffuse;
+688: #if 0 > 0
+689: 	
+690: #endif
+691: #if 0 > 0
+692: 	
+693: #endif
+694: #if 1 > 0
+695: 	
+696: 		getDirectionalDirectLightIrradiance( directionalLights[ 0 ], geometry, directLight );
+697: 		dotNL = dot( geometry.normal, directLight.direction );
+698: 		directLightColor_Diffuse = PI * directLight.color;
+699: 		vLightFront += saturate( dotNL ) * directLightColor_Diffuse;
+700: 		#ifdef DOUBLE_SIDED
+701: 			vLightBack += saturate( -dotNL ) * directLightColor_Diffuse;
+702: 		#endif
+703: 	
+704: #endif
+705: #if 0 > 0
+706: 	
+707: #endif
+708: #ifdef USE_SHADOWMAP
+709: 	#if 0 > 0
+710: 	
+711: 	#endif
+712: 	#if 0 > 0
+713: 	
+714: 	#endif
+715: 	#if 0 > 0
+716: 	
+717: 	#endif
+718: #endif
+719: #ifdef USE_FOG
+720: 	fogDepth = -mvPosition.z;
+721: #endif
+722: }

@@ -16,7 +16,7 @@ element FatFly {
 	
 	input L ({space, args}) => {
 		if (!space || !space.atom) return false
-		if (space.atom.type == FatFlyLimb) return true
+		if (space.atom.element == FatFlyLimb) return true
 	}
 	
 	output L ({space, args}) => {
@@ -46,7 +46,7 @@ element FatFlyLimb {
 	
 	input f ({space, args}) => {
 		if (!space || !space.atom) return true
-		if (space.atom.type == FatFly) args.success = true
+		if (space.atom.element == FatFly) args.success = true
 		return true
 	}
 	

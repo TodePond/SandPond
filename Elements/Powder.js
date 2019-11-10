@@ -1,12 +1,8 @@
 TodeSplat`
 
 
-element Food {
+element Powder {
 
-	colour "brown"
-	emissive "brown"
-	category "life"
-	isFood true
 	state "solid"
 	
 	input l ({space, args}) => {

@@ -8,35 +8,19 @@ element Snow {
 	
 	category "sandbox"
 	state "solid"
-	
-	input l ({space, args}) => {
-		if (!space) return false
-		if (!space.atom) return true
-		if (space.atom.type.state != "liquid") return false
-		return args.swap = space.atom
-	}
-	
+		
 	input h ({space}) => {
 		if (!space || !space.atom) return false
-		if (space.atom.type == Lava || space.atom.type == Fire) return true
+		if (space.atom.element == Lava || space.atom.element == Fire) return true
 		return false
 	}
 	
-	output l ({space, swap}) => SPACE.setAtom(space, swap)
 	output W ({space}) => SPACE.setAtom(space, ATOM.make(Water))
 	
 	rule 0.0005 { @ => W }
 	rule xyz { @h => Wh }
 	
-	rule {
-		@ => l
-		l    @
-	}
-	
-	rule xz {
-		@  => l
-		#l    #@
-	}
+	ruleset Sand
 	
 }
 

@@ -225,8 +225,7 @@ const UI = {}
 	//=======//
 	document.head.appendChild(UI_STYLE)
 	document.body.appendChild(UI_ELEMENT)
-		
-	let firstElementDone = false
+	
 	for (const element of ELEMENT.globalElements) {
 		if (element.hidden) continue
 		
@@ -254,10 +253,8 @@ const UI = {}
 		`
 		document.head.appendChild(style)
 		
-		if (!firstElementDone) {
-			searchItemButton.classList.add("selected")
-			UI.selectedElement = element
-			firstElementDone = true
+		if (element == UI.selectedElement) {
+			 searchItemButton.classList.add("selected")
 		}
 
 	}

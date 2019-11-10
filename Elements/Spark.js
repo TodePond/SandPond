@@ -7,7 +7,7 @@ element Spark {
 	category "sandbox"
 	
 	input s ({space, args}) => {
-		if (space && space.atom && space.atom.type == Spark) args.success = true
+		if (space && space.atom && space.atom.element == Spark) args.success = true
 		return true
 	}
 	
@@ -102,7 +102,7 @@ element BlueSpark {
 	emissive "lightblue"
 	
 	input s ({space, args}) => {
-		if (space && space.atom && space.atom.type == BlueSpark) args.success = true
+		if (space && space.atom && space.atom.element == BlueSpark) args.success = true
 		return true
 	}
 	rule 0.2 { @ => _}
@@ -121,12 +121,12 @@ element Lightning {
 	pour false
 	
 	input l ({space, args}) => {
-		if (space && space.atom && space.atom.type == Lightning) args.success = false
+		if (space && space.atom && space.atom.element == Lightning) args.success = false
 		return true
 	}
 	
-	input L ({space}) => space && space.atom && space.atom.type == Lightning
-	input n ({space}) => !space || !space.atom || (space && space.atom && space.atom.type != Lightning)
+	input L ({space}) => space && space.atom && space.atom.element == Lightning
+	input n ({space}) => !space || !space.atom || (space && space.atom && space.atom.element != Lightning)
 	
 	output F ({space}) => SPACE.setAtom(space, ATOM.make(LightningFlash))
 	
@@ -150,8 +150,8 @@ element LightningFlash {
 	emissive "lightblue"
 	hidden true
 	
-	input L ({space}) => space && space.atom && space.atom.type == Lightning
-	input n ({space}) => space && space.atom && space.atom.type != Lightning
+	input L ({space}) => space && space.atom && space.atom.element == Lightning
+	input n ({space}) => space && space.atom && space.atom.element != Lightning
 	
 	
 	output B ({space}) => SPACE.setAtom(space, ATOM.make(LightningBang))
@@ -176,7 +176,7 @@ element LightningBang {
 	emissive "white"
 	hidden true
 	
-	input F ({space}) => space && space.atom && space.atom.type == LightningFlash
+	input F ({space}) => space && space.atom && space.atom.element == LightningFlash
 	
 	rule {
 		@ => _

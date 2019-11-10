@@ -12,7 +12,7 @@ element Sand2D {
 	input l ({space, args}) => {
 		if (!space) return false
 		if (!space.atom) return true
-		if (space.atom.type.state != "liquid") return false
+		if (space.atom.element.state != "liquid") return false
 		return args.swap = space.atom
 	}
 	

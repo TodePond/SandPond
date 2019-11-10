@@ -11,7 +11,7 @@ element Slime {
 	input w ({space, args}) => {
 		if (!space) return false
 		if (!space.atom) return true
-		if (space.atom.type != Water) return false
+		if (space.atom.element != Water) return false
 		return args.swap = space.atom
 	}
 	

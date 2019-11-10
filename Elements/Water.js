@@ -10,7 +10,7 @@ element Water {
 	
 	input h ({space}) => {
 		if (!space || !space.atom) return false
-		if (space.atom.type == Lava || space.atom.type == Fire) return true
+		if (space.atom.element == Lava || space.atom.element == Fire) return true
 		return false
 	}
 	output S ({space}) => SPACE.setAtom(space, ATOM.make(Steam))

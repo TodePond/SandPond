@@ -9,7 +9,7 @@ element Ant {
 	pour false
 	category "life"
 	
-	input F ({space}) => space && space.atom && space.atom.type == Food
+	input F ({space}) => space && space.atom && space.atom.element == Food
 	output F ({space}) => SPACE.setAtom(space, ATOM.make(Food))
 	
 	

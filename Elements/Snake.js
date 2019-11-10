@@ -18,7 +18,7 @@ element Snake {
 		if (tests.length == 0) tests[0] = ({isTrail}) => isTrail
 		
 		if (!space || !space.atom) return true
-		if (space.atom.type != SnakeTrail) return true
+		if (space.atom.element != SnakeTrail) return true
 		
 		const trail = space.atom
 		if (trail.score == self.score + 1) {
@@ -52,7 +52,7 @@ element Snake {
 		if (tests.length == 0) tests[0] = ({isWaiting}) => isWaiting
 		
 		if (!space || !space.atom) return true
-		if (space.atom.type != SnakeTrail) return true
+		if (space.atom.element != SnakeTrail) return true
 		const trail = space.atom
 		
 		if (trail.score == self.score) {
@@ -68,7 +68,7 @@ element Snake {
 		if (tests.length == 0) tests[0] = ({isObeying}) => isObeying
 		
 		if (!space || !space.atom) return true
-		if (space.atom.type != Snake && space.atom.type != SnakeTrail) return true
+		if (space.atom.element != Snake && space.atom.element != SnakeTrail) return true
 		
 		if (space.atom.score == self.score + 1) {
 			args.isObeying = true
@@ -79,7 +79,7 @@ element Snake {
 	// Is it Res?
 	input R ({space}) => {
 		if (!space || !space.atom) return false
-		return space.atom.type.isFood
+		return space.atom.element.isFood
 	}
 	
 	// Make a new leader
@@ -118,7 +118,7 @@ element SnakeTrail {
 	// Can I die?
 	input * ({space, self}) => {
 		if (!space || !space.atom) return true
-		if (space.atom.type != Snake && space.atom.type != SnakeTrail) return true
+		if (space.atom.element != Snake && space.atom.element != SnakeTrail) return true
 		if (space.atom.score != self.score - 1) return true
 		return false
 	}
