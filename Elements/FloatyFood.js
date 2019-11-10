@@ -7,7 +7,7 @@ element FloatyFood {
 	category "life"
 	isFood true
 		
-	rule xyz { @_ => _@ }
+	ruleset Diffuser
 	
 }
 

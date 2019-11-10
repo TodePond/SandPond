@@ -52,7 +52,7 @@ element Gunpowder {
 	output E ({space}) => SPACE.setAtom(space, ATOM.make(Explosion))
 	
 	rule XYZ { @f => ?? => E* }
-	ruleset Sand
+	ruleset Powder
 	
 }
 

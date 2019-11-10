@@ -14,7 +14,7 @@ element Cloud {
 	}
 
 	rule xz 0.02 { @_ => _@ }
-	rule 0.005 { @ => W }
+	action 0.005 { @ => W }
 	
 }
 

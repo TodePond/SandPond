@@ -31,7 +31,16 @@ const DROPPER = {}
 		if (!UI.selectedElement.pour) {
 			if (!position) return
 			if (down && !previousDown) {
-				dropAtom(Math.round(position.x), Math.round(position.y), Math.round(position.z))
+				const x = Math.round(position.x)
+				const y = Math.round(position.y)
+				const z = Math.round(position.z)
+				dropAtom(x, y, z)
+				if (Math.random() < SPREAD_CHANCE) dropAtom(x + 1, y, z)
+				if (Math.random() < SPREAD_CHANCE) dropAtom(x - 1, y, z)
+				if (Math.random() < SPREAD_CHANCE) dropAtom(x, y, z + 1)
+				if (Math.random() < SPREAD_CHANCE) dropAtom(x, y, z - 1)
+				if (Math.random() < SPREAD_CHANCE) dropAtom(x, y + 1, z)
+				if (Math.random() < SPREAD_CHANCE) dropAtom(x, y - 1, z)
 			}
 			return 
 		}

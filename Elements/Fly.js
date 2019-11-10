@@ -9,7 +9,7 @@ element Fly {
 	pour false
 	category "life"
 
-	rule xyz { @_ => _@ }
+	ruleset Diffuser
 	
 }
 

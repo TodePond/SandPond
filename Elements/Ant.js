@@ -12,14 +12,8 @@ element Ant {
 	input F ({space}) => space && space.atom && space.atom.element == Food
 	output F ({space}) => SPACE.setAtom(space, ATOM.make(Food))
 	
-	
 	//rule 0.001 { @ => F }
-	
-	rule {
-		@ => _
-		_    @
-	}
-	
+	ruleset Faller
 	rule xyz 0.02 { @F => @@ }
 	rule xyz { @F => _@ }
 	

@@ -7,8 +7,8 @@ element Res {
 	opacity 0.3
 	category "t2tile"
 	isFood true
-		
-	rule xyz { @_ => _@ }
+	
+	ruleset Diffuser
 	
 }
 

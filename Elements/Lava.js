@@ -15,7 +15,7 @@ element Lava {
 		@    @
 	}
 	
-	ruleset Slime
+	ruleset Gloop
 	
 }
 

@@ -6,8 +6,8 @@ element Spark {
 	emissive "orange"
 	category "sandbox"
 	
-	input s ({space, args}) => {
-		if (space && space.atom && space.atom.element == Spark) args.success = true
+	input s ({space, self, args}) => {
+		if (space && space.atom && space.atom.element == self.element) args.success = true
 		return true
 	}
 	
@@ -36,11 +36,7 @@ element Explosion {
 	action { @ => t }
 	rule { @d => _. }
 	
-	rule xyz { @* => @e }
-	rule xyz { @* => @e }
-	rule xyz { @* => @e }
-	rule xyz { @* => @e }
-	
+	rule xyz { @* => @e }	
 	
 }
 
@@ -51,22 +47,7 @@ element RedExplosion {
 	
 	data timer 1000
 	
-	output t ({self}) => self.timer--
-	input d ({self}) => self.timer <= 0
-	
-	output e ({space, self}) => {
-		if (space) SPACE.setAtom(space, self)
-	}
-	
-	
-	action { @ => t }
-	rule { @d => _. }
-	
-	rule xyz { @* => @e }
-	rule xyz { @* => @e }
-	rule xyz { @* => @e }
-	rule xyz { @* => @e }
-	
+	ruleset Explosion
 	
 }
 
@@ -77,22 +58,7 @@ element BlueExplosion {
 	
 	data timer 1000
 	
-	output t ({self}) => self.timer--
-	input d ({self}) => self.timer <= 0
-	
-	output e ({space, self}) => {
-		if (space) SPACE.setAtom(space, self)
-	}
-	
-	
-	action { @ => t }
-	rule { @d => _. }
-	
-	rule xyz { @* => @e }
-	rule xyz { @* => @e }
-	rule xyz { @* => @e }
-	rule xyz { @* => @e }
-	
+	ruleset Explosion
 	
 }
 
@@ -101,14 +67,7 @@ element BlueSpark {
 	colour "lightblue"
 	emissive "lightblue"
 	
-	input s ({space, args}) => {
-		if (space && space.atom && space.atom.element == BlueSpark) args.success = true
-		return true
-	}
-	rule 0.2 { @ => _}
-	rule XYZ 0.5 { @s => ?? => _s }
-	rule xyz { @_ => @@ }
-	
+	ruleset Spark
 	
 }
 

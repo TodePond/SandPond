@@ -1,6 +1,5 @@
 TodeSplat`
 
-
 element Snow {
 
 	colour "white"
@@ -20,7 +19,7 @@ element Snow {
 	rule 0.0005 { @ => W }
 	rule xyz { @h => Wh }
 	
-	ruleset Sand
+	ruleset Powder
 	
 }
 
