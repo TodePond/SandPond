@@ -277,16 +277,31 @@
 		if (propertyName == "input") {
 			input = propertyNameResult.input
 			input = eatGap(input).input
+			
 			const keyResult = eatName(input)
 			const key = keyResult.name
 			input = keyResult.input
+			
 			input = eatGap(input).input
+			
+			let extender = undefined
+			const extendsResult = eatKeyword(input, "extends")
+			if (extendsResult.success) {
+				input = extendsResult.input
+				input = eatGap(input).input
+				const extenderResult = eatName(input)
+				const extenderName = extenderResult.name
+				extender = inputs.get(extenderName)
+				if (!extender) extender = globalInputs.get(extenderName)
+				if (!extender) throw new Error (`[TodeSplat] Couldn't find input '${extenderName}'`)
+				input = extenderResult.input
+			}
 			
 			const result = eatJavascript(input, depth)
 			if (!result.success) return {input: source, success: false}
 			input = result.input
 			const test = eval(result.javascript)
-			const ruleInput = makeInput(key, test)
+			const ruleInput = makeInput(key, test, extender)
 			inputs.set(key, ruleInput)
 			return {
 				input,

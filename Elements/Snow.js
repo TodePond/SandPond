@@ -8,12 +8,7 @@ element Snow {
 	category "sandbox"
 	state "solid"
 		
-	input h ({space}) => {
-		if (!space || !space.atom) return false
-		if (space.atom.element == Lava || space.atom.element == Fire) return true
-		return false
-	}
-	
+	input h extends # ({space}) => space.atom.element == Lava || space.atom.element == Fire
 	output W ({space}) => SPACE.setAtom(space, ATOM.make(Water))
 	
 	rule 0.0005 { @ => W }

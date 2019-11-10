@@ -118,10 +118,7 @@ element Snaker {
 	}
 	
 	// Is it Res?
-	input F ({space}) => {
-		if (!space || !space.atom) return false
-		return space.atom.element.isFood
-	}
+	input F extends # ({space}) => space.atom.element.isFood
 	
 	// Make a new leader
 	output l ({space, self}) => {

@@ -1,6 +1,5 @@
 TodeSplat`
 
-
 element Ant {
 
 	colour "grey"
@@ -9,7 +8,7 @@ element Ant {
 	pour false
 	category "life"
 	
-	input F ({space}) => space && space.atom && space.atom.element == Food
+	input F extends # ({space}) => space.atom.element == Food
 	output F ({space}) => SPACE.setAtom(space, ATOM.make(Food))
 	
 	//rule 0.001 { @ => F }

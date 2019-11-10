@@ -14,8 +14,7 @@ element FatFly {
 		return true
 	}
 	
-	input L ({space, args}) => {
-		if (!space || !space.atom) return false
+	input L extends # ({space, args}) => {
 		if (space.atom.element == FatFlyLimb) return true
 	}
 	

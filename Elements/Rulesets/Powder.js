@@ -4,8 +4,7 @@ element Powder {
 
 	state "solid"
 	
-	input l ({space, args}) => {
-		if (!space) return false
+	input l extends . ({space, args}) => {
 		if (!space.atom) return true
 		if (space.atom.element.state != "liquid") return false
 		return args.swap = space.atom

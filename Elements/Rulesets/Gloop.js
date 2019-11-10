@@ -4,8 +4,7 @@ element Gloop {
 	
 	state "liquid"
 	
-	input w ({space, args}) => {
-		if (!space) return false
+	input w extends . ({space, args}) => {
 		if (!space.atom) return true
 		if (space.atom.element != Water) return false
 		return args.swap = space.atom

@@ -32,7 +32,6 @@ element Explosion {
 		if (space) SPACE.setAtom(space, self)
 	}
 	
-	
 	action { @ => t }
 	rule { @d => _. }
 	
@@ -84,8 +83,8 @@ element Lightning {
 		return true
 	}
 	
-	input L ({space}) => space && space.atom && space.atom.element == Lightning
-	input n ({space}) => !space || !space.atom || (space && space.atom && space.atom.element != Lightning)
+	input L extends # ({space}) => space.atom.element == Lightning
+	input n ({space}) => !space || (space && space.atom && space.atom.element != Lightning)
 	
 	output F ({space}) => SPACE.setAtom(space, ATOM.make(LightningFlash))
 	
@@ -109,9 +108,8 @@ element LightningFlash {
 	emissive "lightblue"
 	hidden true
 	
-	input L ({space}) => space && space.atom && space.atom.element == Lightning
-	input n ({space}) => space && space.atom && space.atom.element != Lightning
-	
+	input L extends # ({space}) => space.atom.element == Lightning
+	input n extends # ({space}) => space.atom.element != Lightning
 	
 	output B ({space}) => SPACE.setAtom(space, ATOM.make(LightningBang))
 	
@@ -135,7 +133,7 @@ element LightningBang {
 	emissive "white"
 	hidden true
 	
-	input F ({space}) => space && space.atom && space.atom.element == LightningFlash
+	input F extends # ({space}) => space.atom.element == LightningFlash
 	
 	rule {
 		@ => _

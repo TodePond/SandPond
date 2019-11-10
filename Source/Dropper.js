@@ -35,6 +35,7 @@ const DROPPER = {}
 				const y = Math.round(position.y)
 				const z = Math.round(position.z)
 				dropAtom(x, y, z)
+				if (UI.selectedElement.precise) return
 				if (Math.random() < SPREAD_CHANCE) dropAtom(x + 1, y, z)
 				if (Math.random() < SPREAD_CHANCE) dropAtom(x - 1, y, z)
 				if (Math.random() < SPREAD_CHANCE) dropAtom(x, y, z + 1)

@@ -7,8 +7,8 @@ element DReg {
 	opacity 0.3
 	category "t2tile"
 	
-	input D ({space}) => space && space.atom && space.atom.element == DReg
-	input n ({space}) => space && space.atom && space.atom.element != DReg
+	input D extends # ({space}) => space.atom.element == DReg
+	input n extends # ({space}) => space.atom.element != DReg
 	
 	output R ({space}) => SPACE.setAtom(space, ATOM.make(Res))
 	output D ({space}) => SPACE.setAtom(space, ATOM.make(DReg))

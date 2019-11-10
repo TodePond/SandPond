@@ -7,8 +7,6 @@ element SuperForkBomb {
 	emissive "black"
 	category "t2tile"
 	
-	//hidden true
-	
 	rule XYZ { @. => .@ }
 	
 }

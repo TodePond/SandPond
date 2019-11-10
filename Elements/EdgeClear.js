@@ -9,8 +9,7 @@ element EdgeClear {
 	category "clear"
 	
 	output E ({space}) => SPACE.setAtom(space, ATOM.make(EdgeClearEdge))
-	input N ({space}) => {
-		if (!space) return false
+	input N extends . ({space}) => {
 		if (!space.atom) return true
 		if (space.atom.element.family != "EdgeClear") return true
 	}
@@ -51,8 +50,7 @@ element EdgeClearBomb {
 	hidden true
 	family "EdgeClear"
 	
-	input N ({space}) => {
-		if (!space) return false
+	input N extends . ({space}) => {
 		if (!space.atom) return true
 		if (space.atom.element == EdgeClear) return true
 		if (space.atom.element.family != "EdgeClear") return true

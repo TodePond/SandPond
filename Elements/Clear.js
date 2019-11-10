@@ -21,7 +21,7 @@ element Clear {
 		return true
 	}
 	
-	input D ({space}) => space && space.atom && space.atom.element == ClearDone
+	input D extends # ({space}) => space.atom.element == ClearDone
 	output D ({space}) => SPACE.setAtom(space, ATOM.make(ClearDone))
 	output c ({space}) => { if (space) SPACE.setAtom(space, ATOM.make(Clear)) }
 	

@@ -76,11 +76,8 @@ element Snake {
 		return true
 	}
 	
-	// Is it Res?
-	input R ({space}) => {
-		if (!space || !space.atom) return false
-		return space.atom.element.isFood
-	}
+	// Is it Food?
+	input R extends # ({space}) => space.atom.element.isFood
 	
 	// Make a new leader
 	output l ({space, self}) => {
@@ -120,7 +117,6 @@ element SnakeTrail {
 		if (!space || !space.atom) return true
 		if (space.atom.element != Snake && space.atom.element != SnakeTrail) return true
 		if (space.atom.score != self.score - 1) return true
-		return false
 	}
 	rule XYZ { @* => _. }
 	
