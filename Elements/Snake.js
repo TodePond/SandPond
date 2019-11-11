@@ -1,5 +1,8 @@
 TodeSplat`
 
+
+// NOT WORKING AT THE MOMENT BECause I removed "tests"
+
 element Snake {
 
 	colour "green"
@@ -7,6 +10,7 @@ element Snake {
 	precise true
 	pour false
 	category "life"
+	hidden true
 	
 	data score 0
 

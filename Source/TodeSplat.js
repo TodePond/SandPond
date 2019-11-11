@@ -687,7 +687,7 @@
 		readSides(nextSide, rawSpaces, xAxis, yAxis, inputs, outputs)
 		
 		// Make the rule
-		const rule = new Rule(axes, rawSpaces, superSymmetries, isAction)
+		const rule = RULE.make(rawSpaces, axes, superSymmetries, isAction)
 		elementArgs.rules.push(rule)
 		
 		return {
