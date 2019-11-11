@@ -13,7 +13,15 @@ const RULE = {}
 	// Public //
 	//========//
 	RULE.make = (spaces, reflections, symmetries, isAction = false) => {
-		const events = getEvents(spaces, reflections, symmetries)
+	
+		// First, apply symmetries
+		// Symmetries are just syntactic sugar
+		const symmetrySpaces = getSymmetrySpaces(spaces, symmetries)
+		
+		// Then, link up functions to appropriate site numbers
+		// If reflections are specified, there will be more than one possibility for site number
+		const events = getEvents(symmetrySpaces, reflections)
+		
 		const rule = {
 		
 			// Meaningful Data
@@ -36,24 +44,18 @@ const RULE = {}
 	//===========//
 	// Functions //
 	//===========//
-	const getEvents = (rawSpaces, symmetries, superSymmetries) => {
+	const getEvents = (spaces, reflections) => {
 		
-		// First, apply super symmetries
-		// Super symmetries are just syntactic sugar
-		const symmetrySpaces = getSymmetrySpaces(rawSpaces, superSymmetries)
-		
-		// Then, link up functions to appropriate site numbers
-		// If symmetries are specified, there will be more than one possibility for site number
 		const events = []
-		for (const symmetrySpace of symmetrySpaces) {
+		for (const space of spaces) {
 		
-			const x = symmetrySpace.x | 0
-			const y = symmetrySpace.y | 0
-			const z = symmetrySpace.z | 0
-			const siteNumbers = getSiteNumbers(symmetries, x, y, z)
+			const x = space.x | 0
+			const y = space.y | 0
+			const z = space.z | 0
+			const siteNumbers = getSiteNumbers(reflections, x, y, z)
 			
-			const tests = symmetrySpace.input
-			const instruction = symmetrySpace.output
+			const tests = space.input
+			const instruction = space.output
 			const event = {siteNumbers, tests, instruction}
 			events.push(event)
 		}
@@ -61,34 +63,29 @@ const RULE = {}
 		return events
 	}
 	
-	const getSymmetrySpaces = (rawSpaces, superSymmetries) => {
-		const superSpaces = [...rawSpaces]
-		const rawSpacesLength = superSpaces.length
-		if (superSymmetries != undefined) for (let i = 0; i < rawSpacesLength; i++) {
-			const rawSpace = superSpaces[i]
-			const rawSymmetrySpaces = getRawSuperSymmetrySpaces(superSymmetries, rawSpace.x, rawSpace.y, rawSpace.z)
-			for (const rawSymmetrySpace of rawSymmetrySpaces) {
-				if (isRelativeSpaceInArray(superSpaces, rawSymmetrySpace)) continue
-				superSpaces.push({
-					x: rawSymmetrySpace.x,
-					y: rawSymmetrySpace.y,
-					z: rawSymmetrySpace.z,
-					input: rawSpace.input,
-					output: rawSpace.output,
+	const getSymmetrySpaces = (spaces, symmetries) => {
+		const symmetrySpaces = [...spaces]
+		if (symmetries == undefined) return symmetrySpaces
+		
+		const spacesLength = symmetrySpaces.length
+		for (let i = 0; i < spacesLength; i++) {
+			const space = symmetrySpaces[i]
+			const spaceSymmetrySpaces = getSpaceSymmetrySpaces(symmetries, space.x, space.y, space.z)
+			for (const spaceSymmetrySpace of spaceSymmetrySpaces) {
+				if (isRelativeSpaceInArray(symmetrySpaces, spaceSymmetrySpace)) continue
+				symmetrySpaces.push({
+					x: spaceSymmetrySpace.x,
+					y: spaceSymmetrySpace.y,
+					z: spaceSymmetrySpace.z,
+					input: space.input,
+					output: space.output,
 				})
 			}
 		}
 		
-		return superSpaces
+		return symmetrySpaces
 		
 	}
-	
-	const getTests = (inputs) => {
-		const spaceTests = inputs.map(input => input.test)
-		return spaceTests
-	}
-	
-	const getInstruction = (output) => output.instruction
 	
 	const getSiteNumbers = (symmetries = {}, x, y, z) => {
 			
@@ -198,7 +195,7 @@ const RULE = {}
 	
 	const makeRelativeSpace = (x=0, y=0, z=0) => ({x, y, z})
 	
-	const getRawSuperSymmetrySpaces = (symmetries, x=0, y=0, z=0) => {
+	const getSpaceSymmetrySpaces = (symmetries, x=0, y=0, z=0) => {
 	
 		if (!symmetries.X && !symmetries.Y && !symmetries.Z) {
 			return [

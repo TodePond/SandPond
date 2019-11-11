@@ -1,6 +1,6 @@
-//========//
-// Action //
-//========//
+//=======//
+// Event //
+//=======//
 {
 	
 	function makeInput(character, test, extender) {
