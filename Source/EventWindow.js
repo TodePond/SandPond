@@ -25,7 +25,10 @@ const EVENTWINDOW = {}
 			for (const x of area.xStart.to(area.xEnd)) {
 				for (const z of area.zStart.to(area.zEnd)) {
 					const space = grid[y][x][z]
-					space.eventWindow = makeEventWindow(universe, x, y, z)
+					const sites = makeSites(universe, x, y, z)
+					for (let siteNumber = 0; siteNumber < sites.length; siteNumber++) {
+						space.sites[siteNumber] = sites[siteNumber]
+					}
 				}
 			}
 		}
@@ -38,9 +41,9 @@ const EVENTWINDOW = {}
 		// >x ^y
 		// looking from the front
 		[-2,2,0],  [-1,2,0],  [0,2,0],  [1,2,0],  [2,2,0],
-		[-2,1,0],  [-1,1,0],  [0,1,0],  [1,1,0],  [2,1,0],
-		[-2,0,0],  [-1,0,0],  [0,0,0],  [1,0,0],  [2,0, 0],
-		[-2,-1,0], [-1,-1,0], [0,-1,0], [1,-1,0], [2,-1,0],
+		[-2,1,0],  [-1,1,0],  [0,1,0],  [1,1,0], [2,1,0],
+		[-2,0,0],  [-1,0,0],  [0,0,0],  [1,0,0], [2,0, 0],
+		[-2,-1,0], [-1,-1,0], [0,-1,0], [1,-1,0],[2,-1,0],
 		[-2,-2,0], [-1,-2,0], [0,-2,0], [1,-2,0], [2,-2,0],
 		
 		// >x ^z
@@ -79,10 +82,10 @@ const EVENTWINDOW = {}
 	//===========//
 	// Functions //
 	//===========//
-	const makeEventWindow = (universe, x, y, z) => {
+	const makeSites = (universe, x, y, z) => {
 	
 		// Written by hand because it made lookup faster compared to dynamically filling the array
-		return [
+		const sites = [
 			SITE.make(UNIVERSE.selectSpace(universe, x + -2, y + 2, z + 0), x + -2, y + 2, z + 0),
 			SITE.make(UNIVERSE.selectSpace(universe, x + -1, y + 2, z + 0), x + -1, y + 2, z + 0),
 			SITE.make(UNIVERSE.selectSpace(universe, x + 0, y + 2, z + 0), x + 0, y + 2, z + 0),
@@ -173,6 +176,7 @@ const EVENTWINDOW = {}
 			SITE.make(UNIVERSE.selectSpace(universe, x + 0, y + -2, z + 1), x + 0, y + -2, z + 1),
 			SITE.make(UNIVERSE.selectSpace(universe, x + 0, y + -2, z + 2), x + 0, y + -2, z + 2),
 		]
+		return sites
 	}
 	
 }

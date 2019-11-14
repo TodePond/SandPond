@@ -273,7 +273,7 @@ const UI = {}
 	// Events //
 	//========//
 	on.keydown(e => {
-		const searchWindow = $("#search")
+		const searchWindow = $("#elements")
 		if (!searchWindow.classList.contains("minimised")) {
 			const searchBar = $("#searchBar")
 			searchBar.focus()

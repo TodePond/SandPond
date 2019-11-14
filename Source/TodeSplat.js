@@ -673,7 +673,7 @@
 				
 				// Add chance to origin test
 				if (chance != undefined && relativeX == 0 && relativeY == 0) {
-					const test = ruleInput.test
+					const test = ruleInput
 					const chanceTest = (...args) => Math.random() < chance && test(...args)
 					const chanceRuleInput = makeInput(char, chanceTest)
 					ruleInput = chanceRuleInput

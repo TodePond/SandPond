@@ -30,8 +30,7 @@ const UNIVERSE = {}
 	
 	UNIVERSE.selectSpace = (universe, x, y, z) => {
 		const world = UNIVERSE.selectWorld(universe, x, y, z)
-		const space = WORLD.selectSpace(world, x, y, z)
-		return space
+		return WORLD.selectSpace(world, x, y, z)
 	}
 	
 }

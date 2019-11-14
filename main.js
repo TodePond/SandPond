@@ -27,7 +27,7 @@ const WORLD_AREA = {
 
 const CAMERA_START_X = 0
 const CAMERA_START_Y = D2_MODE? WORLD_HEIGHT/2 : SMALL_MODE? 85 : 150
-const CAMERA_START_Z = SMALL_MODE? 100 : 225
+const CAMERA_START_Z = (SMALL_MODE? 100 : 225) * (D2_MODE? 2 : 1)
 
 const CAMERA_FOV = 35
 const CAMERA_SPEED = 2
@@ -90,7 +90,9 @@ on.process(() => {
 	}
 	for (let i = 0; i < spaceCount; i++) {
 		const space = world.spaces[i]
-		if (space) BEHAVE.spaceBehave(space)
+		if (space) {
+			BEHAVE.spaceBehave(space)
+		}
 	}
 })
 

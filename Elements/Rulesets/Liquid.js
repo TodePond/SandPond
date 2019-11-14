@@ -10,7 +10,7 @@ element Liquid {
 	}
 	
 	rule xz {
-		@  => _
+		@_ => __
 		#_    #@
 	}
 	

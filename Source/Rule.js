@@ -29,7 +29,8 @@ const RULE = {}
 			isAction,
 			
 			// Cache
-			layerCount: events[0].tests.length,
+			layerCount: events[0].layers.length,
+			inputLayerCount: events[0].layers.length - 1,
 			reflectionCount: events[0].siteNumbers.length,
 			eventCount: events.length,
 			
@@ -54,9 +55,12 @@ const RULE = {}
 			const z = space.z | 0
 			const siteNumbers = getSiteNumbers(reflections, x, y, z)
 			
-			const tests = space.input
-			const instruction = space.output
-			const event = {siteNumbers, tests, instruction}
+			const inputs = space.input
+			const output = (...args) => {
+				space.output(...args)
+				return true
+			}
+			const event = {siteNumbers, layers: [...inputs, output]}
 			events.push(event)
 		}
 		
@@ -119,14 +123,15 @@ const RULE = {}
 		if (symmetries.x && symmetries.y && !symmetries.z) {
 			return [
 				EVENTWINDOW.getSiteNumber(x, y, z),
+				EVENTWINDOW.getSiteNumber(-x, -y, z),
+				EVENTWINDOW.getSiteNumber(y, x, z),
+				EVENTWINDOW.getSiteNumber(-y, -x, z),
+				
 				EVENTWINDOW.getSiteNumber(-x, y, z),
 				EVENTWINDOW.getSiteNumber(x, -y, z),
-				EVENTWINDOW.getSiteNumber(-x, -y, z),
 			
-				EVENTWINDOW.getSiteNumber(y, x, z),
 				EVENTWINDOW.getSiteNumber(-y, x, z),
 				EVENTWINDOW.getSiteNumber(y, -x, z),
-				EVENTWINDOW.getSiteNumber(-y, -x, z),
 			]
 		}
 		

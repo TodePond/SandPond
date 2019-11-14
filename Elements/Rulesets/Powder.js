@@ -4,6 +4,8 @@ element Powder {
 
 	state "solid"
 	
+	input L extends . ({space}) => !space.atom || space.atom.element.state == "liquid"
+	
 	input l extends . ({space, args}) => {
 		if (!space.atom) return true
 		if (space.atom.element.state != "liquid") return false
@@ -18,7 +20,7 @@ element Powder {
 	}
 	
 	rule xz {
-		@  => l
+		@L => lL
 		#l    #@
 	}
 	

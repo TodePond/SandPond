@@ -299,7 +299,8 @@ const WORLD = {}
 		if (!gridy) return
 		const gridyx = gridy[x]
 		if (!gridyx) return
-		return gridyx[z]
+		const space = gridyx[z]
+		return space
 	}
 	
 	//===========//

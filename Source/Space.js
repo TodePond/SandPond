@@ -14,7 +14,7 @@ const SPACE = {}
 	// Public //
 	//========//
 	SPACE.make = (world, id) => {
-		const space = {
+		return {
 		
 			// Real Data
 			atom: undefined,
@@ -22,12 +22,12 @@ const SPACE = {}
 			// Cached Data
 			world,
 			id,
-			colourOffset0: id*3 + 0, //not really my job... someone else should tell me how to do this calculation
+			sites: [], //EVENTWINDOW makes this
+			colourOffset0: id*3 + 0, //not really my job to make this... WORLD should make this
 			colourOffset1: id*3 + 1,
 			colourOffset2: id*3 + 2,
 			
 		}
-		return space
 	}
 	
 	SPACE.setAtom = (space, atom) => {

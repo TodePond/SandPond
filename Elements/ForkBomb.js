@@ -6,7 +6,7 @@ element ForkBomb {
 	emissive "black"
 	category "t2tile"
 	
-	rule xyz { @_ => .@ }
+	rule xyz { @_ => *@ }
 	
 }
 
