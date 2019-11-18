@@ -7,7 +7,7 @@ element Rope {
 	category "sandbox"
 	pour false
 	
-	data remaining 20
+	data remaining 50
 	
 	input r ({self}) => {
 		if (!self.id) self.id = Math.random()
@@ -39,6 +39,20 @@ element RopePart {
 		if (space.atom.element == RopePart) {
 			if (self.id != space.atom.id) return true
 		}
+	}
+	
+	input h ({space, args}) => {
+		if (space && space.atom && (space.atom.element == Fire || space.atom.element == Lava)) args.success = true
+		return true
+	}
+	
+	output F ({space}) => {
+		SPACE.setAtom(space, ATOM.make(Fire))
+	}
+	
+	rule XYZ {
+		 h =>  ? =>  .
+		@h    ??    F.
 	}
 	
 	rule {
