@@ -12,85 +12,162 @@ element Cell {
 	output O ({space}) => SPACE.setAtom(space, ATOM.make(OuterMembrane))
 	
 	rule XY {
-		  _      I
-		  _      I
-		@ _ => C I
+		@_ => CC
+	}
+	
+}
+
+element Flubber {
+	colour "#2d3"
+	colour "green"
+	//default true
+	
+	input F extends # ({space}) => space.atom.element == Flubber
+	input N extends . ({space}) => !space.atom || space.atom.element != Flubber
+	
+	rule xy {
+		 N       N
+		N@_F => N_@F
+		 N       N
+	}
+	
+	rule xy {
+		N@_F => N_@F
+		 NF      NF
+	}
+	
+	rule xy {
+		 N       N
+		N@_F => N_@F
+		  F       F
+	}
+	
+	rule xy {
+		  F       F
+		N@_F => N_@F
+		  F       F
+	}
+	
+	rule xy {
+		 N      N
+		N@_ => N_@
+		  F      F
+	}
+	
+	rule xy {
+		  F      F
+		N@_ => N_@
+		  F      F
+	}
+	
+	rule xy {
+		NF    NF
+		@_ => _@
+		 F     F
+	}
+	
+	rule xy {
+		 N      N
+		N@  => N_
+		 F_     F@
 	}
 	
 }
 
 element Cytoplasm {
-	colour "#2d3"
-	hidden true
-	
-	input I extends # ({space}) => space.atom.element == InnerMembrane
-	input O extends # ({space}) => space.atom.element == OuterMembrane
-	
-	output I ({space}) => SPACE.setAtom(space, ATOM.make(InnerMembrane))
-	
-	rule xy { @_ => _@ }
-	
-}
 
-element InnerMembrane {
-	colour "#6789ab"
-	hidden true
+	colour "#2d3"
+	colour "green"
+	//hidden true
 	
-	input C extends # ({space}) => space.atom.element == Cytoplasm
-	input I extends # ({space}) => space.atom.element == InnerMembrane
-	input O extends # ({space}) => space.atom.element == OuterMembrane
-	
-	output I ({space}) => SPACE.setAtom(space, ATOM.make(InnerMembrane))
-	output T ({space}) => SPACE.setAtom(space, ATOM.make(CellTrail))
-	output O ({space}) => SPACE.setAtom(space, ATOM.make(OuterMembrane))
-	
-	input i ({space, args}) => {
+	input 4 ({space, args}) => {
 		if (!args.threshold) {
 			args.score = 0
 			args.threshold = 4
 		}
-		if (space && space.atom && space.atom.element == InnerMembrane) args.score++
+		if (space && !space.atom) args.score++
 		return true
 	}
 	
-	/*rule XY {
-		@i => ^^ => _i
-	}*/
-	
-	
-	
-	/*rule xy {
-	    _I    _I
-		_I    _I
-		@_ => _@
-		_I    _I
-		_I    _I
+	input 3 ({space, args}) => {
+		if (!args.threshold) {
+			args.score = 0
+			args.threshold = 3
+		}
+		if (space && !space.atom) args.score++
+		return true
 	}
 	
-	rule xy {
-		I     I
-		I     I
-		@_ => _@
-		I     I
-		I     I
-	}*/
+	input 2 ({space, args}) => {
+		if (!args.threshold) {
+			args.score = 0
+			args.threshold = 2
+		}
+		if (space && !space.atom) args.score++
+		return true
+	}
 	
+	input 1 ({space, args}) => {
+		if (!args.threshold) {
+			args.score = 0
+			args.threshold = 1
+		}
+		if (space && !space.atom) args.score++
+		return true
+	}
 	
+	input 1 ({space, args}) => {
+		if (!args.threshold) {
+			args.score = 0
+			args.threshold = 0
+		}
+		if (space && !space.atom) args.score++
+		return true
+	}
+	
+	output c ({space}) => {
+		if (space && !space.atom) {
+			SPACE.setAtom(space, ATOM.make(Cytoplasm))
+		}
+	}
+	
+	rule XY 0.3 {
+		@4 => == => _c
+	}
+	
+	rule XY 1 {
+		@4 => == => _.
+	}
+	
+	rule XY 0.03 {
+		@3 => == => _c
+	}
+	
+	rule XY 0.01 {
+		@3 => == => _.
+	}
+	
+	rule XY 0.01 {
+		@2 => == => @c
+	}
+	
+	rule XY 0.01 {
+		@2 => == => _.
+	}
+	
+	rule XY 0.01 {
+		@1 => == => @c
+	}
+	
+	rule XY 0.03 {
+		@1 => == => _.
+	}
+	
+	rule XY 0.02 {
+		@0 => == => _.
+	}
 	
 }
 
-element CellTrail {
-	colour "blue"
-	hidden true
-
-	
-}
-
-element OuterMembrane {
-	colour "#456789"
-	hidden true
-
-	
-}
 
 `

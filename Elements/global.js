@@ -9,6 +9,7 @@ input # ({space}) => space != undefined && space.atom != undefined
 input ? ({success}) => success == true
 input ! ({success}) => success != false
 input ^ ({score, threshold}) => score >= threshold
+input = ({score, threshold}) => score == threshold
 
 output * () => {}
 output @ ({space, self}) => SPACE.setAtom(space, self)

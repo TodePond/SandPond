@@ -257,6 +257,8 @@ const UI = {}
 		if (element == UI.selectedElement) {
 			 searchItemButton.classList.add("selected")
 		}
+		
+		if (element.default) UI.selectedElement = element
 
 	}
 	
