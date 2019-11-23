@@ -2,6 +2,8 @@
 // World //
 //=======//
 const WORLD = {}
+const ATOM_SIZE = 0.01
+
 {
 	
 	// World Job Description
@@ -97,7 +99,7 @@ const WORLD = {}
 	// Globals //
 	//=========//
 	const HIDDEN_MATRIX = [1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 10, 0, 1]
-	const GEOMETRY_TEMPLATE = new THREE.BoxBufferGeometry(1, 1, 1)
+	const GEOMETRY_TEMPLATE = new THREE.BoxBufferGeometry(1 * ATOM_SIZE, 1 * ATOM_SIZE, 1 * ATOM_SIZE)
 	const MATERIAL = new THREE.MeshLambertMaterial({
 		transparent: true,
 		opacity: 0.5,
@@ -382,7 +384,7 @@ const WORLD = {}
 	
 	const dummy = new THREE.Object3D()
 	const getMatrix = (x, y, z) => {
-		dummy.position.set(x, y, z)
+		dummy.position.set(x * ATOM_SIZE, y * ATOM_SIZE, z * ATOM_SIZE)
 		dummy.updateMatrix()
 		return dummy.matrix
 	}

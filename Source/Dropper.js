@@ -25,6 +25,11 @@ const DROPPER = {}
 		if (UI.clicking) return
 		started = true
 		
+		if (position == undefined) return
+		position.x /= ATOM_SIZE
+		position.y /= ATOM_SIZE
+		position.z /= ATOM_SIZE
+		
 		const previousDown = down
 		down = Mouse.down
 		

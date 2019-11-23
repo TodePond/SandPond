@@ -32,7 +32,16 @@
 	const makeCamera = o=> {
 		const camera = new THREE.PerspectiveCamera()
 		camera.fov = 30
-		camera.position.set(0, 50, 75)
+		//camera.position.set(0, 1.6, 0)
+		camera.lookAt(0, 0, 0)
+		//camera.far = 99999999
+		return camera
+	}
+	
+	const makeDummyCamera = o=> {
+		const camera = new THREE.PerspectiveCamera()
+		//camera.fov = 30
+		camera.position.set(0, 1.6, 0)
 		camera.lookAt(0, 0, 0)
 		//camera.far = 99999999
 		return camera
@@ -54,6 +63,9 @@
 			this.camera = makeCamera()
 			this.raycaster = new THREE.Raycaster()
 			
+			this.vrEnabled = false
+			this.dummyCamera = makeDummyCamera()
+			
 			this.cursor = {
 				get position3D() { return self.getCursorPosition3D(mesh => !mesh.unclickable) },
 				get position2D() {
@@ -69,7 +81,7 @@
 		}
 		
 		start() {
-			requestAnimationFrame(this.o.render)
+			this.renderer.setAnimationLoop(this.o.render)
 		}
 		
 		render(timeStampMilliseconds) {
@@ -81,7 +93,6 @@
 			this.renderer.render(this.scene, this.camera)
 			
 			this.previousTimeStamp = timeStamp
-			requestAnimationFrame(this.o.render)
 		}
 		
 		process(tickTime) {
@@ -89,6 +100,7 @@
 		}
 		
 		resize() {
+			if (this.renderer.vr.isPresenting()) return
 			if (this.canvas.width == this.canvas.clientWidth && this.canvas.height == this.canvas.clientHeight) return
 			this.renderer.setSize(this.canvas.clientWidth / 1, this.canvas.clientHeight / 1, false)
 			this.camera.aspect = this.canvas.clientWidth / this.canvas.clientHeight
@@ -96,7 +108,8 @@
 		}
 		
 		getCursorPosition3D(filter = () => true) {
-			this.raycaster.setFromCamera(this.cursor.position2D, this.camera)
+			if (!this.vrEnabled) this.raycaster.setFromCamera(this.cursor.position2D, this.camera)
+			else this.raycaster.setFromCamera(this.cursor.position2D, this.dummyCamera)
 			const intersects = this.raycaster.intersectObjects(this.scene.children.filter(filter))
 			if (intersects.length == 0) return
 			const intersect = intersects[0]

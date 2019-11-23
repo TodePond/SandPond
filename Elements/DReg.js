@@ -4,7 +4,7 @@ element DReg {
 
 	colour "brown"
 	emissive "brown"
-	opacity 0.3
+	//opacity 0.3
 	category "t2tile"
 	
 	input D extends # ({space}) => space.atom.element == DReg

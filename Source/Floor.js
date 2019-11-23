@@ -14,9 +14,9 @@
 	]
 	
 	function makeFloor(width, depth) {
-		const floorGeometry = new THREE.BoxGeometry(width, 1, depth)
+		const floorGeometry = new THREE.BoxGeometry(width, ATOM_SIZE, depth)
 		const floor = new THREE.Mesh(floorGeometry, floorMaterials)
-		floor.position.set(0, -1, 0)
+		floor.position.set(0, -1 * ATOM_SIZE, 0)
 		//floor.castShadow = true
 		//floor.receiveShadow = true
 		return floor
