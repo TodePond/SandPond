@@ -14,7 +14,7 @@ _    @
 It makes an atom fall down if there's an empty space below it.<br>
 
 ## Getting Started
-Just download it and open `index.html` in a browser.<br>
+Just [download](https://github.com/l2wilson94/Sandboys/archive/master.zip) it and open `index.html` in a browser.<br>
 Or try out the [live demo](http://sandboysland.topwilson.com/?small).
 
 ## Make your own element
