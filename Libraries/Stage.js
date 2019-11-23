@@ -108,8 +108,8 @@
 		}
 		
 		getCursorPosition3D(filter = () => true) {
-			if (!this.vrEnabled) this.raycaster.setFromCamera(this.cursor.position2D, this.camera)
-			else this.raycaster.setFromCamera(this.cursor.position2D, this.dummyCamera)
+			this.raycaster.setFromCamera(this.cursor.position2D, this.camera)
+			//else this.raycaster.setFromCamera(this.cursor.position2D, this.dummyCamera)
 			const intersects = this.raycaster.intersectObjects(this.scene.children.filter(filter))
 			if (intersects.length == 0) return
 			const intersect = intersects[0]
