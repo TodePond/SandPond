@@ -23,9 +23,9 @@
 	}
 	
 	function make2DFloor(width, height) {
-		const floorGeometry = new THREE.BoxGeometry(width, height, 1)
+		const floorGeometry = new THREE.BoxGeometry(width, height, ATOM_SIZE)
 		const floor = new THREE.Mesh(floorGeometry, floorMaterials)
-		floor.position.set(0, height / 2, -1)
+		floor.position.set(0, height / 2, -1 * ATOM_SIZE)
 		return floor
 	}
 
