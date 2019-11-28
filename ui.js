@@ -166,11 +166,11 @@ const UI = {}
 				<div id="elements" class="minimised">
 					<div class="menu">
 						<div class="heading box search clickable" id="searchHeading"><div class="label">&#8981;</div></div>
-						<div class="category heading box clickable" id="sandboxHeading"><div class="label">Sandbox</div></div>
+						<!--<div class="category heading box clickable" id="sandboxHeading"><div class="label">Sandbox</div></div>
 						<div class="category heading box clickable" id="lifeHeading"><div class="label">Life</div></div>
 						<div class="category heading box clickable" id="playerHeading"><div class="label">Player</div></div>
 						<div class="category heading box clickable" id="t2tileHeading"><div class="label">T2Tile</div></div>
-						<div class="category heading box clickable" id="clearHeading"><div class="label">Clear</div></div>
+						<div class="category heading box clickable" id="clearHeading"><div class="label">Clear</div></div>-->
 					</div>
 					<div id="search">
 						<input class="minimised clickable" type="text" id="searchBar">
@@ -264,6 +264,14 @@ const UI = {}
 		}
 		
 		if (element.default) UI.selectedElement = element
+		
+		for (const category of element.categories) {
+			const categoryElement = $(`#${category}Heading.category`)
+			if (!categoryElement) {
+				const newCategoryElement = HTML `<div class="category heading box clickable" id="${category}Heading"><div class="label">${category}</div></div>`
+				$("#elements > .menu").appendChild(newCategoryElement)
+			}
+		}
 
 	}
 	
@@ -331,7 +339,7 @@ const UI = {}
 			elementButton.classList.add("minimised")
 			
 			if (index >= 0) {
-				if (categories.length == 0 && $("#searchHeading").classList.contains("selected")) {
+				if (categories.length == 0/* && $("#searchHeading").classList.contains("selected")*/) {
 					elementButton.classList.remove("minimised")
 				}
 				else if (categories.some(category => category == element.category)) {

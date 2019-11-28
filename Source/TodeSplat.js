@@ -274,6 +274,18 @@
 		const propertyNameResult = eatName(input)
 		const propertyName = propertyNameResult.name
 		
+		if (propertyName == "category") {
+			input = propertyNameResult.input
+			input = eatGap(input).input
+			
+			const lineResult = eatLine(input)
+			const line = lineResult.line
+			input = lineResult.input
+			
+			const categoryName = eval(line)
+			elementArgs.categories.push(categoryName)
+		}
+		
 		if (propertyName == "input") {
 			input = propertyNameResult.input
 			input = eatGap(input).input
@@ -426,7 +438,7 @@
 	const eatElement = (source) => {
 	
 		let input = source
-		const elementArgs = {rules: [], data: []}
+		const elementArgs = {rules: [], data: [], categories: []}
 		const inputs = new Map()
 		const outputs = new Map()
 		

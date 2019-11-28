@@ -41,6 +41,14 @@ if (VR_MODE) {
 	renderer.vr.enabled = true
 	stage.vrEnabled = true
 	document.body.appendChild(THREE.WEBVR.createButton(renderer))
+	
+	/*const gamepads = navigator.getGamepads()
+	for (const gamepad of gamepads) {
+		print(gamepad)
+	}
+	
+	window.addEventListener("gamepadconnected", ()=> print("hi"))*/
+	
 }
 
 //camera.position.set(0, 1.6, 0)
