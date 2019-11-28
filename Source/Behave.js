@@ -30,28 +30,61 @@ const BEHAVE = {}
 	
 	//===========//
 	// Functions //
-	//===========//	
+	//===========//
+	
 	const tryRule = (self, rule, sites) => {
 	
 		const reflectionNumber = RULE.getReflectionNumber(rule)
-		const args = {self}
-		args.args = args //args
 		
 		const events = rule.events
 		const eventCount = rule.eventCount
 		
-		// GIVEN + VOTE LAYER
+		const changers = []
+		
+		/*const args = {
+			self: self,
+			space: undefined,
+			//get atom() { return this.space? this.space.atom : undefined },
+		}
+		args.args = args //args*/
+		
+		
+		
+		// GET SPACES
 		for (let eventNumber = 0; eventNumber < eventCount; eventNumber++) {
 		
 			const event = events[eventNumber]
 			const siteNumber = event.siteNumbers[reflectionNumber]
 			const site = sites[siteNumber]
 			const space = site
+			
+			const args = {self: self, space: space}
+			
+			//args.space = space
+			const result = event.testFunc(args)
+			if (!result) return false
+			
+			const changer = event.changeFunc.bind(undefined, args)
+			changers[eventNumber] = changer
+		}
+		
+		for (let eventNumber = 0; eventNumber < eventCount; eventNumber++) {
+			changers[eventNumber]()
+		}
+		
+		/*// GIVEN + VOTE LAYER
+		for (let eventNumber = 0; eventNumber < eventCount; eventNumber++) {
+		
+			const event = events[eventNumber]
+			const siteNumber = event.siteNumbers[reflectionNumber]
+			const site = sites[siteNumber]
+			const space = site
+			
 			args.space = space
 			
 			const func = event.testFunc
 			const result = func(args)
-			if (!result.givenSuccess) return false
+			if (!result) return false
 		}
 		
 		// CHANGE LAYER
@@ -63,10 +96,8 @@ const BEHAVE = {}
 			const space = site
 			args.space = space
 			
-			const func = event.changeFunc
-			const atom = func(args)
-			SPACE.setAtom(space, atom)
-		}
+			event.changeFunc(args)
+		}*/
 		
 		return true
 	}

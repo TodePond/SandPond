@@ -289,7 +289,9 @@
 			if (!result.success) return {input: source, success: false}
 			input = result.input
 			const test = eval(result.javascript)
-			const ruleInput = EVENT.makeInput({givens: [test]})
+			
+			const ruleInput = inputs.get(key) || EVENT.makeInput()
+			ruleInput.givens.push(test)
 			inputs.set(key, ruleInput)
 			return {
 				input,
@@ -309,7 +311,8 @@
 			if (!result.success) return {input: source, success: false}
 			input = result.input
 			const instruction = eval(result.javascript)
-			const ruleOutput = EVENT.makeOutput({changes: [instruction]})
+			const ruleOutput = outputs.get(key) || EVENT.makeOutput()
+			ruleOutput.changes.push(instruction)
 			outputs.set(key, ruleOutput)
 			return {
 				input,
@@ -554,7 +557,7 @@
 				if (output == undefined) {
 					const globalOutput = globalOutputs.get(char)
 					if (globalOutput) output = globalOutput
-					else output = EVENT.makeOutput()
+					else output = EVENT.makeOutput({changes: [({atom}) => atom]})
 				}
 				rawSpace.output = output
 			}
