@@ -1,5 +1,96 @@
 TodeSplat`
 
+element BigSandSeed {
+	colour "pink"
+	emissive "purple"
+	//precise true
+	//pour false
+	category "sandbox"
+	//default true
+	
+	data id -1
+	
+	input i extends _ ({self}) => self.id = Math.random()
+	output P ({space, self}) => {
+		const atom = ATOM.make(BigSandPart)
+		atom.id = self.id
+		SPACE.setAtom(space, atom)
+	}
+	
+	rule {
+		@ => P
+		i    P
+	}
+	
+}
+
+element BigSandPart {
+	colour "pink"
+	emissive "purple"
+	hidden true
+	
+	data id -1
+	
+	input P extends # ({space, self}) => space.atom.element == BigSandPart && self.id == space.atom.id
+	input T extends # ({space, self}) => space.atom.element == BigSandTrail && self.id == space.atom.id
+	input t ({space, args, self}) => {
+		if (space && space.atom && space.atom.element == BigSandTrail && self.id == space.atom.id) {
+			args.success = true
+			args.trailSpace = space
+		}
+		return true
+	}
+	
+	output m ({self, space, trailSpace}) => {
+		if (space == trailSpace) {
+			SPACE.setAtom(space, self)
+		}
+	}
+	
+	output T ({self, space}) => {
+		const atom = ATOM.make(BigSandTrail)
+		atom.id = self.id
+		SPACE.setAtom(space, atom)
+	}
+	
+	input S extends # ({space, self}) => {
+		if (space.atom.element == BigSandPart && space.atom.id == self.id) return false
+		if (space.atom.element == BigSandTrail && space.atom.id == self.id) return false
+		return true
+	}
+	
+	rule XZ { @t => ?? => _m }
+	rule {
+		@ => _
+		T    @
+	}
+	
+	rule {
+		@ => T
+		_    @
+	}
+	
+	rule xz {
+		@_ => __
+		P_    P@
+	}
+	
+	rule xz {
+		@_ => TT
+		S_    S@
+	}
+	
+}
+
+element BigSandTrail {
+	colour "lightblue"
+	emissive "blue"
+	hidden true
+	
+	data id -1
+	
+}
+
 element TallSand {
 
 	colour "pink"
