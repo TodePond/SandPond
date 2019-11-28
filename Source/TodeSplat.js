@@ -40,51 +40,27 @@
 	}
 	
 	const eatGlobalInput = (source, depth) => {
-		let input = source
+		throw new Error("IMPLEMENT ME!")
+		/*let input = source
 		const inputResult = eatInput(input)
 		if (!inputResult.success) return {input, success: false}
 		const name = inputResult.name
 		const ruleInput = inputResult.ruleInput
 		input = inputResult.input
 		globalInputs.set(name, ruleInput)
-		return {input, success: true}
+		return {input, success: true}*/
 	}
 	
 	const eatGlobalOutput = (source, depth) => {
-		let input = source
+		throw new Error("IMPLEMENT ME!")
+		/*let input = source
 		const outputResult = eatOutput(input)
 		if (!outputResult.success) return {input, success: false}
 		const name = outputResult.name
 		const ruleOutput = outputResult.ruleOutput
 		input = outputResult.input
 		globalOutputs.set(name, ruleOutput)
-		return {input, success: true}		
-	}
-	
-	const eatInput = (source, depth) => {
-		let input = source
-		input = eatKeyword(input, "input").input //input input input input (haha great naming, Luke)
-		input = eatGap(input).input
-		const functionResult = eatFunction(input)
-		if (!functionResult.success) return {input: source, success: false}
-		input = functionResult.input
-		const name = functionResult.name
-		const func = functionResult.func
-		const ruleInput = makeInput(name, func)
-		return {input, success: true, ruleInput, name}
-	}
-	
-	const eatOutput = (source, depth) => {
-		let input = source
-		input = eatKeyword(input, "output").input
-		input = eatGap(input).input
-		const functionResult = eatFunction(input)
-		if (!functionResult.success) return {input: source, success: false}
-		input = functionResult.input
-		const name = functionResult.name
-		const func = functionResult.func
-		const ruleOutput = makeOutput(name, func)
-		return {input, success: true, ruleOutput, name}
+		return {input, success: true}	*/	
 	}
 	
 	const eatFunction = (source, depth) => {
@@ -286,7 +262,7 @@
 			elementArgs.categories.push(categoryName)
 		}
 		
-		if (propertyName == "input") {
+		if (propertyName == "given") {
 			input = propertyNameResult.input
 			input = eatGap(input).input
 			
@@ -296,7 +272,7 @@
 			
 			input = eatGap(input).input
 			
-			let extender = undefined
+			/*let extender = undefined
 			const extendsResult = eatKeyword(input, "extends")
 			if (extendsResult.success) {
 				input = extendsResult.input
@@ -307,13 +283,13 @@
 				if (!extender) extender = globalInputs.get(extenderName)
 				if (!extender) throw new Error (`[TodeSplat] Couldn't find input '${extenderName}'`)
 				input = extenderResult.input
-			}
+			}*/
 			
 			const result = eatJavascript(input, depth)
 			if (!result.success) return {input: source, success: false}
 			input = result.input
 			const test = eval(result.javascript)
-			const ruleInput = makeInput(key, test, extender)
+			const ruleInput = EVENT.makeInput({givens: [test]})
 			inputs.set(key, ruleInput)
 			return {
 				input,
@@ -321,7 +297,7 @@
 			}
 		}
 		
-		if (propertyName == "output") {
+		if (propertyName == "change") {
 			input = propertyNameResult.input
 			input = eatGap(input).input
 			const keyResult = eatName(input)
@@ -333,7 +309,7 @@
 			if (!result.success) return {input: source, success: false}
 			input = result.input
 			const instruction = eval(result.javascript)
-			const ruleOutput = makeOutput(key, instruction)
+			const ruleOutput = EVENT.makeOutput({changes: [instruction]})
 			outputs.set(key, ruleOutput)
 			return {
 				input,
@@ -547,7 +523,8 @@
 			rhs.push(rightLine)
 		}
 		
-		const nextSide = splitRuleLinesWithArrow(rhs)
+		const nextSide = {lhs: rhs}
+		//const nextSide = splitRuleLinesWithArrow(rhs)
 		return {lhs, nextSide}
 	}
 	
@@ -577,7 +554,7 @@
 				if (output == undefined) {
 					const globalOutput = globalOutputs.get(char)
 					if (globalOutput) output = globalOutput
-					else output = makeOutput(char, () => {})
+					else output = EVENT.makeOutput()
 				}
 				rawSpace.output = output
 			}
@@ -680,7 +657,8 @@
 				if (ruleInput == undefined) {
 					const globalInput = globalInputs.get(char)
 					if (globalInput) ruleInput = globalInput
-					else ruleInput = makeInput(char, () => true)
+					//else ruleInput = makeInput(char, () => true)
+					else throw new Error(`[TodeSplat] Unrecognised input: '${char}'`)
 				}
 				
 				// Add chance to origin test
@@ -690,7 +668,7 @@
 					const chanceRuleInput = makeInput(char, chanceTest)
 					ruleInput = chanceRuleInput
 				}
-				rawSpaces.push({[xAxis]: relativeX, [yAxis]: relativeY, input: [ruleInput]})
+				rawSpaces.push({[xAxis]: relativeX, [yAxis]: relativeY, input: ruleInput})
 			}
 		}
 		

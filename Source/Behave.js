@@ -38,25 +38,35 @@ const BEHAVE = {}
 		args.args = args //args
 		
 		const events = rule.events
-		const layerCount = rule.layerCount
 		const eventCount = rule.eventCount
 		
-		// FIRST: LAYERS
-		for (let layerNumber = 0; layerNumber < layerCount; layerNumber++) {
-			for (let eventNumber = 0; eventNumber < eventCount; eventNumber++) {
-				//if (paused) continue
-				const event = events[eventNumber]
-				const siteNumber = event.siteNumbers[reflectionNumber]
-				const site = sites[siteNumber]
-				const space = site
-				args.space = space
-				
-				const func = event.layers[layerNumber]
-				const result = func(args)
-				if (!result) return false
-			}
+		// GIVEN + VOTE LAYER
+		for (let eventNumber = 0; eventNumber < eventCount; eventNumber++) {
+		
+			const event = events[eventNumber]
+			const siteNumber = event.siteNumbers[reflectionNumber]
+			const site = sites[siteNumber]
+			const space = site
+			args.space = space
+			
+			const func = event.testFunc
+			const result = func(args)
+			if (!result.givenSuccess) return false
 		}
-		//if (paused) return
+		
+		// CHANGE LAYER
+		for (let eventNumber = 0; eventNumber < eventCount; eventNumber++) {
+		
+			const event = events[eventNumber]
+			const siteNumber = event.siteNumbers[reflectionNumber]
+			const site = sites[siteNumber]
+			const space = site
+			args.space = space
+			
+			const func = event.changeFunc
+			const atom = func(args)
+			SPACE.setAtom(space, atom)
+		}
 		
 		return true
 	}
