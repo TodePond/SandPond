@@ -63,21 +63,6 @@
 		return {input, success: true}	*/	
 	}
 	
-	const eatFunction = (source, depth) => {
-		let input = source
-		const nameResult = eatName(input)
-		const name = nameResult.name
-		input = nameResult.input
-		input = eatGap(input).input
-		
-		const result = eatJavascript(input, depth)
-		if (!result.success) return {input: source, success: false}
-		input = result.input
-		const func = eval(result.javascript)
-		
-		return {input, success: true, name, func}
-	}
-	
 	const eatWhiteSpace = (input) => {
 		let i = 0
 		let depth = 0
@@ -178,16 +163,16 @@
 		return {input, success: result.success}
 	}
 	
-	const eatProperties = (source, elementArgs, inputs, outputs, depth) => {
+	const eatProperties = (source, elementArgs, events, depth) => {
 	
-		const result = eatProperty(source, elementArgs, inputs, outputs, depth)
+		const result = eatProperty(source, elementArgs, events, depth)
 		if (!result.success) return result
 		
 		let input = result.input
 		const whiteSpaceResult = eatWhiteSpace(input)
 		const propertyDepth = whiteSpaceResult.depth
 		input = whiteSpaceResult.input
-		input = eatProperties(input, elementArgs, inputs, outputs, propertyDepth).input
+		input = eatProperties(input, elementArgs, events, propertyDepth).input
 		
 		return {input, success: result.success}
 	}
@@ -243,7 +228,7 @@
 		}
 	}
 	
-	const eatProperty = (source, elementArgs, inputs, outputs, depth) => {
+	const eatProperty = (source, elementArgs, events, depth) => {
 		let input = source
 		let output = ""
 		
@@ -258,7 +243,7 @@
 			const line = lineResult.line
 			input = lineResult.input
 			
-			const categoryName = eval(line)
+			const categoryName = JS(line)
 			elementArgs.categories.push(categoryName)
 		}
 		
@@ -275,11 +260,11 @@
 			const result = eatJavascript(input, depth)
 			if (!result.success) return {input: source, success: false}
 			input = result.input
-			const test = eval(result.javascript)
+			const test = JS(result.javascript)
 			
-			const ruleInput = inputs.get(key) || EVENT.makeInput()
+			const ruleInput = events.get(key) || CHARACTER.make()
 			ruleInput.givens.push(test)
-			inputs.set(key, ruleInput)
+			events.set(key, ruleInput)
 			return {
 				input,
 				success: true,
@@ -299,11 +284,11 @@
 			const result = eatJavascript(input, depth)
 			if (!result.success) return {input: source, success: false}
 			input = result.input
-			const test = eval(result.javascript)
+			const test = JS(result.javascript)
 			
-			const ruleInput = inputs.get(key) || EVENT.makeInput()
+			const ruleInput = events.get(key) || CHARACTER.make()
 			ruleInput.votes.push(test)
-			inputs.set(key, ruleInput)
+			events.set(key, ruleInput)
 			return {
 				input,
 				success: true,
@@ -323,11 +308,11 @@
 			const result = eatJavascript(input, depth)
 			if (!result.success) return {input: source, success: false}
 			input = result.input
-			const test = eval(result.javascript)
+			const test = JS(result.javascript)
 			
-			const ruleInput = inputs.get(key) || EVENT.makeInput()
+			const ruleInput = events.get(key) || CHARACTER.make()
 			ruleInput.selects.push(test)
-			inputs.set(key, ruleInput)
+			events.set(key, ruleInput)
 			return {
 				input,
 				success: true,
@@ -345,10 +330,31 @@
 			const result = eatJavascript(input, depth)
 			if (!result.success) return {input: source, success: false}
 			input = result.input
-			const instruction = eval(result.javascript)
-			const ruleOutput = outputs.get(key) || EVENT.makeOutput()
+			const instruction = JS(result.javascript)
+			const ruleOutput = events.get(key) || CHARACTER.make()
 			ruleOutput.changes.push(instruction)
-			outputs.set(key, ruleOutput)
+			events.set(key, ruleOutput)
+			return {
+				input,
+				success: true,
+			}
+		}
+		
+		if (propertyName == "keep") {
+			input = propertyNameResult.input
+			input = eatGap(input).input
+			const keyResult = eatName(input)
+			const key = keyResult.name
+			input = keyResult.input
+			input = eatGap(input).input
+			
+			const result = eatJavascript(input, depth)
+			if (!result.success) return {input: source, success: false}
+			input = result.input
+			const instruction = JS(result.javascript)
+			const ruleOutput = events.get(key) || CHARACTER.make()
+			ruleOutput.keeps.push(instruction)
+			events.set(key, ruleOutput)
 			return {
 				input,
 				success: true,
@@ -361,7 +367,7 @@
 			const result = eatName(input)
 			const name = result.name
 			const isAction = propertyName == "action"? true : false
-			return eatRule(input, elementArgs, inputs, outputs, isAction)
+			return eatRule(input, elementArgs, events, isAction)
 		}
 		
 		if (propertyName == "ruleset") {
@@ -394,7 +400,7 @@
 			const line = lineResult.line
 			input = lineResult.input
 			
-			elementArgs.data[name] = eval(line)
+			elementArgs.data[name] = JS(line)
 			
 			return {
 				input,
@@ -408,7 +414,7 @@
 		input = eatGap(input).input
 		
 		const propertyValueResult = eatLine(input)
-		const propertyValue = eval(propertyValueResult.line)
+		const propertyValue = JS(propertyValueResult.line)
 		if (!propertyValueResult.success) return {input: source, success: false}
 		input = propertyValueResult.input
 		
@@ -453,8 +459,7 @@
 	
 		let input = source
 		const elementArgs = {rules: [], data: [], categories: []}
-		const inputs = new Map()
-		const outputs = new Map()
+		const events = new Map()
 		
 		const keywordResult = eatKeyword(input, "element")
 		if (!keywordResult.success) return {input, success: false}
@@ -473,7 +478,7 @@
 		const whiteSpaceResult = eatWhiteSpace(input)
 		const propertyDepth = whiteSpaceResult.depth
 		input = whiteSpaceResult.input
-		input = eatProperties(input, elementArgs, inputs, outputs, propertyDepth).input
+		input = eatProperties(input, elementArgs, events, propertyDepth).input
 		input = eatWhiteSpace(input).input
 		
 		const closeBracketResult = eatKeyword(input, "}")
@@ -512,18 +517,12 @@
 		input = nameResult.input
 		
 		if (isNameSymmetries(name)) {
-			const axes = {}
-			for (const c of name) {
-				axes[c] = true
-			}
+			const axes = name
 			return {input, success: true, labels: {axes}}
 		}
 		
 		if (isNameSuperSymmetries(name)) {
-			const superSymmetries = {}
-			for (const c of name) {
-				superSymmetries[c] = true
-			}
+			const superSymmetries = name.as(LowerCase)
 			return {input, success: true, labels: {superSymmetries}}
 		}
 		
@@ -577,7 +576,7 @@
 		}
 	}
 	
-	const readSides = (sides, rawSpaces, xAxis, yAxis, inputs, outputs) => {
+	const readSides = (sides, rawSpaces, xAxis, yAxis, events) => {
 		const sideLines = sides.lhs
 		const firstCharPos = getFirstCharPos(sideLines)
 		for (const rawSpace of rawSpaces) {
@@ -588,37 +587,39 @@
 			
 			// Is this the final diagram? ie: the output
 			if (sides.nextSide == undefined) {
-				let output = outputs.get(char)
-				if (output == undefined) {
-					const globalOutput = globalOutputs.get(char)
-					if (globalOutput) output = globalOutput
-					else output = EVENT.makeOutput()
+				let event = events.get(char)
+				if (event == undefined || (event.changes.length == 0 && event.keeps.length == 0)) {
+					//const globalOutput = globalOutputs.get(char)
+					//if (globalOutput) output = globalOutput
+					//event = EVENT.makeEvent()
+					throw new Error("[TodeSplat] Undeclared output character: " + char)
 				}
-				rawSpace.output = output
+				rawSpace.output = event
 			}
 			
 			// Otherwise, it must be an input
 			else {
-				let input = inputs.get(char)
+				throw new Error("[TodeSplat] Multiple input layers are no longer supported")
+				/*let input = inputs.get(char)
 				if (input == undefined) {
 					const globalInput = globalInputs.get(char)
 					if (globalInput) input = globalInput
 					else input = makeInput(char, () => true)
 				}
-				rawSpace.input.push(input)
+				rawSpace.input.push(input)*/
 			}
 		}
 		
-		if (sides.nextSide != undefined) readSides(sides.nextSide, rawSpaces, xAxis, yAxis, inputs, outputs)
+		if (sides.nextSide != undefined) readSides(sides.nextSide, rawSpaces, xAxis, yAxis, events)
 	}
 	
-	const eatRule = (source, elementArgs, inputs, outputs, isAction) => {
+	const eatRule = (source, elementArgs, events, isAction) => {
 	
 		// Read the meta labels before the rule
 		const labelsResult = eatRuleLabels(source)
 		const labels = labelsResult.labels
 		
-		let axes = {}
+		let axes = ""
 		let pov = "front"
 		let chance = undefined
 		let superSymmetries = undefined
@@ -690,29 +691,29 @@
 				const relativeX = j - originX
 				const relativeY = originY - i
 				
-				let ruleInput = inputs.get(char)
+				let ruleInput = events.get(char)
 				
 				if (ruleInput == undefined) {
 					const globalInput = globalInputs.get(char)
 					if (globalInput) ruleInput = globalInput
 					//else ruleInput = makeInput(char, () => true)
-					else throw new Error(`[TodeSplat] Unrecognised input: '${char}'`)
+					else throw new Error(`[TodeSplat] Undeclared input character: '${char}'`)
 				}
 				
 				// Add chance to origin test
 				if (chance != undefined && relativeX == 0 && relativeY == 0) {
 					const test = ruleInput
-					const chanceTest = (...args) => Math.random() < chance && test(...args)
-					const chanceRuleInput = makeInput(char, chanceTest)
-					ruleInput = chanceRuleInput
+					const chanceTest = () => Math.random() < chance
+					ruleInput.givens.push(chanceTest)
 				}
+				
 				rawSpaces.push({[xAxis]: relativeX, [yAxis]: relativeY, input: ruleInput})
 			}
 		}
 		
 		// Get the first space on the right-hand-side (we will use it as an anchor for the other spaces)
 		// Go through the positions, adding each output
-		readSides(nextSide, rawSpaces, xAxis, yAxis, inputs, outputs)
+		readSides(nextSide, rawSpaces, xAxis, yAxis, events)
 		
 		// Make the rule
 		const rule = RULE.make(rawSpaces, axes, superSymmetries, isAction)

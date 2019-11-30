@@ -1,7 +1,33 @@
 TodeSplat`
 
+/*element Sand {
 
-element Sand {
+	colour "#ffcc00"
+	emissive "#ffa34d"
+	category "Sandbox"
+	
+	given @ () => true
+	change @ ({self}) => self
+	
+	given _ ({space, atom}) => space && !atom
+	change _ () => undefined
+	
+	given # ({atom}) => atom
+	keep # () => {}
+	
+	rule {
+		@ => _
+		_    @
+	}
+	
+	rule xz {
+		@_ => __
+		#_    #@
+	}
+	
+}*/
+
+/*element Sand {
 
 	colour "#ffcc00"
 	emissive "#ffa34d"
@@ -16,6 +42,8 @@ element Sand {
 	change D ({selected}) => selected
 	
 	given T ({element}) => !element || element == Water
+	keep T
+	keep #
 	
 	rule {
 		@ => D
@@ -43,6 +71,8 @@ element Water {
 	change @ ({self}) => self
 	change _ () => undefined
 	
+	keep #
+	
 	rule {
 		@ => _
 		_    @
@@ -52,27 +82,27 @@ element Water {
 		@_ => __
 		#_    #@
 	}
-	
 	rule xz {
+	
 		@_ => _@
 		#     #
 	}
 	
-}
+}*/
 
 element Forkbomb {
-
+	default true
 	colour "grey"
 	emissive "black"
 	category "T2Tile"
 	
-	given @ () => true
-	given _ ({space}) => space && !space.atom
+	given @ true
+	given _ (space) => space && !space.atom
 	
-	change @ ({self}) => self
+	change @ () => ATOM.make(Forkbomb)
+	keep .
 	
-	rule xyz { @_ => @@ }
-	
+	rule xyz { @_ => .@ }
 	
 }
 

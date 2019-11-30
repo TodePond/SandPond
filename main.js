@@ -102,10 +102,10 @@ on.process(() => {
 let paused = false
 let stepCount = 0
 on.process(() => {
-	if (paused) {
+	/*if (paused) {
 		if (stepCount <= 0) return
 		stepCount--
-	}
+	}*/
 	for (let i = 0; i < spaceCount; i++) {
 		const space = world.spaces[i]
 		if (space) {

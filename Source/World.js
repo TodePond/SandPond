@@ -3,6 +3,7 @@
 //=======//
 const WORLD = {}
 const ATOM_SIZE = 0.01
+const ATOM_SCALE = 1.0
 
 {
 	
@@ -99,7 +100,7 @@ const ATOM_SIZE = 0.01
 	// Globals //
 	//=========//
 	const HIDDEN_MATRIX = [1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 10, 0, 1]
-	const GEOMETRY_TEMPLATE = new THREE.BoxBufferGeometry(1 * ATOM_SIZE, 1 * ATOM_SIZE, 1 * ATOM_SIZE)
+	const GEOMETRY_TEMPLATE = new THREE.BoxBufferGeometry(1 * ATOM_SIZE * ATOM_SCALE, 1 * ATOM_SIZE * ATOM_SCALE, 1 * ATOM_SIZE * ATOM_SCALE)
 	const MATERIAL = new THREE.MeshLambertMaterial({
 		transparent: true,
 		opacity: 0.5,
