@@ -272,19 +272,6 @@
 			
 			input = eatGap(input).input
 			
-			/*let extender = undefined
-			const extendsResult = eatKeyword(input, "extends")
-			if (extendsResult.success) {
-				input = extendsResult.input
-				input = eatGap(input).input
-				const extenderResult = eatName(input)
-				const extenderName = extenderResult.name
-				extender = inputs.get(extenderName)
-				if (!extender) extender = globalInputs.get(extenderName)
-				if (!extender) throw new Error (`[TodeSplat] Couldn't find input '${extenderName}'`)
-				input = extenderResult.input
-			}*/
-			
 			const result = eatJavascript(input, depth)
 			if (!result.success) return {input: source, success: false}
 			input = result.input
@@ -292,6 +279,54 @@
 			
 			const ruleInput = inputs.get(key) || EVENT.makeInput()
 			ruleInput.givens.push(test)
+			inputs.set(key, ruleInput)
+			return {
+				input,
+				success: true,
+			}
+		}
+		
+		if (propertyName == "vote") {
+			input = propertyNameResult.input
+			input = eatGap(input).input
+			
+			const keyResult = eatName(input)
+			const key = keyResult.name
+			input = keyResult.input
+			
+			input = eatGap(input).input
+			
+			const result = eatJavascript(input, depth)
+			if (!result.success) return {input: source, success: false}
+			input = result.input
+			const test = eval(result.javascript)
+			
+			const ruleInput = inputs.get(key) || EVENT.makeInput()
+			ruleInput.votes.push(test)
+			inputs.set(key, ruleInput)
+			return {
+				input,
+				success: true,
+			}
+		}
+		
+		if (propertyName == "select") {
+			input = propertyNameResult.input
+			input = eatGap(input).input
+			
+			const keyResult = eatName(input)
+			const key = keyResult.name
+			input = keyResult.input
+			
+			input = eatGap(input).input
+			
+			const result = eatJavascript(input, depth)
+			if (!result.success) return {input: source, success: false}
+			input = result.input
+			const test = eval(result.javascript)
+			
+			const ruleInput = inputs.get(key) || EVENT.makeInput()
+			ruleInput.selects.push(test)
 			inputs.set(key, ruleInput)
 			return {
 				input,
@@ -557,7 +592,7 @@
 				if (output == undefined) {
 					const globalOutput = globalOutputs.get(char)
 					if (globalOutput) output = globalOutput
-					else output = EVENT.makeOutput({changes: [({atom}) => atom]})
+					else output = EVENT.makeOutput()
 				}
 				rawSpace.output = output
 			}

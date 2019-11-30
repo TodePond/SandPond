@@ -5,38 +5,33 @@ const EVENT = {}
 
 {
 	
-	EVENT.makeInput = ({givens = [], votes = [], checks = []} = {}) => {
-		return {givens, votes, checks}
+	EVENT.makeInput = ({givens = [], votes = [], checks = [], selects = []} = {}) => {
+		return {givens, votes, checks, selects}
 	}
 	
 	EVENT.makeOutput = ({changes = []} = {}) => {
 		return {changes}
 	}
 	
-	EVENT.makeTestFunc = (input) => {
+	EVENT.makeSelectFunc = (input) => {
+		const selects = input.selects
+		if (selects.length == 0) return undefined
+		if (selects.length == 1) return selects[0]
+		if (selects.length > 1) throw new Error("[TodeSplat] Multiple selects not implemented yet")
+	}
 	
+	EVENT.makeVoteFunc = (input) => {
 		const votes = input.votes
+		if (votes.length == 0) return undefined
+		if (votes.length == 1) return votes[0]
+		if (votes.length > 1) throw new Error("[TodeSplat] Multiple votes not implemented yet")
+	}
+	
+	EVENT.makeGivenFunc = (input) => {
 		const givens = input.givens
-		
-		if (givens.length == 0) {
-			const given = givens[0]
-			return given
-		}
-		
-		return (args) => {
-		
-			// Votes
-			/*let voteCount = 0
-			if (votes.length > 0) votes.forEach(vote => {
-				if (vote(...args)) voteCount++
-			})*/
-			
-			// Givens
-			//if (givens.length <= 0) return {voteCount}
-			const givenSuccess = givens.every(given => given(args))
-			return givenSuccess
-			
-		}
+		if (givens.length == 0) return undefined
+		if (givens.length == 1) return givens[0]		
+		if (givens.length >  1) return (args) => givens.every(given => given(args))
 	}
 	
 	EVENT.makeChangeFunc = (output) => {
@@ -44,21 +39,11 @@ const EVENT = {}
 		const changes = output.changes
 	
 		if (changes.length <= 0) return () => {}
-		else if (changes.length == 1) return (args) => {
+		if (changes.length == 1) return (args) => {
 			const atom = changes[0](args)
 			SPACE.setAtom(args.space, atom)
 		}
-		
-		// doesnt work right cos "atom" is not a writable property
-		/*else return (...args) => {
-		
-			for (let i = 0; i < changes.length; i++) {
-				const change = changes[i]
-				args.atom = change(...args)
-			}
-			
-			return args.atom
-		}*/
+		if (changes.length > 1) throw new Error("[TodeSplat] Multiple 'change's not supported yet")
 	}
 	
 	// Old

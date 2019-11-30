@@ -56,10 +56,12 @@ const RULE = {}
 			const input = space.input
 			const output = space.output
 			
-			const testFunc = EVENT.makeTestFunc(input)
+			const givenFunc = EVENT.makeGivenFunc(input)
+			const selectFunc = EVENT.makeSelectFunc(input)
+			const voteFunc = EVENT.makeVoteFunc(input)
 			const changeFunc = EVENT.makeChangeFunc(output)
 			
-			const event = {siteNumbers, testFunc, changeFunc}
+			const event = {siteNumbers, givenFunc, voteFunc, selectFunc, changeFunc}
 			events.push(event)
 		}
 		

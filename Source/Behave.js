@@ -31,7 +31,6 @@ const BEHAVE = {}
 	//===========//
 	// Functions //
 	//===========//
-	
 	const tryRule = (self, rule, sites) => {
 	
 		const reflectionNumber = RULE.getReflectionNumber(rule)
@@ -40,14 +39,16 @@ const BEHAVE = {}
 		const eventCount = rule.eventCount
 		
 		const changers = []
+		const spaces = []
+		const selects = []
 		
-		/*const args = {
+		const args = {
 			self: self,
 			space: undefined,
+			votes: 0,
 			//get atom() { return this.space? this.space.atom : undefined },
 		}
-		args.args = args //args*/
-		
+		args.args = args //args
 		
 		
 		// GET SPACES
@@ -58,50 +59,47 @@ const BEHAVE = {}
 			const site = sites[siteNumber]
 			const space = site
 			
-			const args = {self: self, space: space}
+			args.space = space
+			args.atom = space? space.atom : undefined
+			args.element = args.atom? args.atom.element : undefined
 			
-			//args.space = space
-			const result = event.testFunc(args)
-			if (!result) return false
+			// GIVEN		
+			if (event.givenFunc) {
+				const givenResult = event.givenFunc(args)
+				if (!givenResult) return false
+			}
 			
-			const changer = event.changeFunc.bind(undefined, args)
+			// SELECT
+			if (event.selectFunc) {
+				const selectResult = event.selectFunc(args)
+				selects.push(selectResult)
+			}
+			
+			// VOTE
+			if (event.voteFunc) {
+				const voteResult = event.voteFunc(args)
+				if (voteResult) args.votes++
+			}
+			
+			// Prepare CHANGE
+			const changer = event.changeFunc
 			changers[eventNumber] = changer
+			spaces[eventNumber] = space
 		}
 		
-		for (let eventNumber = 0; eventNumber < eventCount; eventNumber++) {
-			changers[eventNumber]()
-		}
+		if (selects.length == 1) args.selected = selects[0]
+		else if (selects.length > 1) args.selected = selects[Math.floor(Math.random() * selects.length)]
 		
-		/*// GIVEN + VOTE LAYER
+		// Do CHANGE
 		for (let eventNumber = 0; eventNumber < eventCount; eventNumber++) {
-		
-			const event = events[eventNumber]
-			const siteNumber = event.siteNumbers[reflectionNumber]
-			const site = sites[siteNumber]
-			const space = site
+			const space = spaces[eventNumber]
+			const changer = changers[eventNumber]
 			
 			args.space = space
-			
-			const func = event.testFunc
-			const result = func(args)
-			if (!result) return false
+			changer(args)
 		}
-		
-		// CHANGE LAYER
-		for (let eventNumber = 0; eventNumber < eventCount; eventNumber++) {
-		
-			const event = events[eventNumber]
-			const siteNumber = event.siteNumbers[reflectionNumber]
-			const site = sites[siteNumber]
-			const space = site
-			args.space = space
-			
-			event.changeFunc(args)
-		}*/
 		
 		return true
 	}
-	
-	
 	
 }
