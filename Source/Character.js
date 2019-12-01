@@ -65,6 +65,8 @@ const CHARACTER = {}
 	
 	const makeInputFunc = (character) => {
 		
+		let returnCode = "return true"
+		
 		const givenFunc = makeGivenFunc(character)
 		let givenCode = ""
 		const givenParams = []
@@ -75,10 +77,15 @@ const CHARACTER = {}
 		else if (givenFunc !== undefined && givenFunc.as(Boolean) === false) givenCode = `return false`
 		
 		const selectFunc = makeSelectFunc(character)
-		const selectCode = selectFunc? `
-			const selectResult = selectFunc(args)
-			selects.push(selectResult)
-		` : ""
+		const selectParams = []
+		let selectCode = ""
+		if (typeof selectFunc == "function") {
+			selectParams.push(...eatParams(selectFunc.as(String)))
+			selectCode = `
+				const selected = selectFunc(${selectParams.join(",")})
+				selects.push(selected)
+			`
+		}
 		
 		const voteFunc = makeVoteFunc(character)
 		const voteCode = voteFunc? `
@@ -87,19 +94,29 @@ const CHARACTER = {}
 		` : ""
 		
 		const inputParams = [...givenParams]
-		const spaceCode = inputParams.includes("space")? `
+		const spaceCode = inputParams.includes("space") || inputParams.includes("atom") || inputParams.includes("element")? `
 			const space = sites[event.siteNumber]
 		` : ""
 		
-		const inputFuncMaker = new Function("givenFunc", "voteFunc", "selectFunc", `return (event, sites) => {
+		const atomCode = inputParams.includes("atom") || inputParams.includes("element")? `
+			const atom = space? space.atom : undefined
+		` : ""
+		
+		const elementCode = inputParams.includes("element")? `
+			const element = atom? atom.element : undefined
+		` : ""
+		
+		const inputFuncMaker = new Function("givenFunc", "voteFunc", "selectFunc", `return (event, sites, self, selects) => {
 			${spaceCode}
+			${atomCode}
+			${elementCode}
 			${givenCode}
 			${selectCode}
 			${voteCode}
-			return true
+			${returnCode}
 		}`)
 		
-		const inputFunc = inputFuncMaker(givenFunc, voteFunc, selectFunc).d
+		const inputFunc = inputFuncMaker(givenFunc, voteFunc, selectFunc)
 		return inputFunc
 		
 	}
@@ -125,13 +142,19 @@ const CHARACTER = {}
 			const space = sites[event.siteNumber]
 		` : ""
 		
-		const outputFuncMaker = new Function("changeFunc", "keepFunc", `return (event, sites) => {
+		const atomCode = inputParams.includes("atom")? `
+			${spaceCode == ""? "const space = sites[event.siteNumber]" : ""}
+			const atom = space? space.atom : undefined
+		` : ""
+		
+		const outputFuncMaker = new Function("changeFunc", "keepFunc", `return (event, sites, self, selected) => {
 			${spaceCode}
+			${atomCode}
 			${changeCode}
 			${keepFunc? "keepFunc()" : ""}
 		}`)
 		
-		const outputFunc = outputFuncMaker(changeFunc, keepFunc).d
+		const outputFunc = outputFuncMaker(changeFunc, keepFunc)
 		return outputFunc
 	}
 	
@@ -153,7 +176,10 @@ const CHARACTER = {}
 		const givens = character.givens
 		if (givens.length == 0) return undefined
 		if (givens.length == 1) return givens[0]
-		if (givens.length > 1) return (args) => givens.every(given => given(args))
+		if (givens.length > 1) {
+			throw new Error("[TodeSplat] Multiple givens not implemented yet")
+			//return (args) => givens.every(given => given(args))
+		}
 	}
 
 	const makeChangeFunc = (character) => {

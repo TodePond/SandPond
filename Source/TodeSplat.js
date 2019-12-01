@@ -1,6 +1,5 @@
 {
-	globalInputs = new Map()
-	globalOutputs = new Map()
+	globalEvents = new Map()
 	
 	function TodeSplat([source]) {
 		let input = source
@@ -34,33 +33,18 @@
 		const nameResult = eatName(input)
 		const name = nameResult.name
 		if (name == "element") return eatElement(input)
-		if (name == "input") return eatGlobalInput(input)
-		if (name == "output") return eatGlobalOutput(input)
+		
+		const characterResult = eatGlobalCharacter(input, depth)
+		if (characterResult) return characterResult
+		
 		return {input, success: false}
 	}
 	
-	const eatGlobalInput = (source, depth) => {
-		throw new Error("IMPLEMENT ME!")
-		/*let input = source
-		const inputResult = eatInput(input)
-		if (!inputResult.success) return {input, success: false}
-		const name = inputResult.name
-		const ruleInput = inputResult.ruleInput
-		input = inputResult.input
-		globalInputs.set(name, ruleInput)
-		return {input, success: true}*/
-	}
-	
-	const eatGlobalOutput = (source, depth) => {
-		throw new Error("IMPLEMENT ME!")
-		/*let input = source
-		const outputResult = eatOutput(input)
-		if (!outputResult.success) return {input, success: false}
-		const name = outputResult.name
-		const ruleOutput = outputResult.ruleOutput
-		input = outputResult.input
-		globalOutputs.set(name, ruleOutput)
-		return {input, success: true}	*/	
+	const eatGlobalCharacter = (source, depth) => {
+		let input = source
+		const elementArgs = {}
+		const characterResult = eatCharacter(input, elementArgs, globalEvents, depth)
+		return characterResult
 	}
 	
 	const eatWhiteSpace = (input) => {
@@ -228,25 +212,14 @@
 		}
 	}
 	
-	const eatProperty = (source, elementArgs, events, depth) => {
+	const eatCharacter = (source, elementArgs, events, depth) => {
+	
 		let input = source
 		let output = ""
 		
 		const propertyNameResult = eatName(input)
 		const propertyName = propertyNameResult.name
-		
-		if (propertyName == "category") {
-			input = propertyNameResult.input
-			input = eatGap(input).input
-			
-			const lineResult = eatLine(input)
-			const line = lineResult.line
-			input = lineResult.input
-			
-			const categoryName = JS(line)
-			elementArgs.categories.push(categoryName)
-		}
-		
+	
 		if (propertyName == "given") {
 			input = propertyNameResult.input
 			input = eatGap(input).input
@@ -359,6 +332,31 @@
 				input,
 				success: true,
 			}
+		}
+		
+	}
+	
+	const eatProperty = (source, elementArgs, events, depth) => {
+		
+		const characterResult = eatCharacter(source, elementArgs, events, depth)
+		if (characterResult) return characterResult
+		
+		let input = source
+		let output = ""
+		
+		const propertyNameResult = eatName(input)
+		const propertyName = propertyNameResult.name
+		
+		if (propertyName == "category") {
+			input = propertyNameResult.input
+			input = eatGap(input).input
+			
+			const lineResult = eatLine(input)
+			const line = lineResult.line
+			input = lineResult.input
+			
+			const categoryName = JS(line)
+			elementArgs.categories.push(categoryName)
 		}
 		
 		if (propertyName == "rule" || propertyName == "action") {
@@ -588,6 +586,7 @@
 			// Is this the final diagram? ie: the output
 			if (sides.nextSide == undefined) {
 				let event = events.get(char)
+				if (event == undefined || (event.changes.length == 0 && event.keeps.length == 0)) event = globalEvents.get(char)
 				if (event == undefined || (event.changes.length == 0 && event.keeps.length == 0)) {
 					//const globalOutput = globalOutputs.get(char)
 					//if (globalOutput) output = globalOutput
@@ -692,17 +691,14 @@
 				const relativeY = originY - i
 				
 				let ruleInput = events.get(char)
-				
-				if (ruleInput == undefined) {
-					const globalInput = globalInputs.get(char)
-					if (globalInput) ruleInput = globalInput
-					//else ruleInput = makeInput(char, () => true)
-					else throw new Error(`[TodeSplat] Undeclared input character: '${char}'`)
+				if (ruleInput == undefined || (ruleInput.givens.length == 0 && ruleInput.selects.length == 0 && ruleInput.votes.length == 0 && ruleInput.checks.length == 0)) ruleInput = globalEvents.get(char)
+				if (ruleInput == undefined || (ruleInput.givens.length == 0 && ruleInput.selects.length == 0 && ruleInput.votes.length == 0 && ruleInput.checks.length == 0)) {
+					throw new Error(`[TodeSplat] Undeclared input character: '${char}'`)
 				}
 				
 				// Add chance to origin test
 				if (chance != undefined && relativeX == 0 && relativeY == 0) {
-					const test = ruleInput
+					ruleInput = CHARACTER.make(...ruleInput)
 					const chanceTest = () => Math.random() < chance
 					ruleInput.givens.push(chanceTest)
 				}

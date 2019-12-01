@@ -47,15 +47,17 @@ const BEHAVE = {}
 			//args.atom = space? space.atom : undefined
 			//args.element = args.atom? args.atom.element : undefined
 			
-			const inputResult = event.inputFunc(event, sites)
+			const inputResult = event.inputFunc(event, sites, self, selects)
+			if (inputResult.selected) selects.push(inputResult.selected)
 			if (paused) continue
 			if (!inputResult) return false
 		}
 		
 		if (paused) return
 		
-		if (selects.length == 1) args.selected = selects[0]
-		else if (selects.length > 1) args.selected = selects[Math.floor(Math.random() * selects.length)]
+		let selected = undefined
+		if (selects.length == 1) selected = selects[0]
+		else if (selects.length > 1) selected = selects[Math.floor(Math.random() * selects.length)]
 		
 		//args.atom = undefined
 		//args.element = undefined
@@ -63,7 +65,7 @@ const BEHAVE = {}
 		// Do CHANGE + KEEP
 		for (let eventNumber = 0; eventNumber < eventCount; eventNumber++) {
 			const event = events[eventNumber]
-			event.outputFunc(event, sites)
+			event.outputFunc(event, sites, self, selected)
 		}
 		
 		return true

@@ -259,11 +259,10 @@ const UI = {}
 		`
 		document.head.appendChild(style)
 		
-		if (element == UI.selectedElement) {
-			 searchItemButton.classList.add("selected")
+		if (element.default) {
+			UI.selectedElement = element
+			searchItemButton.classList.add("selected")
 		}
-		
-		if (element.default) UI.selectedElement = element
 		
 		for (const category of element.categories) {
 			const categoryElement = $(`#${category}Heading.category`)
