@@ -17,7 +17,7 @@ const RULE = {}
 		// one(xyz)
 		const oneReflections = SYMMETRY.getReflections(oneSymmetries)
 		
-		const oneReflectedDiagrams = oneReflections.map(reflection => {
+		const oneReflectedEvents = oneReflections.map(reflection => {
 		
 			const reflectedSpaces = allSpaces.map(space => {
 				const reflectedPosition = reflection(space.x, space.y, space.z)
@@ -29,22 +29,19 @@ const RULE = {}
 				return reflectedSpace
 			})
 			
-			const reflectedDiagram = EVENT.makeEvents(reflectedSpaces)
-			return reflectedDiagram
+			const reflectedEvents = reflectedSpaces.map(space => EVENT.make(space))
+			return reflectedEvents
 		})
-		
-		// events
-		//const events = EVENT.makeEvents(allSpaces, oneSymmetries)
 		
 		const rule = {
 		
 			// Meaningful Data
-			oneReflectedDiagrams,
+			oneReflectedEvents,
 			isAction,
 			
 			// Cache
-			reflectionCount: oneReflectedDiagrams.length,
-			eventCount: oneReflectedDiagrams[0].length,
+			reflectionCount: oneReflectedEvents.length,
+			eventCount: oneReflectedEvents[0].length,
 			
 		}
 		

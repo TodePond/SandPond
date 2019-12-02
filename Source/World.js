@@ -101,6 +101,7 @@ const ATOM_SCALE = 1.0
 	//=========//
 	const HIDDEN_MATRIX = [1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 10, 0, 1]
 	const GEOMETRY_TEMPLATE = new THREE.BoxBufferGeometry(1 * ATOM_SIZE * ATOM_SCALE, 1 * ATOM_SIZE * ATOM_SCALE, 1 * ATOM_SIZE * ATOM_SCALE)
+	//const GEOMETRY_TEMPLATE = new THREE.SphereBufferGeometry(1 * ATOM_SIZE * ATOM_SCALE)
 	const MATERIAL = new THREE.MeshLambertMaterial({
 		transparent: true,
 		opacity: 0.5,

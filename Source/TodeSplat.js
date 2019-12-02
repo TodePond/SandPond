@@ -235,7 +235,7 @@
 			input = result.input
 			const test = JS(result.javascript)
 			
-			const ruleInput = events.get(key) || CHARACTER.make()
+			const ruleInput = events.get(key) || CHARACTER.make(key)
 			ruleInput.givens.push(test)
 			events.set(key, ruleInput)
 			return {
@@ -259,7 +259,7 @@
 			input = result.input
 			const test = JS(result.javascript)
 			
-			const ruleInput = events.get(key) || CHARACTER.make()
+			const ruleInput = events.get(key) || CHARACTER.make(key)
 			ruleInput.votes.push(test)
 			events.set(key, ruleInput)
 			return {
@@ -283,7 +283,7 @@
 			input = result.input
 			const test = JS(result.javascript)
 			
-			const ruleInput = events.get(key) || CHARACTER.make()
+			const ruleInput = events.get(key) || CHARACTER.make(key)
 			ruleInput.selects.push(test)
 			events.set(key, ruleInput)
 			return {
@@ -304,7 +304,7 @@
 			if (!result.success) return {input: source, success: false}
 			input = result.input
 			const instruction = JS(result.javascript)
-			const ruleOutput = events.get(key) || CHARACTER.make()
+			const ruleOutput = events.get(key) || CHARACTER.make(key)
 			ruleOutput.changes.push(instruction)
 			events.set(key, ruleOutput)
 			return {
@@ -325,8 +325,29 @@
 			if (!result.success) return {input: source, success: false}
 			input = result.input
 			const instruction = JS(result.javascript)
-			const ruleOutput = events.get(key) || CHARACTER.make()
+			const ruleOutput = events.get(key) || CHARACTER.make(key)
 			ruleOutput.keeps.push(instruction)
+			events.set(key, ruleOutput)
+			return {
+				input,
+				success: true,
+			}
+		}
+		
+		if (propertyName == "check") {
+			input = propertyNameResult.input
+			input = eatGap(input).input
+			const keyResult = eatName(input)
+			const key = keyResult.name
+			input = keyResult.input
+			input = eatGap(input).input
+			
+			const result = eatJavascript(input, depth)
+			if (!result.success) return {input: source, success: false}
+			input = result.input
+			const instruction = JS(result.javascript)
+			const ruleOutput = events.get(key) || CHARACTER.make(key)
+			ruleOutput.checks.push(instruction)
 			events.set(key, ruleOutput)
 			return {
 				input,
@@ -698,9 +719,9 @@
 				
 				// Add chance to origin test
 				if (chance != undefined && relativeX == 0 && relativeY == 0) {
-					ruleInput = CHARACTER.make(...ruleInput)
-					const chanceTest = () => Math.random() < chance
-					ruleInput.givens.push(chanceTest)
+					ruleInput = CHARACTER.make(ruleInput.name, ruleInput)
+					const chanceTest = JS `() => Math.random() < ${chance}`
+					ruleInput.givens = [...ruleInput.givens, chanceTest]
 				}
 				
 				rawSpaces.push({[xAxis]: relativeX, [yAxis]: relativeY, input: ruleInput})

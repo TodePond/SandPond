@@ -5,8 +5,8 @@ const CHARACTER = {}
 
 {
 
-	CHARACTER.make = ({givens = [], votes = [], checks = [], selects = [], changes = [], keeps = []} = {}) => {
-		return {givens, votes, checks, selects, changes, keeps}
+	CHARACTER.make = (name, {givens = [], votes = [], checks = [], selects = [], changes = [], keeps = []} = {}) => {
+		return {name, givens, votes, checks, selects, changes, keeps, inputFunc: undefined, outputFunc: undefined}
 	}
 	
 	CHARACTER.createInputFunc = (character) => {
@@ -44,25 +44,6 @@ const CHARACTER = {}
 		return params
 	}
 	
-	const makeInputParams = (character) => {
-	
-		const inputParams = {}
-		const inputs = [...character.givens, ...character.votes, ...character.selects]
-		
-		for (const input of inputs) {
-			if (typeof input !== "function") continue
-			const args = []
-			const params = eatParams(input.as(String))
-			for (const param of params) inputParams[param] = true
-		}
-		
-		return inputParams
-	}
-	
-	const makeOutputParams = (character) => {
-		return []
-	}
-	
 	const makeInputFunc = (character) => {
 		
 		let returnCode = "return true"
@@ -83,7 +64,7 @@ const CHARACTER = {}
 			selectParams.push(...eatParams(selectFunc.as(String)))
 			selectCode = `
 				const selected = selectFunc(${selectParams.join(",")})
-				selects.push(selected)
+				selects["${character.name}"] = selected
 			`
 		}
 		
@@ -107,11 +88,11 @@ const CHARACTER = {}
 		` : ""
 		
 		const inputFuncMaker = new Function("givenFunc", "voteFunc", "selectFunc", `return (event, sites, self, selects) => {
-			${spaceCode}
-			${atomCode}
-			${elementCode}
-			${givenCode}
-			${selectCode}
+			${spaceCode}\
+			${atomCode}\
+			${elementCode}\
+			${givenCode}\
+			${selectCode}\
 			${voteCode}
 			${returnCode}
 		}`)
@@ -147,10 +128,15 @@ const CHARACTER = {}
 			const atom = space? space.atom : undefined
 		` : ""
 		
-		const outputFuncMaker = new Function("changeFunc", "keepFunc", `return (event, sites, self, selected) => {
-			${spaceCode}
-			${atomCode}
-			${changeCode}
+		const selectCode = inputParams.includes("selected")? `
+			const selected = selection["${character.name}"]
+		` : ""
+		
+		const outputFuncMaker = new Function("changeFunc", "keepFunc", `return (event, sites, self, selection) => {
+			${selectCode}\
+			${spaceCode}\
+			${atomCode}\
+			${changeCode}\
 			${keepFunc? "keepFunc()" : ""}
 		}`)
 		
@@ -165,6 +151,13 @@ const CHARACTER = {}
 		if (votes.length > 1) throw new Error("[TodeSplat] Multiple votes not implemented yet")
 	}
 	
+	const makeCheckFunction = (character) => {
+		const checks = character.selects
+		if (checks.length == 0) return undefined
+		if (checks.length == 1) return checks[0]
+		if (checks.length > 1) throw new Error("[TodeSplat] Multiple checks not implemented yet")
+	}
+	
 	const makeSelectFunc = (character) => {
 		const selects = character.selects
 		if (selects.length == 0) return undefined
@@ -177,8 +170,24 @@ const CHARACTER = {}
 		if (givens.length == 0) return undefined
 		if (givens.length == 1) return givens[0]
 		if (givens.length > 1) {
-			throw new Error("[TodeSplat] Multiple givens not implemented yet")
-			//return (args) => givens.every(given => given(args))
+			
+			const allParams = givens.map(given => eatParams(given.as(String)))
+			const paramSet = new Set()
+			const params = []
+			
+			allParams.forEach(params => params.forEach(param => paramSet.add(param)))
+			paramSet.forEach(param => params.push(param))
+			
+			const givensLines = givens.map((g, i) => `if (!givens[${i}](${allParams[i]})) return false`)
+			const givensCode = givensLines.join("\n")
+			
+			const givenFuncMaker = JS `(givens) => (${params.join(",")}) => {
+				${givensCode}
+				return true
+			}`
+			
+			const givenFunc = givenFuncMaker(givens)
+			return givenFunc
 		}
 	}
 
@@ -186,12 +195,6 @@ const CHARACTER = {}
 		const changes = character.changes
 		if (changes.length <= 0) return undefined
 		if (changes.length == 1) return changes[0]
-			/*const changeFunc = changes[0]
-			return (args) => {
-				const atom = changeFunc(args)
-				SPACE.setAtom(args.space, atom)
-			}
-		}*/
 		if (changes.length > 1) throw new Error("[TodeSplat] Multiple changes not supported yet")
 	}
 
