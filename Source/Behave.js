@@ -31,10 +31,15 @@ const BEHAVE = {}
 	// Functions //
 	//===========//
 	const tryRule = (self, rule, sites) => {
+		const reflectionNumber = SYMMETRY.getOneNumber(rule)
+		return rule.funcs[reflectionNumber](self, sites)
+	}
+	
+	/*const tryRule = (self, rule, sites) => {
 	
 		const reflectionNumber = SYMMETRY.getOneNumber(rule)
 		
-		const events = rule.oneReflectedEvents[reflectionNumber]
+		const events = rule.eventLists[reflectionNumber]
 		const eventCount = rule.eventCount
 		
 		const selection = {}
@@ -65,6 +70,6 @@ const BEHAVE = {}
 		}
 		
 		return true
-	}
+	}*/
 	
 }

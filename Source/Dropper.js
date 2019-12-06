@@ -33,6 +33,7 @@ const DROPPER = {}
 		const previousDown = down
 		down = Mouse.down
 		
+		if (!UI.selectedElement) return
 		if (!UI.selectedElement.pour) {
 			if (!position) return
 			if (down && !previousDown) {
