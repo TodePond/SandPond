@@ -8,9 +8,9 @@ const D2_MODE = urlParams.has("2d")
 const D1_MODE = urlParams.has("1d")
 const VR_MODE = urlParams.has("vr")
 
-const MAX_X = (SMALL_MODE? 30 : 50) * (D1_MODE? 1.5 : 1) * (D2_MODE? 2 : 1)
+const MAX_X = (SMALL_MODE? 30 : 50) * (D1_MODE? 2 : 1) * (D2_MODE? 5 : 1)
 const MAX_Z = D1_MODE? 0 : (D2_MODE? 0 : MAX_X)
-const MAX_Y = D1_MODE? 0 : (SMALL_MODE? 30 : 40) * (D2_MODE? 3 : 1)
+const MAX_Y = D1_MODE? 0 : (SMALL_MODE? 30 : 40) * (D2_MODE? 8 : 1)
 
 const MIN_X = -MAX_X
 const MIN_Z = -MAX_Z
@@ -102,10 +102,10 @@ on.process(() => {
 let paused = false
 let stepCount = 0
 on.process(() => {
-	/*if (paused) {
+	if (paused) {
 		if (stepCount <= 0) return
 		stepCount--
-	}*/
+	}
 	for (let i = 0; i < spaceCount; i++) {
 		const space = world.spaces[i]
 		if (space) {

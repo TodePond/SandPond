@@ -15,8 +15,11 @@ const BEHAVE = {}
 	BEHAVE.spaceBehave = (space) => {
 		const atom = space.atom
 		if (!atom) return
-		const sites = space.sites
-		let ruleDone = false
+		//const sites = space.sites
+		
+		atom.element.func(atom, space.sites)
+		
+		/*let ruleDone = false
 		for (let r = 0; r < atom.element.rules.length; r++) {
 			const rule = atom.element.rules[r]
 			if (ruleDone && !rule.isAction) continue
@@ -24,7 +27,7 @@ const BEHAVE = {}
 			if (result) {
 				if (!rule.isAction)	ruleDone = true
 			}
-		}
+		}*/
 	}
 	
 	//===========//

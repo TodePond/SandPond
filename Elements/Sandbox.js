@@ -12,7 +12,7 @@ element Sand {
 		_    @
 	}
 	
-	rule xz {
+	rule {
 		@  => _
 		#_    #@
 	}

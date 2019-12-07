@@ -1,6 +1,6 @@
 TodeSplat`
 
-element Forkbomb {
+/*element Forkbomb {
 
 	colour "grey"
 	emissive "black"
@@ -8,7 +8,7 @@ element Forkbomb {
 	
 	rule xyz { @_ => .@ }
 	
-}
+}*/
 
 /*element Res {
 

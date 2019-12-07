@@ -262,7 +262,6 @@ const UI = {}
 		
 		if (element.default) {
 			UI.selectedElement = element
-			searchItemButton.classList.add("selected")
 		}
 		
 		for (const category of element.categories) {
@@ -287,6 +286,9 @@ const UI = {}
 	
 	if (UI.selectedReality == "vr") $("#vrOption").classList.add("selected")
 	else if (UI.selectedReality == "nonvr") $("#nonvrOption").classList.add("selected")
+	
+	
+	$(`#${UI.selectedElement.name}Button`).classList.add("selected")
 	
 	//========//
 	// Events //
