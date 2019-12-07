@@ -19,6 +19,8 @@ const ELEMENT = {}
 	}) => {
 	
 		const func = makeRulesFunc(rules)
+		
+		print(func.as(String))
 	
 		const element = {
 			name, colour, emissive, opacity,
@@ -34,18 +36,58 @@ const ELEMENT = {}
 	// Functions //
 	//===========//
 	
-	const makeRulesFunc = (rules, preparedParams = ["self", "sites"]) => {
+	const makeRulesFunc = (rules, preparedParams = ["self", "sites"], preparedSymmetries = {[""]: 0}) => {
 		
 		const rule = rules[0]
 		const nextRules = rules.slice(1)
-		
 		const eventLists = rule.eventLists
 		
-		if (eventLists.length > 1) {
-			throw new Error("[TodeSplat] Symmetries not supported yet")
+		if (preparedSymmetries[rule.oneSymmetries] == undefined) {
+			
+			let code = ``
+			
+			code += `const reflectionNumber = Math.floor(Math.random() * ${eventLists.length})\n`
+			const reflectionFuncs = []
+			const params = []
+			
+			for (let i = 0; i < eventLists.length; i++) {
+				const events = eventLists[i]
+				const nextPreparedSymmetries = {
+					[rule.oneSymmetries]: i,
+					...preparedSymmetries,
+				}
+				const reflectionFunc = makeRulesFunc(rules, preparedParams, nextPreparedSymmetries)
+				const reflectionParams = getParams(reflectionFunc)
+				
+				reflectionFuncs.push(reflectionFunc)
+				for (const param of reflectionParams) {
+					if (!params.includes(param)) params.push(param)
+				}
+			}
+			
+			/*const funcs = reflectionFuncs.map(func => {
+				const funcParams = getParams(func)
+				if (funcParams.every((param, i) => param == params[i])) return func
+				const maker = JS (`(func) => (${params.join(", ")}) => func(${funcParams.join(", ")})`)
+				return maker(func)
+			})*/
+			
+			const funcs = reflectionFuncs
+			
+			code += `return funcs[reflectionNumber](${params.join(", ")})\n`
+			
+			let makerCode = `(funcs) => (${params.join(", ")}) => {\n`
+			makerCode += code
+			makerCode += `}`
+			
+			const maker = JS (makerCode)
+			const func = maker(funcs)
+			
+			return func
 		}
 		
-		const events = eventLists[0] //TODO: go through different symmetries somehow
+		const reflectionNumber = preparedSymmetries[rule.oneSymmetries]
+		const events = eventLists[reflectionNumber]
 		
 		let code = ""
 		const doneParams = [...preparedParams]
@@ -120,7 +162,7 @@ const ELEMENT = {}
 				let returnCode = ``
 				if (nextRules.length == 0) returnCode = `return false`
 				else {
-					const nextFunc = makeRulesFunc(nextRules, doneParams.d)
+					const nextFunc = makeRulesFunc(nextRules, doneParams)
 					const nextParams = getParams(nextFunc)
 					
 					captures[`nextRule${nextRuleNumber}`] = nextFunc
@@ -189,7 +231,7 @@ const ELEMENT = {}
 		//print(captures)
 		const captureNames = Object.keys(captures)
 		const captureCode = `(${captureNames.join(", ")}) => (${desiredParams.join(", ")}) => {\n\n${code}}`
-		print(captureCode)
+		//print(captureCode)
 		const captureFunc = JS (captureCode)
 		const func = captureFunc(...captures)
 		

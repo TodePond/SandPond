@@ -28,7 +28,7 @@ const RULE = {}
 		
 			// Meaningful Data
 			eventLists,
-			//funcs,
+			oneSymmetries,
 			isAction,
 			
 			// Cache
