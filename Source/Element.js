@@ -18,15 +18,25 @@ const ELEMENT = {}
 		rules = [], data = {}, ...properties
 	}) => {
 	
-		const func = makeRulesFunc(rules)
+		const sources = []
+		const func = makeRulesFunc(sources, rules)
 		
-		print(func.as(String))
-	
 		const element = {
+			
+			// Appearance
 			name, colour, emissive, opacity,
+			
+			// Dropper
 			precise, floor, hidden, pour,
+			
+			// Debug
+			sources, funcSource: sources.join("\n\n"),
+			
+			// Behaviour
 			func, rules, data, ...properties
+			
 		}
+	
 		ELEMENT.globalElements[name] = element
 		createShaderColours(element)
 		return element
@@ -35,8 +45,9 @@ const ELEMENT = {}
 	//===========//
 	// Functions //
 	//===========//
-	
-	const makeRulesFunc = (rules, preparedParams = ["self", "sites"], preparedSymmetries = {[""]: 0}) => {
+	const makeRulesFunc = (sources, rules, preparedParams = ["self", "sites"], preparedSymmetries = {[""]: 0}) => {
+		
+		let source = ""
 		
 		const rule = rules[0]
 		const nextRules = rules.slice(1)
@@ -56,7 +67,7 @@ const ELEMENT = {}
 					[rule.oneSymmetries]: i,
 					...preparedSymmetries,
 				}
-				const reflectionFunc = makeRulesFunc(rules, preparedParams, nextPreparedSymmetries)
+				const reflectionFunc = makeRulesFunc(i == 0? sources : [], rules, preparedParams, nextPreparedSymmetries)
 				const reflectionParams = getParams(reflectionFunc)
 				
 				reflectionFuncs.push(reflectionFunc)
@@ -83,13 +94,15 @@ const ELEMENT = {}
 			const maker = JS (makerCode)
 			const func = maker(funcs)
 			
+			sources.unshift(func.as(String))
+			
 			return func
 		}
 		
 		const reflectionNumber = preparedSymmetries[rule.oneSymmetries]
 		const events = eventLists[reflectionNumber]
 		
-		let code = ""
+		let code = ``
 		const doneParams = [...preparedParams]
 		const desiredParams = ["self", "sites"]
 		const captures = {}
@@ -162,7 +175,7 @@ const ELEMENT = {}
 				let returnCode = ``
 				if (nextRules.length == 0) returnCode = `return false`
 				else {
-					const nextFunc = makeRulesFunc(nextRules, doneParams)
+					const nextFunc = makeRulesFunc(sources, nextRules, doneParams)
 					const nextParams = getParams(nextFunc)
 					
 					captures[`nextRule${nextRuleNumber}`] = nextFunc
@@ -229,12 +242,21 @@ const ELEMENT = {}
 		code += `return true\n\n`
 		//print(code)
 		//print(captures)
+		
 		const captureNames = Object.keys(captures)
 		const captureCode = `(${captureNames.join(", ")}) => (${desiredParams.join(", ")}) => {\n\n${code}}`
 		//print(captureCode)
 		const captureFunc = JS (captureCode)
 		const func = captureFunc(...captures)
 		
+		
+		let headerCode = ""
+		headerCode += `//==========================\n`
+		headerCode += `// Rules Remaining: ${rules.length}\n`
+		if (rule.oneSymmetries != "") headerCode += `// Reflections Remaining: ${reflectionNumber}\n`
+		headerCode += `//==========================\n`
+		
+		sources.unshift(headerCode + func.as(String))
 		
 		return func
 	}
