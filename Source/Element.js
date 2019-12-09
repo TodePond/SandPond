@@ -19,7 +19,14 @@ const ELEMENT = {}
 	}) => {
 	
 		const sources = []
-		const func = makeRulesFunc(sources, rules)
+		const func = makeRulesFunc(sources, "behave", 0, undefined, rules)
+		
+		const elementTitle = `// ELEMENT: ${name} //`
+		let funcSource = ``
+		funcSource += elementTitle.map((c, i) => (i > 1 && i < elementTitle.length - 2)? "=" : "/") + "\n"
+		funcSource += elementTitle + `\n`
+		funcSource += elementTitle.map((c, i) => (i > 1 && i < elementTitle.length - 2)? "=" : "/") + "\n"
+		funcSource += sources.join("\n\n")
 		
 		const element = {
 			
@@ -30,13 +37,13 @@ const ELEMENT = {}
 			precise, floor, hidden, pour,
 			
 			// Debug
-			sources, funcSource: sources.join("\n\n"),
+			funcSource,
 			
 			// Behaviour
 			func, rules, data, ...properties
 			
 		}
-	
+			
 		ELEMENT.globalElements[name] = element
 		createShaderColours(element)
 		return element
@@ -45,7 +52,7 @@ const ELEMENT = {}
 	//===========//
 	// Functions //
 	//===========//
-	const makeRulesFunc = (sources, rules, preparedParams = ["self", "sites"], preparedSymmetries = {[""]: 0}) => {
+	const makeRulesFunc = (sources, funcName, ruleNumber, ruleLetter, rules, preparedParams = ["self", "sites"], preparedSymmetries = {[""]: 0}) => {
 		
 		let source = ""
 		
@@ -67,7 +74,7 @@ const ELEMENT = {}
 					[rule.oneSymmetries]: i,
 					...preparedSymmetries,
 				}
-				const reflectionFunc = makeRulesFunc(i == 0? sources : [], rules, preparedParams, nextPreparedSymmetries)
+				const reflectionFunc = makeRulesFunc(i == 0? sources : [], funcName, ruleNumber, ruleLetter, rules, preparedParams, nextPreparedSymmetries)
 				const reflectionParams = getParams(reflectionFunc)
 				
 				reflectionFuncs.push(reflectionFunc)
@@ -94,7 +101,10 @@ const ELEMENT = {}
 			const maker = JS (makerCode)
 			const func = maker(funcs)
 			
-			sources.unshift(func.as(String))
+			const lines = func.as(String).split(`\n`)
+			const prettyLines = lines.map((l, i) => (i == 0 || i == lines.length-1)? l : `	` + l)
+			const prettySource = prettyLines.join(`\n`)
+			sources.unshift(prettySource)
 			
 			return func
 		}
@@ -111,9 +121,8 @@ const ELEMENT = {}
 		let nextRuleNumber = 0
 		
 		// INPUTTY
-		code += `//========//\n`
-		code += `// INPUTS //\n`
-		code += `//========//\n`
+		code += `// INPUTS\n`
+		code += `//--------\n`
 		for (let eventNumber = 0; eventNumber < events.length; eventNumber++) {
 			
 			code += `// Input ${eventNumber}\n`
@@ -175,7 +184,8 @@ const ELEMENT = {}
 				let returnCode = ``
 				if (nextRules.length == 0) returnCode = `return false`
 				else {
-					const nextFunc = makeRulesFunc(sources, nextRules, doneParams)
+					const nextRuleLetter = nextRuleNumber
+					const nextFunc = makeRulesFunc(sources, `nextRule${nextRuleNumber}`, ruleNumber + 1, nextRuleLetter, nextRules, doneParams)
 					const nextParams = getParams(nextFunc)
 					
 					captures[`nextRule${nextRuleNumber}`] = nextFunc
@@ -186,6 +196,7 @@ const ELEMENT = {}
 				code += `if (!given${givenNumber}(${siteParams.join(", ")})) ${returnCode}\n`
 				
 				givenNumber++
+				
 			}
 			
 			code += `\n`
@@ -193,9 +204,8 @@ const ELEMENT = {}
 		}
 		
 		// OUTPUTTY
-		code += `//=========//\n`
-		code += `// OUTPUTS //\n`
-		code += `//=========//\n`
+		code += `// OUTPUTS\n`
+		code += `//---------\n`
 		for (let eventNumber = 0; eventNumber < events.length; eventNumber++) {
 			
 			code += `// Output ${eventNumber}\n`
@@ -251,16 +261,21 @@ const ELEMENT = {}
 		
 		
 		let headerCode = ""
-		headerCode += `//==========================\n`
-		headerCode += `// Rules Remaining: ${rules.length}\n`
-		if (rule.oneSymmetries != "") headerCode += `// Reflections Remaining: ${reflectionNumber}\n`
-		headerCode += `//==========================\n`
+		const ruleBoxInner = `:: Rule ${ruleNumber}${ruleLetter == undefined? "" : ALPHABET[ruleLetter]} ::`
+		headerCode += ruleBoxInner.map(() => ":") + `\n`
+		headerCode += ruleBoxInner + "\n"
+		headerCode += ruleBoxInner.map(() => ":") + `\n`
 		
-		sources.unshift(headerCode + func.as(String))
+		const lines = func.as(String).split(`\n`)
+		const prettyLines = lines.map((l, i) => (i == 0 || i == lines.length-1)? l : `	` + l)
+		const prettySource = `const ${funcName} = ` + prettyLines.join(`\n`)
+		sources.unshift(headerCode + prettySource)
 		
 		return func
 	}
-		
+	
+	const ALPHABET = "abcdefghijklmnopqrstuvwxyz"
+	
 	const getParams = (func) => {
 		const code = func.as(String)
 		const params = []

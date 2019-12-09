@@ -19,6 +19,24 @@ element Sand {
 	
 }
 
+element MountainMaker {
+	
+	colour "lightblue"
+	emissive "red"
+	category "Sandbox"
+	
+	change S () => ATOM.make(Sand)
+	
+	rule 0.4 {
+		@ => S
+	}
+	
+	rule xyz {
+		@._ => ..@
+	}
+	
+}
+
 /*element Sand {
 
 	colour "#ffcc00"
