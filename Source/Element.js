@@ -28,7 +28,7 @@ const ELEMENT = {}
 		funcSource += elementTitle.map((c, i) => (i > 1 && i < elementTitle.length - 2)? "=" : "/") + "\n"
 		funcSource += sources.join("\n\n")
 		
-		const element = {
+		const elementInfo = {
 			
 			// Appearance
 			name, colour, emissive, opacity,
@@ -43,7 +43,17 @@ const ELEMENT = {}
 			func, rules, data, ...properties
 			
 		}
-			
+		
+		const elementMaker = JS `() => {
+			const element = function ${name}() {
+				return {element}
+			}
+			return element
+		}`
+		
+		const element = elementMaker()
+		element.o= elementInfo
+		
 		ELEMENT.globalElements[name] = element
 		createShaderColours(element)
 		return element

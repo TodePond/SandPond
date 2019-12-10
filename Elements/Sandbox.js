@@ -25,7 +25,7 @@ element MountainMaker {
 	emissive "red"
 	category "Sandbox"
 	
-	change S () => ATOM.make(Sand)
+	change S () => new Sand()
 	
 	rule 0.4 {
 		@ => S
