@@ -6,7 +6,7 @@ keep .
 given @ () => true
 change @ (self) => self
 
-given # (atom) => atom
+given # (element) => element
 keep #
 
 given _ (space, atom) => space && !atom

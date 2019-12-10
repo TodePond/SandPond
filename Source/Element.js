@@ -152,7 +152,7 @@ const ELEMENT = {}
 				// Get params
 				for (const param of params) {
 				
-					if (param == "space" || param == "atom") {
+					if (param == "space" || param == "atom" || param == "element") {
 						const paramName = `space${siteNumber}`
 						if (!doneParams.includes(paramName)) {
 							code += `const space${siteNumber} = sites[${siteNumber}]\n`
@@ -160,10 +160,18 @@ const ELEMENT = {}
 						}
 					}
 					
-					if (param == "atom") {
+					if (param == "atom" || param == "element") {
 						const paramName = `atom${siteNumber}`
 						if (!doneParams.includes(paramName)) {
 							code += `const atom${siteNumber} = space${siteNumber} ? space${siteNumber}.atom : undefined\n`
+							doneParams.push(paramName)
+						}
+					}
+					
+					if (param == "element") {
+						const paramName = `element${siteNumber}`
+						if (!doneParams.includes(paramName)) {
+							code += `const element${siteNumber} = atom${siteNumber} ? atom${siteNumber}.element : undefined\n`
 							doneParams.push(paramName)
 						}
 					}
@@ -174,14 +182,27 @@ const ELEMENT = {}
 					if (param == "space") {
 						const paramName = `space${siteNumber}`
 						if (preparedParams.includes(paramName)) {
-							desiredParams.push(paramName)
+							if (!desiredParams.includes(paramName)) desiredParams.push(paramName)
 						}
 					}
 					
 					if (param == "atom") {
 						const paramName = `atom${siteNumber}`
 						if (preparedParams.includes(paramName)) {
-							desiredParams.push(paramName)
+							if (!desiredParams.includes(paramName)) desiredParams.push(paramName)
+						}
+						if (preparedParams.includes(`space${siteNumber}`)) {
+							if (!desiredParams.includes(`space${siteNumber}`)) desiredParams.push(`space${siteNumber}`)
+						}
+					}
+					
+					if (param == "element") {
+						const paramName = `element${siteNumber}`
+						if (preparedParams.includes(paramName)) {
+							if (!desiredParams.includes(paramName)) desiredParams.push(paramName)
+						}
+						if (preparedParams.includes(`atom${siteNumber}`)) {
+							if (!desiredParams.includes(`atom${siteNumber}`)) desiredParams.push(`atom${siteNumber}`)
 						}
 					}
 				}
@@ -197,6 +218,10 @@ const ELEMENT = {}
 					const nextRuleLetter = nextRuleNumber
 					const nextFunc = makeRulesFunc(sources, `nextRule${nextRuleNumber}`, ruleNumber + 1, nextRuleLetter, nextRules, doneParams)
 					const nextParams = getParams(nextFunc)
+					
+					for (const nextParam of nextParams) {
+						if (preparedParams.includes(nextParam) && !desiredParams.includes(nextParam)) desiredParams.push(nextParam)
+					}
 					
 					captures[`nextRule${nextRuleNumber}`] = nextFunc
 					returnCode = `return nextRule${nextRuleNumber}(${nextParams.join(", ")})`
