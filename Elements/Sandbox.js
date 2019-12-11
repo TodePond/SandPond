@@ -19,6 +19,31 @@ element Sand {
 	
 }
 
+element Water {
+	
+	colour "lightblue"
+	emissive "blue"
+	opacity 0.5
+	
+	category "Sandbox"
+	
+	rule {
+		@ => _
+		_    @
+	}
+	
+	rule xz {
+		@_ => __
+		#_    #@
+	}
+	rule xz {
+	
+		@_ => _@
+		#     #
+	}
+	
+}
+
 element MountainMaker {
 	
 	colour "lightblue"
