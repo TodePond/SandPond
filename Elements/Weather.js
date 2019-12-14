@@ -4,6 +4,7 @@ element WeatherBoy {
 	colour "blue"
 	emissive "darkblue"
 	
+	isWeatherBoy true
 	chance 0.01
 	
 	// init
