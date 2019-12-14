@@ -20,6 +20,24 @@ element Food {
 	
 }
 
+element MountainMaker {
+	
+	colour "lightblue"
+	emissive "red"
+	category "Life"
+	
+	change S () => new Sand()
+	
+	rule 0.4 {
+		@ => S
+	}
+	
+	rule xyz {
+		@._ => ..@
+	}
+	
+}
+
 element SandLeaver {
 	
 	colour "brown"

@@ -7,6 +7,19 @@ element Sand {
 	emissive "#ffa34d"
 	category "Sandbox"
 	
+	given W (element) => element == Water
+	change W () => new Water()
+	
+	rule {
+		@ => W
+		W    @
+	}
+	
+	rule xz {
+		@  => W
+		#W    #@
+	}
+	
 	rule {
 		@ => _
 		_    @
@@ -17,6 +30,16 @@ element Sand {
 		#_    #@
 	}
 	
+}
+
+element Snow {
+	colour "white"
+	emissive "grey"
+	category "Sandbox"
+	
+	change W () => new Water()
+	rule 0.0001 { @ => W }
+	ruleset Sand
 }
 
 element Water {
@@ -32,32 +55,14 @@ element Water {
 		_    @
 	}
 	
-	rule xz {
+	/*rule x {
 		@_ => __
 		#_    #@
-	}
-	rule xz {
+	}*/
 	
+	rule xz {
 		@_ => _@
 		#     #
-	}
-	
-}
-
-element MountainMaker {
-	
-	colour "lightblue"
-	emissive "red"
-	category "Sandbox"
-	
-	change S () => new Sand()
-	
-	rule 0.4 {
-		@ => S
-	}
-	
-	rule xyz {
-		@._ => ..@
 	}
 	
 }
