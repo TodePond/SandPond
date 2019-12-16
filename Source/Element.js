@@ -18,15 +18,8 @@ const ELEMENT = {}
 		rules = [], data = {}, ...properties
 	}) => {
 	
-		const sources = []
-		const func = makeRulesFunc(sources, "behave", 0, undefined, rules)
-		
-		const elementTitle = `// ELEMENT: ${name} //`
-		let funcSource = ``
-		funcSource += elementTitle.map((c, i) => (i > 1 && i < elementTitle.length - 2)? "=" : "/") + "\n"
-		funcSource += elementTitle + `\n`
-		funcSource += elementTitle.map((c, i) => (i > 1 && i < elementTitle.length - 2)? "=" : "/") + "\n"
-		funcSource += sources.join("\n\n")
+		const code = makeCode(rules, {name})
+		const func = new Function(code)()
 		
 		const elementInfo = {
 			
@@ -37,10 +30,10 @@ const ELEMENT = {}
 			precise, floor, hidden, pour,
 			
 			// Debug
-			funcSource,
+			code, rules,
 			
 			// Behaviour
-			func, rules, data, ...properties
+			func, data, ...properties
 			
 		}
 		
@@ -62,6 +55,137 @@ const ELEMENT = {}
 	//===========//
 	// Functions //
 	//===========//
+	const makeCode = (rules, {name}) => {
+		
+		const ruleFuncs = {}
+		const symmetryArrays = {}
+		const symmetryFuncs = {}
+		
+		//======================//
+		// MAIN FUNC GENERATION //
+		//======================//
+		// Header
+		const mainFuncName = `${name}Behave`
+		let mainCode = ""
+		mainCode += `const ${mainFuncName} = (atom, sites) => {\n`
+		
+		// Go through each rule
+		for (let r = 0; r < rules.length; r++) {
+		
+			//======================//
+			// RULE FUNC GENERATION //
+			//======================//
+			// Header
+			const rule = rules[r]
+			const ruleFuncName = `${name}Rule${r}`
+			let ruleCode = ""
+			ruleCode += `(atom, sites) => {\n`
+			
+			// Prepare One Symmetries
+			const oneSymmetryNumberName = `one${rule.oneSymmetries.as(UpperCase)}`
+			const symmetryArrayName = `${ruleFuncName}Symmetries`
+			ruleCode += `const ${oneSymmetryNumberName} = Math.floor(Math.random() * ${rule.oneSymmetriesCount})\n`
+			ruleCode += `return ${symmetryArrayName}[${oneSymmetryNumberName}](atom, sites)\n`
+			
+			// End rule func
+			ruleCode += "}\n"
+			ruleCode = indentInnerCode(ruleCode)
+			ruleFuncs[ruleFuncName] = ruleCode
+			mainCode += `if (${ruleFuncName}(atom, sites)) return true\n`
+			//============================================//
+			
+			//===========================//
+			// SYMMETRY ARRAY GENERATION //
+			//===========================//
+			let symmetryArrayCode = ""
+			symmetryArrayCode += "[\n"
+			
+			// Go through each symmetry
+			for (let s = 0; s < rule.oneSymmetriesCount; s++) {
+				const symmetryFuncName = `${ruleFuncName}Symmetry${rule.oneSymmetries.as(UpperCase)}${s}`
+				symmetryArrayCode += `${symmetryFuncName},\n`
+				
+				//==========================//
+				// SYMMETRY FUNC GENERATION //
+				//==========================//
+				let symmetryCode = ""
+				symmetryCode += `(atom, sites) => {\n`
+				symmetryCode += `//event code goes here\n`
+				symmetryCode += `}\n`
+				symmetryCode = indentInnerCode(symmetryCode)
+				symmetryFuncs[symmetryFuncName] = symmetryCode
+			}
+			
+			// End symmetry array
+			symmetryArrayCode += "]\n"
+			symmetryArrayCode = indentInnerCode(symmetryArrayCode)
+			symmetryArrays[symmetryArrayName] = symmetryArrayCode
+			//============================================//
+			
+
+			
+		}
+		
+		// End behave func
+		mainCode += `}\n`
+		mainCode = indentInnerCode(mainCode)
+		//============================================//
+		
+		// Group all rule functions together
+		let rulesCode = ""
+		for (const ruleFuncName in ruleFuncs) {
+			const ruleCode = ruleFuncs[ruleFuncName]
+			rulesCode += `const ${ruleFuncName} = ${ruleCode}\n`
+		}
+		
+		// Group all symmetry arrays together
+		let symmetryArraysCode = ""
+		for (const symmetryArrayName in symmetryArrays) {
+			const symmetryArrayCode = symmetryArrays[symmetryArrayName]
+			symmetryArraysCode += `const ${symmetryArrayName} = ${symmetryArrayCode}\n`
+		}
+		
+		// Group all symmetry funcs together
+		let symmetryFuncsCode = ""
+		for (const symmetryFuncName in symmetryFuncs) {
+			const symmetryFuncCode = symmetryFuncs[symmetryFuncName]
+			symmetryFuncsCode += `const ${symmetryFuncName} = ${symmetryFuncCode}\n`
+		}
+		
+		// Group all symmetry funcs together
+		
+		// Group everything together
+		let code = ""
+		code += `//======//\n`
+		code += `// MAIN //\n`
+		code += `//======//\n`
+		code += mainCode
+		code += "\n"
+		code += `//=======//\n`
+		code += `// RULES //\n`
+		code += `//=======//\n`
+		code += rulesCode
+		code += `//============//\n`
+		code += `// SYMMETRIES //\n`
+		code += `//============//\n`
+		code += symmetryFuncsCode
+		code += `//=================//\n`
+		code += `// SYMMETRY ARRAYS //\n`
+		code += `//=================//\n`
+		code += symmetryArraysCode
+		code += `return ${mainFuncName}`
+		print(code)
+		return code
+	}
+	
+	const indentInnerCode = (code) => {
+		const lines = code.split("\n")
+		const indentedLines = lines.map((line, i) => (i == 0 || i >= lines.length-2)? line : `	${line}`)
+		const indentedCode = indentedLines.join("\n")
+		return indentedCode
+	}
+	
+	// Old
 	const makeRulesFunc = (sources, funcName, ruleNumber, ruleLetter, rules, preparedParams = ["self", "sites"], preparedSymmetries = {[""]: 0}) => {
 		
 		let source = ""

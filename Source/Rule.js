@@ -17,23 +17,17 @@ const RULE = {}
 	
 		const allSpaces = SYMMETRY.getAllSpaces(spaces, allSymmetries)
 		const oneSpaceLists = SYMMETRY.getOneSpaceLists(allSpaces, oneSymmetries)
-		
 		const eventLists = getEventLists(oneSpaceLists)
-		
-		//const funcs = eventLists.map(events => compileRuleFunc(events))
-		
-		//print(funcs[0].as(String))
 		
 		const rule = {
 		
 			// Meaningful Data
 			eventLists,
-			oneSymmetries,
 			isAction,
 			
 			// Cache
-			//reflectionCount: funcs.length,
-			//eventCount: eventLists[0].length,
+			oneSymmetries, //technically deductable from 'eventLists' but why bother
+			oneSymmetriesCount: eventLists.length,
 			
 		}
 		

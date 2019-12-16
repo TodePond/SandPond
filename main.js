@@ -125,4 +125,4 @@ function measureConcentration() {
 	return atomCount / spaceCount
 }
 
-//print(GreenSand.funcSource)
+//print(Sand.code)
