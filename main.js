@@ -65,8 +65,9 @@ scene.add(sun)
 const floor = D2_MODE? make2DFloor(WORLD_WIDTH * ATOM_SIZE, WORLD_HEIGHT * ATOM_SIZE) : makeFloor(WORLD_WIDTH * ATOM_SIZE, WORLD_DEPTH * ATOM_SIZE)
 scene.add(floor)
 
+let orbit
 if (!VR_MODE) {
-	const orbit = new THREE.OrbitControls(camera)
+	orbit = new THREE.OrbitControls(camera)
 	orbit.mouseButtons.LEFT = undefined
 	orbit.mouseButtons.MIDDLE = THREE.MOUSE.DOLLY
 	orbit.mouseButtons.RIGHT = THREE.MOUSE.ROTATE

@@ -12,6 +12,7 @@ const UI = {}
 	UI.selectedSize = SMALL_MODE? "small" : "big"
 	UI.selectedDimensions = D1_MODE? "d1" : (D2_MODE? "d2" : "d3")
 	UI.selectedReality = VR_MODE? "vr" : "nonvr"
+	UI.selectedSource = "todeSplat"
 	
 	//======//
 	// HTML //
@@ -76,7 +77,7 @@ const UI = {}
 				width: 45px;
 			}
 			
-			.search.heading {
+			.search.heading, .source.heading {
 				width: auto;
 				padding: 0px 6px;
 			}
@@ -140,6 +141,9 @@ const UI = {}
 			#sourceBox {
 				font-family: UbuntuMono;
 				font-size: 18px;
+				overflow: auto;
+				max-height: calc(100vh - 102px);
+				margin: 16px;
 			}
 			
 		</style>
@@ -159,7 +163,11 @@ const UI = {}
 			
 			<div class="windowContainer">
 			
-				<div id="source" class="minimised form">
+				<div id="source" class="minimised">
+					<div class="menu">
+						<div class="heading box clickable sourceType selected" id="todeSplatSource"><div class="label">TodeSplat</div></div>
+						<div class="heading box clickable sourceType" id="javaScriptSource"><div class="label">JavaScript</div></div>
+					</div>
 					<pre id="sourceBox"></pre>
 				</div>
 			
@@ -223,7 +231,7 @@ const UI = {}
 	
 	const updateSourceUI = () => {
 		if (!UI.selectedElement) return
-		const source = UI.selectedElement.source
+		const source = UI.selectedSource == "todeSplat"? UI.selectedElement.source : UI.selectedElement.code
 		$("#sourceBox").textContent = source
 	}
 	
@@ -437,14 +445,17 @@ const UI = {}
 			const name = id.slice(0, id.length - "Heading".length)
 			const window = windowContainer.$("#" + name)
 			if (window) window.classList.add("minimised")
+			if (oldHeading.id == "sourceHeading") orbit.enableZoom = true
 		}
 		
-		if (newHeading) {		
+		if (newHeading) {
 			const id = newHeading.id
 			const name = id.slice(0, id.length - "Heading".length)
 			const window = windowContainer.$("#" + name)
 			if (window) window.classList.remove("minimised")
+			if (newHeading.id == "sourceHeading") orbit.enableZoom = false
 		}
+		
 	})
 	
 	$("#searchHeading").on.click(function() {
@@ -459,6 +470,16 @@ const UI = {}
 		})
 		this.classList.toggle("selected")
 		updateSearch()
+	})
+	
+	$$(".sourceType").on.click(function() {
+		$$(".sourceType").forEach(category => {
+			category.classList.remove("selected")
+		})
+		this.classList.add("selected")
+		if (this.id == "javaScriptSource") UI.selectedSource = "javaScript"
+		else UI.selectedSource = "todeSplat"
+		updateSourceUI()
 	})
 	
 	
