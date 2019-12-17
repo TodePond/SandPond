@@ -66,9 +66,9 @@ const ELEMENT = {}
 		// MAIN FUNC GENERATION //
 		//======================//
 		// Header
-		const mainFuncName = `${name}Behave`
+		const mainFuncName = `${name}Behave0`
 		let mainCode = ""
-		mainCode += `const ${mainFuncName} = (atom, sites) => {\n`
+		mainCode += `const ${mainFuncName} = (self, sites) => {\n`
 		
 		// Go through each rule
 		for (let r = 0; r < rules.length; r++) {
@@ -78,21 +78,21 @@ const ELEMENT = {}
 			//======================//
 			// Header
 			const rule = rules[r]
-			const ruleFuncName = `${name}Rule${r}`
+			const ruleFuncName = `${name}Input${r}`
 			let ruleCode = ""
-			ruleCode += `(atom, sites) => {\n`
+			ruleCode += `(self, sites) => {\n`
 			
 			// Prepare One Symmetries
 			const oneSymmetryNumberName = `one${rule.oneSymmetries.as(UpperCase)}`
 			const symmetryArrayName = `${ruleFuncName}Symmetries`
 			ruleCode += `const ${oneSymmetryNumberName} = Math.floor(Math.random() * ${rule.oneSymmetriesCount})\n`
-			ruleCode += `return ${symmetryArrayName}[${oneSymmetryNumberName}](atom, sites)\n`
+			ruleCode += `return ${symmetryArrayName}[${oneSymmetryNumberName}](self, sites)\n`
 			
 			// End rule func
 			ruleCode += "}\n"
 			ruleCode = indentInnerCode(ruleCode)
 			ruleFuncs[ruleFuncName] = ruleCode
-			mainCode += `if (${ruleFuncName}(atom, sites)) return true\n`
+			mainCode += `if (${ruleFuncName}(self, sites)) return ${name}Output${r}(self, sites)\n`
 			//============================================//
 			
 			//===========================//
@@ -110,23 +110,47 @@ const ELEMENT = {}
 				// SYMMETRY FUNC GENERATION //
 				//==========================//
 				let symmetryCode = ""
-				symmetryCode += `(atom, sites) => {\n`
+				let innerSymmetryCode = ""
+				const symmetryParams = []
 				
 				const events = rule.eventLists[s]
 				for (let e = 0; e < events.length; e++) {
 					const event = events[e]
 					const givens = event.input.givens
 					for (let g = 0; g < givens.length; g++) {
+						innerSymmetryCode += "\n"
 						const given = givens[g]
 						const givenIndex = givenFuncs.indexOf(given)
 						const givenNumber = givenIndex != -1? givenIndex : givenFuncs.push(given) - 1
 						const givenName = `${name}Given${givenNumber}`
-						const givenParamsCode = getParams(given).join(", ")
-						symmetryCode += `if (!${givenName}(${givenParamsCode})) return false\n`
+						const givenParams = getParams(given)
+						const givenSiteParams = givenParams.map(param => {
+							if (param == "space" || param == "atom" || param == "element") return `${param}${event.siteNumber}`
+							else return param
+						})
+						
+						// Retrieve Params
+						if (givenParams.includes("space") || givenParams.includes("atom") || givenParams.includes("element")) {
+							innerSymmetryCode += `const space${event.siteNumber} = sites[${event.siteNumber}]\n`
+						}
+						
+						if (givenParams.includes("atom") || givenParams.includes("element")) {
+							innerSymmetryCode += `const atom${event.siteNumber} = space${event.siteNumber} && space${event.siteNumber}.atom\n`
+						}
+						
+						if (givenParams.includes("element")) {
+							innerSymmetryCode += `const element${event.siteNumber} = atom${event.siteNumber} && atom${event.siteNumber}.element\n`
+						}
+						
+						const givenParamsCode = givenSiteParams.join(", ")
+						innerSymmetryCode += `if (!${givenName}(${givenParamsCode})) return false\n`
 					}
 					
 				}
 				
+				symmetryCode += `(self, sites) => {\n`
+				symmetryCode += innerSymmetryCode
+				symmetryCode += "\n"
 				symmetryCode += `return true\n`
 				symmetryCode += `}\n`
 				symmetryCode = indentInnerCode(symmetryCode)
@@ -183,17 +207,17 @@ const ELEMENT = {}
 		code += `//======//\n`
 		code += mainCode
 		code += "\n"
-		code += `//=======//\n`
-		code += `// RULES //\n`
-		code += `//=======//\n`
+		code += `//========//\n`
+		code += `// INPUTS //\n`
+		code += `//========//\n`
 		code += rulesCode
-		code += `//============//\n`
-		code += `// SYMMETRIES //\n`
-		code += `//============//\n`
+		code += `//==================//\n`
+		code += `// INPUT SYMMETRIES //\n`
+		code += `//==================//\n`
 		code += symmetryFuncsCode
-		code += `//=================//\n`
-		code += `// SYMMETRY ARRAYS //\n`
-		code += `//=================//\n`
+		code += `//=======================//\n`
+		code += `// INPUT SYMMETRY ARRAYS //\n`
+		code += `//=======================//\n`
 		code += symmetryArraysCode
 		code += `//========//\n`
 		code += `// GIVENS //\n`
