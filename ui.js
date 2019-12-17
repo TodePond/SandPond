@@ -146,6 +146,10 @@ const UI = {}
 				margin: 16px;
 			}
 			
+			.sourceType > .label {
+				font-size: 15px;
+			}
+			
 		</style>
 	`
 	

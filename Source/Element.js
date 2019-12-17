@@ -60,6 +60,7 @@ const ELEMENT = {}
 		const ruleFuncs = {}
 		const symmetryArrays = {}
 		const symmetryFuncs = {}
+		const givenFuncs = []
 		
 		//======================//
 		// MAIN FUNC GENERATION //
@@ -110,7 +111,23 @@ const ELEMENT = {}
 				//==========================//
 				let symmetryCode = ""
 				symmetryCode += `(atom, sites) => {\n`
-				symmetryCode += `//event code goes here\n`
+				
+				const events = rule.eventLists[s]
+				for (let e = 0; e < events.length; e++) {
+					const event = events[e]
+					const givens = event.input.givens
+					for (let g = 0; g < givens.length; g++) {
+						const given = givens[g]
+						const givenIndex = givenFuncs.indexOf(given)
+						const givenNumber = givenIndex != -1? givenIndex : givenFuncs.push(given) - 1
+						const givenName = `${name}Given${givenNumber}`
+						const givenParamsCode = getParams(given).join(", ")
+						symmetryCode += `if (!${givenName}(${givenParamsCode})) return false\n`
+					}
+					
+				}
+				
+				symmetryCode += `return true\n`
 				symmetryCode += `}\n`
 				symmetryCode = indentInnerCode(symmetryCode)
 				symmetryFuncs[symmetryFuncName] = symmetryCode
@@ -152,7 +169,12 @@ const ELEMENT = {}
 			symmetryFuncsCode += `const ${symmetryFuncName} = ${symmetryFuncCode}\n`
 		}
 		
-		// Group all symmetry funcs together
+		// Group all given funcs together
+		let givensCode = ""
+		givenFuncs.forEach((given, g) => {
+			const givenName = `${name}Given${g}`
+			givensCode += `const ${givenName} = ${given}\n`
+		})
 		
 		// Group everything together
 		let code = ""
@@ -173,6 +195,11 @@ const ELEMENT = {}
 		code += `// SYMMETRY ARRAYS //\n`
 		code += `//=================//\n`
 		code += symmetryArraysCode
+		code += `//========//\n`
+		code += `// GIVENS //\n`
+		code += `//========//\n`
+		code += givensCode
+		code += "\n"
 		code += `return ${mainFuncName}`
 		print(code)
 		return code
@@ -183,254 +210,6 @@ const ELEMENT = {}
 		const indentedLines = lines.map((line, i) => (i == 0 || i >= lines.length-2)? line : `	${line}`)
 		const indentedCode = indentedLines.join("\n")
 		return indentedCode
-	}
-	
-	// Old
-	const makeRulesFunc = (sources, funcName, ruleNumber, ruleLetter, rules, preparedParams = ["self", "sites"], preparedSymmetries = {[""]: 0}) => {
-		
-		let source = ""
-		
-		const rule = rules[0]
-		const nextRules = rules.slice(1)
-		const eventLists = rule.eventLists
-		
-		if (preparedSymmetries[rule.oneSymmetries] == undefined) {
-			
-			let code = ``
-			
-			code += `const reflectionNumber = Math.floor(Math.random() * ${eventLists.length})\n`
-			const reflectionFuncs = []
-			const params = []
-			
-			for (let i = 0; i < eventLists.length; i++) {
-				const events = eventLists[i]
-				const nextPreparedSymmetries = {
-					[rule.oneSymmetries]: i,
-					...preparedSymmetries,
-				}
-				const reflectionFunc = makeRulesFunc(i == 0? sources : [], funcName, ruleNumber, ruleLetter, rules, preparedParams, nextPreparedSymmetries)
-				const reflectionParams = getParams(reflectionFunc)
-				
-				reflectionFuncs.push(reflectionFunc)
-				for (const param of reflectionParams) {
-					if (!params.includes(param)) params.push(param)
-				}
-			}
-			
-			/*const funcs = reflectionFuncs.map(func => {
-				const funcParams = getParams(func)
-				if (funcParams.every((param, i) => param == params[i])) return func
-				const maker = JS (`(func) => (${params.join(", ")}) => func(${funcParams.join(", ")})`)
-				return maker(func)
-			})*/
-			
-			const funcs = reflectionFuncs
-			
-			code += `return funcs[reflectionNumber](${params.join(", ")})\n`
-			
-			let makerCode = `(funcs) => (${params.join(", ")}) => {\n`
-			makerCode += code
-			makerCode += `}`
-			
-			const maker = JS (makerCode)
-			const func = maker(funcs)
-			
-			const lines = func.as(String).split(`\n`)
-			const prettyLines = lines.map((l, i) => (i == 0 || i == lines.length-1)? l : `	` + l)
-			const prettySource = prettyLines.join(`\n`)
-			sources.unshift(prettySource)
-			
-			return func
-		}
-		
-		const reflectionNumber = preparedSymmetries[rule.oneSymmetries]
-		const events = eventLists[reflectionNumber]
-		
-		let code = ``
-		const doneParams = [...preparedParams]
-		const desiredParams = ["self", "sites"]
-		const captures = {}
-		let givenNumber = 0
-		let changeNumber = 0
-		let nextRuleNumber = 0
-		
-		// INPUTTY
-		code += `// INPUTS\n`
-		code += `//--------\n`
-		for (let eventNumber = 0; eventNumber < events.length; eventNumber++) {
-			
-			code += `// Input ${eventNumber}\n`
-			
-			const event = events[eventNumber]
-			const siteNumber = event.siteNumber
-			const input = event.input
-			
-			// GIVENS
-			const givens = input.givens
-			for (const given of givens) {
-			
-				captures[`given${givenNumber}`] = given
-			
-				const params = getParams(given)
-				
-				// Get params
-				for (const param of params) {
-				
-					if (param == "space" || param == "atom" || param == "element") {
-						const paramName = `space${siteNumber}`
-						if (!doneParams.includes(paramName)) {
-							code += `const space${siteNumber} = sites[${siteNumber}]\n`
-							doneParams.push(paramName)
-						}
-					}
-					
-					if (param == "atom" || param == "element") {
-						const paramName = `atom${siteNumber}`
-						if (!doneParams.includes(paramName)) {
-							code += `const atom${siteNumber} = space${siteNumber} ? space${siteNumber}.atom : undefined\n`
-							doneParams.push(paramName)
-						}
-					}
-					
-					if (param == "element") {
-						const paramName = `element${siteNumber}`
-						if (!doneParams.includes(paramName)) {
-							code += `const element${siteNumber} = atom${siteNumber} ? atom${siteNumber}.element : undefined\n`
-							doneParams.push(paramName)
-						}
-					}
-				}
-				
-				// Get params from cache
-				for (const param of params) {
-					if (param == "space") {
-						const paramName = `space${siteNumber}`
-						if (preparedParams.includes(paramName)) {
-							if (!desiredParams.includes(paramName)) desiredParams.push(paramName)
-						}
-					}
-					
-					if (param == "atom") {
-						const paramName = `atom${siteNumber}`
-						if (preparedParams.includes(paramName)) {
-							if (!desiredParams.includes(paramName)) desiredParams.push(paramName)
-						}
-						if (preparedParams.includes(`space${siteNumber}`)) {
-							if (!desiredParams.includes(`space${siteNumber}`)) desiredParams.push(`space${siteNumber}`)
-						}
-					}
-					
-					if (param == "element") {
-						const paramName = `element${siteNumber}`
-						if (preparedParams.includes(paramName)) {
-							if (!desiredParams.includes(paramName)) desiredParams.push(paramName)
-						}
-						if (preparedParams.includes(`atom${siteNumber}`)) {
-							if (!desiredParams.includes(`atom${siteNumber}`)) desiredParams.push(`atom${siteNumber}`)
-						}
-					}
-				}
-				
-				const siteParams = params.map(param => {
-					if (param == "self") return param
-					else return `${param}${siteNumber}`
-				})
-				
-				let returnCode = ``
-				if (nextRules.length == 0) returnCode = `return false`
-				else {
-					const nextRuleLetter = nextRuleNumber
-					const nextFunc = makeRulesFunc(sources, `nextRule${nextRuleNumber}`, ruleNumber + 1, nextRuleLetter, nextRules, doneParams)
-					const nextParams = getParams(nextFunc)
-					
-					for (const nextParam of nextParams) {
-						if (preparedParams.includes(nextParam) && !desiredParams.includes(nextParam)) desiredParams.push(nextParam)
-					}
-					
-					captures[`nextRule${nextRuleNumber}`] = nextFunc
-					returnCode = `return nextRule${nextRuleNumber}(${nextParams.join(", ")})`
-					nextRuleNumber++
-				}
-				
-				code += `if (!given${givenNumber}(${siteParams.join(", ")})) ${returnCode}\n`
-				
-				givenNumber++
-				
-			}
-			
-			code += `\n`
-			
-		}
-		
-		// OUTPUTTY
-		code += `// OUTPUTS\n`
-		code += `//---------\n`
-		for (let eventNumber = 0; eventNumber < events.length; eventNumber++) {
-			
-			code += `// Output ${eventNumber}\n`
-			
-			const event = events[eventNumber]
-			const siteNumber = event.siteNumber
-			const output = event.output
-			
-			// CHANGES
-			const changes = output.changes
-			for (const change of changes) {
-				
-				captures[`change${changeNumber}`] = change
-				
-				const params = getParams(change)
-				
-				if (!doneParams.includes(`space${siteNumber}`)) {
-					code += `const space${siteNumber} = sites[${siteNumber}]\n`
-					doneParams.push(`space${siteNumber}`)
-				}
-				
-				for (const param of params) {
-					// atom
-					// element
-					// selected
-					// etc...
-				}
-				
-				const siteParams = params.map(param => {
-					if (param == "self") return param
-					else return `${param}${siteNumber}`
-				})
-				
-				code += `const newAtom${siteNumber} = change${changeNumber}(${siteParams.join(", ")})\n`
-				code += `SPACE.setAtom(space${siteNumber}, newAtom${siteNumber})\n`
-				
-				changeNumber++
-			}
-			
-			code += `\n`
-			
-		}
-		
-		code += `return true\n\n`
-		//print(code)
-		//print(captures)
-		
-		const captureNames = Object.keys(captures)
-		const captureCode = `(${captureNames.join(", ")}) => (${desiredParams.join(", ")}) => {\n\n${code}}`
-		//print(captureCode)
-		const captureFunc = JS (captureCode)
-		const func = captureFunc(...captures)
-		
-		
-		let headerCode = ""
-		const ruleBoxInner = `:: Rule ${ruleNumber}${ruleLetter == undefined? "" : ALPHABET[ruleLetter]} ::`
-		headerCode += ruleBoxInner.map(() => ":") + `\n`
-		headerCode += ruleBoxInner + "\n"
-		headerCode += ruleBoxInner.map(() => ":") + `\n`
-		
-		const lines = func.as(String).split(`\n`)
-		const prettyLines = lines.map((l, i) => (i == 0 || i == lines.length-1)? l : `	` + l)
-		const prettySource = `const ${funcName} = ` + prettyLines.join(`\n`)
-		sources.unshift(headerCode + prettySource)
-		
-		return func
 	}
 	
 	const ALPHABET = "abcdefghijklmnopqrstuvwxyz"
