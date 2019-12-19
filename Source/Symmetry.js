@@ -17,12 +17,11 @@ const SYMMETRY = {}
 	SYMMETRY.getOneNumber = (rule) => Math.floor(Math.random() * rule.reflectionCount)
 	
 	SYMMETRY.getAllSpaces = (spaces, symmetries) => {
-		const allSpaces = []		
+		const allSpaces = [...spaces]		
 		const spacesLength = spaces.length
-		const reflections = SYMMETRY.getReflections(symmetries)
 		for (let i = 0; i < spacesLength; i++) {
 			const space = spaces[i]
-			const reflectedSpaces = reflections.map(reflection => getReflectedSpace(space, reflection))
+			const reflectedSpaces = getReflectedSpaces(symmetries, space.x, space.y, space.z)
 			for (const reflectedSpace of reflectedSpaces) {
 				if (isVectorInArray(allSpaces, reflectedSpace)) continue
 				allSpaces.push({
@@ -37,23 +36,13 @@ const SYMMETRY = {}
 		return allSpaces
 	}
 	
-	SYMMETRY.getOneSpaceLists = (spaces, symmetries) => {
-		const reflections = SYMMETRY.getReflections(symmetries) 
-		const diagrams = reflections.map(reflection => spaces.map(space => getReflectedSpace(space, reflection)) )
-		return diagrams
-	}
-	
 	//=========//
 	// Private //
-	//=========//	
-	const getReflectedSpace = (space, reflection) => {
-		const reflectedPosition = reflection(space.x, space.y, space.z)
-		const reflectedSpace = {
-			...reflectedPosition,
-			input: space.input,
-			output: space.output,
-		}
-		return reflectedSpace
+	//=========//
+	const getReflectedSpaces = (symmetries, x=0, y=0, z=0) => {
+		const reflections = SYMMETRY.getReflections(symmetries)
+		const reflectedSpaces = reflections.map(reflection => reflection(x, y, z))
+		return reflectedSpaces
 	}
 	
 	const isVectorInArray = (array, vector) => array.some(element => element.x == vector.x && element.y == vector.y && element.z == vector.z)

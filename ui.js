@@ -8,7 +8,7 @@ const UI = {}
 	//=========//
 	// Globals //
 	//=========//
-	UI.selectedElement = Sand
+	UI.selectedElement = undefined
 	UI.selectedSize = SMALL_MODE? "small" : "big"
 	UI.selectedDimensions = D1_MODE? "d1" : (D2_MODE? "d2" : "d3")
 	UI.selectedReality = VR_MODE? "vr" : "nonvr"
@@ -222,7 +222,6 @@ const UI = {}
 	}
 	
 	const updateSourceUI = () => {
-		if (!UI.selectedElement) return
 		const source = UI.selectedElement.source
 		$("#sourceBox").textContent = source
 	}
@@ -401,7 +400,7 @@ const UI = {}
 		const newElement = ELEMENT.globalElements[name]
 		const oldElement = UI.selectedElement
 		
-		const oldId = (oldElement? oldElement.name : "") + idEnd
+		const oldId = oldElement.name + idEnd
 		const oldButton = $("#" + oldId)
 		
 		if (oldElement) {

@@ -10,7 +10,7 @@ element Forkbomb {
 	
 }
 
-/*element Res {
+element Res {
 
 	colour "slategrey"
 	emissive "grey"
@@ -41,6 +41,6 @@ element DReg {
 	rule xyz 0.01 { @n => @_ }
 	action xyz { @_ => _@ }
 	
-}*/
+}
 
 `

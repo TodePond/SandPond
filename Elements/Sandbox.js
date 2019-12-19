@@ -1,25 +1,7 @@
 TodeSplat`
 
-
 element Sand {
-
-	colour "#ffcc00"
-	emissive "#ffa34d"
-	category "Sandbox"
-	
-	rule {
-		@ => _
-		_    @
-	}
-	
-	rule xz {
-		@  => _
-		#_    #@
-	}
-	
-}
-
-/*element Sand {
+	default true
 
 	colour "#ffcc00"
 	emissive "#ffa34d"
@@ -44,9 +26,9 @@ element Sand {
 		#D    #@
 	}
 	
-}*/
+}
 
-/*element Water {
+element Water {
 	
 	colour "lightblue"
 	emissive "blue"
@@ -155,7 +137,7 @@ element Steam {
 	
 	rule xz { @_ => _@ }
 	
-}*/
+}
 
 
 

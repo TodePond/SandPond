@@ -14,10 +14,10 @@ const EVENT = {}
 		const input = space.input
 		const output = space.output
 		
-		//const inputFunc = CHARACTER.createInputFunc(input)
-		//const outputFunc = CHARACTER.createOutputFunc(output)
+		const inputFunc = CHARACTER.createInputFunc(input)
+		const outputFunc = CHARACTER.createOutputFunc(output)
 		
-		const event = {siteNumber, input, output}
+		const event = {siteNumber, inputFunc, outputFunc}
 		return event
 	}
 	
