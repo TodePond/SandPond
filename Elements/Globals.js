@@ -1,6 +1,6 @@
 TodeSplat`
 
-given . (space) => space
+given . true
 keep .
 
 given @ () => true
@@ -14,7 +14,5 @@ change _ () => undefined
 
 given x (space) => !space
 keep x
-
-
 
 `

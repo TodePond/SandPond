@@ -21,8 +21,8 @@ Or try out the [live demo](http://sandboysland.topwilson.com/?small).
 1. Write some TodeSplat using the `TodeSplat` function.
 2. Add your TodeSplat function or file to `index.html` in the same place as the other elements.
 
-To learn more, check out the [TodeSplat Documentation](https://github.com/l2wilson94/Sandboys/wiki/TodeSplat-Documentation).<br>
+To learn more, check out the [TodeSplat Tutorial](https://github.com/l2wilson94/Sandboys/wiki/TodeSplat-Tutorial).<br>
 Or check out the examples in the [Elements](https://github.com/l2wilson94/Sandboys/tree/master/Elements) folder.
 
 ## To-do
-Check out my [to-do list](https://github.com/l2wilson94/Sandboys/wiki/Todo-List) to see what I'm working on.
+Check out my [to-do list](https://github.com/l2wilson94/Sandboys/wiki/To-Do-List) to see what I'm working on.

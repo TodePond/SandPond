@@ -12,7 +12,6 @@ const ATOM = {}
 	//========//
 	// Public //
 	//========//
-	// Not really used
 	ATOM.make = (element, args) => {
 		return {element, ...element.data, ...args}
 	}
