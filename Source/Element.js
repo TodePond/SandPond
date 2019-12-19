@@ -17,11 +17,22 @@ const ELEMENT = {}
 		precise = false, floor = false, hidden = false, pour = true,
 		rules = [], data = {}, ...properties
 	}) => {
-		const element = {
+		const elementInfo = {
 			name, colour, emissive, opacity,
 			precise, floor, hidden, pour,
 			rules, data, ...properties
 		}
+		
+		const elementMaker = JS `() => {
+			const element = function ${name}() {
+				return {element}
+			}
+			return element
+		}`
+		
+		const element = elementMaker()
+		element.o= elementInfo
+		
 		ELEMENT.globalElements[name] = element
 		createShaderColours(element)
 		return element
