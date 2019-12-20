@@ -58,15 +58,20 @@ const ELEMENT = {}
 	const makeCode = (rules, {name}) => {
 		
 		const ruleFuncs = {}
-		const symmetryArrays = {}
-		const symmetryFuncs = {}
+		const symmetryInputArrays = {}
+		const symmetryInputFuncs = {}
+		const symmetryOutputArrays = {}
+		const symmetryOutputFuncs = {}
 		const givenFuncs = []
+		const changeFuncs = []
+		
+		const doneOneSymmetries = []
 		
 		//======================//
 		// MAIN FUNC GENERATION //
 		//======================//
 		// Header
-		const mainFuncName = `${name}Behave0`
+		const mainFuncName = `${name}Main`
 		let mainCode = ""
 		mainCode += `const ${mainFuncName} = (self, sites) => {\n`
 		
@@ -74,93 +79,159 @@ const ELEMENT = {}
 		for (let r = 0; r < rules.length; r++) {
 		
 			//======================//
-			// RULE FUNC GENERATION //
+			// RULE CODE GENERATION //
 			//======================//
 			// Header
 			const rule = rules[r]
-			const ruleFuncName = `${name}Input${r}`
-			let ruleCode = ""
-			ruleCode += `(self, sites) => {\n`
+			const ruleInputName = `${name}Rule${r}Input`
+			let ruleCode = "\n"
+			
+			const symmetryArrayName = `${ruleInputName}Symmetries`
+			const symmetryOutputArrayName = `${name}Rule${r}OutputSymmetries`
+			const oneSymmetryNumberName = `one${rule.oneSymmetries.as(UpperCase)}`
 			
 			// Prepare One Symmetries
-			const oneSymmetryNumberName = `one${rule.oneSymmetries.as(UpperCase)}`
-			const symmetryArrayName = `${ruleFuncName}Symmetries`
-			ruleCode += `const ${oneSymmetryNumberName} = Math.floor(Math.random() * ${rule.oneSymmetriesCount})\n`
-			ruleCode += `return ${symmetryArrayName}[${oneSymmetryNumberName}](self, sites)\n`
+			if (!doneOneSymmetries.includes(rule.oneSymmetries)) {
+				ruleCode += `const ${oneSymmetryNumberName} = Math.floor(Math.random() * ${rule.oneSymmetriesCount})\n`
+				doneOneSymmetries.push(rule.oneSymmetries)
+			}
 			
 			// End rule func
-			ruleCode += "}\n"
-			ruleCode = indentInnerCode(ruleCode)
-			ruleFuncs[ruleFuncName] = ruleCode
-			mainCode += `if (${ruleFuncName}(self, sites)) return ${name}Output${r}(self, sites)\n`
+			//ruleCode += "}\n"
+			//ruleCode = indentInnerCode(ruleCode)
+			ruleFuncs[ruleInputName] = ruleCode
+			mainCode += ruleCode
+			
+			
+			const outputFuncName = `${name}RuleOutput${r}`
+			mainCode += `if (${symmetryArrayName}[${oneSymmetryNumberName}](self, sites)) {\n	return ${symmetryOutputArrayName}[${oneSymmetryNumberName}](self, sites)\n}\n`
 			//============================================//
 			
 			//===========================//
 			// SYMMETRY ARRAY GENERATION //
 			//===========================//
+			
 			let symmetryArrayCode = ""
 			symmetryArrayCode += "[\n"
 			
+			let symmetryOutputArrayCode = ""
+			symmetryOutputArrayCode += "[\n"
+			
 			// Go through each symmetry
 			for (let s = 0; s < rule.oneSymmetriesCount; s++) {
-				const symmetryFuncName = `${ruleFuncName}Symmetry${rule.oneSymmetries.as(UpperCase)}${s}`
-				symmetryArrayCode += `${symmetryFuncName},\n`
 				
-				//==========================//
-				// SYMMETRY FUNC GENERATION //
-				//==========================//
-				let symmetryCode = ""
-				let innerSymmetryCode = ""
-				const symmetryParams = []
-				
-				const events = rule.eventLists[s]
-				for (let e = 0; e < events.length; e++) {
-					const event = events[e]
-					const givens = event.input.givens
-					for (let g = 0; g < givens.length; g++) {
-						innerSymmetryCode += "\n"
-						const given = givens[g]
-						const givenIndex = givenFuncs.indexOf(given)
-						const givenNumber = givenIndex != -1? givenIndex : givenFuncs.push(given) - 1
-						const givenName = `${name}Given${givenNumber}`
-						const givenParams = getParams(given)
-						const givenSiteParams = givenParams.map(param => {
-							if (param == "space" || param == "atom" || param == "element") return `${param}${event.siteNumber}`
-							else return param
-						})
-						
-						// Retrieve Params
-						if (givenParams.includes("space") || givenParams.includes("atom") || givenParams.includes("element")) {
-							innerSymmetryCode += `const space${event.siteNumber} = sites[${event.siteNumber}]\n`
+				//================================//
+				// INPUT SYMMETRY FUNC GENERATION //
+				//================================//
+				{
+					const symmetryFuncName = `${ruleInputName}Symmetry${rule.oneSymmetries.as(UpperCase)}${s}`
+					symmetryArrayCode += `${symmetryFuncName},\n`
+					
+					let symmetryCode = ""
+					let innerSymmetryCode = ""
+					const symmetryParams = []
+					
+					const events = rule.eventLists[s]
+					for (let e = 0; e < events.length; e++) {
+						const event = events[e]
+						const givens = event.input.givens
+						for (let g = 0; g < givens.length; g++) {
+							innerSymmetryCode += "\n"
+							const given = givens[g]
+							const givenIndex = givenFuncs.indexOf(given)
+							const givenNumber = givenIndex != -1? givenIndex : givenFuncs.push(given) - 1
+							const givenName = `${name}Given${givenNumber}`
+							const givenParams = getParams(given)
+							const givenSiteParams = givenParams.map(param => {
+								if (param == "space" || param == "atom" || param == "element") return `${param}${event.siteNumber}`
+								else return param
+							})
+							
+							// Retrieve Params
+							if (givenParams.includes("space") || givenParams.includes("atom") || givenParams.includes("element")) {
+								innerSymmetryCode += `const space${event.siteNumber} = sites[${event.siteNumber}]\n`
+							}
+							
+							if (givenParams.includes("atom") || givenParams.includes("element")) {
+								innerSymmetryCode += `const atom${event.siteNumber} = space${event.siteNumber} && space${event.siteNumber}.atom\n`
+							}
+							
+							if (givenParams.includes("element")) {
+								innerSymmetryCode += `const element${event.siteNumber} = atom${event.siteNumber} && atom${event.siteNumber}.element\n`
+							}
+							
+							const givenParamsCode = givenSiteParams.join(", ")
+							innerSymmetryCode += `if (!${givenName}(${givenParamsCode})) return false\n`
 						}
 						
-						if (givenParams.includes("atom") || givenParams.includes("element")) {
-							innerSymmetryCode += `const atom${event.siteNumber} = space${event.siteNumber} && space${event.siteNumber}.atom\n`
-						}
-						
-						if (givenParams.includes("element")) {
-							innerSymmetryCode += `const element${event.siteNumber} = atom${event.siteNumber} && atom${event.siteNumber}.element\n`
-						}
-						
-						const givenParamsCode = givenSiteParams.join(", ")
-						innerSymmetryCode += `if (!${givenName}(${givenParamsCode})) return false\n`
 					}
 					
+					symmetryCode += `(self, sites) => {\n`
+					symmetryCode += innerSymmetryCode
+					symmetryCode += "\n"
+					symmetryCode += `return true\n`
+					symmetryCode += `}\n`
+					symmetryCode = indentInnerCode(symmetryCode)
+					symmetryInputFuncs[symmetryFuncName] = symmetryCode
 				}
 				
-				symmetryCode += `(self, sites) => {\n`
-				symmetryCode += innerSymmetryCode
-				symmetryCode += "\n"
-				symmetryCode += `return true\n`
-				symmetryCode += `}\n`
-				symmetryCode = indentInnerCode(symmetryCode)
-				symmetryFuncs[symmetryFuncName] = symmetryCode
+				//================================//
+				// OUTPUT SYMMETRY FUNC GENERATION //
+				//================================//
+				{
+					const symmetryOutputFuncName = `${name}${r}OutputSymmetry${rule.oneSymmetries.as(UpperCase)}${s}`
+					symmetryOutputArrayCode += `${symmetryOutputFuncName},\n`
+					
+					let symmetryCode = ""
+					let innerSymmetryCode = ""
+					const symmetryParams = []
+					
+					const events = rule.eventLists[s]
+					for (let e = 0; e < events.length; e++) {
+						const event = events[e]
+						const changes = event.output.changes
+						for (let c = 0; c < changes.length; c++) {
+							innerSymmetryCode += "\n"
+							const change = changes[c]
+							const changeIndex = changeFuncs.indexOf(change)
+							const changeNumber = changeIndex != -1? changeIndex : changeFuncs.push(change) - 1
+							const changeName = `${name}Change${changeNumber}`
+							const changeParams = getParams(change)
+							const changeSiteParams = changeParams.map(param => {
+								if (param == "space" || param == "atom" || param == "element") return `${param}${event.siteNumber}`
+								else return param
+							})
+							
+							// Retrieve Params
+							innerSymmetryCode += `const space${event.siteNumber} = sites[${event.siteNumber}]\n`
+							
+							const changeParamsCode = changeSiteParams.join(", ")
+							innerSymmetryCode += `SPACE.setAtom(space${event.siteNumber}, ${changeName}(${changeParamsCode}))\n`
+						}
+						
+					}
+					
+					symmetryCode += `(self, sites) => {\n`
+					symmetryCode += innerSymmetryCode
+					symmetryCode += "\n"
+					symmetryCode += `}\n`
+					symmetryCode = indentInnerCode(symmetryCode)
+					symmetryOutputFuncs[symmetryOutputFuncName] = symmetryCode
+				}
 			}
 			
 			// End symmetry array
 			symmetryArrayCode += "]\n"
 			symmetryArrayCode = indentInnerCode(symmetryArrayCode)
-			symmetryArrays[symmetryArrayName] = symmetryArrayCode
+			symmetryInputArrays[symmetryArrayName] = symmetryArrayCode
+			//============================================================//
+				
+			// End symmetry array
+			symmetryOutputArrayCode += "]\n"
+			symmetryOutputArrayCode = indentInnerCode(symmetryOutputArrayCode)
+			symmetryOutputArrays[`${name}Rule${r}OutputSymmetries`] = symmetryOutputArrayCode
+			//============================================================//
+			
 			//============================================//
 			
 
@@ -172,25 +243,32 @@ const ELEMENT = {}
 		mainCode = indentInnerCode(mainCode)
 		//============================================//
 		
-		// Group all rule functions together
-		let rulesCode = ""
-		for (const ruleFuncName in ruleFuncs) {
-			const ruleCode = ruleFuncs[ruleFuncName]
-			rulesCode += `const ${ruleFuncName} = ${ruleCode}\n`
+		// Group all symmetry input arrays together
+		let inputArraysCode = ""
+		for (const symmetryInputArrayName in symmetryInputArrays) {
+			const symmetryArrayCode = symmetryInputArrays[symmetryInputArrayName]
+			inputArraysCode += `const ${symmetryInputArrayName} = ${symmetryArrayCode}\n`
 		}
 		
-		// Group all symmetry arrays together
-		let symmetryArraysCode = ""
-		for (const symmetryArrayName in symmetryArrays) {
-			const symmetryArrayCode = symmetryArrays[symmetryArrayName]
-			symmetryArraysCode += `const ${symmetryArrayName} = ${symmetryArrayCode}\n`
+		// Group all symmetry input funcs together
+		let inputFuncsCode = ""
+		for (const symmetryInputFuncName in symmetryInputFuncs) {
+			const symmetryFuncCode = symmetryInputFuncs[symmetryInputFuncName]
+			inputFuncsCode += `const ${symmetryInputFuncName} = ${symmetryFuncCode}\n`
 		}
 		
-		// Group all symmetry funcs together
-		let symmetryFuncsCode = ""
-		for (const symmetryFuncName in symmetryFuncs) {
-			const symmetryFuncCode = symmetryFuncs[symmetryFuncName]
-			symmetryFuncsCode += `const ${symmetryFuncName} = ${symmetryFuncCode}\n`
+		// Group all symmetry output arrays together
+		let outputArraysCode = ""
+		for (const symmetryOutputArrayName in symmetryOutputArrays) {
+			const symmetryArrayCode = symmetryOutputArrays[symmetryOutputArrayName]
+			outputArraysCode += `const ${symmetryOutputArrayName} = ${symmetryArrayCode}\n`
+		}
+		
+		// Group all symmetry output funcs together
+		let outputFuncsCode = ""
+		for (const symmetryOutputFuncName in symmetryOutputFuncs) {
+			const symmetryFuncCode = symmetryOutputFuncs[symmetryOutputFuncName]
+			outputFuncsCode += `const ${symmetryOutputFuncName} = ${symmetryFuncCode}\n`
 		}
 		
 		// Group all given funcs together
@@ -198,6 +276,13 @@ const ELEMENT = {}
 		givenFuncs.forEach((given, g) => {
 			const givenName = `${name}Given${g}`
 			givensCode += `const ${givenName} = ${given}\n`
+		})
+		
+		// Group all change funcs together
+		let changesCode = ""
+		changeFuncs.forEach((change, g) => {
+			const changeName = `${name}Change${g}`
+			changesCode += `const ${changeName} = ${change}\n`
 		})
 		
 		// Group everything together
@@ -208,22 +293,31 @@ const ELEMENT = {}
 		code += mainCode
 		code += "\n"
 		code += `//========//\n`
-		code += `// INPUTS //\n`
-		code += `//========//\n`
-		code += rulesCode
-		code += `//==================//\n`
-		code += `// INPUT SYMMETRIES //\n`
-		code += `//==================//\n`
-		code += symmetryFuncsCode
-		code += `//=======================//\n`
-		code += `// INPUT SYMMETRY ARRAYS //\n`
-		code += `//=======================//\n`
-		code += symmetryArraysCode
-		code += `//========//\n`
 		code += `// GIVENS //\n`
 		code += `//========//\n`
 		code += givensCode
 		code += "\n"
+		code += `//=========//\n`
+		code += `// CHANGES //\n`
+		code += `//=========//\n`
+		code += changesCode
+		code += "\n"
+		code += `//==================//\n`
+		code += `// INPUT SYMMETRIES //\n`
+		code += `//==================//\n`
+		code += inputFuncsCode
+		code += `//===================//\n`
+		code += `// OUTPUT SYMMETRIES //\n`
+		code += `//===================//\n`
+		code += outputFuncsCode
+		code += `//=======================//\n`
+		code += `// INPUT SYMMETRY ARRAYS //\n`
+		code += `//=======================//\n`
+		code += inputArraysCode
+		code += `//========================//\n`
+		code += `// OUTPUT SYMMETRY ARRAYS //\n`
+		code += `//========================//\n`
+		code += outputArraysCode
 		code += `return ${mainFuncName}`
 		print(code)
 		return code
