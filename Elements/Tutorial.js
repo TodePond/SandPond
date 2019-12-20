@@ -49,4 +49,36 @@ element PinkWater {
 	
 }
 
+element RedSlime {
+
+	colour "red"
+	emissive "darkred"
+	opacity 0.7
+	category "Tutorial"
+	
+	rule {
+		@ => _
+		_    @
+	}
+	
+	rule xz 0.1 {
+		@_ => _@
+		#     #
+	}
+	
+}
+
+element BlueSnow {
+	
+	colour "lightblue"
+	emissive "blue"
+	category "Tutorial"
+	default true
+	
+	change W () => new PinkWater()
+	rule 0.0001 { @ => W }
+	ruleset GreenSand
+	
+}
+
 `
