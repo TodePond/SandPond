@@ -61,10 +61,11 @@ const SYMMETRY = {}
 	//============//
 	// Long Stuff //
 	//============//
-	const REFLECTIONS = {
+	REFLECTIONS = {
 	
 		[""]: [
 			(x, y, z) => V(x, y, z),
+			(x, y, z) => V(x, y, z), // filler
 		],
 		
 		x: [

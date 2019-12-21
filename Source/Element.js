@@ -57,6 +57,177 @@ const ELEMENT = {}
 	//===========//
 	const makeCode = (rules, {name}) => {
 		
+		// Buffers
+		let mainCode = ""
+		let symmetryArrayCode = ""
+		let symmetryFuncsCode = ""
+		let givensCode = ""
+		let changesCode = ""
+		let code = ""
+		
+		const doneParams = []
+		const doneGivens = []
+		const doneChanges = []
+		
+		// Constants
+		const mainFuncName = `${name}Main`
+		const symmetryArrayName = `${name}Symmetries`
+		const symmetryNumberName = `symmetryNumber`
+		const symmetryFuncName = `${name}Symmetry`
+		const maxSymmetryCount = 2
+		
+		// Main
+		mainCode += `const ${mainFuncName} = (self, sites) => {\n`
+		mainCode += `const ${symmetryNumberName} = Math.floor(Math.random() * ${maxSymmetryCount})\n`
+		mainCode += `return ${symmetryArrayName}[${symmetryNumberName}](self, sites)\n`
+		mainCode += "}\n"
+		mainCode = indentInnerCode(mainCode)
+		
+		// Symmetry Array
+		symmetryArrayCode += `const ${symmetryArrayName} = [\n`
+		for (let s = 0; s < maxSymmetryCount; s++) {
+			symmetryArrayCode += `${symmetryFuncName}${s}Rule0,\n`
+		}
+		symmetryArrayCode += `]\n`
+		symmetryArrayCode = indentInnerCode(symmetryArrayCode)
+		
+		// Symmetry Funcs
+		for (let s = 0; s < maxSymmetryCount; s++) {
+			
+			for (let r = 0; r < rules.length; r++) {
+				const rule = rules[r]
+				const events = rule.eventLists[s]
+				
+				let ruleCode = ""
+				ruleCode += `const ${symmetryFuncName}${s}Rule${r} = (self, sites, ${doneParams.join(", ")}) => {\n`
+				ruleCode += "\n// INPUTS\n"
+				ruleCode += "//========\n"
+				
+				for (let e = 0; e < events.length; e++) {
+					const event = events[e]
+					
+					// Givens
+					const givens = event.input.givens
+					for (let g = 0; g < givens.length; g++) {
+						const given = givens[g]
+						if (!doneGivens.includes(given)) {
+							const number = doneGivens.push(given) - 1
+							givensCode += `const ${name}Given${number} = ${given}\n`
+						}
+						const givenNumber = doneGivens.indexOf(given)
+						const givenName = `${name}Given${givenNumber}`
+						const givenParams = getParams(given)
+						const givenSiteParams = givenParams.map(param => {
+							if (param == "space" || param == "atom" || param == "element") return `${param}${event.siteNumber}`
+							else return param
+						})
+						
+						
+						const spaceName = `space${event.siteNumber}`
+						if (!doneParams.includes(spaceName))
+						if (givenParams.includes("space") || givenParams.includes("atom") || givenParams.includes("element")) {
+							ruleCode += `const ${spaceName} = sites[${event.siteNumber}]\n`
+							doneParams.push(spaceName)
+						}
+						
+						const atomName = `atom${event.siteNumber}`
+						if (!doneParams.includes(atomName))
+						if (givenParams.includes("atom") || givenParams.includes("element")) {
+							ruleCode += `const ${atomName} = ${spaceName} && ${spaceName}.atom\n`
+							doneParams.push(atomName)
+						}
+						
+						const elementName = `element${event.siteNumber}`
+						if (!doneParams.includes(elementName))
+						if (givenParams.includes("element")) {
+							ruleCode += `const ${elementName} = ${atomName} && ${atomName}.element\n`
+							doneParams.push(elementName)
+						}
+						
+						const givenParamsCode = givenSiteParams.join(", ")
+						if (r == rules.length - 1) ruleCode += `if (!${givenName}(${givenParamsCode})) return false\n`
+						else ruleCode += `if (!${givenName}(${givenParamsCode})) return ${symmetryFuncName}${s}Rule${r+1}(self, sites, ${doneParams.join(", ")})\n`
+						ruleCode += `\n`
+					}
+					
+				}
+				
+				ruleCode += "// OUTPUTS\n"
+				ruleCode += "//=========\n"
+				for (let e = 0; e < events.length; e++) {
+					const event = events[e]
+					
+					// Changes
+					const changes = event.output.changes
+					for (let c = 0; c < changes.length; c++) {
+						const change = changes[c]
+						if (!doneChanges.includes(change)) {
+							const number = doneChanges.push(change) - 1
+							changesCode += `const ${name}Change${number} = ${change}\n`
+						}
+						const changeNumber = doneChanges.indexOf(change)
+						const changeName = `${name}Change${changeNumber}`
+						const changeParams = getParams(change)
+						const changeSiteParams = changeParams.map(param => {
+							if (param == "space" || param == "atom" || param == "element") return `${param}${event.siteNumber}`
+							else return param
+						})
+						
+						const spaceName = `space${event.siteNumber}`
+						if (!doneParams.includes(spaceName)) {
+							ruleCode += `const space${event.siteNumber} = sites[${event.siteNumber}]\n`
+							doneParams.push(spaceName)
+						}
+						
+						const changeParamsCode = changeSiteParams.join(", ")
+						ruleCode += `SPACE.setAtom(space${event.siteNumber}, ${changeName}(${changeParamsCode}))\n`
+						ruleCode += `\n`
+					}
+				}
+				
+				ruleCode += `}\n`
+				ruleCode = indentInnerCode(ruleCode)
+				ruleCode += `\n`
+				symmetryFuncsCode += ruleCode
+				
+			}
+			
+		}
+		
+		// Stitch it all together
+		code += `//======//\n`
+		code += `// MAIN //\n`
+		code += `//======//\n`
+		code += mainCode
+		code += `\n`
+		code += `//================//\n`
+		code += `// SYMMETRY FUNCS //\n`
+		code += `//================//\n`
+		code += symmetryFuncsCode
+		code += `//================//\n`
+		code += `// SYMMETRY ARRAY //\n`
+		code += `//================//\n`
+		code += symmetryArrayCode
+		code += `\n`
+		code += `//========//\n`
+		code += `// GIVENS //\n`
+		code += `//========//\n`
+		code += givensCode
+		code += `\n`
+		code += `//=========//\n`
+		code += `// CHANGES //\n`
+		code += `//=========//\n`
+		code += changesCode
+		code += `\n`
+		code += `return ${mainFuncName}`
+		
+		print(code)
+		return code
+		
+	}
+	
+	const makeCodeOld = (rules, {name}) => {
+		
 		const ruleFuncs = {}
 		const symmetryInputArrays = {}
 		const symmetryInputFuncs = {}
