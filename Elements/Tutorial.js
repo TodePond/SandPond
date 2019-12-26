@@ -1,39 +1,33 @@
 TodeSplat`
 
-element GreenSand {
+element SandDemo {
 
-	colour "green"
+	colour "#ffcc00"
+	emissive "#ffa34d"
 	category "Tutorial"
-
-	given W (element) => element == PinkWater
-	change W () => new PinkWater()
+	
+	given D (space) => space
+	given D (element) => element == WaterDemo || element == SlimeDemo || element == undefined
+	select D (atom) => atom
+	
+	change D (selected) => selected
 	
 	rule {
-		@ => W
-		W    @
+		@ => D
+		D    @
 	}
 	
 	rule xz {
-		@  => W
-		#W    #@
-	}
-	
-	rule {
-		@ => _
-		_    @
-	}
-	
-	rule xz {
-		@  => _
-		#_    #@
+		@  => D
+		#D    #@
 	}
 	
 }
 
-element PinkWater {
+element WaterDemo {
 
-	colour "pink"
-	emissive "purple"
+	colour "lightblue"
+	emissive "blue"
 	opacity 0.5
 	category "Tutorial"
 	
@@ -49,10 +43,10 @@ element PinkWater {
 	
 }
 
-element RedSlime {
+element SlimeDemo {
 
-	colour "red"
-	emissive "darkred"
+	colour "lightgreen"
+	emissive "green"
 	opacity 0.7
 	category "Tutorial"
 	
@@ -68,16 +62,15 @@ element RedSlime {
 	
 }
 
-element BlueSnow {
+element SnowDemo {
 	
-	colour "lightblue"
-	emissive "blue"
+	colour "white"
+	emissive "grey"
 	category "Tutorial"
-	default true
 	
-	change W () => new PinkWater()
+	change W () => new WaterDemo()
 	rule 0.0001 { @ => W }
-	ruleset GreenSand
+	ruleset SandDemo
 	
 }
 
