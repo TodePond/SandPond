@@ -1,14 +1,28 @@
 TodeSplat`
 
-/*element Forkbomb {
+element Forkbomb {
 
 	colour "grey"
 	emissive "black"
 	category "T2Tile"
 	
-	rule xyz { @_ => .@ }
+	rule {
+		_@_ => @@@
+	}
 	
-}*/
+	rule {
+		_    @
+		@ => @
+		_    @
+	}
+	
+	rule top {
+		_    @
+		@ => @
+		_    @
+	}
+	
+}
 
 /*element Res {
 

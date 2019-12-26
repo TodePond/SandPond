@@ -65,7 +65,7 @@ const SYMMETRY = {}
 	
 		[""]: [
 			(x, y, z) => V(x, y, z),
-			(x, y, z) => V(x, y, z), // filler
+			//(x, y, z) => V(x, y, z), // filler
 		],
 		
 		x: [
