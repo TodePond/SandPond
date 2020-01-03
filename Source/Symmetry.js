@@ -57,48 +57,105 @@ const SYMMETRY = {}
 	}
 	
 	const isVectorInArray = (array, vector) => array.some(element => element.x == vector.x && element.y == vector.y && element.z == vector.z)
-		
-	const makeSymmetry = (reflections) => {
-		return {reflections}
-	}
 	
 	//============//
 	// Long Stuff //
 	//============//
-	const REFLECTION = {
-	
-		NONE: (x, y, z) => V(x, y, z),
-		FLIP_Y: (x, y, z) => V(x, -y, z),
-		FLIP_Z: (x, y, z) => V(x, y, -z),
-		FLIP_X: (x, y, z) => V(-x, y, z),
+	REFLECTION = {
+		["x, y, z"]: (x, y, z) => V(x, y, z),
+		["x, y, -z"]: (x, y, z) => V(x, y, -z),
+		["x, -y, z"]: (x, y, z) => V(x, -y, z),
+		["x, -y, -z"]: (x, y, z) => V(x, -y, -z),
+		["-x, y, z"]: (x, y, z) => V(-x, y, z),
+		["-x, y, -z"]: (x, y, z) => V(-x, y, -z),
+		["-x, -y, z"]: (x, y, z) => V(-x, -y, z),
+		["-x, -y, -z"]: (x, y, z) => V(-x, -y, -z),
 		
-		FLIP_YZ: (x, y, z) => V(x, -y, -z),
-		FLIP_XY: (x, y, z) => V(-x, -y, z),
-		FLIP_XZ: (x, y, z) => V(-x, y, -z),
-		FLIP_XYZ: (x, y, z) => V(-x, -y, -z),
+		["x, z, y"]: (x, y, z) => V(x, z, y),
+		["x, z, -y"]: (x, y, z) => V(x, z, -y),
+		["x, -z, y"]: (x, y, z) => V(x, -z, y),
+		["x, -z, -y"]: (x, y, z) => V(x, -z, -y),
+		["-x, z, y"]: (x, y, z) => V(-x, z, y),
+		["-x, z, -y"]: (x, y, z) => V(-x, z, -y),
+		["-x, -z, y"]: (x, y, z) => V(-x, -z, y),
+		["-x, -z, -y"]: (x, y, z) => V(-x, -z, -y),
 		
+		["z, y, x"]: (x, y, z) => V(z, y, x),
+		["z, y, -x"]: (x, y, z) => V(z, y, -x),
+		["z, -y, x"]: (x, y, z) => V(z, -y, x),
+		["z, -y, -x"]: (x, y, z) => V(z, -y, -x),
+		["-z, y, x"]: (x, y, z) => V(-z, y, x),
+		["-z, y, -x"]: (x, y, z) => V(-z, y, -x),
+		["-z, -y, x"]: (x, y, z) => V(-z, -y, x),
+		["-z, -y, -x"]: (x, y, z) => V(-z, -y, -x),
+		
+		["y, x, z"]: (x, y, z) => V(y, x, z),
+		["y, x, -z"]: (x, y, z) => V(y, x, -z),
+		["y, -x, z"]: (x, y, z) => V(y, -x, z),
+		["y, -x, -z"]: (x, y, z) => V(y, -x, -z),
+		["-y, x, z"]: (x, y, z) => V(-y, x, z),
+		["-y, x, -z"]: (x, y, z) => V(-y, x, -z),
+		["-y, -x, z"]: (x, y, z) => V(-y, -x, z),
+		["-y, -x, -z"]: (x, y, z) => V(-y, -x, -z),
+		
+		["z, x, y"]: (x, y, z) => V(z, x, y),
+		["z, x, -y"]: (x, y, z) => V(z, x, -y),
+		["z, -x, y"]: (x, y, z) => V(z, -x, y),
+		["z, -x, -y"]: (x, y, z) => V(z, -x, -y),
+		["-z, x, y"]: (x, y, z) => V(-z, x, y),
+		["-z, x, -y"]: (x, y, z) => V(-z, x, -y),
+		["-z, -x, y"]: (x, y, z) => V(-z, -x, y),
+		["-z, -x, -y"]: (x, y, z) => V(-z, -x, -y),
+		
+		["y, z, x"]: (x, y, z) => V(y, z, x),
+		["y, z, -x"]: (x, y, z) => V(y, z, -x),
+		["y, -z, x"]: (x, y, z) => V(y, -z, x),
+		["y, -z, -x"]: (x, y, z) => V(y, -z, -x),
+		["-y, z, x"]: (x, y, z) => V(-y, z, x),
+		["-y, z, -x"]: (x, y, z) => V(-y, z, -x),
+		["-y, -z, x"]: (x, y, z) => V(-y, -z, x),
+		["-y, -z, -x"]: (x, y, z) => V(-y, -z, -x),
 	}
 	
 	SYMMETRIES = {
-		[""]: makeSymmetry(
-			"NONE",
-			"NONE",
-		),
+		[""]: [
+			"x, y, z", "x, y, z", "x, y, z", "x, y, z", "x, y, z", "x, y, z", "x, y, z", "x, y, z",
+			"x, y, z", "x, y, z", "x, y, z", "x, y, z", "x, y, z", "x, y, z", "x, y, z", "x, y, z",
+			"x, y, z", "x, y, z", "x, y, z", "x, y, z", "x, y, z", "x, y, z", "x, y, z", "x, y, z", 
+			"x, y, z", "x, y, z", "x, y, z", "x, y, z", "x, y, z", "x, y, z", "x, y, z", "x, y, z", 
+			"x, y, z", "x, y, z", "x, y, z", "x, y, z", "x, y, z", "x, y, z", "x, y, z", "x, y, z", 
+			"x, y, z", "x, y, z", "x, y, z", "x, y, z", "x, y, z", "x, y, z", "x, y, z", "x, y, z", 
+		],
 		
-		x: makeSymmetry(
-			"NONE",
-			"FLIP_X",
-		),
+		x: [
+			// No Flip                                  	// Flip X
+			"x, y, z", "x, y, z", "x, y, z", "x, y, z", 	"-x, y, z", "-x, y, z", "-x, y, z", "-x, y, z",
+			"x, y, z", "x, y, z", "x, y, z", "x, y, z", 	"-x, y, z", "-x, y, z", "-x, y, z", "-x, y, z",
+			"x, y, z", "x, y, z", "x, y, z", "x, y, z", 	"-x, y, z", "-x, y, z", "-x, y, z", "-x, y, z",
+			"x, y, z", "x, y, z", "x, y, z", "x, y, z", 	"-x, y, z", "-x, y, z", "-x, y, z", "-x, y, z",
+			"x, y, z", "x, y, z", "x, y, z", "x, y, z", 	"-x, y, z", "-x, y, z", "-x, y, z", "-x, y, z",
+			"x, y, z", "x, y, z", "x, y, z", "x, y, z", 	"-x, y, z", "-x, y, z", "-x, y, z", "-x, y, z",
+		],
 		
-		y: makeSymmetry(
-			"NONE",
-			"FLIP_Y",
-		),
+		y: [
+			// No Flip            	// Flip Y               	// repeat pattern...
+			"x, y, z", "x, y, z", 	"x, -y, z", "x, -y, z", 	"x, y, z", "x, y, z", 	"x, -y, z", "x, -y, z", 
+			"x, y, z", "x, y, z", 	"x, -y, z", "x, -y, z", 	"x, y, z", "x, y, z", 	"x, -y, z", "x, -y, z", 
+			"x, y, z", "x, y, z", 	"x, -y, z", "x, -y, z", 	"x, y, z", "x, y, z", 	"x, -y, z", "x, -y, z", 
+			"x, y, z", "x, y, z", 	"x, -y, z", "x, -y, z", 	"x, y, z", "x, y, z", 	"x, -y, z", "x, -y, z", 
+			"x, y, z", "x, y, z", 	"x, -y, z", "x, -y, z", 	"x, y, z", "x, y, z", 	"x, -y, z", "x, -y, z", 
+			"x, y, z", "x, y, z", 	"x, -y, z", "x, -y, z", 	"x, y, z", "x, y, z", 	"x, -y, z", "x, -y, z", 
+		],
 		
-		z: makeSymmetry(
-			"NONE",
-			"FLIP_Z",
-		),
+		z: [
+			// No Flip 	// Flip Z		// repeat pattern...
+			"x, y, z", 	"x, y, -z", 	"x, y, z", 	"x, y, -z", 	"x, y, z", 	"x, y, -z", 	"x, y, z", 	"x, y, -z",
+			"x, y, z", 	"x, y, -z", 	"x, y, z", 	"x, y, -z", 	"x, y, z", 	"x, y, -z", 	"x, y, z", 	"x, y, -z",
+			"x, y, z", 	"x, y, -z", 	"x, y, z", 	"x, y, -z", 	"x, y, z", 	"x, y, -z", 	"x, y, z", 	"x, y, -z",
+			"x, y, z", 	"x, y, -z", 	"x, y, z", 	"x, y, -z", 	"x, y, z", 	"x, y, -z", 	"x, y, z", 	"x, y, -z",
+			"x, y, z", 	"x, y, -z", 	"x, y, z", 	"x, y, -z", 	"x, y, z", 	"x, y, -z", 	"x, y, z", 	"x, y, -z",
+			"x, y, z", 	"x, y, -z", 	"x, y, z", 	"x, y, -z", 	"x, y, z", 	"x, y, -z", 	"x, y, z", 	"x, y, -z",
+		],
 		
 	}
 	
@@ -125,11 +182,14 @@ const SYMMETRY = {}
 		],
 		
 		xy: [
+		
+			// xyz
 			(x, y, z) => V(x, y, z),
 			(x, y, z) => V(-x, y, z),
 			(x, y, z) => V(x, -y, z),
 			(x, y, z) => V(-x, -y, z),
 			
+			// yxz
 			(x, y, z) => V(y, x, z),
 			(x, y, z) => V(-y, x, z),
 			(x, y, z) => V(y, -x, z),
@@ -137,11 +197,14 @@ const SYMMETRY = {}
 		],
 		
 		xz: [
+		
+			// xyz
 			(x, y, z) => V(x, y, z),
 			(x, y, z) => V(-x, y, z),
 			(x, y, z) => V(x, y, -z),
 			(x, y, z) => V(-x, y, -z),
 			
+			// zyx
 			(x, y, z) => V(z, y, x),
 			(x, y, z) => V(-z, y, x),
 			(x, y, z) => V(z, y, -x),
@@ -149,47 +212,83 @@ const SYMMETRY = {}
 		],
 		
 		yz: [
+		
+			// xyz
 			(x, y, z) => V(x, y, z),
 			(x, y, z) => V(x, -y, z),
 			(x, y, z) => V(x, y, -z),
 			(x, y, z) => V(x, -y, -z),
 			
+			// xzy
 			(x, y, z) => V(x, z, y),
 			(x, y, z) => V(x, -z, y),
 			(x, y, z) => V(x, z, -y),
 			(x, y, z) => V(x, -z, -y),
+			
 		],
 		
 		xyz: [
+		
+			// xyz
 			(x, y, z) => V(x, y, z),
 			(x, y, z) => V(x, -y, z),
 			(x, y, z) => V(x, y, -z),
 			(x, y, z) => V(x, -y, -z),
-		
 			(x, y, z) => V(-x, y, z),
 			(x, y, z) => V(-x, -y, z),
 			(x, y, z) => V(-x, y, -z),
 			(x, y, z) => V(-x, -y, -z),
 		
+			// xzy
+			(x, y, z) => V(x, z, y),
+			(x, y, z) => V(x, -z, y),
+			(x, y, z) => V(x, z, -y),
+			(x, y, z) => V(x, -z, -y),
+			(x, y, z) => V(-x, z, y),
+			(x, y, z) => V(-x, -z, y),
+			(x, y, z) => V(-x, z, -y),
+			(x, y, z) => V(-x, -z, -y),
+		
+			// zxy
 			(x, y, z) => V(z, x, y),
 			(x, y, z) => V(z, -x, y),
 			(x, y, z) => V(z, x, -y),
 			(x, y, z) => V(z, -x, -y),
-		
+			(x, y, z) => V(-z, x, y),
+			(x, y, z) => V(-z, -x, y),
+			(x, y, z) => V(-z, x, -y),
+			(x, y, z) => V(-z, -x, -y),
+			
+			// zyx
+			(x, y, z) => V(z, x, y),
+			(x, y, z) => V(z, -x, y),
+			(x, y, z) => V(z, x, -y),
+			(x, y, z) => V(z, -x, -y),
 			(x, y, z) => V(-z, x, y),
 			(x, y, z) => V(-z, -x, y),
 			(x, y, z) => V(-z, x, -y),
 			(x, y, z) => V(-z, -x, -y),
 		
+			// yzx
 			(x, y, z) => V(y, z, x),
 			(x, y, z) => V(y, -z, x),
 			(x, y, z) => V(y, z, -x),
 			(x, y, z) => V(y, -z, -x),
-			
 			(x, y, z) => V(-y, z, x),
 			(x, y, z) => V(-y, -z, x),
 			(x, y, z) => V(-y, z, -x),
 			(x, y, z) => V(-y, -z, -x),
+			
+			// yxz
+			(x, y, z) => V(y, x, z),
+			(x, y, z) => V(y, -x, z),
+			(x, y, z) => V(y, x, -z),
+			(x, y, z) => V(y, -x, -z),
+			(x, y, z) => V(-y, x, z),
+			(x, y, z) => V(-y, -x, z),
+			(x, y, z) => V(-y, x, -z),
+			(x, y, z) => V(-y, -x, -z),
+			
 		],
 	}
 	
