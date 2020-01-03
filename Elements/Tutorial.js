@@ -74,4 +74,41 @@ element SnowDemo {
 	
 }
 
+element PlantDemo {
+	colour "green"
+	category "Tutorial"
+	
+	// Gravity
+	ruleset SandDemo
+	
+	// Grow
+	rule xz 0.05 { @_ => @@ }
+	
+}
+
+element HerbivoreDemo {
+	colour "blue"
+	emissive "darkblue"
+	category "Tutorial"
+	default true
+	
+	// Die
+	rule 0.002 { @ => _ }
+	
+	// Gravity
+	ruleset SandDemo
+	
+	// Eat
+	given P (element) => element == PlantDemo
+	rule xyz { @P => @_ }
+	
+	// Reproduce
+	rule xyz 0.05 { @P => @@ }
+	
+	// Move
+	rule xz 0.5 { @_ => _@ }
+}
+
+
+
 `
