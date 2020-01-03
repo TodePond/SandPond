@@ -1,17 +1,21 @@
 TodeSplat`
 
-/*element ForkBomb {
+element ForkBomb {
 
 	colour "grey"
 	emissive "black"
 	category "T2Tile"
-	default true
 	
-	rule xyz { @_ => @@ }
+	rule x { @_ => @@ }
+	rule z side { @_ => @@ }
+	rule y {
+		@ => @
+		_    @
+	}
 	
-}*/
+}
 
-/*element Cycler {
+element Cycler {
 
 	colour "grey"
 	emissive "black"
@@ -38,7 +42,7 @@ TodeSplat`
 		_    @
 	}
 	
-}*/
+}
 
 /*element Res {
 

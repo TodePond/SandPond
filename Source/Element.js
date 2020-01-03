@@ -276,7 +276,7 @@ const ELEMENT = {}
 			// SYMMETRIES //
 			//============//
 		`
-		for (let s = 0; s < 2; s++) {
+		for (let s = 0; s < 48; s++) {
 			code += makeSymmetryCode(rules, globals, s)
 			code += ``
 		}
@@ -290,7 +290,53 @@ const ELEMENT = {}
 			//==================//
 			const symmetries = [
 				symmetry0,
-				symmetry1
+				symmetry1,
+				symmetry2,
+				symmetry3,
+				symmetry4,
+				symmetry5,
+				symmetry6,
+				symmetry7,
+				symmetry8,
+				symmetry9,
+				symmetry10,
+				symmetry11,
+				symmetry12,
+				symmetry13,
+				symmetry14,
+				symmetry15,
+				symmetry16,
+				symmetry17,
+				symmetry18,
+				symmetry19,
+				symmetry20,
+				symmetry21,
+				symmetry22,
+				symmetry23,
+				symmetry24,
+				symmetry25,
+				symmetry26,
+				symmetry27,
+				symmetry28,
+				symmetry29,
+				symmetry30,
+				symmetry31,
+				symmetry32,
+				symmetry33,
+				symmetry34,
+				symmetry35,
+				symmetry36,
+				symmetry37,
+				symmetry38,
+				symmetry39,
+				symmetry40,
+				symmetry41,
+				symmetry42,
+				symmetry43,
+				symmetry44,
+				symmetry45,
+				symmetry46,
+				symmetry47,
 			]
 			
 		`
@@ -317,7 +363,7 @@ const ELEMENT = {}
 			// SYMMETRY SELECTION //
 			//====================//
 			const selectSymmetry = () => {
-				const symmetryNumber = Math.floor(Math.random() * 2)
+				const symmetryNumber = Math.floor(Math.random() * 48)
 				return symmetries[symmetryNumber]
 			}
 			

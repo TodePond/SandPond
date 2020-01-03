@@ -11,6 +11,11 @@ element Sand {
 		_    @
 	}
 	
+	rule x {
+		@  => _
+		#_    #@
+	}
+	
 }
 
 /*element Sand {

@@ -12,7 +12,9 @@ const SYMMETRY = {}
 	//========//
 	// Public //
 	//========//	
-	SYMMETRY.getReflections = (symmetries) => REFLECTIONS[symmetries]
+	SYMMETRY.getReflections = (symmetries) => {
+		return REFLECTIONS[symmetries].map(ref => REFLECTION[ref])
+	}
 	
 	SYMMETRY.getOneNumber = (rule) => Math.floor(Math.random() * rule.reflectionCount)
 	
@@ -117,7 +119,7 @@ const SYMMETRY = {}
 		["-y, -z, -x"]: (x, y, z) => V(-y, -z, -x),
 	}
 	
-	SYMMETRIES = {
+	REFLECTIONS = {
 		[""]: [
 			"x, y, z", "x, y, z", "x, y, z", "x, y, z", "x, y, z", "x, y, z", "x, y, z", "x, y, z",
 			"x, y, z", "x, y, z", "x, y, z", "x, y, z", "x, y, z", "x, y, z", "x, y, z", "x, y, z",
@@ -157,139 +159,6 @@ const SYMMETRY = {}
 			"x, y, z", 	"x, y, -z", 	"x, y, z", 	"x, y, -z", 	"x, y, z", 	"x, y, -z", 	"x, y, z", 	"x, y, -z",
 		],
 		
-	}
-	
-	REFLECTIONS = {
-	
-		[""]: [
-			(x, y, z) => V(x, y, z),
-			(x, y, z) => V(x, y, z), // filler
-		],
-		
-		x: [
-			(x, y, z) => V(x, y, z),
-			(x, y, z) => V(-x, y, z),
-		],
-		
-		y: [
-			(x, y, z) => V(x, y, z),
-			(x, y, z) => V(x, -y, z),
-		],
-		
-		z: [
-			(x, y, z) => V(x, y, z),
-			(x, y, z) => V(x, y, -z),
-		],
-		
-		xy: [
-		
-			// xyz
-			(x, y, z) => V(x, y, z),
-			(x, y, z) => V(-x, y, z),
-			(x, y, z) => V(x, -y, z),
-			(x, y, z) => V(-x, -y, z),
-			
-			// yxz
-			(x, y, z) => V(y, x, z),
-			(x, y, z) => V(-y, x, z),
-			(x, y, z) => V(y, -x, z),
-			(x, y, z) => V(-y, -x, z),
-		],
-		
-		xz: [
-		
-			// xyz
-			(x, y, z) => V(x, y, z),
-			(x, y, z) => V(-x, y, z),
-			(x, y, z) => V(x, y, -z),
-			(x, y, z) => V(-x, y, -z),
-			
-			// zyx
-			(x, y, z) => V(z, y, x),
-			(x, y, z) => V(-z, y, x),
-			(x, y, z) => V(z, y, -x),
-			(x, y, z) => V(-z, y, -x),
-		],
-		
-		yz: [
-		
-			// xyz
-			(x, y, z) => V(x, y, z),
-			(x, y, z) => V(x, -y, z),
-			(x, y, z) => V(x, y, -z),
-			(x, y, z) => V(x, -y, -z),
-			
-			// xzy
-			(x, y, z) => V(x, z, y),
-			(x, y, z) => V(x, -z, y),
-			(x, y, z) => V(x, z, -y),
-			(x, y, z) => V(x, -z, -y),
-			
-		],
-		
-		xyz: [
-		
-			// xyz
-			(x, y, z) => V(x, y, z),
-			(x, y, z) => V(x, -y, z),
-			(x, y, z) => V(x, y, -z),
-			(x, y, z) => V(x, -y, -z),
-			(x, y, z) => V(-x, y, z),
-			(x, y, z) => V(-x, -y, z),
-			(x, y, z) => V(-x, y, -z),
-			(x, y, z) => V(-x, -y, -z),
-		
-			// xzy
-			(x, y, z) => V(x, z, y),
-			(x, y, z) => V(x, -z, y),
-			(x, y, z) => V(x, z, -y),
-			(x, y, z) => V(x, -z, -y),
-			(x, y, z) => V(-x, z, y),
-			(x, y, z) => V(-x, -z, y),
-			(x, y, z) => V(-x, z, -y),
-			(x, y, z) => V(-x, -z, -y),
-		
-			// zxy
-			(x, y, z) => V(z, x, y),
-			(x, y, z) => V(z, -x, y),
-			(x, y, z) => V(z, x, -y),
-			(x, y, z) => V(z, -x, -y),
-			(x, y, z) => V(-z, x, y),
-			(x, y, z) => V(-z, -x, y),
-			(x, y, z) => V(-z, x, -y),
-			(x, y, z) => V(-z, -x, -y),
-			
-			// zyx
-			(x, y, z) => V(z, x, y),
-			(x, y, z) => V(z, -x, y),
-			(x, y, z) => V(z, x, -y),
-			(x, y, z) => V(z, -x, -y),
-			(x, y, z) => V(-z, x, y),
-			(x, y, z) => V(-z, -x, y),
-			(x, y, z) => V(-z, x, -y),
-			(x, y, z) => V(-z, -x, -y),
-		
-			// yzx
-			(x, y, z) => V(y, z, x),
-			(x, y, z) => V(y, -z, x),
-			(x, y, z) => V(y, z, -x),
-			(x, y, z) => V(y, -z, -x),
-			(x, y, z) => V(-y, z, x),
-			(x, y, z) => V(-y, -z, x),
-			(x, y, z) => V(-y, z, -x),
-			(x, y, z) => V(-y, -z, -x),
-			
-			// yxz
-			(x, y, z) => V(y, x, z),
-			(x, y, z) => V(y, -x, z),
-			(x, y, z) => V(y, x, -z),
-			(x, y, z) => V(y, -x, -z),
-			(x, y, z) => V(-y, x, z),
-			(x, y, z) => V(-y, -x, z),
-			(x, y, z) => V(-y, x, -z),
-			(x, y, z) => V(-y, -x, -z),
-			
-		],
 	}
 	
 }
