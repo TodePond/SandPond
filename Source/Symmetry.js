@@ -38,7 +38,7 @@ const SYMMETRY = {}
 	}
 	
 	SYMMETRY.getOneSpaceLists = (spaces, symmetries) => {
-		const reflections = SYMMETRY.getReflections(symmetries) 
+		const reflections = SYMMETRY.getReflections(symmetries)
 		const diagrams = reflections.map(reflection => spaces.map(space => getReflectedSpace(space, reflection)) )
 		return diagrams
 	}
@@ -57,15 +57,56 @@ const SYMMETRY = {}
 	}
 	
 	const isVectorInArray = (array, vector) => array.some(element => element.x == vector.x && element.y == vector.y && element.z == vector.z)
+		
+	const makeSymmetry = (reflections) => {
+		return {reflections}
+	}
 	
 	//============//
 	// Long Stuff //
 	//============//
+	const REFLECTION = {
+	
+		NONE: (x, y, z) => V(x, y, z),
+		FLIP_Y: (x, y, z) => V(x, -y, z),
+		FLIP_Z: (x, y, z) => V(x, y, -z),
+		FLIP_X: (x, y, z) => V(-x, y, z),
+		
+		FLIP_YZ: (x, y, z) => V(x, -y, -z),
+		FLIP_XY: (x, y, z) => V(-x, -y, z),
+		FLIP_XZ: (x, y, z) => V(-x, y, -z),
+		FLIP_XYZ: (x, y, z) => V(-x, -y, -z),
+		
+	}
+	
+	SYMMETRIES = {
+		[""]: makeSymmetry(
+			"NONE",
+			"NONE",
+		),
+		
+		x: makeSymmetry(
+			"NONE",
+			"FLIP_X",
+		),
+		
+		y: makeSymmetry(
+			"NONE",
+			"FLIP_Y",
+		),
+		
+		z: makeSymmetry(
+			"NONE",
+			"FLIP_Z",
+		),
+		
+	}
+	
 	REFLECTIONS = {
 	
 		[""]: [
 			(x, y, z) => V(x, y, z),
-			//(x, y, z) => V(x, y, z), // filler
+			(x, y, z) => V(x, y, z), // filler
 		],
 		
 		x: [

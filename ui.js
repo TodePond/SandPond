@@ -8,7 +8,7 @@ const UI = {}
 	//=========//
 	// Globals //
 	//=========//
-	UI.selectedElement = Sand
+	UI.selectedElement = window.Sand
 	UI.selectedSize = SMALL_MODE? "small" : "big"
 	UI.selectedDimensions = D1_MODE? "d1" : (D2_MODE? "d2" : "d3")
 	UI.selectedReality = VR_MODE? "vr" : "nonvr"
