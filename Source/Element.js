@@ -67,7 +67,7 @@ const ELEMENT = {}
 		const changesCode = makeChangesCode(globals)
 		
 		const symmetrySelectionCode = makeSymmetrySelectionCode()
-		const symmetriesArrayCode = makeSymmetriesArrayCode()
+		//const symmetriesArrayCode = makeSymmetriesArrayCode()
 		const symmetriesCode = makeSymmetriesCode(rules, globals)
 		
 		let code = ``
@@ -76,7 +76,7 @@ const ELEMENT = {}
 		code += changesCode
 		code += symmetriesCode
 		code += symmetrySelectionCode
-		code += symmetriesArrayCode
+		//code += symmetriesArrayCode
 		code += `return main`
 		
 		print(code)
@@ -272,6 +272,13 @@ const ELEMENT = {}
 	
 		const symmetryCodes = []
 	
+		let arrayCode = Code `
+			//==================//
+			// SYMMETRIES ARRAY //
+			//==================//
+			const symmetries = [
+		`
+	
 		let code = Code `
 			//============//
 			// SYMMETRIES //
@@ -279,15 +286,21 @@ const ELEMENT = {}
 		`
 		for (let s = 0; s < 48; s++) {
 			let symmetryCode = makeInnerSymmetryCode(rules, globals, s)
+			let arrayIndex = s
 			const duplicateIndex = symmetryCodes.indexOf(symmetryCode)
 			if (duplicateIndex != -1) {
-				symmetryCode = `symmetry${duplicateIndex}\n`
+				arrayIndex = duplicateIndex
+			}
+			else {
+				code += `const symmetry${s} = `
+				code += symmetryCode
 			}
 			symmetryCodes.push(symmetryCode)
-			code += `const symmetry${s} = `
-			code += symmetryCode
+			arrayCode += `	symmetry${arrayIndex},\n`
 		}
 		code += `\n`
+		arrayCode += `\n]\n`
+		code += arrayCode
 		return code
 	}
 	
