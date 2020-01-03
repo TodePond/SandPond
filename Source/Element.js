@@ -160,13 +160,11 @@ const ELEMENT = {}
 		return globalGivens
 	}
 	
-	const makeSymmetryCode = (rules, globals, symmetryNumber) => {
+	const makeInnerSymmetryCode = (rules, globals, symmetryNumber) => {
 		
 		const locals = []
 		
-		let code = Code `
-			const symmetry${symmetryNumber} = (self, sites) => {
-		`
+		let code = `(self, sites) => {\n`
 		
 		for (let r = 0; r < rules.length; r++) {
 			const rule = rules[r]
@@ -271,15 +269,25 @@ const ELEMENT = {}
 	}
 	
 	const makeSymmetriesCode = (rules, globals) => {
+	
+		const symmetryCodes = []
+	
 		let code = Code `
 			//============//
 			// SYMMETRIES //
 			//============//
 		`
 		for (let s = 0; s < 48; s++) {
-			code += makeSymmetryCode(rules, globals, s)
-			code += ``
+			let symmetryCode = makeInnerSymmetryCode(rules, globals, s)
+			const duplicateIndex = symmetryCodes.indexOf(symmetryCode)
+			if (duplicateIndex != -1) {
+				symmetryCode = `symmetry${duplicateIndex}\n`
+			}
+			symmetryCodes.push(symmetryCode)
+			code += `const symmetry${s} = `
+			code += symmetryCode
 		}
+		code += `\n`
 		return code
 	}
 	
