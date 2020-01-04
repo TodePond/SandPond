@@ -26,6 +26,7 @@ element Sand {
 	}
 	
 }
+
 element Water {
 	
 	colour "lightblue"
@@ -57,6 +58,7 @@ element Water {
 	}
 	
 }
+
 element Fire {
 	colour "orange"
 	emissive "red"
@@ -76,6 +78,7 @@ element Fire {
 	}
 	
 }
+
 element Lava {
 	colour "red"
 	emissive "darkred"
@@ -93,6 +96,7 @@ element Lava {
 	ruleset Gloop
 	
 }
+
 element Snow {
 	colour "white"
 	emissive "grey"
@@ -109,6 +113,7 @@ element Snow {
 	ruleset Powder
 	
 }
+
 element Steam {
 	colour "lightgrey"
 	emissive "darkgrey"
