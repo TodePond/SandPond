@@ -1,6 +1,6 @@
 TodeSplat`
 
-/*element ForkBomb {
+element ForkBomb {
 
 	colour "grey"
 	emissive "black"
@@ -13,7 +13,7 @@ TodeSplat`
 		_    @
 	}
 	
-}*/
+}
 
 /*element Cycler {
 
