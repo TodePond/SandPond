@@ -18,7 +18,7 @@ const ELEMENT = {}
 		rules = [], data = {}, ...properties
 	}) => {
 	
-		const code = makeCode(rules)
+		const code = makeCode(rules, name)
 		const func = new Function(code)()
 		
 		const elementInfo = {
@@ -55,7 +55,7 @@ const ELEMENT = {}
 	//===========//
 	// Functions //
 	//===========//
-	const makeCode = (rules) => {
+	const makeCode = (rules, name) => {
 	
 		const globals = {
 			givens: gatherGivens(rules),
@@ -68,14 +68,14 @@ const ELEMENT = {}
 		
 		const symmetriesCode = makeSymmetriesCode(rules, globals)
 		
-		let code = ``
+		let code = `// ${name}\n`
 		code += mainCode
 		code += givensCode
 		code += changesCode
 		code += symmetriesCode
 		code += `return main`
 		
-		print(code)
+		//print(code)
 		return code
 		
 	}
@@ -226,9 +226,9 @@ const ELEMENT = {}
 					const givenId = globals.givens.indexOf(given)
 					const givenResultName = `given${givenId}Result${s}`
 					
-					if (e == 0) code += `	if (${givenResultName}`
+					if (g == 0 && e == 0) code += `	if (${givenResultName}`
 					else code += ` && ${givenResultName}`
-					if (e == events.length-1) code += `)`
+					if (g == givens.length - 1 && e == events.length-1) code += `)`
 				}
 			}
 			

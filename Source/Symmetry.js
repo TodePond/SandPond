@@ -130,56 +130,74 @@ const SYMMETRY = {}
 		],
 		
 		x: [
-			// No Flip                                  	// Flip X
-			"x, y, z", "x, y, z", "x, y, z", "x, y, z", 	"-x, y, z", "-x, y, z", "-x, y, z", "-x, y, z",
-			"x, y, z", "x, y, z", "x, y, z", "x, y, z", 	"-x, y, z", "-x, y, z", "-x, y, z", "-x, y, z",
-			"x, y, z", "x, y, z", "x, y, z", "x, y, z", 	"-x, y, z", "-x, y, z", "-x, y, z", "-x, y, z",
-			"x, y, z", "x, y, z", "x, y, z", "x, y, z", 	"-x, y, z", "-x, y, z", "-x, y, z", "-x, y, z",
-			"x, y, z", "x, y, z", "x, y, z", "x, y, z", 	"-x, y, z", "-x, y, z", "-x, y, z", "-x, y, z",
-			"x, y, z", "x, y, z", "x, y, z", "x, y, z", 	"-x, y, z", "-x, y, z", "-x, y, z", "-x, y, z",
+			// No Flip                                     // Flip X
+			"x, y, z", "x, y, z", "x, y, z", "x, y, z",    "-x, y, z", "-x, y, z", "-x, y, z", "-x, y, z",
+			"x, y, z", "x, y, z", "x, y, z", "x, y, z",    "-x, y, z", "-x, y, z", "-x, y, z", "-x, y, z",
+			"x, y, z", "x, y, z", "x, y, z", "x, y, z",    "-x, y, z", "-x, y, z", "-x, y, z", "-x, y, z",
+			"x, y, z", "x, y, z", "x, y, z", "x, y, z",    "-x, y, z", "-x, y, z", "-x, y, z", "-x, y, z",
+			"x, y, z", "x, y, z", "x, y, z", "x, y, z",    "-x, y, z", "-x, y, z", "-x, y, z", "-x, y, z",
+			"x, y, z", "x, y, z", "x, y, z", "x, y, z",    "-x, y, z", "-x, y, z", "-x, y, z", "-x, y, z",
 		],
 		
 		y: [
-			// No Flip            	// Flip Y               	// repeat pattern...
-			"x, y, z", "x, y, z", 	"x, -y, z", "x, -y, z", 	"x, y, z", "x, y, z", 	"x, -y, z", "x, -y, z", 
-			"x, y, z", "x, y, z", 	"x, -y, z", "x, -y, z", 	"x, y, z", "x, y, z", 	"x, -y, z", "x, -y, z", 
-			"x, y, z", "x, y, z", 	"x, -y, z", "x, -y, z", 	"x, y, z", "x, y, z", 	"x, -y, z", "x, -y, z", 
-			"x, y, z", "x, y, z", 	"x, -y, z", "x, -y, z", 	"x, y, z", "x, y, z", 	"x, -y, z", "x, -y, z", 
-			"x, y, z", "x, y, z", 	"x, -y, z", "x, -y, z", 	"x, y, z", "x, y, z", 	"x, -y, z", "x, -y, z", 
-			"x, y, z", "x, y, z", 	"x, -y, z", "x, -y, z", 	"x, y, z", "x, y, z", 	"x, -y, z", "x, -y, z", 
+			// No Flip                // Flip Y                   // repeat pattern...
+			"x, y, z", "x, y, z",     "x, -y, z", "x, -y, z",     "x, y, z", "x, y, z",     "x, -y, z", "x, -y, z", 
+			"x, y, z", "x, y, z",     "x, -y, z", "x, -y, z",     "x, y, z", "x, y, z",     "x, -y, z", "x, -y, z", 
+			"x, y, z", "x, y, z",     "x, -y, z", "x, -y, z",     "x, y, z", "x, y, z",     "x, -y, z", "x, -y, z", 
+			"x, y, z", "x, y, z",     "x, -y, z", "x, -y, z",     "x, y, z", "x, y, z",     "x, -y, z", "x, -y, z", 
+			"x, y, z", "x, y, z",     "x, -y, z", "x, -y, z",     "x, y, z", "x, y, z",     "x, -y, z", "x, -y, z", 
+			"x, y, z", "x, y, z",     "x, -y, z", "x, -y, z",     "x, y, z", "x, y, z",     "x, -y, z", "x, -y, z", 
 		],
 		
 		z: [
-			// No Flip 	// Flip Z		// repeat pattern...
-			"x, y, z", 	"x, y, -z", 	"x, y, z", 	"x, y, -z", 	"x, y, z", 	"x, y, -z", 	"x, y, z", 	"x, y, -z",
-			"x, y, z", 	"x, y, -z", 	"x, y, z", 	"x, y, -z", 	"x, y, z", 	"x, y, -z", 	"x, y, z", 	"x, y, -z",
-			"x, y, z", 	"x, y, -z", 	"x, y, z", 	"x, y, -z", 	"x, y, z", 	"x, y, -z", 	"x, y, z", 	"x, y, -z",
-			"x, y, z", 	"x, y, -z", 	"x, y, z", 	"x, y, -z", 	"x, y, z", 	"x, y, -z", 	"x, y, z", 	"x, y, -z",
-			"x, y, z", 	"x, y, -z", 	"x, y, z", 	"x, y, -z", 	"x, y, z", 	"x, y, -z", 	"x, y, z", 	"x, y, -z",
-			"x, y, z", 	"x, y, -z", 	"x, y, z", 	"x, y, -z", 	"x, y, z", 	"x, y, -z", 	"x, y, z", 	"x, y, -z",
+			// No Flip     // Flip Z       // repeat pattern...
+			"x, y, z",     "x, y, -z",     "x, y, z",     "x, y, -z",     "x, y, z",     "x, y, -z",     "x, y, z",     "x, y, -z",
+			"x, y, z",     "x, y, -z",     "x, y, z",     "x, y, -z",     "x, y, z",     "x, y, -z",     "x, y, z",     "x, y, -z",
+			"x, y, z",     "x, y, -z",     "x, y, z",     "x, y, -z",     "x, y, z",     "x, y, -z",     "x, y, z",     "x, y, -z",
+			"x, y, z",     "x, y, -z",     "x, y, z",     "x, y, -z",     "x, y, z",     "x, y, -z",     "x, y, z",     "x, y, -z",
+			"x, y, z",     "x, y, -z",     "x, y, z",     "x, y, -z",     "x, y, z",     "x, y, -z",     "x, y, z",     "x, y, -z",
+			"x, y, z",     "x, y, -z",     "x, y, z",     "x, y, -z",     "x, y, z",     "x, y, -z",     "x, y, z",     "x, y, -z",
 		],
 		
 		xz: [
-			// No Flip 	// Flip Z   	// No Flip 	// Flip Z   	// Flip X   	// Flip X+Z    	// Flip X   	// Flip X+Z
-			"x, y, z", 	"x, y, -z", 	"x, y, z", 	"x, y, -z", 	"-x, y, z", 	"-x, y, -z", 	"-x, y, z", 	"-x, y, -z",	// No Swap
-			"x, y, z", 	"x, y, -z", 	"x, y, z", 	"x, y, -z", 	"-x, y, z", 	"-x, y, -z", 	"-x, y, z", 	"-x, y, -z",	
-			
-			"z, y, x", 	"z, y, -x", 	"z, y, x", 	"z, y, -x", 	"-z, y, x", 	"-z, y, -x", 	"-z, y, x", 	"-z, y, -x",	// Swap XZ
-			"x, y, z", 	"x, y, -z", 	"x, y, z", 	"x, y, -z", 	"-x, y, z", 	"-x, y, -z", 	"-x, y, z", 	"-x, y, -z",	// No Swap
-			
-			"z, y, x", 	"z, y, -x", 	"z, y, x", 	"z, y, -x", 	"-z, y, x", 	"-z, y, -x", 	"-z, y, x", 	"-z, y, -x",	// Swap XZ
-			"z, y, x", 	"z, y, -x", 	"z, y, x", 	"z, y, -x", 	"-z, y, x", 	"-z, y, -x", 	"-z, y, x", 	"-z, y, -x",	
+			// No Flip     // Flip Z       // same again...                // Flip X      // Flip X+Z      // same again...
+			"x, y, z",     "x, y, -z",     "x, y, z",     "x, y, -z",     "-x, y, z",     "-x, y, -z",     "-x, y, z",     "-x, y, -z",	// No Swap
+			"x, y, z",     "x, y, -z",     "x, y, z",     "x, y, -z",     "-x, y, z",     "-x, y, -z",     "-x, y, z",     "-x, y, -z",	// No Swap
+			"z, y, x",     "z, y, -x",     "z, y, x",     "z, y, -x",     "-z, y, x",     "-z, y, -x",     "-z, y, x",     "-z, y, -x",	// Swap XZ
+			"x, y, z",     "x, y, -z",     "x, y, z",     "x, y, -z",     "-x, y, z",     "-x, y, -z",     "-x, y, z",     "-x, y, -z",	// No Swap
+			"z, y, x",     "z, y, -x",     "z, y, x",     "z, y, -x",     "-z, y, x",     "-z, y, -x",     "-z, y, x",     "-z, y, -x",	// Swap XZ
+			"z, y, x",     "z, y, -x",     "z, y, x",     "z, y, -x",     "-z, y, x",     "-z, y, -x",     "-z, y, x",     "-z, y, -x",	// Swap XZ
 		],
 		
 		xy: [
-			// No Flip            	// Flip Y               	// Flip X               	// Flip X+Y
-			"x, y, z", "x, y, z", 	"x, -y, z", "x, -y, z", 	"-x, y, z", "-x, y, z", 	"-x, -y, z", "-x, -y, z",	// No Swap
-			"x, y, z", "x, y, z", 	"x, -y, z", "x, -y, z", 	"-x, y, z", "-x, y, z", 	"-x, -y, z", "-x, -y, z",
-			"x, y, z", "x, y, z", 	"x, -y, z", "x, -y, z", 	"-x, y, z", "-x, y, z", 	"-x, -y, z", "-x, -y, z",
+			// No Flip                // Flip Y                   // Flip X                   // Flip X+Y
+			"x, y, z", "x, y, z",     "x, -y, z", "x, -y, z",     "-x, y, z", "-x, y, z",     "-x, -y, z", "-x, -y, z",	// No Swap
+			"x, y, z", "x, y, z",     "x, -y, z", "x, -y, z",     "-x, y, z", "-x, y, z",     "-x, -y, z", "-x, -y, z",
+			"x, y, z", "x, y, z",     "x, -y, z", "x, -y, z",     "-x, y, z", "-x, y, z",     "-x, -y, z", "-x, -y, z",
 			
-			"y, x, z", "y, x, z", 	"y, -x, z", "y, -x, z", 	"-y, x, z", "-y, x, z", 	"-y, -x, z", "-y, -x, z",	// Swap XY
-			"y, x, z", "y, x, z", 	"y, -x, z", "y, -x, z", 	"-y, x, z", "-y, x, z", 	"-y, -x, z", "-y, -x, z",
-			"y, x, z", "y, x, z", 	"y, -x, z", "y, -x, z", 	"-y, x, z", "-y, x, z", 	"-y, -x, z", "-y, -x, z",
+			"y, x, z", "y, x, z",     "y, -x, z", "y, -x, z",     "-y, x, z", "-y, x, z",     "-y, -x, z", "-y, -x, z",	// Swap XY
+			"y, x, z", "y, x, z",     "y, -x, z", "y, -x, z",     "-y, x, z", "-y, x, z",     "-y, -x, z", "-y, -x, z",
+			"y, x, z", "y, x, z",     "y, -x, z", "y, -x, z",     "-y, x, z", "-y, x, z",     "-y, -x, z", "-y, -x, z",
+		],
+		
+		yz: [
+			// No Flip     // Flip Z       // Flip Y       // Flip Y+Z      // same again...
+			"x, y, z",     "x, y, -z",     "x, -y, z",     "x, -y, -z",     "x, y, z",     "x, y, -z",     "x, -y, z",     "x, -y, -z", // No Swap
+			"x, z, y",     "x, z, -y",     "x, -z, y",     "x, -z, -y",     "x, z, y",     "x, z, -y",     "x, -z, y",     "x, -z, -y", // Swap YZ
+			"x, y, z",     "x, y, -z",     "x, -y, z",     "x, -y, -z",     "x, y, z",     "x, y, -z",     "x, -y, z",     "x, -y, -z", // No Swap
+			"x, y, z",     "x, y, -z",     "x, -y, z",     "x, -y, -z",     "x, y, z",     "x, y, -z",     "x, -y, z",     "x, -y, -z", // No Swap
+			"x, z, y",     "x, z, -y",     "x, -z, y",     "x, -z, -y",     "x, z, y",     "x, z, -y",     "x, -z, y",     "x, -z, -y", // Swap YZ
+			"x, z, y",     "x, z, -y",     "x, -z, y",     "x, -z, -y",     "x, z, y",     "x, z, -y",     "x, -z, y",     "x, -z, -y", // Swap YZ
+		],
+		
+		xyz: [
+			// No Flip     // Flip Z       // Flip Y       // Flip Y+Z      // Flip X       // Flip X+Z      // Flip X+Z      // Flip X+Y+Z
+			"x, y, z",     "x, y, -z",     "x, -y, z",     "x, -y, -z",     "-x, y, z",     "-x, y, -z",     "-x, -y, z",     "-x, -y, -z", // No Swap
+			"x, z, y",     "x, z, -y",     "x, -z, y",     "x, -z, -y",     "-x, z, y",     "-x, z, -y",     "-x, -z, y",     "-x, -z, -y", // Swap YZ
+			"z, y, x",     "z, y, -x",     "z, -y, x",     "z, -y, -x",     "-z, y, x",     "-z, y, -x",     "-z, -y, x",     "-z, -y, -x", // Swap XZ
+			"y, x, z",     "y, x, -z",     "y, -x, z",     "y, -x, -z",     "-y, x, z",     "-y, x, -z",     "-y, -x, z",     "-y, -x, -z", // Swap XY
+			"z, x, y",     "z, x, -y",     "z, -x, y",     "z, -x, -y",     "-z, x, y",     "-z, x, -y",     "-z, -x, y",     "-z, -x, -y", // Swap XZ+YZ
+			"y, z, x",     "y, z, -x",     "y, -z, x",     "y, -z, -x",     "-y, z, x",     "-y, z, -x",     "-y, -z, x",     "-y, -z, -x", // Swap XY+YZ
 		],
 		
 	}
