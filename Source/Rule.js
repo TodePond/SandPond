@@ -3,50 +3,46 @@
 //======//
 const RULE = {}
 
+
 {
 	
 	// Rule Job Description
 	//=======================
 	// "I describe how an atom behaves."
 	
-	RULE.make = (spaces, oneSymmetries, allSymmetries, isAction = false) => {
+	//========//
+	// Public //
+	//========//
+	RULE.make = (spaces, oneSymmetries = "", allSymmetries = "", isAction = false) => {
 	
-		// all(xyz)
-		const allSpaces = allSymmetries? SYMMETRY.getAllSpaces(spaces, allSymmetries) : spaces
-		
-		// one(xyz)
-		const oneReflections = SYMMETRY.getReflections(oneSymmetries)
-		
-		const oneReflectedEvents = oneReflections.map(reflection => {
-		
-			const reflectedSpaces = allSpaces.map(space => {
-				const reflectedPosition = reflection(space.x, space.y, space.z)
-				const reflectedSpace = {
-					...reflectedPosition,
-					input: space.input,
-					output: space.output,
-				}
-				return reflectedSpace
-			})
-			
-			const reflectedEvents = reflectedSpaces.map(space => EVENT.make(space))
-			return reflectedEvents
-		})
+		const allSpaces = SYMMETRY.getAllSpaces(spaces, allSymmetries)
+		const oneSpaceLists = SYMMETRY.getOneSpaceLists(allSpaces, oneSymmetries)
+		const eventLists = getEventLists(oneSpaceLists)
 		
 		const rule = {
 		
 			// Meaningful Data
-			oneReflectedEvents,
+			eventLists,
 			isAction,
 			
 			// Cache
-			reflectionCount: oneReflectedEvents.length,
-			eventCount: oneReflectedEvents[0].length,
+			oneSymmetries, //technically deductable from 'eventLists' but why bother
+			oneSymmetriesCount: eventLists.length,
 			
 		}
 		
 		return rule
 	}
 	
+	//=========//
+	// Private //
+	//=========//
+	const getEventLists = (spaceLists) => {
+		const eventLists = spaceLists.map(spaces => {
+			const events = spaces.map(space => EVENT.make(space))
+			return events
+		})
+		return eventLists
+	}
+	
 }
-

@@ -1,12 +1,12 @@
 TodeSplat`
 
-element Forkbomb {
+element ForkBomb {
 
 	colour "grey"
 	emissive "black"
 	category "T2Tile"
 	
-	rule xyz { @_ => .@ }
+	rule xyz { @_ => @@ }
 	
 }
 
@@ -39,7 +39,7 @@ element DReg {
 	rule xyz 0.005 { @_ => @R }
 	rule xyz 0.1 { @D => @_ }
 	rule xyz 0.01 { @n => @_ }
-	action xyz { @_ => _@ }
+	rule xyz { @_ => _@ }
 	
 }
 

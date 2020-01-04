@@ -1,8 +1,7 @@
-TodeSplat`
+TodeSplat` 
 
 element Sand {
 	default true
-
 	colour "#ffcc00"
 	emissive "#ffa34d"
 	category "Sandbox"
@@ -61,7 +60,6 @@ element Water {
 }
 
 element Fire {
-
 	colour "orange"
 	emissive "red"
 	category "Sandbox"
@@ -82,7 +80,6 @@ element Fire {
 }
 
 element Lava {
-
 	colour "red"
 	emissive "darkred"
 	category "Sandbox"
@@ -101,7 +98,6 @@ element Lava {
 }
 
 element Snow {
-
 	colour "white"
 	emissive "grey"
 	
@@ -119,7 +115,6 @@ element Snow {
 }
 
 element Steam {
-
 	colour "lightgrey"
 	emissive "darkgrey"
 	category "Sandbox"
@@ -138,7 +133,5 @@ element Steam {
 	rule xz { @_ => _@ }
 	
 }
-
-
 
 `
