@@ -42,6 +42,7 @@ element SandLeaver {
 	
 	colour "brown"
 	emissive "brown"
+	category "Life"
 		
 	change F () => new Sand()
 	rule xyz 0.45 { @_ => @F }
@@ -62,6 +63,7 @@ element FoodLeaver {
 	
 	colour "yellow"
 	emissive "orange"
+	category "Life"
 		
 	change F () => new Food()
 	rule xyz 0.45 { @_ => @F }

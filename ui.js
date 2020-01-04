@@ -300,7 +300,7 @@ const UI = {}
 	else if (UI.selectedReality == "nonvr") $("#nonvrOption").classList.add("selected")
 	
 	
-	$(`#${UI.selectedElement.name}Button`).classList.add("selected")
+	if (UI.selectedElement) $(`#${UI.selectedElement.name}Button`).classList.add("selected")
 	
 	//========//
 	// Events //

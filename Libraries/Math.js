@@ -3,9 +3,10 @@
 //======//
 Math.gcd = (...args) => {
 
+	
 	const a = args[0]
 	const b = args[1]
-	
+	if (args.length == 1) return a
 	if (args.length > 2) return Math.gcd(a, Math.gcd(...args.slice(1)))
 
 	if (b == 0) return a

@@ -4,7 +4,6 @@ element Powder {
 	
 	colour "grey"
 	category "Presets"
-	hidden true
 	
 	given D (space, element) => (space && !element) || element == Water
 	select D (atom) => atom
