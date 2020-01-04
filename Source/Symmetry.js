@@ -159,6 +159,29 @@ const SYMMETRY = {}
 			"x, y, z", 	"x, y, -z", 	"x, y, z", 	"x, y, -z", 	"x, y, z", 	"x, y, -z", 	"x, y, z", 	"x, y, -z",
 		],
 		
+		xz: [
+			// No Flip 	// Flip Z   	// No Flip 	// Flip Z   	// Flip X   	// Flip X+Z    	// Flip X   	// Flip X+Z
+			"x, y, z", 	"x, y, -z", 	"x, y, z", 	"x, y, -z", 	"-x, y, z", 	"-x, y, -z", 	"-x, y, z", 	"-x, y, -z",	// No Swap
+			"x, y, z", 	"x, y, -z", 	"x, y, z", 	"x, y, -z", 	"-x, y, z", 	"-x, y, -z", 	"-x, y, z", 	"-x, y, -z",	
+			
+			"z, y, x", 	"z, y, -x", 	"z, y, x", 	"z, y, -x", 	"-z, y, x", 	"-z, y, -x", 	"-z, y, x", 	"-z, y, -x",	// Swap XZ
+			"x, y, z", 	"x, y, -z", 	"x, y, z", 	"x, y, -z", 	"-x, y, z", 	"-x, y, -z", 	"-x, y, z", 	"-x, y, -z",	// No Swap
+			
+			"z, y, x", 	"z, y, -x", 	"z, y, x", 	"z, y, -x", 	"-z, y, x", 	"-z, y, -x", 	"-z, y, x", 	"-z, y, -x",	// Swap XZ
+			"z, y, x", 	"z, y, -x", 	"z, y, x", 	"z, y, -x", 	"-z, y, x", 	"-z, y, -x", 	"-z, y, x", 	"-z, y, -x",	
+		],
+		
+		xy: [
+			// No Flip            	// Flip Y               	// Flip X               	// Flip X+Y
+			"x, y, z", "x, y, z", 	"x, -y, z", "x, -y, z", 	"-x, y, z", "-x, y, z", 	"-x, -y, z", "-x, -y, z",	// No Swap
+			"x, y, z", "x, y, z", 	"x, -y, z", "x, -y, z", 	"-x, y, z", "-x, y, z", 	"-x, -y, z", "-x, -y, z",
+			"x, y, z", "x, y, z", 	"x, -y, z", "x, -y, z", 	"-x, y, z", "-x, y, z", 	"-x, -y, z", "-x, -y, z",
+			
+			"y, x, z", "y, x, z", 	"y, -x, z", "y, -x, z", 	"-y, x, z", "-y, x, z", 	"-y, -x, z", "-y, -x, z",	// Swap XY
+			"y, x, z", "y, x, z", 	"y, -x, z", "y, -x, z", 	"-y, x, z", "-y, x, z", 	"-y, -x, z", "-y, -x, z",
+			"y, x, z", "y, x, z", 	"y, -x, z", "y, -x, z", 	"-y, x, z", "-y, x, z", 	"-y, -x, z", "-y, -x, z",
+		],
+		
 	}
 	
 }
