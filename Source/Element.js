@@ -205,11 +205,14 @@ const ELEMENT = {}
 		const locals = []
 		
 		let code = `(self, sites) => {\n`
+		//code += `\n	let ruleDone = false\n`
 		
 		for (let r = 0; r < rules.length; r++) {
 			const rule = rules[r]
 			const events = rule.eventLists[symmetryNumber]
 			code += `\n`
+			//code += `	if (ruleDone) return true\n`
+			
 			
 			// Given Result 
 			//==============
@@ -359,7 +362,8 @@ const ELEMENT = {}
 				code += `		SPACE.setAtom(space${s}, newAtom${s})\n`
 			}
 			
-			code += `		return true\n`
+			//code += `		ruleDone = true\n`
+			if (!rule.isAction) code += `		return true\n`
 			code += `	}\n`
 		}
 		

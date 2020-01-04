@@ -30,8 +30,8 @@ element WeatherBoy {
 	}
 	
 	given W (atom) => atom && atom.initialised
-	given W (element) => element.isWeatherBoy
-	given W (self, atom) => self.birthday >= atom.birthday
+	given W (element) => element && element.isWeatherBoy
+	given W (self, atom) => atom && self.birthday >= atom.birthday
 	change W (self) => {
 		const atom = new self.element()
 		atom.birthday = self.birthday

@@ -10,35 +10,6 @@ element ForkBomb {
 	
 }
 
-/*element Cycler {
-
-	colour "grey"
-	emissive "black"
-	category "T2Tile"
-	
-	
-	rule {
-		 x =>  x
-		_@    @_
-	}
-	
-	rule {
-		_     @
-		@x => _x
-	}
-	
-	rule {
-		@_ => _@
-		x     x
-	}
-	
-	rule {
-		@ => _
-		_    @
-	}
-	
-}*/
-
 element Res {
 
 	colour "slategrey"
@@ -68,7 +39,7 @@ element DReg {
 	rule xyz 0.005 { @_ => @R }
 	rule xyz 0.1 { @D => @_ }
 	rule xyz 0.01 { @n => @_ }
-	action xyz { @_ => _@ }
+	rule xyz { @_ => _@ }
 	
 }
 
