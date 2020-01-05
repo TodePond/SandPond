@@ -21,7 +21,7 @@ element Water {
 	given H (element) => element == Fire || element == Lava
 	keep H
 	
-	change S () => ATOM.make(Steam)
+	change S () => new Steam()
 	
 	rule xyz { @H => SH }
 	ruleset Liquid
@@ -57,7 +57,7 @@ element Lava {
 	
 	state "gloop"
 	
-	change F () => ATOM.make(Fire)
+	change F () => new Fire()
 	
 	action 0.25 {
 		_ => F
@@ -86,7 +86,7 @@ element Snow {
 	
 	given H (element) => element == Lava || element == Fire
 	keep H
-	change W () => ATOM.make(Water)
+	change W () => new Water()
 	
 	rule 0.0005 { @ => W }
 	rule xyz { @H => WH }
@@ -103,7 +103,7 @@ element Steam {
 	floor true
 	state "gas"
 	
-	change W () => ATOM.make(Water)
+	change W () => new Water()
 	
 	rule 0.0002 { @ => W }
 	

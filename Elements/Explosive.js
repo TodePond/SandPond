@@ -5,7 +5,7 @@ element Spark {
 	colour "lightyellow"
 	emissive "orange"
 	category "Explosive"
-	
+	state "effect"
 	given s (element, self) => element == self.element
 	keep s
 	
@@ -21,7 +21,7 @@ element BlueSpark {
 	colour "lightblue"
 	emissive "lightblue"
 	category "Explosive"
-	
+	state "effect"
 	ruleset Spark
 	
 }
@@ -31,7 +31,7 @@ element Explosion {
 	colour "lightyellow"
 	emissive "orange"
 	category "Explosive"
-	
+	state "effect"
 	data timer 20
 	
 	given t (self) => self.timer--
@@ -50,7 +50,7 @@ element RedExplosion {
 	colour "red"
 	emissive "darkred"
 	category "Explosive"
-	
+	state "effect"
 	data timer 20
 	
 	ruleset Explosion
@@ -62,10 +62,25 @@ element BlueExplosion {
 	colour "blue"
 	emissive "darkblue"
 	category "Explosive"
-	
+	state "effect"
 	data timer 20
 	
 	ruleset Explosion
+	
+}
+
+element GunPowder {
+	
+	colour "grey"
+	emissive "brown"
+	category "Explosive"
+	state "solid"
+	
+	given H (element) => element == Fire || element == Lava || element == Explosion
+	change E (self) => new Explosion()
+	
+	rule xyz { @H => EE }
+	ruleset Powder
 	
 }
 
