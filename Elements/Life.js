@@ -12,6 +12,31 @@ element Food {
 	
 }
 
+element Ant {
+
+	colour "grey"
+	emissive "black"
+	precise true
+	pour false
+	category "Life"
+	state "solid"
+	
+	given F (element) => element && element.isFood
+	
+	rule 0.0005 { @ => _ }
+	
+	ruleset Solid
+	
+	rule xyz 0.02 { @F => @@ }
+	rule xyz { @F => _@ }
+	
+	rule xz {
+		 _ =>  @
+		@.    _.
+	}
+	
+}
+
 element MountainMaker {
 	
 	colour "lightblue"

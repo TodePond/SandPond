@@ -28,6 +28,23 @@ element Powder {
 	
 }
 
+element Solid {
+	colour "grey"
+	category "Presets"
+	hidden true
+	
+	state "solid"
+	
+	given D (space, element) => space && (!element || element.state == "liquid" || element.state == "gloop" || element.state == "gas" || element.state == "effect")
+	select D (atom) => atom
+	change D (selected) => selected
+	
+	rule {
+		@ => D
+		D    @
+	}
+}
+
 element Liquid {
 	
 	colour "grey"
