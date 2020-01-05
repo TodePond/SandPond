@@ -1,3 +1,5 @@
+let fireworkColour = 0
+
 TodeSplat` 
 
 element Spark {
@@ -158,6 +160,56 @@ element LightningBang {
 	rule {
 		@ => _
 	}
+	
+}
+
+element Firework {
+
+	colour "grey"
+	emissive "black"
+	precise true
+	pour false
+	floor true
+	category "Explosive"
+	state "solid"
+		
+	data timer 25
+	
+	change E (self) => {
+		if (self.timer > 0) return self
+		fireworkColour++
+		if (fireworkColour >= 3) fireworkColour = 0
+		if (fireworkColour == 0) return new Explosion()
+		else if (fireworkColour == 1) return new RedExplosion()
+		else if (fireworkColour == 2) return new BlueExplosion()
+	}
+	
+	change F (self) => {
+		self.timer--
+		return new Fire()
+	}
+	
+	rule {
+		_ => E
+		@    F
+	}
+	
+}
+
+element Rocket {
+
+	colour "grey"
+	emissive "black"
+	precise true
+	pour false
+	category "Explosive"
+	state "solid"
+	
+	ruleset Solid
+	
+	given I (element) => element && element.ignites
+	change F () => new Firework()
+	rule xyz { @I => F. }
 	
 }
 
