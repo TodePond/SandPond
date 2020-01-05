@@ -3,8 +3,8 @@ TodeSplat`
 element Powder {
 	
 	colour "grey"
-	category "Presets"
-	hidden true
+	category "Rulesets"
+	//hidden true
 	
 	state "solid"
 	
@@ -30,8 +30,8 @@ element Powder {
 
 element Solid {
 	colour "grey"
-	category "Presets"
-	hidden true
+	category "Rulesets"
+	//hidden true
 	
 	state "solid"
 	
@@ -48,8 +48,8 @@ element Solid {
 element Liquid {
 	
 	colour "grey"
-	category "Presets"
-	hidden true
+	category "Rulesets"
+	//hidden true
 	
 	state "liquid"
 	
@@ -81,8 +81,8 @@ element Liquid {
 element Gloop {
 	
 	colour "grey"
-	category "Presets"
-	hidden true
+	category "Rulesets"
+	//hidden true
 	
 	state "gloop"
 	
