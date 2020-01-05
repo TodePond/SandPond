@@ -59,7 +59,7 @@ element Lava {
 	
 	change F () => ATOM.make(Fire)
 	
-	action {
+	action 0.25 {
 		_ => F
 		@    @
 	}

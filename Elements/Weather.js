@@ -4,6 +4,8 @@ element WeatherBoy {
 	colour "blue"
 	emissive "darkblue"
 	
+	state "effect"
+	
 	isWeatherBoy true
 	chance 0.01
 	
@@ -48,6 +50,7 @@ element Rainy {
 	emissive "darkblue"
 	opacity 0.0
 	category "Weather"
+	state "effect"
 	
 	isWeatherBoy true
 	chance 0.01
@@ -61,6 +64,7 @@ element Sandstorm {
 	emissive "darkblue"
 	opacity 0.0
 	category "Weather"
+	state "effect"
 	
 	isWeatherBoy true
 	chance 0.01
@@ -74,6 +78,7 @@ element Snowstorm {
 	emissive "darkblue"
 	opacity 0.0
 	category "Weather"
+	state "effect"
 	
 	isWeatherBoy true
 	chance 0.01
@@ -87,6 +92,7 @@ element Sunny {
 	emissive "darkblue"
 	category "Weather"
 	opacity 0.0
+	state "effect"
 	
 	isWeatherBoy true
 	chance 0.01
