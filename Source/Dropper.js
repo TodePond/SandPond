@@ -119,17 +119,18 @@ const DROPPER = {}
 	// Private //
 	//=========//
 	const dropAtom = (x, y, z, yOffset = 0) => {
-		let alteredY = Math.min(y + MAX_Y - 5 + yOffset, MAX_Y - 5 + yOffset)
+		let alteredY = Math.min(y + MAX_Y - 5, MAX_Y - 5)
 		let alteredZ = z
 		if (!UI) return
 		const atomType = UI.selectedElement
-		if (atomType.floor || D1_MODE) alteredY = 0 + yOffset
-		if (D2_MODE) alteredY = y + yOffset
+		if (atomType.floor) alteredY = 0 + yOffset
+		if (D1_MODE) alteredY = 0
+		if (D2_MODE) alteredY = y
 		if (D2_MODE) alteredZ = 0
 		const world = UNIVERSE.selectWorld(universe, x, alteredY, alteredZ)
 		const space = WORLD.selectSpace(world, x, alteredY, alteredZ)
 		if (!space) return
-		if (space.atom) return dropAtom(x, y, z, yOffset + 1)
+		if ((!D2_MODE && !D1_MODE) && space.atom) return atomType.floor? dropAtom(x, y, z, yOffset + 1) : undefined
 		const atom = new atomType()
 		SPACE.setAtom(space, atom)
 		return atom
