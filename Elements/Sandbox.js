@@ -18,7 +18,7 @@ element Water {
 	category "Sandbox"
 	state "liquid"
 	
-	given H (element) => element == Fire || element == Lava
+	given H (element) => element && element.isHot
 	keep H
 	
 	change S () => new Steam()
@@ -33,6 +33,8 @@ element Fire {
 	emissive "red"
 	category "Sandbox"
 	floor true
+	ignites true
+	isHot true
 	
 	state "effect"
 	
@@ -49,11 +51,35 @@ element Fire {
 	
 }
 
+/*element Flame {
+	colour "orange"
+	emissive "red"
+	category "Sandbox"
+	floor true
+	ignites true
+	isHot true
+	precise true
+	
+	state "effect"
+	
+	rule 0.03 { @ => _ }
+	
+	change F () => new Fire()
+	rule {
+		_ => F
+		@    @
+	}
+	rule xyz { @_ => @F  }
+	
+}*/
+
 element Lava {
 	colour "red"
 	emissive "darkred"
 	category "Sandbox"
 	opacity 0.7
+	ignites true
+	isHot true
 	
 	state "gloop"
 	
@@ -84,7 +110,7 @@ element Snow {
 	category "Sandbox"
 	state "solid"
 	
-	given H (element) => element == Lava || element == Fire
+	given H (element) => element && element.isHot
 	keep H
 	change W () => new Water()
 	

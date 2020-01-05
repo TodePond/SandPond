@@ -6,6 +6,8 @@ element Spark {
 	emissive "orange"
 	category "Explosive"
 	state "effect"
+	ignites true
+	floor true
 	given s (element, self) => element == self.element
 	keep s
 	
@@ -18,21 +20,26 @@ element Spark {
 
 element BlueSpark {
 
+	floor true
 	colour "lightblue"
 	emissive "lightblue"
 	category "Explosive"
 	state "effect"
+	ignites true
 	ruleset Spark
 	
 }
 
 element Explosion {
 
+	floor true
 	colour "lightyellow"
 	emissive "orange"
 	category "Explosive"
 	state "effect"
+	ignites true
 	data timer 20
+	isHot true
 	
 	given t (self) => self.timer--
 	given d (self) => self.timer <= 0
@@ -47,11 +54,14 @@ element Explosion {
 
 element RedExplosion {
 
+	floor true
 	colour "red"
 	emissive "darkred"
 	category "Explosive"
 	state "effect"
+	ignites true
 	data timer 20
+	isHot true
 	
 	ruleset Explosion
 	
@@ -59,11 +69,14 @@ element RedExplosion {
 
 element BlueExplosion {
 
+	floor true
 	colour "blue"
 	emissive "darkblue"
 	category "Explosive"
 	state "effect"
+	ignites true
 	data timer 20
+	isHot true
 	
 	ruleset Explosion
 	
@@ -76,7 +89,7 @@ element GunPowder {
 	category "Explosive"
 	state "solid"
 	
-	given H (element) => element == Fire || element == Lava || element == Explosion
+	given H (element) => element && element.ignites
 	change E (self) => new Explosion()
 	
 	rule xyz { @H => EE }
@@ -88,8 +101,8 @@ element Lightning {
 	colour "yellow"
 	emissive "orange"
 	category "Explosive"
-	default true
 	state "effect"
+	ignites true
 	precise true
 	pour false
 	
@@ -116,6 +129,7 @@ element LightningFlash {
 	emissive "lightblue"
 	hidden true
 	state "effect"
+	ignites true
 	
 	change S () => new BlueSpark()
 	action xz 0.5 { @_ => @S }
@@ -132,6 +146,7 @@ element LightningBang {
 	emissive "white"
 	hidden true
 	state "effect"
+	ignites true
 	
 	given F (element) => element == LightningFlash
 	

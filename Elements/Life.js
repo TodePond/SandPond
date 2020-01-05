@@ -167,11 +167,35 @@ element Plant {
 	category "Life"
 	state "solid"
 	
+	// Burn
+	given H (element) => element && element.ignites
+	keep H
+	change F () => new BurningPlant()
+	rule xyz { @H => FH }
+	
 	// Gravity
 	ruleset Powder
 	
 	// Grow
 	rule xz 0.05 { @_ => @@ }
+	
+}
+
+element BurningPlant {
+	colour "green"
+	category "Life"
+	state "solid"
+	hidden true
+	ignites true
+	
+	rule 0.03 { @ => _ }
+	
+	change F () => new Fire()
+	rule {
+		_ => F
+		@    @
+	}
+	ruleset Plant
 	
 }
 
