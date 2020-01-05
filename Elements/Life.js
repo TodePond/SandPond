@@ -92,6 +92,8 @@ element SandLeaver {
 	emissive "brown"
 	category "Life"
 	state "solid"
+	precise true
+	pour false
 		
 	change F () => new Sand()
 	rule xyz 0.45 { @_ => @F }
@@ -114,6 +116,8 @@ element FoodLeaver {
 	emissive "orange"
 	category "Life"
 	state "solid"
+	precise true
+	pour false
 		
 	change F () => new Food()
 	rule xyz 0.45 { @_ => @F }
@@ -176,6 +180,8 @@ element Herbivore {
 	emissive "darkblue"
 	category "Life"
 	state "solid"
+	precise true
+	pour false
 	
 	// Die
 	rule 0.002 { @ => _ }
