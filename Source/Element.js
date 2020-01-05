@@ -38,8 +38,9 @@ const ELEMENT = {}
 		}
 		
 		const elementMaker = JS `() => {
-			const element = function ${name}() {
-				return {element}
+			const element = function ${name}(args) {
+				const atom = {element, ...element.data, ...args}
+				return atom
 			}
 			return element
 		}`

@@ -35,7 +35,7 @@ element Explosion {
 	action { @ => t }
 	rule { @d => _. }
 	
-	rule xyz { @* => @e }	
+	rule xyz { @* => @e }
 	
 }
 

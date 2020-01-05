@@ -130,7 +130,7 @@ const DROPPER = {}
 		const space = WORLD.selectSpace(world, x, alteredY, alteredZ)
 		if (!space) return
 		//if (space.atom) return
-		const atom = ATOM.make(atomType)
+		const atom = new atomType()
 		SPACE.setAtom(space, atom)
 		return atom
 	}
