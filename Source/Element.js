@@ -83,7 +83,7 @@ const ELEMENT = {}
 		code += symmetriesCode
 		code += `return main`
 		
-		if (isSand) print(code)
+		//if (isSand) print(code)
 		return code
 		
 	}

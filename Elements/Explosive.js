@@ -84,4 +84,66 @@ element GunPowder {
 	
 }
 
+element Lightning {
+	colour "yellow"
+	emissive "orange"
+	category "Explosive"
+	default true
+	state "effect"
+	precise true
+	pour false
+	
+	change S () => new Spark()
+	action xz 0.3 { @_ => @S }
+	
+	rule {
+		@ => @
+		_    @
+	}
+	
+	given N (space, element) => !space || element != Lightning
+	keep N
+	change F () => new LightningFlash()
+	rule {
+		@ => F
+		N    N
+	}
+	
+}
+
+element LightningFlash {
+	colour "lightblue"
+	emissive "lightblue"
+	hidden true
+	state "effect"
+	
+	change S () => new BlueSpark()
+	action xz 0.5 { @_ => @S }
+	
+	change B () => new LightningBang
+	rule {
+		_ => _
+		@    B
+	}
+}
+
+element LightningBang {
+	colour "white"
+	emissive "white"
+	hidden true
+	state "effect"
+	
+	given F (element) => element == LightningFlash
+	
+	rule {
+		@ => _
+		F    @
+	}
+	
+	rule {
+		@ => _
+	}
+	
+}
+
 `
