@@ -8,15 +8,7 @@ element Food {
 	isFood true
 	state "solid"
 	
-	rule {
-		@ => _
-		_    @
-	}
-	
-	rule xz {
-		@_ => __
-		#_    #@
-	}
+	ruleset Powder
 	
 }
 
@@ -25,6 +17,7 @@ element MountainMaker {
 	colour "lightblue"
 	emissive "red"
 	category "Life"
+	state "effect"
 	
 	change S () => new Sand()
 	
@@ -43,6 +36,7 @@ element SandLeaver {
 	colour "brown"
 	emissive "brown"
 	category "Life"
+	state "solid"
 		
 	change F () => new Sand()
 	rule xyz 0.45 { @_ => @F }
@@ -64,6 +58,7 @@ element FoodLeaver {
 	colour "yellow"
 	emissive "orange"
 	category "Life"
+	state "solid"
 		
 	change F () => new Food()
 	rule xyz 0.45 { @_ => @F }
@@ -84,6 +79,7 @@ element Cycler {
 	colour "grey"
 	emissive "black"
 	category "Life"
+	state "solid"
 	
 	rule {
 		 x =>  x
@@ -110,6 +106,7 @@ element Cycler {
 element Plant {
 	colour "green"
 	category "Life"
+	state "solid"
 	
 	// Gravity
 	ruleset Powder
@@ -123,6 +120,7 @@ element Herbivore {
 	colour "blue"
 	emissive "darkblue"
 	category "Life"
+	state "solid"
 	
 	// Die
 	rule 0.002 { @ => _ }
@@ -131,7 +129,7 @@ element Herbivore {
 	ruleset Powder
 	
 	// Reproduce
-	given P (element) => element == Plant
+	given P (element) => element == Plant || (element && element.isFood)
 	rule xyz 0.05 { @P => @@ }
 	
 	// Eat

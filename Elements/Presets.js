@@ -6,11 +6,13 @@ element Powder {
 	category "Presets"
 	hidden true
 	
-	given D (space, element) => (space && !element) || element == Water
+	state "solid"
+	
+	given D (space, element) => space && (!element || element.state == "liquid" || element.state == "gloop" || element.state == "gas" || element.state == "effect")
 	select D (atom) => atom
 	change D (selected) => selected
 	
-	given T (space, element) => (space && !element) || element == Water
+	given T (space, element) => space && (!element || element.state == "liquid" || element.state == "gloop" || element.state == "gas" || element.state == "effect")
 	select T (atom) => atom
 	change T (selected) => selected
 	
@@ -32,18 +34,28 @@ element Liquid {
 	category "Presets"
 	hidden true
 	
+	state "liquid"
+	
+	given D (space, element) => space && (!element || element.state == "gas" || element.state == "effect")
+	select D (atom) => atom
+	change D (selected) => selected
+	
+	given T (space, element) => space && (!element || element.state == "gas" || element.state == "effect")
+	select T (atom) => atom
+	change T (selected) => selected
+	
 	rule {
-		@ => _
-		_    @
+		@ => D
+		D    @
 	}
 	
 	rule xz {
-		@_ => __
-		#_    #@
+		@T => TD
+		#D    #@
 	}
 	
 	rule xz {
-		@_    _@
+		@D    D@
 		#  => #
 	}
 	
@@ -55,22 +67,28 @@ element Gloop {
 	category "Presets"
 	hidden true
 	
-	given w (space, atom, element) => space && (!atom || element == Water)
-	select w (atom) => atom
-	change w (selected) => selected
+	state "gloop"
+	
+	given D (space, element) => space && (!element || element.state == "liquid" || element.state == "gas" || element.state == "effect")
+	select D (atom) => atom
+	change D (selected) => selected
+	
+	given T (space, element) => space && (!element || element.state == "liquid" || element.state == "gas" || element.state == "effect")
+	select T (atom) => atom
+	change T (selected) => selected
 	
 	rule {
-		@ => w
-		w    @
+		@ => D
+		D    @
 	}
 	
 	rule xz 0.1 {
-		@  => w
-		#w    #@
+		@T => TD
+		#D    #@
 	}
 	
 	rule xz 0.05 {
-		@w    w@
+		@D    D@
 		#  => #
 	}
 	
