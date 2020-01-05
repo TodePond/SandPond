@@ -12,6 +12,36 @@ element Food {
 	
 }
 
+element FloatyFood {
+
+	colour "brown"
+	emissive "brown"
+	category "Life"
+	isFood true
+	
+	state "solid"
+	
+	rule xyz { @_ => _@ }
+	
+}
+
+element Fly {
+
+	colour "royalblue"
+	emissive "darkblue"
+	precise true
+	pour false
+	category "Life"
+	state "solid"
+
+	given F (element) => element && element.isFood
+	rule 0.0005 { @ => _ }
+	rule xyz 0.05 { @F => @@ }
+	rule xyz { @F => @_ }
+	rule xyz { @_ => _@ }
+	
+}
+
 element Ant {
 
 	colour "grey"
@@ -27,7 +57,7 @@ element Ant {
 	
 	ruleset Solid
 	
-	rule xyz 0.02 { @F => @@ }
+	rule xyz 0.05 { @F => @@ }
 	rule xyz { @F => _@ }
 	
 	rule xz {
