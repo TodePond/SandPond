@@ -42,7 +42,6 @@ element Explosion {
 	ignites true
 	data timer 20
 	isHot true
-	default true
 	
 	keep t (self, space) => self.timer--
 	given d (self) => self.timer <= 0
