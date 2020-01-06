@@ -66,11 +66,13 @@ const ELEMENT = {}
 			givens: gatherGivens(rules),
 			changes: gatherChanges(rules),
 			selects: gatherSelects(rules),
+			keeps: gatherKeeps(rules),
 		}
 	
 		const mainCode = makeMainCode()
 		const givensCode = makeGivensCode(globals)
 		const changesCode = makeChangesCode(globals)
+		const keepsCode = makeKeepsCode(globals)
 		const selectsCode = makeSelectsCode(globals)
 		
 		const symmetriesCode = makeSymmetriesCode(rules, globals)
@@ -78,8 +80,9 @@ const ELEMENT = {}
 		let code = `// ${name}\n`
 		code += mainCode
 		code += givensCode
-		code += changesCode
 		code += selectsCode
+		code += changesCode
+		code += keepsCode
 		code += symmetriesCode
 		code += `return main`
 		
@@ -115,6 +118,23 @@ const ELEMENT = {}
 		for (let c = 0; c < globals.changes.length; c++) {
 			const change = globals.changes[c]
 			code += `const change${c} = ${change.as(String)}\n`
+		}
+		
+		code += `\n`
+		return code
+	}
+	
+	const makeKeepsCode = (globals) => {
+	
+		let code = Code `
+			//=======//
+			// KEEPS //
+			//=======//
+		`
+		
+		for (let k = 0; k < globals.keeps.length; k++) {
+			const keep = globals.keeps[k]
+			code += `const keep${k} = ${keep? keep.as(String) : "() => {}"}\n`
 		}
 		
 		code += `\n`
@@ -157,6 +177,27 @@ const ELEMENT = {}
 		}
 		
 		return globalSelects
+	}
+	
+	const gatherKeeps = (rules) => {
+		
+		const globalKeeps = []
+		
+		for (let r = 0; r < rules.length; r++) {
+			const rule = rules[r]
+			const events = rule.eventLists[0]
+			for (let e = 0; e < events.length; e++) {
+				const event = events[e]
+				const output = event.output
+				const keeps = output.keeps
+				for (let k = 0; k < keeps.length; k++) {
+					const keep = keeps[k]
+					if (!globalKeeps.includes(keep)) globalKeeps.push(keep)
+				}
+			}
+		}
+		
+		return globalKeeps
 	}
 	
 	const gatherChanges = (rules) => {
@@ -309,21 +350,21 @@ const ELEMENT = {}
 				if (!locals.includes(spaceName) && !outputLocals.includes(spaceName))
 				if (selectParams.includes("space") || selectParams.includes("atom") || selectParams.includes("element")) {
 					code += `		const ${spaceName} = sites[${event.siteNumber}]\n`
-					locals.push(spaceName)
+					outputLocals.push(spaceName)
 				}
 				
 				const atomName = `atom${event.siteNumber}`
 				if (!locals.includes(atomName) && !outputLocals.includes(atomName))
 				if (selectParams.includes("atom") || selectParams.includes("element")) {
 					code += `		const ${atomName} = ${spaceName}? ${spaceName}.atom : undefined\n`
-					locals.push(atomName)
+					outputLocals.push(atomName)
 				}
 				
 				const elementName = `element${event.siteNumber}`
 				if (!locals.includes(elementName) && !outputLocals.includes(elementName))
 				if (selectParams.includes("element")) {
 					code += `		const ${elementName} = ${atomName}? ${atomName}.element : undefined\n`
-					locals.push(elementName)
+					outputLocals.push(elementName)
 				}
 				
 				const selectSiteParams = selectParams.map(param => {
@@ -361,6 +402,53 @@ const ELEMENT = {}
 				const changeId = globals.changes.indexOf(change)
 				code += `		const newAtom${s} = change${changeId}(${changeSiteParams.join(", ")})\n`
 				code += `		SPACE.setAtom(space${s}, newAtom${s})\n`
+			}
+			
+			// Keeps 
+			//=======
+			for (let e = 0; e < events.length; e++) {
+				const event = events[e]
+				const s = event.siteNumber
+				const output = event.output
+				const keep = output.keeps[0]
+				
+				if (output.keeps.length > 1) throw new Error(`[TodeSplat] You can't have multiple keep events in one space because I was too lazy to implement it yet. Please send me a message to tell me to stop slacking :) :)`)
+				if (!keep) continue
+				
+				const keepParams = getParams(keep)
+				
+				const spaceName = `space${event.siteNumber}`
+				if (!locals.includes(spaceName) && !outputLocals.includes(spaceName))
+				if (keepParams.includes("space") || keepParams.includes("atom") || keepParams.includes("element")) {
+					code += `		const ${spaceName} = sites[${event.siteNumber}]\n`
+					outputLocals.push(spaceName)
+				}
+				
+				const atomName = `atom${event.siteNumber}`
+				if (!locals.includes(atomName) && !outputLocals.includes(atomName))
+				if (keepParams.includes("atom") || keepParams.includes("element")) {
+					code += `		const ${atomName} = ${spaceName}? ${spaceName}.atom : undefined\n`
+					outputLocals.push(atomName)
+				}
+				
+				const elementName = `element${event.siteNumber}`
+				if (!locals.includes(elementName) && !outputLocals.includes(elementName))
+				if (keepParams.includes("element")) {
+					code += `		const ${elementName} = ${atomName}? ${atomName}.element : undefined\n`
+					outputLocals.push(elementName)
+				}
+				
+				const keepSiteParams = keepParams.map(param => {
+					if (param == "selected") {
+						const selectedId = selectedRegister[output.name]
+						return `selected${selectedId}`
+					}
+					if (param == "space" || param == "atom" || param == "element") return `${param}${s}`
+					else return param
+				})
+				
+				const keepId = globals.keeps.indexOf(keep)
+				code += `		keep${keepId}(${keepSiteParams.join(", ")})\n`
 			}
 			
 			//code += `		ruleDone = true\n`

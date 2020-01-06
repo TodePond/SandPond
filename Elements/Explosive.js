@@ -42,12 +42,13 @@ element Explosion {
 	ignites true
 	data timer 20
 	isHot true
+	default true
 	
-	given t (self) => self.timer--
+	keep t (self, space) => self.timer--
 	given d (self) => self.timer <= 0
 	change E (self) => new self.element({timer: self.timer})
 	
-	action { @t => .. }
+	action { @ => t }
 	rule { @d => _. }
 	
 	rule xyz { @. => @E }
