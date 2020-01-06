@@ -125,7 +125,7 @@
 		let i = 0
 		while (i < input.length) {
 			const char = input[i]
-			if (char == " " || char == "	" || char == "\n") break
+			if (char == " " || char == "	" || char == "\n" || char == "(" || char == ")") break
 			i++
 		}
 		return {
@@ -357,7 +357,7 @@
 		
 	}
 	
-	const eatProperty = (source, elementArgs, events, depth) => {
+	const eatProperty = (source, elementArgs, events, depth, forSymmetries) => {
 		
 		const characterResult = eatCharacter(source, elementArgs, events, depth)
 		if (characterResult) return characterResult
@@ -367,6 +367,24 @@
 		
 		const propertyNameResult = eatName(input)
 		const propertyName = propertyNameResult.name
+		
+		if (propertyName == "for") {
+			input = propertyNameResult.input
+			input = eatGap(input).input
+			const openBracketResult = eatKeyword(input, "(")
+			if (!openBracketResult.success) throw new Error("[TodeSplat] Expected '(' after 'for' but got something else.")
+			input = openBracketResult.input
+			const symmetryResult = eatName(input)
+			const symmetry = symmetryResult.name
+			if (!isNameSymmetries(symmetry)) throw new Error(`[TodeSplat] Unrecognised symmetry: '${symmetry}'`)
+			input = symmetryResult.input
+			input = eatGap(input).input
+			const closeBracketResult = eatKeyword(input, ")")
+			if (!closeBracketResult.success) throw new Error("[TodeSplat] Expected ')' after symmetry but got something else.")
+			input = closeBracketResult.input
+			input = eatGap(input).input
+			return eatProperty(input, elementArgs, events, depth, symmetry)
+		}
 		
 		if (propertyName == "category") {
 			input = propertyNameResult.input
@@ -386,7 +404,7 @@
 			const result = eatName(input)
 			const name = result.name
 			const isAction = propertyName == "action"? true : false
-			return eatRule(input, elementArgs, events, isAction)
+			return eatRule(input, elementArgs, events, isAction, forSymmetries)
 		}
 		
 		if (propertyName == "ruleset") {
@@ -633,8 +651,8 @@
 		if (sides.nextSide != undefined) readSides(sides.nextSide, rawSpaces, xAxis, yAxis, events)
 	}
 	
-	const eatRule = (source, elementArgs, events, isAction) => {
-	
+	const eatRule = (source, elementArgs, events, isAction, forSymmetries) => {
+		
 		// Read the meta labels before the rule
 		const labelsResult = eatRuleLabels(source)
 		const labels = labelsResult.labels
@@ -733,7 +751,7 @@
 		readSides(nextSide, rawSpaces, xAxis, yAxis, events)
 		
 		// Make the rule
-		const rule = RULE.make(rawSpaces, axes, superSymmetries, isAction)
+		const rule = RULE.make(rawSpaces, axes, superSymmetries, isAction, forSymmetries)
 		elementArgs.rules.push(rule)
 		
 		return {
