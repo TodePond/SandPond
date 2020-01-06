@@ -118,6 +118,7 @@ const DROPPER = {}
 	//=========//
 	// Private //
 	//=========//
+	// This function is the messy result of adding one line of code every two weeks without much thought
 	const dropAtom = (x, y, z, yOffset = 0) => {
 		let alteredY = Math.min(y + MAX_Y - 5, MAX_Y - 5)
 		let alteredZ = z
@@ -130,7 +131,10 @@ const DROPPER = {}
 		const world = UNIVERSE.selectWorld(universe, x, alteredY, alteredZ)
 		const space = WORLD.selectSpace(world, x, alteredY, alteredZ)
 		if (!space) return
-		if ((!D2_MODE && !D1_MODE) && space.atom) return atomType.floor? dropAtom(x, y, z, yOffset + 1) : undefined
+		if ((!D2_MODE && !D1_MODE) && space.atom) {
+			if (atomType.floor && atomType != space.atom.element) return dropAtom(x, y, z, yOffset + 1)
+			else return
+		}
 		const atom = new atomType()
 		SPACE.setAtom(space, atom)
 		return atom
