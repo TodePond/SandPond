@@ -11,9 +11,13 @@ const SYMMETRY = {}
 	
 	//========//
 	// Public //
-	//========//	
+	//========//
 	SYMMETRY.getReflections = (symmetries) => {
-		return REFLECTIONS[symmetries].map(ref => REFLECTION[ref])
+		return REFLECTIONS[symmetries].map(r => REFLECTION[r])
+	}
+	
+	SYMMETRY.getUniqueReflections = (symmetries) => {
+		return REFLECTIONS_UNIQUE[symmetries].map(r => REFLECTION[r])
 	}
 	
 	SYMMETRY.getOneNumber = (rule) => Math.floor(Math.random() * rule.reflectionCount)
@@ -45,6 +49,11 @@ const SYMMETRY = {}
 		return diagrams
 	}
 	
+	SYMMETRY.getUniqueSymmetryDiagrams = (spaces, symmetries) => {
+		const reflections = SYMMETRY.getUniqueReflections(symmetries)
+		const diagrams = reflections.map(reflection => spaces.map(space => getReflectedSpace(space, reflection)))
+		return diagrams
+	}
 	
 	//=========//
 	// Private //
@@ -189,6 +198,54 @@ const SYMMETRY = {}
 			"x, y, z",     "x, y, -z",     "x, -y, z",     "x, -y, -z",     "x, y, z",     "x, y, -z",     "x, -y, z",     "x, -y, -z", // No Swap
 			"x, z, y",     "x, z, -y",     "x, -z, y",     "x, -z, -y",     "x, z, y",     "x, z, -y",     "x, -z, y",     "x, -z, -y", // Swap YZ
 			"x, z, y",     "x, z, -y",     "x, -z, y",     "x, -z, -y",     "x, z, y",     "x, z, -y",     "x, -z, y",     "x, -z, -y", // Swap YZ
+		],
+		
+		xyz: [
+			// No Flip     // Flip Z       // Flip Y       // Flip Y+Z      // Flip X       // Flip X+Z      // Flip X+Z      // Flip X+Y+Z
+			"x, y, z",     "x, y, -z",     "x, -y, z",     "x, -y, -z",     "-x, y, z",     "-x, y, -z",     "-x, -y, z",     "-x, -y, -z", // No Swap
+			"x, z, y",     "x, z, -y",     "x, -z, y",     "x, -z, -y",     "-x, z, y",     "-x, z, -y",     "-x, -z, y",     "-x, -z, -y", // Swap YZ
+			"z, y, x",     "z, y, -x",     "z, -y, x",     "z, -y, -x",     "-z, y, x",     "-z, y, -x",     "-z, -y, x",     "-z, -y, -x", // Swap XZ
+			"y, x, z",     "y, x, -z",     "y, -x, z",     "y, -x, -z",     "-y, x, z",     "-y, x, -z",     "-y, -x, z",     "-y, -x, -z", // Swap XY
+			"z, x, y",     "z, x, -y",     "z, -x, y",     "z, -x, -y",     "-z, x, y",     "-z, x, -y",     "-z, -x, y",     "-z, -x, -y", // Swap XZ+YZ
+			"y, z, x",     "y, z, -x",     "y, -z, x",     "y, -z, -x",     "-y, z, x",     "-y, z, -x",     "-y, -z, x",     "-y, -z, -x", // Swap XY+YZ
+		],
+		
+	}
+	
+	REFLECTIONS_UNIQUE = {
+		[""]: [
+			"x, y, z",
+		],
+		
+		x: [
+			"x, y, z",
+			"-x, y, z", 
+		],
+		
+		y: [
+			"x, y, z",
+			"x, -y, z",
+		],
+		
+		z: [
+			"x, y, z",
+			"x, y, -z",
+		],
+		
+		xz: [
+			"x, y, z",     "x, y, -z",     "-x, y, z",     "-x, y, -z",
+			"z, y, x",     "z, y, -x",     "-z, y, x",     "-z, y, -x",
+		],
+		
+		xy: [
+			"x, y, z",     "x, -y, z", "-x, y, z",      "-x, -y, z", 
+			"y, x, z",     "y, -x, z", "-y, x, z",      "-y, -x, z", 
+		],
+		
+		yz: [
+			// No Flip     // Flip Z       // Flip Y       // Flip Y+Z
+			"x, y, z",     "x, y, -z",     "x, -y, z",     "x, -y, -z",
+			"x, z, y",     "x, z, -y",     "x, -z, y",     "x, -z, -y",
 		],
 		
 		xyz: [
