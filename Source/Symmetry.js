@@ -18,7 +18,7 @@ const SYMMETRY = {}
 	
 	SYMMETRY.getOneNumber = (rule) => Math.floor(Math.random() * rule.reflectionCount)
 	
-	SYMMETRY.getAllSpaces = (spaces, symmetries) => {
+	SYMMETRY.getAllDiagram = (spaces, symmetries) => {
 		const allSpaces = []		
 		const spacesLength = spaces.length
 		const reflections = SYMMETRY.getReflections(symmetries)
@@ -39,11 +39,12 @@ const SYMMETRY = {}
 		return allSpaces
 	}
 	
-	SYMMETRY.getOneSpaceLists = (spaces, symmetries) => {
+	SYMMETRY.getSymmetryDiagrams = (spaces, symmetries) => {
 		const reflections = SYMMETRY.getReflections(symmetries)
-		const diagrams = reflections.map(reflection => spaces.map(space => getReflectedSpace(space, reflection)) )
+		const diagrams = reflections.map(reflection => spaces.map(space => getReflectedSpace(space, reflection)))
 		return diagrams
 	}
+	
 	
 	//=========//
 	// Private //

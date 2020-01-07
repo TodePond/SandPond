@@ -13,21 +13,25 @@ const RULE = {}
 	//========//
 	// Public //
 	//========//
-	RULE.make = (spaces, oneSymmetries = "", allSymmetries = "", isAction = false) => {
+	RULE.make = (rawDiagram, oneSymmetries = "", allSymmetries = "", isAction = false, forSymmetries = "") => {
 	
-		const allSpaces = SYMMETRY.getAllSpaces(spaces, allSymmetries)
-		const oneSpaceLists = SYMMETRY.getOneSpaceLists(allSpaces, oneSymmetries)
-		const eventLists = getEventLists(oneSpaceLists)
+		const diagram = SYMMETRY.getAllDiagram(rawDiagram, allSymmetries) 
+		const forDiagrams = SYMMETRY.getSymmetryDiagrams(diagram, forSymmetries)
+		const oneForDiagrams = []
+		for (const forDiagram of forDiagrams) {
+			const oneDiagrams = SYMMETRY.getSymmetryDiagrams(forDiagram, oneSymmetries)
+			oneForDiagrams.push(oneDiagrams)
+		}
+		
+		const oneDiagrams = SYMMETRY.getSymmetryDiagrams(diagram, oneSymmetries)
+		const eventLists = getEventLists(oneDiagrams)
+		
 		
 		const rule = {
 		
-			// Meaningful Data
+			diagrams: oneForDiagrams,
 			eventLists,
 			isAction,
-			
-			// Cache
-			oneSymmetries, //technically deductable from 'eventLists' but why bother
-			oneSymmetriesCount: eventLists.length,
 			
 		}
 		
