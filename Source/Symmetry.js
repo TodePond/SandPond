@@ -52,12 +52,29 @@ const SYMMETRY = {}
 	SYMMETRY.getUniqueSymmetryDiagrams = (spaces, symmetries) => {
 		const reflections = SYMMETRY.getUniqueReflections(symmetries)
 		const diagrams = reflections.map(reflection => spaces.map(space => getReflectedSpace(space, reflection)))
-		return diagrams
+		const uniqueDiagrams = []
+		for (const diagram of diagrams) {
+			if (uniqueDiagrams.some(uniqueDiagram => isDiagramEqual(uniqueDiagram, diagram))) continue
+			else uniqueDiagrams.push(diagram)
+		}
+		return uniqueDiagrams
 	}
 	
 	//=========//
 	// Private //
-	//=========//	
+	//=========//
+	const isDiagramEqual = (a, b) => {
+	
+		if (a.length != b.length) return false
+		for (let s = 0; s < a.length; s++) {
+			const aSpace = a[s]
+			const bSpace = b[s]
+			if (!V.equals(aSpace, bSpace)) return false
+		}
+		
+		return true
+	}
+	
 	const getReflectedSpace = (space, reflection) => {
 		const reflectedPosition = reflection(space.x, space.y, space.z)
 		const reflectedSpace = {
