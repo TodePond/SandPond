@@ -113,7 +113,6 @@ element LavaDemo {
 	emissive "darkred"
 	category "Tutorial"
 	opacity 0.7
-	default true
 	
 	change F () => new FireDemo()
 	action {
