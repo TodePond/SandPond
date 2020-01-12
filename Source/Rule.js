@@ -41,16 +41,26 @@ const RULE = {}
 		if (oneSymmetries != "" && forSymmetries != "") throw new Error("[TodeSplat] You can't combine a 'for' with a 'one' because I find it too confusing to code sorry.")
 		
 		const diagram = SYMMETRY.getAllDiagram(rawDiagram, allSymmetries)
-		const forDiagrams = SYMMETRY.getUniqueSymmetryDiagrams(diagram, forSymmetries)
+		const forDiagrams = SYMMETRY.getSymmetryDiagrams(diagram, forSymmetries)
 		const iterations = []
 		
+		let previousDiagram = undefined
+		
 		for (const forDiagram of forDiagrams) {
+			if (!previousDiagram) {
+				previousDiagram = forDiagram
+			}
+			else if (SYMMETRY.isDiagramEqual(forDiagram, previousDiagram)) {
+				iterations.push(undefined)
+				continue
+			}
+			previousDiagram = forDiagram
 			const oneDiagrams = SYMMETRY.getSymmetryDiagrams(forDiagram, oneSymmetries)
 			const eventLists = getEventLists(oneDiagrams)
 			iterations.push(eventLists)
 		}
 		
-		//print(iterations)
+		print(iterations)
 		
 		const rule = {
 		

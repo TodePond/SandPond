@@ -54,16 +54,13 @@ const SYMMETRY = {}
 		const diagrams = reflections.map(reflection => spaces.map(space => getReflectedSpace(space, reflection)))
 		const uniqueDiagrams = []
 		for (const diagram of diagrams) {
-			if (uniqueDiagrams.some(uniqueDiagram => isDiagramEqual(uniqueDiagram, diagram))) continue
+			if (uniqueDiagrams.some(uniqueDiagram => SYMMETRY.isDiagramEqual(uniqueDiagram, diagram))) continue
 			else uniqueDiagrams.push(diagram)
 		}
 		return uniqueDiagrams
 	}
 	
-	//=========//
-	// Private //
-	//=========//
-	const isDiagramEqual = (a, b) => {
+	SYMMETRY.isDiagramEqual = (a, b) => {
 	
 		if (a.length != b.length) return false
 		for (let s = 0; s < a.length; s++) {
@@ -74,6 +71,10 @@ const SYMMETRY = {}
 		
 		return true
 	}
+	
+	//=========//
+	// Private //
+	//=========//
 	
 	const getReflectedSpace = (space, reflection) => {
 		const reflectedPosition = reflection(space.x, space.y, space.z)
