@@ -6,21 +6,22 @@ element Sand {
 	category "Simple"
 	default true
 	
-	/*rule {
+	//for(x) rule { @_ => _@ }
+	
+	rule {
 		@ => _
 		_    @
-	}*/
+	}
 	
-	for(x) rule { @_ => _@ }
 	
-	/*for(x) rule {
+	for(xz) rule {
 		@  => _
 		#_    #@
-	}*/
+	}
 	
 }
 
-/*element ForkBomb {
+element ForkBomb {
 	colour "grey"
 	emissive "black"
 	category "Simple"
@@ -34,7 +35,7 @@ element SuperForkBomb {
 	emissive "black"
 	category "Simple"
 	
-	//for(xyz) rule { @_ => @@ }
+	for(xyz) rule { @_ => @@ }
 	
 }
 
@@ -43,9 +44,9 @@ element UberForkBomb {
 	emissive "black"
 	category "Simple"
 	
-	//for(xyz) action { @_ => @@ }
+	for(xyz) action { @_ => @@ }
 	
-}*/
+}
 
 `
 

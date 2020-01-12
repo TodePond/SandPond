@@ -60,7 +60,7 @@ const RULE = {}
 			iterations.push(eventLists)
 		}
 		
-		print(iterations)
+		//print(iterations)
 		
 		const rule = {
 		

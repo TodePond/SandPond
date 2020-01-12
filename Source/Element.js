@@ -252,11 +252,10 @@ const ELEMENT = {}
 		for (let r = 0; r < rules.length; r++) {
 			const rule = rules[r]
 			
-			const iterationOffset = 0
-			
 			for (let i = 0; i < 48; i++) {
 			
-				const iterationNumber = i + iterationOffset
+				let iterationNumber = i + symmetryNumber
+				if (iterationNumber >= 48) iterationNumber -= 48
 				const iteration = rule.iterations[iterationNumber]
 				if (iteration == undefined) continue
 				
