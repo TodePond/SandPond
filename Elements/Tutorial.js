@@ -90,7 +90,6 @@ element HerbivoreDemo {
 	colour "blue"
 	emissive "darkblue"
 	category "Tutorial"
-	default true
 	
 	// Die
 	rule 0.002 { @ => _ }
@@ -108,6 +107,42 @@ element HerbivoreDemo {
 	// Move
 	rule xz 0.5 { @_ => _@ }
 }
+
+element LavaDemo {
+	colour "red"
+	emissive "darkred"
+	category "Tutorial"
+	opacity 0.7
+	default true
+	
+	change F () => new FireDemo()
+	action {
+		_ => F
+		@    @
+	}
+	
+	ruleset SlimeDemo
+}
+
+element FireDemo {
+	colour "orange"
+	emissive "red"
+	category "Tutorial"
+	opacity 0.5
+	floor true
+	
+	rule 0.3 { @ => _ }
+	
+	rule {
+		_ => @
+		@    _
+	}
+	
+	rule { @ => _ }
+	
+}
+
+
 
 
 
