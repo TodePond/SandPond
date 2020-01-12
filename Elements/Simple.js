@@ -4,6 +4,7 @@ element Sand {
 	colour "#ffcc00"
 	emissive "#ffa34d"
 	category "Simple"
+	default true
 	
 	rule {
 		@ => _
@@ -35,5 +36,16 @@ element SuperForkBomb {
 	
 }
 
+element UberForkBomb {
+	colour "cyan"
+	emissive "black"
+	category "Simple"
+	
+	for(xyz) action { @_ => @@ }
+	
+}
+
 `
+
+print(Sand.code)
 

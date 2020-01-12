@@ -252,8 +252,14 @@ const ELEMENT = {}
 		for (let r = 0; r < rules.length; r++) {
 			const rule = rules[r]
 			
-			for (const iteration of rule.iterations) {
-				//print(iteration)
+			const iterationOffset = 0
+			
+			for (let i = 0; i < 48; i++) {
+			
+				const iterationNumber = i + iterationOffset
+				const iteration = rule.iterations[iterationNumber]
+				if (iteration == undefined) continue
+				
 				let ruleCode = ``
 				const events = iteration[symmetryNumber]
 				ruleCode += `\n`

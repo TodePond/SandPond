@@ -3,7 +3,7 @@ TodeSplat`
 given . (space) => space
 keep .
 
-given @ () => true
+given @ (self, atom) => self == atom
 change @ (self) => self
 
 given # (atom) => atom

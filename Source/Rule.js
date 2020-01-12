@@ -17,7 +17,7 @@ const RULE = {}
 	// - iteration0
 	// - iteration1
 	// - ...
-	// - iterationN
+	// - iteration47
 	
 	// iteration
 	// - reflection0
