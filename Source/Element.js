@@ -252,6 +252,8 @@ const ELEMENT = {}
 		for (let r = 0; r < rules.length; r++) {
 			const rule = rules[r]
 			
+			const ruleCodes = []
+			
 			for (let i = 0; i < 48; i++) {
 			
 				let iterationNumber = i + symmetryNumber
@@ -259,10 +261,10 @@ const ELEMENT = {}
 				const iteration = rule.iterations[iterationNumber]
 				if (iteration == undefined) continue
 				
+				let iterationCode = ``
 				let ruleCode = ``
 				const events = iteration[symmetryNumber]
-				ruleCode += `\n`
-				//ruleCode += `	if (ruleDone) return true\n`
+				iterationCode += `\n`
 				
 				// Given Result 
 				//==============
@@ -288,48 +290,52 @@ const ELEMENT = {}
 						const spaceName = `space${event.siteNumber}`
 						if (!locals.includes(spaceName))
 						if (givenParams.includes("space") || givenParams.includes("atom") || givenParams.includes("element")) {
-							ruleCode += `	const ${spaceName} = sites[${event.siteNumber}]\n`
+							iterationCode += `	const ${spaceName} = sites[${event.siteNumber}]\n`
 							locals.push(spaceName)
 						}
 						
 						const atomName = `atom${event.siteNumber}`
 						if (!locals.includes(atomName))
 						if (givenParams.includes("atom") || givenParams.includes("element")) {
-							ruleCode += `	const ${atomName} = ${spaceName}? ${spaceName}.atom : undefined\n`
+							iterationCode += `	const ${atomName} = ${spaceName}? ${spaceName}.atom : undefined\n`
 							locals.push(atomName)
 						}
 						
 						const elementName = `element${event.siteNumber}`
 						if (!locals.includes(elementName))
 						if (givenParams.includes("element")) {
-							ruleCode += `	const ${elementName} = ${atomName}? ${atomName}.element : undefined\n`
+							iterationCode += `	const ${elementName} = ${atomName}? ${atomName}.element : undefined\n`
 							locals.push(elementName)
 						}
 						
-						ruleCode += `	const ${givenResultName} = given${givenId}(${givenSiteParams.join(", ")})\n`
+						iterationCode += `	const ${givenResultName} = given${givenId}(${givenSiteParams.join(", ")})\n`
 						
 					}
 				}
 				
 				// Given If Statement
 				//====================
+				ruleCode += `	if (`
+				let firstGiven = true
 				for (let e = 0; e < events.length; e++) {
 					const event = events[e]
 					const s = event.siteNumber
 					const input = event.input
-					const givens = input.givens		
+					const givens = input.givens
 					for (let g = 0; g < givens.length; g++) {
 						const given = givens[g]
 						const givenId = globals.givens.indexOf(given)
 						const givenResultName = `given${givenId}Result${s}`
 						
-						if (g == 0 && e == 0) ruleCode += `	if (${givenResultName}`
+						if (firstGiven) {
+							firstGiven = false
+							ruleCode += `${givenResultName}`
+						}
 						else ruleCode += ` && ${givenResultName}`
-						if (g == givens.length - 1 && e == events.length-1) ruleCode += `)`
 					}
 				}
 				
-				ruleCode += ` {\n`
+				ruleCode += `) {\n`
 				
 				const outputLocals = []
 				
@@ -463,9 +469,14 @@ const ELEMENT = {}
 				if (!rule.isAction) ruleCode += `		return true\n`
 				ruleCode += `	}\n`
 				
-				
-				code += ruleCode
+				if (!ruleCodes.includes(ruleCode)) {
+					iterationCode += ruleCode
+					code += iterationCode	
+					ruleCodes.push(ruleCode)
+				}
 			}
+			
+			
 		}
 		
 		code += `	\n`
