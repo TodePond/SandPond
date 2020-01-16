@@ -60,7 +60,7 @@ element Sand {
 
 */
 
-/*element ForkBomb {
+element ForkBomb {
 	colour "grey"
 	emissive "black"
 	category "Simple"
@@ -87,11 +87,11 @@ element UberForkBomb {
 	
 }
 
-element MasterForkBomb {
+element MasterForkBombOld {
 	colour "purple"
 	emissive "black"
 	category "Simple"
-	default true
+	hidden true
 	
 	select 1 (space, atom) => space && !atom
 	keep 1 (selected, self, space) => {
@@ -123,9 +123,39 @@ element MasterForkBomb {
 		 34     34
 		@12 => .12
 	}
-}*/
+}
+
+element MasterForkBomb {
+	colour "purple"
+	emissive "black"
+	category "Simple"
+	
+	for(xyz) action {
+		@_ => .@
+	}
+	
+	for(xyz) action {
+		@ _ => . @
+	}
+	
+	for(xyz) action {
+		@  => .
+		 _     @
+	}
+	
+	for(xyz) action {
+		@   => .
+		  _      @
+	}
+	
+	for(xyz) action {
+		@   => .
+		          
+		  _      @
+	}
+}
 
 `
 
-print(Sand.code)
+print(MasterForkBomb2.code)
 
