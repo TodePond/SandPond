@@ -97,12 +97,12 @@ element HerbivoreDemo {
 	// Gravity
 	ruleset SandDemo
 	
-	// Eat
-	given P (element) => element == PlantDemo
-	rule xyz { @P => @_ }
-	
 	// Reproduce
+	given P (element) => element == PlantDemo
 	rule xyz 0.05 { @P => @@ }
+	
+	// Eat
+	rule xyz { @P => @_ }
 	
 	// Move
 	rule xz 0.5 { @_ => _@ }
@@ -140,6 +140,34 @@ element FireDemo {
 	rule { @ => _ }
 	
 }
+
+element EggDemo {
+	colour "pink"
+	emissive "grey"
+	category "Tutorial"
+	precise true
+	pour false
+	default true
+	
+	data timer 1000
+	
+	// Countdown
+	keep t (self) => self.timer--
+	action { @ => t }
+	
+	// Hatch
+	given h (self) => self.timer < 0
+	change H () => new HerbivoreDemo()
+	action { h => H }
+	
+	// Fall
+	rule {
+		@ => _
+		_    @
+	}
+}
+
+
 
 
 

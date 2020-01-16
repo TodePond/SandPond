@@ -700,9 +700,14 @@
 		if (lhs == undefined) throw new Error(`[TodeSplat] Failed to split rule with arrow(s)...`)
 		
 		// Find the "@" symbol on the left-hand-side
-		let originX = -1
-		let originY = -1
-		for (let i = 0; i < lhs.length; i++) {
+		let originX = undefined
+		let originY = undefined
+		if (lhs.length == 1 && lhs[0].trim().length == 1) {
+			const match = /[^ 	]/.exec(lhs[0])
+			originX = match.index
+			originY = 0
+		}
+		else for (let i = 0; i < lhs.length; i++) {
 			const leftLine = lhs[i]
 			const originIndex = leftLine.indexOf("@")
 			if (originIndex != -1) {
