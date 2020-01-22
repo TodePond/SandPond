@@ -12,7 +12,7 @@ element Sand {
 	}
 	
 	
-	for(xz) rule {
+	for(x) rule {
 		@  => _
 		#_    #@
 	}
@@ -60,6 +60,11 @@ element Sand {
 
 */
 
+/*element Static {
+	colour "black"
+	category "Simple"
+}
+
 element ForkBomb {
 	colour "grey"
 	emissive "black"
@@ -85,44 +90,6 @@ element UberForkBomb {
 	
 	for(xyz) action { @_ => @@ }
 	
-}
-
-element MasterForkBombOld {
-	colour "purple"
-	emissive "black"
-	category "Simple"
-	hidden true
-	
-	select 1 (space, atom) => space && !atom
-	keep 1 (selected, self, space) => {
-		if (selected) SPACE.setAtom(space, self)
-	}
-	
-	select 2 (space, atom) => space && !atom
-	keep 2 (selected, self, space) => {
-		if (selected) SPACE.setAtom(space, self)
-	}
-	
-	select 3 (space, atom) => space && !atom
-	keep 3 (selected, self, space) => {
-		if (selected) SPACE.setAtom(space, self)
-	}
-	
-	select 4 (space, atom) => space && !atom
-	keep 4 (selected, self, space) => {
-		if (selected) SPACE.setAtom(space, self)
-	}
-	
-	select 5 (space, atom) => space && !atom
-	keep 5 (selected, self, space) => {
-		if (selected) SPACE.setAtom(space, self)
-	}
-	
-	for(xyz) action {
-		  5      5
-		 34     34
-		@12 => .12
-	}
 }
 
 element MasterForkBomb {
@@ -153,9 +120,10 @@ element MasterForkBomb {
 		          
 		  _      @
 	}
-}
+}*/
 
 `
 
-print(MasterForkBomb2.code)
+print(Sand.code)
+
 
