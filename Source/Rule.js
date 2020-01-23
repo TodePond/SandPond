@@ -44,17 +44,15 @@ const RULE = {}
 		const forDiagrams = SYMMETRY.getSymmetryDiagrams(diagram, forSymmetries)
 		const iterations = []
 		
-		let previousDiagram = undefined
+		const previousDiagrams = []
 		
 		for (const forDiagram of forDiagrams) {
-			if (!previousDiagram) {
-				previousDiagram = forDiagram
-			}
-			else if (SYMMETRY.isDiagramEqual(forDiagram, previousDiagram)) {
+			/*const isAlreadyDone = previousDiagrams.some(previousDiagram => SYMMETRY.isDiagramEqual(forDiagram, previousDiagram))
+			if (isAlreadyDone) {
 				iterations.push(undefined)
 				continue
-			}
-			previousDiagram = forDiagram
+			}*/
+			previousDiagrams.push(forDiagram)
 			const oneDiagrams = SYMMETRY.getSymmetryDiagrams(forDiagram, oneSymmetries)
 			const eventLists = getEventLists(oneDiagrams)
 			iterations.push(eventLists)

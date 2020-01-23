@@ -6,59 +6,20 @@ element Sand {
 	category "Simple"
 	default true
 	
+	//for(xz) rule { @_ => _@ }
+	
 	rule {
 		@ => _
 		_    @
 	}
 	
 	
-	for(x) rule {
+	for(xz) rule {
 		@  => _
 		#_    #@
 	}
 	
 }
-
-/*
-
->> 0
-18
-16
-55
-54
-
->> 1
-16
-18
-55
-54
-
->> 9
-16
-55
-54
-18
-
->> 13
-55
-54
-18
-16
-
->> 17
-54
-55
-18
-16
-
->> 23
-54
-18
-16
-55
-
-
-*/
 
 /*element Static {
 	colour "black"
@@ -124,6 +85,6 @@ element MasterForkBomb {
 
 `
 
-print(Sand.code)
+//print(Sand.code)
 
 

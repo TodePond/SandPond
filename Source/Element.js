@@ -259,7 +259,6 @@ const ELEMENT = {}
 				let iterationNumber = i + symmetryNumber
 				if (iterationNumber >= 48) iterationNumber -= 48
 				const iteration = rule.iterations[iterationNumber]
-				if (iteration == undefined) continue
 				
 				let iterationCode = ``
 				let ruleCode = ``

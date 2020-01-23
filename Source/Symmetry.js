@@ -154,7 +154,7 @@ const SYMMETRY = {}
 			"x, y, z", "x, y, z", "x, y, z", "x, y, z", "x, y, z", "x, y, z", "x, y, z", "x, y, z", 
 			"x, y, z", "x, y, z", "x, y, z", "x, y, z", "x, y, z", "x, y, z", "x, y, z", "x, y, z", 
 			"x, y, z", "x, y, z", "x, y, z", "x, y, z", "x, y, z", "x, y, z", "x, y, z", "x, y, z", 
-			"x, y, z", "x, y, z", "x, y, z", "x, y, z", "x, y, z", "x, y, z", "x, y, z", "x, y, z", 
+			"x, y, z", "x, y, z", "x, y, z", "x, y, z", "x, y, z", "x, y, z", "x, y, z", "x, y, z",
 		],
 		
 		x: [
@@ -229,6 +229,14 @@ const SYMMETRY = {}
 		],
 		
 	}
+	
+	REFLECTIONS_FOR = {
+		[""]: [["x, y, z"]].repeat(48),
+		["x"]: [...[["x, y, z", "-x, y, z"]].repeat(4), ...[["-x, y, z", "x, y, z"]].repeat(4)].repeat(6),
+		["y"]: [...[["x, y, z", "-x, y, z"]].repeat(2), ...[["-x, y, z", "x, y, z"]].repeat(2)].repeat(12),
+		["z"]: [["x, y, z", "x, y, -z"], ["x, y, -z", "x, y, z"]].repeat(24),
+	}
+	print(REFLECTIONS_FOR)
 	
 	REFLECTIONS_UNIQUE = {
 		[""]: [
