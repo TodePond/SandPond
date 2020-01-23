@@ -147,7 +147,6 @@ element EggDemo {
 	category "Tutorial"
 	precise true
 	pour false
-	default true
 	
 	data timer 1000
 	
@@ -165,6 +164,20 @@ element EggDemo {
 		@ => _
 		_    @
 	}
+}
+
+element WindySandDemo {
+	colour SandDemo.colour
+	emissive SandDemo.emissive
+	category "Tutorial"
+	
+	rule 0.3 { _@ => @_ }
+	rule 0.2 {
+		_  => @
+		#@    #_
+	}
+	
+	ruleset SandDemo
 }
 
 
