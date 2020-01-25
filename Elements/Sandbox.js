@@ -142,4 +142,34 @@ element Steam {
 	
 }
 
+element WallSeed {
+	colour "rgb(128, 128, 128)"
+	emissive "rgb(2, 128, 200)"
+	category "Sandbox"
+	state "solid"
+	
+	data fuel 10
+	
+	ruleset Solid
+	
+	given W (element) => element == Solid || element == WallSeed
+	given W (self) => self.fuel == 10
+	rule {
+		@ => _
+		W    .
+	}
+	
+	change W () => new Solid()
+	change S (self) => {
+		self.fuel--
+		if (self.fuel > 0) return self
+	}
+
+	rule {
+		_ => S
+		@    W
+	}
+	
+}
+
 `

@@ -224,4 +224,30 @@ element Herbivore {
 	rule xz 0.5 { @_ => _@ }
 }
 
+element Fish {
+	colour "rgb(255, 100, 0)"
+	category "Life"
+	precise true
+	pour false
+	state "solid"
+	
+	given W (element) => element == Water
+	select W (atom) => atom
+	change W (selected) => selected
+	rule xyz { @W => W@ }
+	
+	rule {
+		@ => .
+		W    .
+	}
+	ruleset Solid
+	
+	rule 0.05 xz {
+		 _ =>  @
+		 
+		@     _
+	}
+	
+}
+
 `
