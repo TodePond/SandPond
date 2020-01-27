@@ -250,4 +250,89 @@ element Fish {
 	
 }
 
+element Giraffe {
+	colour "rgb(128, 128, 0)"
+	emissive "rgb(255, 128, 0)"
+	state "solid"
+	precise true
+	pour false
+	category "Life"
+	
+	data level 0
+	
+	given d (self) => self.level > 0
+	given d (atom, element, self) => element != Giraffe || !atom || atom.level != self.level - 1
+	rule {
+		@ => _
+		d    .
+	}
+	
+	ruleset Solid
+	
+	given e (space, atom) => space && !atom
+	given e (self) => self.level < 10
+	change G (self) => new Giraffe({level: self.level + 1})
+	action {
+		e => G
+		@    .
+	}
+	rule xz 0.05 { @_ => _@ }
+	
+	
+}
+
+element StretchyGiraffe {
+	colour "rgb(128, 128, 0)"
+	emissive "rgb(255, 128, 0)"
+	state "solid"
+	precise true
+	pour false
+	category "Life"
+	
+	data level 0
+	
+	given d (self) => self.level == 0
+	given d (element) => !element || element.state != "solid"
+	given d (space) => space
+	select d (atom) => atom
+	change d (selected) => selected
+	rule {
+		@ => d
+		d    @
+	}
+	
+	given e (space, atom) => space && !atom
+	given e (self) => self.level < 7
+	change G (self) => new StretchyGiraffe({level: self.level + 1})
+	action {
+		e => G
+		@    .
+	}
+	
+	given G (element) => element == StretchyGiraffe
+	change T (self) => new GiraffeTrail({level: self.level + 1})
+	rule xz {
+		G_    .T
+		@d => d@
+	}
+	
+	given T (element, atom, self) => element && element == GiraffeTrail && atom.level == self.level
+	rule xz {
+		G_    .T
+		@T => _@
+	}
+	
+	rule xz {
+		_     .
+		@T => _@
+	}
+	
+}
+
+element GiraffeTrail {
+	colour "grey"
+	emissive "black"
+	hidden true
+}
+
 `
