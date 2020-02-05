@@ -12,14 +12,8 @@ const RULE = {}
 	
 	//========//
 	// Public //
-	//========//
-	// iterations
-	// - iteration0
-	// - iteration1
-	// - ...
-	// - iteration47
-	
-	// iteration
+	//========//	
+	// reflections
 	// - reflection0
 	// - reflection1
 	// - ...
@@ -40,31 +34,16 @@ const RULE = {}
 	
 		if (oneSymmetries != "" && forSymmetries != "") throw new Error("[TodeSplat] You can't combine a 'for' with a 'one' because I find it too confusing to code sorry.")
 		
-		const diagram = SYMMETRY.getAllDiagram(rawDiagram, allSymmetries)
-		const forDiagrams = SYMMETRY.getSymmetryDiagrams(diagram, forSymmetries)
-		const iterations = []
+		const allDiagram = SYMMETRY.getAllDiagram(rawDiagram, allSymmetries)
+		//const forDiagrams = SYMMETRY.getSymmetryDiagrams(allDiagram, forSymmetries)
 		
-		const previousDiagrams = []
-		
-		for (const forDiagram of forDiagrams) {
-			/*const isAlreadyDone = previousDiagrams.some(previousDiagram => SYMMETRY.isDiagramEqual(forDiagram, previousDiagram))
-			if (isAlreadyDone) {
-				iterations.push(undefined)
-				continue
-			}*/
-			previousDiagrams.push(forDiagram)
-			const oneDiagrams = SYMMETRY.getSymmetryDiagrams(forDiagram, oneSymmetries)
-			const eventLists = getEventLists(oneDiagrams)
-			iterations.push(eventLists)
-		}
-		
-		//print(iterations)
+		const oneDiagrams = SYMMETRY.getSymmetryDiagrams(allDiagram, oneSymmetries)
+		const reflections = getEventLists(oneDiagrams)
 		
 		const rule = {
 		
-			//eventLists,
 			isAction,
-			iterations, 
+			reflections, 
 			
 		}
 		

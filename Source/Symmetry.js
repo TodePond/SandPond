@@ -236,7 +236,6 @@ const SYMMETRY = {}
 		["y"]: [...[["x, y, z", "-x, y, z"]].repeat(2), ...[["-x, y, z", "x, y, z"]].repeat(2)].repeat(12),
 		["z"]: [["x, y, z", "x, y, -z"], ["x, y, -z", "x, y, z"]].repeat(24),
 	}
-	print(REFLECTIONS_FOR)
 	
 	REFLECTIONS_UNIQUE = {
 		[""]: [

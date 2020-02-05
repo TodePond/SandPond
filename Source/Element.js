@@ -164,7 +164,7 @@ const ELEMENT = {}
 		
 		for (let r = 0; r < rules.length; r++) {
 			const rule = rules[r]
-			const events = rule.iterations[0][0]
+			const events = rule.reflections[0]
 			for (let e = 0; e < events.length; e++) {
 				const event = events[e]
 				const input = event.input
@@ -185,7 +185,7 @@ const ELEMENT = {}
 		
 		for (let r = 0; r < rules.length; r++) {
 			const rule = rules[r]
-			const events = rule.iterations[0][0]
+			const events = rule.reflections[0]
 			for (let e = 0; e < events.length; e++) {
 				const event = events[e]
 				const output = event.output
@@ -206,7 +206,7 @@ const ELEMENT = {}
 		
 		for (let r = 0; r < rules.length; r++) {
 			const rule = rules[r]
-			const events = rule.iterations[0][0]
+			const events = rule.reflections[0]
 			for (let e = 0; e < events.length; e++) {
 				const event = events[e]
 				const output = event.output
@@ -227,7 +227,7 @@ const ELEMENT = {}
 		
 		for (let r = 0; r < rules.length; r++) {
 			const rule = rules[r]
-			const events = rule.iterations[0][0]
+			const events = rule.reflections[0]
 			for (let e = 0; e < events.length; e++) {
 				const event = events[e]
 				const input = event.input
@@ -242,6 +242,10 @@ const ELEMENT = {}
 		return globalGivens
 	}
 	
+	// nothing to see hear
+	// perfectly clean code
+	// well maintained
+	// highly readable
 	const makeInnerSymmetryCode = (rules, globals, symmetryNumber) => {
 		
 		const locals = []
@@ -254,11 +258,11 @@ const ELEMENT = {}
 			
 			const ruleCodes = []
 			
-			for (let i = 0; i < 48; i++) {
+			for (let i = 0; i < 1; i++) { //lol
 			
 				let iterationNumber = i + symmetryNumber
 				if (iterationNumber >= 48) iterationNumber -= 48
-				const iteration = rule.iterations[iterationNumber]
+				const iteration = rule.reflections
 				
 				let iterationCode = ``
 				let ruleCode = ``

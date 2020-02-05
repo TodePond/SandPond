@@ -4,20 +4,19 @@ element Sand {
 	colour "#ffcc00"
 	emissive "#ffa34d"
 	category "Simple"
-	default true
 	
-	//for(xz) rule { @_ => _@ }
+	for(xz) rule { @_ => _@ }
 	
-	rule {
+	/*rule {
 		@ => _
 		_    @
 	}
 	
 	
-	for(xz) rule {
+	rule xz {
 		@  => _
 		#_    #@
-	}
+	}*/
 	
 }
 
