@@ -20,6 +20,12 @@ const RULE = {}
 	// - reflection47
 	
 	// reflection
+	// - iteration0
+	// - iteration1
+	// - ...
+	// - iterationN
+	
+	// iteration
 	// - event0
 	// - event1
 	// - ...
@@ -31,14 +37,18 @@ const RULE = {}
 	// - output
 	
 	RULE.make = (rawDiagram, oneSymmetries = "", allSymmetries = "", isAction = false, forSymmetries = "") => {
-	
-		if (oneSymmetries != "" && forSymmetries != "") throw new Error("[TodeSplat] You can't combine a 'for' with a 'one' because I find it too confusing to code sorry.")
+		
+		const reflections = []
 		
 		const allDiagram = SYMMETRY.getAllDiagram(rawDiagram, allSymmetries)
-		//const forDiagrams = SYMMETRY.getSymmetryDiagrams(allDiagram, forSymmetries)
-		
 		const oneDiagrams = SYMMETRY.getSymmetryDiagrams(allDiagram, oneSymmetries)
-		const reflections = getEventLists(oneDiagrams)
+		
+		let i = 0
+		for (const oneDiagram of oneDiagrams) {
+			const iterations = SYMMETRY.getIterations(oneDiagram, forSymmetries, i)
+			reflections.push(iterations)
+			i++
+		}
 		
 		const rule = {
 		
@@ -48,17 +58,6 @@ const RULE = {}
 		}
 		
 		return rule
-	}
-	
-	//=========//
-	// Private //
-	//=========//
-	const getEventLists = (spaceLists) => {
-		const eventLists = spaceLists.map(spaces => {
-			const events = spaces.map(space => EVENT.make(space))
-			return events
-		})
-		return eventLists
 	}
 	
 }

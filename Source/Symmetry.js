@@ -12,8 +12,8 @@ const SYMMETRY = {}
 	//========//
 	// Public //
 	//========//
-	SYMMETRY.getReflections = (symmetries) => {
-		return REFLECTIONS[symmetries].map(r => REFLECTION[r])
+	SYMMETRY.getReflections = (symmetries, reflectionDatabase = REFLECTIONS) => {
+		return reflectionDatabase[symmetries].map(r => REFLECTION[r])
 	}
 	
 	SYMMETRY.getUniqueReflections = (symmetries) => {
@@ -41,6 +41,32 @@ const SYMMETRY = {}
 			}
 		}
 		return allSpaces
+	}
+	
+	SYMMETRY.getIterations = (diagram, forSymmetries, symmetryNumber) => {
+	
+		const iterations = []
+		const orders = REFLECTIONS_FOR[forSymmetries]
+		if (orders == undefined) throw new Error(`[TodeSplat] Unrecognised 'for' type: '${forSymmetries}'`)
+		const order = orders[symmetryNumber]
+		for (const symmName of order) {
+			const reflector = REFLECTION[symmName]
+			const reflectedDiagram = reflectDiagram(diagram, reflector)
+			const iteration = getEventList(reflectedDiagram)
+			iterations.push(iteration)
+		}
+		
+		return iterations
+	}
+	
+	const getEventList = (diagram) => diagram.map(space => EVENT.make(space))
+	
+	const getEventLists = (spaceLists) => {
+		const eventLists = spaceLists.map(spaces => {
+			const events = spaces.map(space => EVENT.make(space))
+			return events
+		})
+		return eventLists
 	}
 	
 	SYMMETRY.getSymmetryDiagrams = (spaces, symmetries) => {
@@ -75,6 +101,9 @@ const SYMMETRY = {}
 	//=========//
 	// Private //
 	//=========//
+	const reflectDiagram = (diagram, reflection) => {
+		return diagram.map(space => getReflectedSpace(space, reflection))
+	}
 	
 	const getReflectedSpace = (space, reflection) => {
 		const reflectedPosition = reflection(space.x, space.y, space.z)

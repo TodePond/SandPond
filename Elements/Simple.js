@@ -5,7 +5,7 @@ element Sand {
 	emissive "#ffa34d"
 	category "Simple"
 	
-	for(xz) rule { @_ => _@ }
+	for(x) rule { @_ => _@ }
 	
 	/*rule {
 		@ => _

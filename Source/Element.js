@@ -164,7 +164,7 @@ const ELEMENT = {}
 		
 		for (let r = 0; r < rules.length; r++) {
 			const rule = rules[r]
-			const events = rule.reflections[0]
+			const events = rule.reflections[0][0]
 			for (let e = 0; e < events.length; e++) {
 				const event = events[e]
 				const input = event.input
@@ -185,7 +185,7 @@ const ELEMENT = {}
 		
 		for (let r = 0; r < rules.length; r++) {
 			const rule = rules[r]
-			const events = rule.reflections[0]
+			const events = rule.reflections[0][0]
 			for (let e = 0; e < events.length; e++) {
 				const event = events[e]
 				const output = event.output
@@ -206,7 +206,7 @@ const ELEMENT = {}
 		
 		for (let r = 0; r < rules.length; r++) {
 			const rule = rules[r]
-			const events = rule.reflections[0]
+			const events = rule.reflections[0][0]
 			for (let e = 0; e < events.length; e++) {
 				const event = events[e]
 				const output = event.output
@@ -227,7 +227,7 @@ const ELEMENT = {}
 		
 		for (let r = 0; r < rules.length; r++) {
 			const rule = rules[r]
-			const events = rule.reflections[0]
+			const events = rule.reflections[0][0]
 			for (let e = 0; e < events.length; e++) {
 				const event = events[e]
 				const input = event.input
@@ -257,16 +257,15 @@ const ELEMENT = {}
 			const rule = rules[r]
 			
 			const ruleCodes = []
+			const iterations = rule.reflections[symmetryNumber]
 			
-			for (let i = 0; i < 1; i++) { //lol
+			for (let i = 0; i < iterations.length; i++) {
 			
-				let iterationNumber = i + symmetryNumber
-				if (iterationNumber >= 48) iterationNumber -= 48
-				const iteration = rule.reflections
+				const iteration = iterations[i]
 				
 				let iterationCode = ``
 				let ruleCode = ``
-				const events = iteration[symmetryNumber]
+				const events = iteration
 				iterationCode += `\n`
 				
 				// Given Result 
