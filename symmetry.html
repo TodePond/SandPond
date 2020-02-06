@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<head>
+	<title>Sandboy Symmetries</title>
+	<meta name="viewport" content="height=device-height, width=device-width, initial-scale=1.0">
+	
+	<!-- My Stuff -->
+	<script src="Libraries/Array.js"></script>
+	<script src="Libraries/Async.js"></script>
+	<script src="Libraries/Console.js"></script>
+	<script src="Libraries/Bracketless.js"></script>
+	<script src="Libraries/Document.js"></script>
+	<script src="Libraries/Loop.js"></script>
+	<script src="Libraries/Match.js"></script>
+	<script src="Libraries/Report.js"></script>
+	<script src="Libraries/Type.js"></script>
+	<script src="Libraries/Event.js"></script>
+	<script src="Libraries/Worker.js"></script>
+	<script src="Libraries/Vector.js"></script>
+	<script src="Libraries/PropertyEditor.js"></script>
+	<script src="Libraries/Controls.js"></script>
+	<script src="Libraries/Stage.js"></script>
+	<script src="Libraries/Javascript.js"></script>
+	<script src="Libraries/Math.js"></script>
+	
+	<!-- Someone Else's Stuff -->
+	<script src="Libraries/three.min.js"></script>
+	<script src="Libraries/BufferGeometryUtils.js"></script>
+	<script src="Libraries/OrbitControls.js"></script>
+	<script src="Libraries/WebVR.js"></script>
+	
+	<style>
+		
+		@font-face {
+			font-family: UbuntuMono;
+			src: url("Fonts/UbuntuMono-R.ttf")
+		}
+		
+		@font-face {
+			font-family: Rosario;
+			src: url("Fonts/Rosario-Regular.ttf")
+		}
+		
+		#loading {
+			font-family: Rosario;
+			position: absolute;
+			left: 50vw;
+			transform: translateX(-50%);
+			top: 25vh;
+			text-align:center;
+		}
+		
+		#loading img {
+			width: 100px;
+		}
+		
+		pre {
+			tab-size: 4;
+		}
+		
+		body {
+			font-family: Rosario;
+			margin: 20px;
+			background-color: rgb(23, 29, 40);
+			color: rgb(224, 224, 224);
+		}
+		
+		pre {
+			font-family: UbuntuMono;
+		}
+		
+		article {
+			font-size: 18px;
+		}
+		
+		.demo {
+			max-width: 250px;
+			height: 200px;
+			display: inline-block;
+		}
+	
+	</style>
+</head>
+
+<body>
+
+	<header>
+		<h1>Sandboy Symmetries</h1>
+	</header>
+	<main>
+	
+		<article>
+
+<h1>Intro</h1>
+In TodeSplat, you draw 2D diagrams to program elements.<br>
+For example:
+<pre>
+	rule {
+		@_ => _@
+	}
+</pre>
+This makes an atom move to the right each tick.<br>
+Let's represent the left-hand-side of our 2D diagram like this:<br>
+<div class="demo" id="right"></div>
+
+<h1>Left and Right</h1>
+Now let's imagine you want this atom to randomly move left or right.<br>
+You can add the 'x' rule label, that flips the x-axis randomly:
+<pre>
+	rule x {
+		@_ => _@
+	}
+</pre>
+This means that one of two diagrams will be chosen:<br>
+<div class="demo" id="rightLeft0"></div>
+<div class="demo" id="rightLeft1"></div><br>
+With this 'x' label, there are only two translations:
+<pre>
+( x, y, z )
+(-x, y, z )
+</pre>
+<br>
+<h1>Sideways</h1>
+You could also use the 'xz' label to make it go in every direction sideways:
+<pre>
+rule xz {
+	@_ => _@
+}
+</pre>
+<div class="demo" id="side0"></div>
+<div class="demo" id="side1"></div>
+<div class="demo" id="side2"></div>
+<div class="demo" id="side3"></div>
+<pre>
+( x, y, z )
+(-x, y, z )
+( z, y, x )
+(-z, y, x )
+</pre>
+
+		</article>
+	
+	</main>
+
+	<!-- Structure -->
+	<!--<script src="Source/Universe.js"></script>-->
+	<script src="Source/World.js"></script>
+	<script src="Source/Space.js"></script>
+	<script src="Source/Site.js"></script>
+	<script src="Source/Atom.js"></script>
+	<script src="Source/Element.js"></script>
+	<script src="Source/Rule.js"></script>
+	<script src="Source/Event.js"></script>
+	<script src="Source/Character.js"></script>
+	
+	<!-- Helpers -->
+	<script src="Source/Symmetry.js"></script>
+	<script src="Source/EventWindow.js"></script>
+	<script src="Source/Behave.js"></script>
+	<script src="Source/Random.js"></script>
+	<script src="Source/TodeSplat.js"></script>
+	
+	<!-- Entities -->
+	<!--<script src="Source/Dropper.js"></script>-->
+	<script src="Source/Floor.js"></script>
+	<script src="Source/Lighting.js"></script>
+	
+	<!-- Elements -->
+	<script src="Elements/Globals.js"></script>
+	<script src="Elements/Simple.js"></script>
+	<!--<script src="Elements/Presets.js"></script>
+	<script src="Elements/Sandbox.js"></script>
+	<script src="Elements/Weather.js"></script>
+	<script src="Elements/Explosive.js"></script>
+	<script src="Elements/Life.js"></script>
+	<script src="Elements/T2Tile.js"></script>-->
+	<!--<script src="Elements/Tutorial.js"></script>-->
+	
+	<!-- Main -->
+	<script>
+		
+		TodeSplat `
+			element Dummy {
+				rule {
+					@_ => _@
+				}
+				
+				rule {
+					_@ => @_
+				}
+				
+				rule side {
+					@_ => _@
+				}
+				
+				rule side {
+					_@ => @_
+				}
+			}
+		`
+		
+		const boxGeometry = new THREE.BoxGeometry(1, 1, 1)
+	
+		const makeBox = (colour, emissive = colour) => {
+			const boxMaterial = new THREE.MeshStandardMaterial({color: colour, emissive})
+			const box = new THREE.Mesh(boxGeometry, boxMaterial)
+			return box
+		}
+		
+		const getColours = (character) => {
+			if (character == "@") return ["#ffcc00", "#ffa34d"]
+			return ["grey"]
+		}
+		
+		let dummyCamera = undefined
+		
+		const makeDemo = (name, rule, bothSides = false) => {
+			const stage = new Stage($(`#${name}`), {alpha: true})
+			
+			if (!dummyCamera) {
+				const orbit = new THREE.OrbitControls(stage.camera)
+				orbit.mouseButtons.RIGHT = THREE.MOUSE.ROTATE
+				orbit.enableKeys = false
+				orbit.enableDamping = true
+				orbit.enableZoom = false
+				stage.on.process(orbit.o.update)
+				dummyCamera = stage.camera
+			}
+			else {
+				stage.on.process(() => {
+					stage.camera.position.set(...dummyCamera.position)
+					stage.camera.lookAt(0, 0, 0)
+				})
+			}
+			
+			for (const event of rule) {
+				
+				const colours = getColours(event.input.name)
+				const box = makeBox(...colours)
+				const position = SITE_POSITIONS[event.siteNumber]
+				box.position.set(...position)
+				stage.scene.add(box)
+			}
+			
+			stage.camera.position.set(0, 2, 10)
+			//stage.camera.position.set(0, 10, 50)
+			const sun = makeSun()
+			//sun.position.set(200, 400, 400)
+			stage.scene.add(sun)
+			
+			return stage
+		}
+		
+		const getBaseRule = (ruleNumber) => Dummy.rules[ruleNumber].reflections[0][0]
+		
+		makeDemo("right", getBaseRule(0))
+		makeDemo("rightLeft0", getBaseRule(0))
+		makeDemo("rightLeft1", getBaseRule(1))
+		makeDemo("side0", getBaseRule(0))
+		makeDemo("side1", getBaseRule(1))
+		makeDemo("side2", getBaseRule(2))
+		makeDemo("side3", getBaseRule(3))
+		
+		
+	</script>
+	
+</body>

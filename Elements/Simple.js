@@ -5,9 +5,9 @@ element Sand {
 	emissive "#ffa34d"
 	category "Simple"
 	
-	//for(x) rule { @_ => _@ }
+	for(xz) rule { @_ => _@ }
 	
-	rule {
+	/*rule {
 		@ => _
 		_    @
 	}
@@ -16,9 +16,17 @@ element Sand {
 	for(xz) rule {
 		@  => _
 		#_    #@
-	}
+	}*/
 	
 }
+
+/*
+
+13, 11, 32, 37
+13, 11, 37, 32
+11, 
+
+*/
 
 /*
 

@@ -8,12 +8,12 @@
 	//===========//
 	// Functions //
 	//===========//
-	const makeRenderer = (canvas) => {
+	const makeRenderer = (canvas, alpha = false) => {
 		const renderer = new THREE.WebGLRenderer({
 			canvas,
 			antialias: true,
 			powerPreference: "high-performance",
-			alpha: false,
+			alpha,
 		})
 		renderer.autoClear = false
 		return renderer
@@ -23,7 +23,7 @@
 		const style = `
 			width: 100%;
 			height: 100%;
-			position: absolute;
+			/*position: absolute;*/
 			z-index: -1;
 		`
 		return HTML `<canvas style="${style}"></canvas>`
@@ -32,7 +32,7 @@
 	const makeCamera = o=> {
 		const camera = new THREE.PerspectiveCamera()
 		camera.fov = 30
-		//camera.position.set(0, 1.6, 0)
+		camera.position.set(0, 1, 3)
 		camera.lookAt(0, 0, 0)
 		//camera.far = 99999999
 		return camera
@@ -52,13 +52,13 @@
 	//=======//	
 	Stage = class Stage {
 		
-		constructor(element, {start = true} = {}) {
+		constructor(element, {start = true, alpha = false} = {}) {
 		
 			const self = this		
 			this.canvas = makeCanvas()
 			element.appendChild(this.canvas)
 			
-			this.renderer = makeRenderer(this.canvas)
+			this.renderer = makeRenderer(this.canvas, alpha)
 			this.scene = new THREE.Scene()
 			this.camera = makeCamera()
 			this.raycaster = new THREE.Raycaster()

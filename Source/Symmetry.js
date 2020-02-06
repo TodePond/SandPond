@@ -260,13 +260,18 @@ const SYMMETRY = {}
 	}
 	
 	const xz1 = ["x, y, z", "-x, y, z", "x, y, -z", "-x, y, -z", "z, y, x", "-z, y, x", "z, y, -x", "-z, y, -x"]
-	const xz2 = ["x, y, -z", "-x, y, -z", "x, y, z", "-x, y, z", "z, y, -x", "-z, y, -x", "z, y, x", "-z, y, x"]
+	//const xz2 = ["x, y, -z", "-x, y, -z", "x, y, z", "-x, y, z", "z, y, -x", "-z, y, -x", "z, y, x", "-z, y, x"]
+	const xz2 = ["x, y, -z", "x, y, z", "-x, y, -z", "-x, y, z", "z, y, -x", "z, y, x", "-z, y, -x", "-z, y, x"]
 	const xz3 = ["-x, y, z", "-x, y, -z", "x, y, z", "x, y, -z", "-z, y, x", "-z, y, -x", "z, y, x", "z, y, -x"]
 	const xz4 = ["-x, y, -z", "x, y, -z", "-x, y, z", "x, y, z", "-z, y, -x", "z, y, -x", "-z, y, x", "z, y, x"]
 	const xz5 = ["z, y, x", "-z, y, x", "z, y, -x", "-z, y, -x", "x, y, z", "-x, y, z", "x, y, -z", "-x, y, -z"]
-	const xz6 = ["z, y, -x", "-z, y, -x", "z, y, x", "-z, y, x", "x, y, -z", "-x, y, -z", "x, y, z", "-x, y, z"]
+	//const xz6 = ["z, y, -x", "-z, y, -x", "z, y, x", "-z, y, x", "x, y, -z", "-x, y, -z", "x, y, z", "-x, y, z"]
+	const xz6 = ["z, y, -x", "z, y, x", "-z, y, -x", "-z, y, x", "x, y, -z", "x, y, z", "-x, y, -z", "-x, y, z"]
 	const xz7 = ["-z, y, x", "-z, y, -x", "z, y, x", "z, y, -x", "-x, y, z", "-x, y, -z", "x, y, z", "x, y, -z"]
 	const xz8 = ["-z, y, -x", "z, y, -x", "-z, y, x", "z, y, x", "-x, y, -z", "x, y, -z", "-x, y, z", "x, y, z"]
+	
+	const xy1 = ["x, y, z", "x, -y, z", "-x, y, z", "-x, -y, z", "y, x, z", "y, -x, z", "-y, x, z", "-y, -x, z"]
+	const xy2 = ["x, -y, z", "x, -y, z", "-x, y, z", "-x, -y, z", "y, x, z", "y, -x, z", "-y, x, z", "-y, -x, z"]
 	
 	REFLECTIONS_FOR = {
 		[""]: [["x, y, z"]].repeat(48),

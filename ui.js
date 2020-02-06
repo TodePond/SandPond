@@ -21,6 +21,11 @@ const UI = {}
 	const UI_STYLE = HTML `
 		<style>
 			
+			#ui {
+				position: absolute;
+				top: 0px;
+			}
+			
 			.menu {
 				font-size: 0px;
 				height: 35px;
