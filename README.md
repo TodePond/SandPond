@@ -22,7 +22,7 @@ Or try out the [live demo](http://www.sandboys.land).
 2. Add your TodeSplat function or file to `index.html` in the same place as the other elements.
 
 To learn more, check out the [TodeSplat Documentation](https://github.com/l2wilson94/Sandboys/wiki/TodeSplat-Documentation).<br>
-Or check out the examples in the [Elements](https://github.com/l2wilson94/Sandboys/tree/master/Elements) folder.
+Or check out the examples in the [Elements](https://github.com/l2wilson94/Sandboys/tree/master/Elements) folder.<br>
 To learn more about how symmetries work, check out my [Symmetry Notes](https://nifty-heyrovsky-333d51.netlify.com/symmetry.html).
 
 ## To-do
