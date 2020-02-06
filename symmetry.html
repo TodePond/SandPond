@@ -222,6 +222,10 @@ rule xz {
 				orbit.enableKeys = false
 				orbit.enableDamping = true
 				orbit.enableZoom = false
+				orbit.touches = {
+					ONE: undefined,
+					TWO: THREE.TOUCH.DOLLY_ROTATE,
+				}
 				stage.on.process(orbit.o.update)
 				dummyCamera = stage.camera
 			}
