@@ -259,12 +259,31 @@ const SYMMETRY = {}
 		
 	}
 	
+	const xz1 = ["x, y, z", "-x, y, z", "x, y, -z", "-x, y, -z", "z, y, x", "-z, y, x", "z, y, -x", "-z, y, -x"]
+	const xz2 = ["x, y, -z", "-x, y, -z", "x, y, z", "-x, y, z", "z, y, -x", "-z, y, -x", "z, y, x", "-z, y, x"]
+	const xz3 = ["-x, y, z", "-x, y, -z", "x, y, z", "x, y, -z", "-z, y, x", "-z, y, -x", "z, y, x", "z, y, -x"]
+	const xz4 = ["-x, y, -z", "x, y, -z", "-x, y, z", "x, y, z", "-z, y, -x", "z, y, -x", "-z, y, x", "z, y, x"]
+	const xz5 = ["z, y, x", "-z, y, x", "z, y, -x", "-z, y, -x", "x, y, z", "-x, y, z", "x, y, -z", "-x, y, -z"]
+	const xz6 = ["z, y, -x", "-z, y, -x", "z, y, x", "-z, y, x", "x, y, -z", "-x, y, -z", "x, y, z", "-x, y, z"]
+	const xz7 = ["-z, y, x", "-z, y, -x", "z, y, x", "z, y, -x", "-x, y, z", "-x, y, -z", "x, y, z", "x, y, -z"]
+	const xz8 = ["-z, y, -x", "z, y, -x", "-z, y, x", "z, y, x", "-x, y, -z", "x, y, -z", "-x, y, z", "x, y, z"]
+	
 	REFLECTIONS_FOR = {
 		[""]: [["x, y, z"]].repeat(48),
 		["x"]: [...[["x, y, z", "-x, y, z"]].repeat(4), ...[["-x, y, z", "x, y, z"]].repeat(4)].repeat(6),
 		["y"]: [...[["x, y, z", "-x, y, z"]].repeat(2), ...[["-x, y, z", "x, y, z"]].repeat(2)].repeat(12),
 		["z"]: [["x, y, z", "x, y, -z"], ["x, y, -z", "x, y, z"]].repeat(24),
+		["xz"]: [
+			xz1, xz2, xz1, xz2, xz3, xz4, xz3, xz4,
+			xz1, xz2, xz1, xz2, xz3, xz4, xz3, xz4,
+			xz5, xz6, xz5, xz6, xz7, xz8, xz7, xz8,
+			xz1, xz2, xz1, xz2, xz3, xz4, xz3, xz4,
+			xz5, xz6, xz5, xz6, xz7, xz8, xz7, xz8,
+			xz5, xz6, xz5, xz6, xz7, xz8, xz7, xz8,
+		],
 	}
+	
+	
 	
 	REFLECTIONS_UNIQUE = {
 		[""]: [

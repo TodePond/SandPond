@@ -5,20 +5,34 @@ element Sand {
 	emissive "#ffa34d"
 	category "Simple"
 	
-	for(x) rule { @_ => _@ }
+	//for(x) rule { @_ => _@ }
 	
-	/*rule {
+	rule {
 		@ => _
 		_    @
 	}
 	
 	
-	rule xz {
+	for(xz) rule {
 		@  => _
 		#_    #@
-	}*/
+	}
 	
 }
+
+/*
+
+18, 16, 55, 54
+18, 16, 54, 55
+16, 18, 55, 54
+16, 18, 54, 55
+55, 54, 18, 16
+54, 55, 18, 16
+55, 54, 16, 18
+54, 55, 16, 18
+YES!
+
+*/
 
 /*element Static {
 	colour "black"
