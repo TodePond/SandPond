@@ -126,12 +126,12 @@ This means that one of two diagrams will be chosen:<br>
 <div class="demo" id="rightLeft1"></div><br>
 With this 'x' label, there are only two translations:
 <pre>
-( x, y, z )
-(-x, y, z )
+( x, y, 0 )
+(-x, y, 0 )
 </pre>
 <br>
 <h1>Sideways</h1>
-You could also use the 'xz' label to make it go in every direction sideways:
+You could also use the 'xz' label to make it go in any direction sideways:
 <pre>
 rule xz {
 	@_ => _@
@@ -142,11 +142,34 @@ rule xz {
 <div class="demo" id="side2"></div>
 <div class="demo" id="side3"></div>
 <pre>
-( x, y, z )
-(-x, y, z )
-( z, y, x )
-( z, y,-x )
+( x, y, 0 )
+(-x, y, 0 )
+( 0, y, x )
+( 0, y,-x )
 </pre>
+<br>
+<h1>Any Direction</h1>
+You can use the 'xyz' label to make it go in ANY direction:
+<pre>
+rule xz {
+	@_ => _@
+}
+</pre>
+<div class="demo" id="any0"></div>
+<div class="demo" id="any1"></div>
+<div class="demo" id="any2"></div>
+<div class="demo" id="any3"></div>
+<div class="demo" id="any4"></div>
+<div class="demo" id="any5"></div>
+<pre>
+( x, y, 0 )
+(-x, y, 0 )
+( 0, y, x )
+( 0, y,-x )
+( y, x, 0 )
+( y,-x, 0 )
+</pre>
+
 
 		</article>
 	
@@ -200,11 +223,21 @@ rule xz {
 				}
 				
 				rule side {
-					@_ => _@
+					_@ => @_
 				}
 				
 				rule side {
-					_@ => @_
+					@_ => _@
+				}
+				
+				rule {
+					_ => @
+					@    _
+				}
+				
+				rule {
+					@ => _
+					_    @
 				}
 			}
 		`
@@ -349,6 +382,12 @@ rule xz {
 		makeDemo("side1", getBaseRule(1))
 		makeDemo("side2", getBaseRule(2))
 		makeDemo("side3", getBaseRule(3))
+		makeDemo("any0", getBaseRule(0))
+		makeDemo("any1", getBaseRule(1))
+		makeDemo("any2", getBaseRule(2))
+		makeDemo("any3", getBaseRule(3))
+		makeDemo("any4", getBaseRule(4))
+		makeDemo("any5", getBaseRule(5))
 		
 		requestAnimationFrame(render)
 		
