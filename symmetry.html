@@ -113,7 +113,10 @@ For example:
 </pre>
 This makes an atom move to the right each tick.<br>
 Let's represent the left-hand-side of our 2D diagram like this:<br>
+
+<div id="rightGroup">
 <div class="demo" id="right"></div>
+</div>
 
 <h1>Left and Right</h1>
 Now let's imagine you want this atom to randomly move left or right.<br>
@@ -124,8 +127,11 @@ You can add the 'x' rule label, that flips the x-axis randomly:
 	}
 </pre>
 This means that one of two diagrams will be chosen:<br>
+
+<div id="rightLeft">
 <div class="demo" id="rightLeft0"></div>
-<div class="demo" id="rightLeft1"></div><br>
+<div class="demo" id="rightLeft1"></div>
+</div>
 With this 'x' label, there are only two translations:
 <pre>
 ( x, y, 0 )
@@ -139,10 +145,12 @@ rule xz {
 	@_ => _@
 }
 </pre>
+<div id="side">
 <div class="demo" id="side0"></div>
 <div class="demo" id="side1"></div>
 <div class="demo" id="side2"></div>
 <div class="demo" id="side3"></div>
+</div>
 <pre>
 ( x, y, 0 )
 (-x, y, 0 )
@@ -157,12 +165,14 @@ rule xz {
 	@_ => _@
 }
 </pre>
-<div class="demo" id="any0"></div>
-<div class="demo" id="any1"></div>
-<div class="demo" id="any2"></div>
-<div class="demo" id="any3"></div>
-<div class="demo" id="any4"></div>
-<div class="demo" id="any5"></div>
+<div id="any">
+	<div class="demo" id="any0"></div>
+	<div class="demo" id="any1"></div>
+	<div class="demo" id="any2"></div>
+	<div class="demo" id="any3"></div>
+	<div class="demo" id="any4"></div>
+	<div class="demo" id="any5"></div>
+</div>
 <pre>
 ( x, y, 0 )
 (-x, y, 0 )
@@ -314,7 +324,7 @@ rule xz {
 			requestAnimationFrame(render)
 		}
 		
-		const makeDemo = (name, rule, bothSides = false) => {
+		const makeDemo = (name, group, rule, bothSides = false) => {
 			
 			const scene = new THREE.Scene()
 			
@@ -347,14 +357,13 @@ rule xz {
 			
 			let orbit = undefined
 			if (true || !dummyCamera) {
-				orbit = new THREE.OrbitControls(camera)
+				orbit = new THREE.OrbitControls(camera, $(`#${group}`))
 				orbit.mouseButtons.RIGHT = THREE.MOUSE.ROTATE
 				orbit.enableKeys = false
 				orbit.enableDamping = true
 				orbit.enableZoom = false
 				orbit.touches = {
-					ONE: undefined,
-					TWO: THREE.TOUCH.DOLLY_ROTATE,
+					ONE: THREE.TOUCH.ROTATE,
 				}
 				//stage.on.process(orbit.o.update)
 				dummyCamera = camera
@@ -377,19 +386,19 @@ rule xz {
 		
 		const getBaseRule = (ruleNumber) => Dummy.rules[ruleNumber].reflections[0][0]
 		
-		makeDemo("right", getBaseRule(0))
-		makeDemo("rightLeft0", getBaseRule(0))
-		makeDemo("rightLeft1", getBaseRule(1))
-		makeDemo("side0", getBaseRule(0))
-		makeDemo("side1", getBaseRule(1))
-		makeDemo("side2", getBaseRule(2))
-		makeDemo("side3", getBaseRule(3))
-		makeDemo("any0", getBaseRule(0))
-		makeDemo("any1", getBaseRule(1))
-		makeDemo("any2", getBaseRule(2))
-		makeDemo("any3", getBaseRule(3))
-		makeDemo("any4", getBaseRule(4))
-		makeDemo("any5", getBaseRule(5))
+		makeDemo("right", "rightGroup", getBaseRule(0))
+		makeDemo("rightLeft0", "rightLeft", getBaseRule(0))
+		makeDemo("rightLeft1", "rightLeft", getBaseRule(1))
+		makeDemo("side0", "side", getBaseRule(0))
+		makeDemo("side1", "side", getBaseRule(1))
+		makeDemo("side2", "side", getBaseRule(2))
+		makeDemo("side3", "side", getBaseRule(3))
+		makeDemo("any0", "any", getBaseRule(0))
+		makeDemo("any1", "any", getBaseRule(1))
+		makeDemo("any2", "any", getBaseRule(2))
+		makeDemo("any3", "any", getBaseRule(3))
+		makeDemo("any4", "any", getBaseRule(4))
+		makeDemo("any5", "any", getBaseRule(5))
 		
 		requestAnimationFrame(render)
 		
