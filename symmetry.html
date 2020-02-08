@@ -77,7 +77,7 @@
 		
 		.demo {
 			max-width: 200px;
-			width: 35vw;
+			width: 30vw;
 			max-height: 200px;
 			height: 35vw;
 			display: inline-block;
@@ -307,6 +307,64 @@ So the potential diagrams are either these:<br>
 	<div class="demo" id="follow3"></div>
 </div>
 
+<h1 id="diffo">Follow Through - Different Symmetries</h1>
+The chosen symmetry follows through even when rules have different symmetry labels.<br>
+ie: Where applicable, a chosen symmetry will stay consistent from one rule to the next.<br>
+Look at this:
+<pre>
+element Foo {
+	
+	rule xz {
+		@_ => _@
+	}
+	
+	rule x {
+		@_ => _@
+		#     #
+	}
+}
+</pre>
+When the first rule points to the right, the second rule points right too:
+<div id="diffoRight">
+	<div class="demo" id="diffoRight0"></div>
+	<div class="demo" id="diffoRight1"></div>
+</div>
+When the first rule points to the left, the second rule points left too:
+<div id="diffoLeft">
+	<div class="demo" id="diffoLeft0"></div>
+	<div class="demo" id="diffoLeft1"></div>
+</div>
+But sometimes the first rule points along the z-axis.<br>
+In these cases, it wouldn't make much sense to try to match this to the second rule.<br>
+When this happens, the second rule randomly picks one of its translations.<br>
+For example, you could have this combination:
+<div id="diffoZ">
+	<div class="demo" id="diffoZ0"></div>
+	<div class="demo" id="diffoZ1"></div>
+</div>
+For completeness, let's now list all possibile combinations of these rules:
+<div id="diffoAll">
+	<div class="demo" id="diffoAll0"></div>
+	<div class="demo" id="diffoAll1"></div>
+	<p style="width: 70vw; max-width: 400px; text-align: center;">--- or ---</p>
+	<div class="demo" id="diffoAll2"></div>
+	<div class="demo" id="diffoAll3"></div>
+	<p style="width: 70vw; max-width: 400px; text-align: center;">--- or ---</p>
+	<div class="demo" id="diffoAll4"></div>
+	<div class="demo" id="diffoAll5"></div>
+	<p style="width: 70vw; max-width: 400px; text-align: center;">--- or ---</p>
+	<div class="demo" id="diffoAll6"></div>
+	<div class="demo" id="diffoAll7"></div>
+	<p style="width: 70vw; max-width: 400px; text-align: center;">--- or ---</p>
+	<div class="demo" id="diffoAll8"></div>
+	<div class="demo" id="diffoAll9"></div>
+	<p style="width: 70vw; max-width: 400px; text-align: center;">--- or ---</p>
+	<div class="demo" id="diffoAll10"></div>
+	<div class="demo" id="diffoAll11"></div>
+	
+</div>
+
+
 
 		</article>
 	
@@ -493,6 +551,7 @@ So the potential diagrams are either these:<br>
 				if (true || !dummyCamera) {
 					orbit = new THREE.OrbitControls(camera, $(`#${group}`))
 					orbit.mouseButtons.RIGHT = THREE.MOUSE.ROTATE
+					orbit.mouseButtons.MIDDLE = undefined
 					orbit.enableKeys = false
 					orbit.enableDamping = true
 					orbit.enableZoom = false
@@ -805,6 +864,14 @@ So the potential diagrams are either these:<br>
 						_@ => @_
 						 #     #
 					}
+					
+					rule side {
+						_@ => @_
+					}
+					
+					rule side {
+						@_ => _@
+					}
 				}
 			`
 			
@@ -813,6 +880,29 @@ So the potential diagrams are either these:<br>
 			
 			makeDemo("follow2", "followOther", getBaseRule(1, FollowDummy))
 			makeDemo("follow3", "followOther", getBaseRule(3, FollowDummy))
+			
+			makeDemo("diffoRight0", "diffoRight", getBaseRule(0, FollowDummy))
+			makeDemo("diffoRight1", "diffoRight", getBaseRule(2, FollowDummy))
+			
+			makeDemo("diffoLeft0", "diffoLeft", getBaseRule(1, FollowDummy))
+			makeDemo("diffoLeft1", "diffoLeft", getBaseRule(3, FollowDummy))
+			
+			makeDemo("diffoZ0", "diffoZ", getBaseRule(4, FollowDummy))
+			makeDemo("diffoZ1", "diffoZ", getBaseRule(2, FollowDummy))
+			
+			makeDemo("diffoAll0", "diffoAll", getBaseRule(0, FollowDummy))
+			makeDemo("diffoAll1", "diffoAll", getBaseRule(2, FollowDummy))
+			makeDemo("diffoAll2", "diffoAll", getBaseRule(1, FollowDummy))
+			makeDemo("diffoAll3", "diffoAll", getBaseRule(3, FollowDummy))
+			makeDemo("diffoAll4", "diffoAll", getBaseRule(4, FollowDummy))
+			makeDemo("diffoAll5", "diffoAll", getBaseRule(2, FollowDummy))
+			makeDemo("diffoAll6", "diffoAll", getBaseRule(4, FollowDummy))
+			makeDemo("diffoAll7", "diffoAll", getBaseRule(3, FollowDummy))
+			
+			makeDemo("diffoAll8", "diffoAll", getBaseRule(5, FollowDummy))
+			makeDemo("diffoAll9", "diffoAll", getBaseRule(2, FollowDummy))
+			makeDemo("diffoAll10", "diffoAll", getBaseRule(5, FollowDummy))
+			makeDemo("diffoAll11", "diffoAll", getBaseRule(3, FollowDummy))
 			
 			requestAnimationFrame(render)
 		})
