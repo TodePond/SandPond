@@ -76,7 +76,7 @@
 		}
 		
 		.demo {
-			max-width: 250px;
+			max-width: 200px;
 			width: 35vw;
 			max-height: 200px;
 			height: 35vw;
@@ -181,7 +181,7 @@ rule xyz {
 	<div class="demo" id="any5"></div>
 </div>
 By writing 'xyz', you are saying, "I don't care which way round the x, y, or z-axes are."<br>
-In this case, there are 6 relevant translations:
+In this case, there are 6 relevant transformations:
 <pre>
 ( x, y, 0 )
 (-x, y, 0 )
@@ -223,63 +223,60 @@ rule xz {
 ( 0, y, x )
 ( 0, y,-x )
 </pre><br>
-<h1 id="here">Slide Anywhere</h1>
-Sliding in any direction gets a lot more complicated.
+<h1>Slide Anywhere</h1>
+What about sliding in any direction?
 <pre>
 rule xyz {
 	@  => _
 	#_    #@
 }
 </pre>
-To be continued...
-<!--<div id="slideAny">
-	<p style="margin-bottom: -20px; font-weight: bold;">Normal</p>
-	<div class="demo" id="slideAny0"></div><br>
-	
-	<p style="margin-bottom: -20px; font-weight: bold;">Rotate around y-axis</p>
+I find it trickier to visualise all possibilities for this one.<br>
+I think these are all the possible transformations:
+<pre>
+( x, y, 0 )    ( x, 0, y )
+( x,-y, 0 )    ( x, 0,-y )
+(-x, y, 0 )    (-x, 0, y )
+(-x,-y, 0 )    (-x, 0,-y )
+
+( 0, y, x )    ( y, x, 0 )
+( 0,-y, x )    (-y, x, 0 )
+( 0, y,-x )    ( y,-x, 0 )
+( 0,-y,-x )    (-y,-x, 0 )
+
+( 0, x, y )    ( y, 0, x )
+( 0, x,-y )    (-y, 0, x )
+( 0,-x, y )    ( y, 0,-x )
+( 0,-x,-y )    (-y, 0,-x )
+
+</pre>
+And this is what they look like in 3D (not necessarily in order):
+<div id="slideAny">
+	<div class="demo" id="slideAny0"></div>
 	<div class="demo" id="slideAny1"></div>
 	<div class="demo" id="slideAny2"></div>
-	<div class="demo" id="slideAny3"></div><br>
-	
-	<p style="margin-bottom: -20px; font-weight: bold;">Rotate around x-axis</p>
+	<div class="demo" id="slideAny3"></div>
 	<div class="demo" id="slideAny4"></div>
 	<div class="demo" id="slideAny5"></div>
-	<div class="demo" id="slideAny6"></div><br>
-	
-	<p style="margin-bottom: -20px; font-weight: bold;">Rotate around z-axis</p>
+	<div class="demo" id="slideAny6"></div>
 	<div class="demo" id="slideAny7"></div>
 	<div class="demo" id="slideAny8"></div>
-	<div class="demo" id="slideAny9"></div><br>
-	
-	<p style="margin-bottom: -20px; font-weight: bold;">Reflected in x=y</p>
+	<div class="demo" id="slideAny9"></div>
 	<div class="demo" id="slideAny10"></div>
 	<div class="demo" id="slideAny11"></div>
+	<div class="demo" id="slideAny12"></div>
+	<div class="demo" id="slideAny13"></div>
+	<div class="demo" id="slideAny14"></div>
+	<div class="demo" id="slideAny15"></div>
+	<div class="demo" id="slideAny16"></div>
+	<div class="demo" id="slideAny17"></div>
+	<div class="demo" id="slideAny18"></div>
+	<div class="demo" id="slideAny19"></div>
+	<div class="demo" id="slideAny20"></div>
+	<div class="demo" id="slideAny21"></div>
+	<div class="demo" id="slideAny22"></div>
+	<div class="demo" id="slideAny23"></div>
 </div>
-<pre>
-Normal
-( x, y, 0 )
-
-Rotate around y-axis
-(-x, y, 0 )
-( 0, y, x )
-( 0, y,-x )
-
-Rotate around x-axis
-( x,-y, 0 )
-( x, 0, y )
-( x, 0,-y )
-
-Rotate around z-axis
-(-x,-y, 0 )
-( y,-x, 0 )
-(-y,-x, 0 )
-
-Reflected in x=y
-( y, x, 0 )
-
-TODO: more
-</pre>-->
-
 
 		</article>
 	
@@ -426,9 +423,12 @@ TODO: more
 				
 				const scene = new THREE.Scene()
 				
-				const fov = 30
-				const camera = new THREE.PerspectiveCamera(fov)
-				camera.position.set(0, 2, 10)
+				//const fov = 30
+				const fov = 15
+				const camera = new THREE.OrthographicCamera(-2.5, 2.5, 2.5, -2.5)
+				//const camera = new THREE.PerspectiveCamera(fov)
+				camera.position.set(-1, 2, 10)
+				//camera.position.set(0, 3, 15)
 				camera.lookAt(0, 0, 0)
 				
 				/*{
@@ -577,7 +577,7 @@ TODO: more
 				}
 			`
 			
-			const getBaseRule = (ruleNumber) => Dummy.rules[ruleNumber] && Dummy.rules[ruleNumber].reflections[0][0]
+			const getBaseRule = (ruleNumber, element = Dummy) => element.rules[ruleNumber] && element.rules[ruleNumber].reflections[0][0]
 			
 			makeDemo("right", "rightGroup", getBaseRule(0))
 			makeDemo("rightLeft0", "rightLeft", getBaseRule(0))
@@ -598,20 +598,162 @@ TODO: more
 			makeDemo("slideSide2", "slideSide", getBaseRule(8))
 			makeDemo("slideSide3", "slideSide", getBaseRule(9))
 			
-			const anySlideRule = Dummy.rules[6]
+			TodeSplat `
+				element SlideAny {
+					
+					// x y 0
+					rule {
+						@  => _
+						#_    #@
+					}
+					
+					rule {
+						 @ =>  _
+						_#    @#
+					}
+					
+					rule {
+						#_    #@
+						@  => _
+					}
+					
+					rule {
+						_#    @#
+						 @ =>  _
+					}
+					
+					// x 0 y
+					rule top {
+						#_    #@
+						@  => _
+					}
+					
+					rule top {
+						_#    @#
+						 @ =>  _
+					}
+					
+					rule top {
+						@  => _
+						#_    #@
+					}
+					
+					rule top {
+						 @ =>  _
+						_#    @#
+					}
+					
+					// 0 y x
+					rule side {
+						#_    #@
+						@  => _
+					}
+					
+					rule side {
+						_#    @#
+						 @ =>  _
+					}
+					
+					rule side {
+						@  => _
+						#_    #@
+					}
+					
+					rule side {
+						 @ =>  _
+						_#    @#
+					}
+					
+					// y x 0
+					rule {
+						_  => .
+						#@    ..
+					}
+					
+					rule {
+						 _ =>  _
+						@#    @#
+					}
+					
+					rule {
+						#@    #@
+						_  => _
+					}
+					
+					rule {
+						@#    @#
+						 _ =>  _
+					}
+					
+					// 0 x y
+					rule side {
+						 _ =>  .
+						@#    ..
+					}
+					
+					rule side {
+						_  => .
+						#@    ..
+					}
+					
+					rule side {
+						@#    ..
+						 _ =>  .
+					}
+					
+					rule side {
+						#@    ..
+						_  => .
+					}
+					
+					// y 0 x
+					rule top {
+						#@ => ..
+						_     .
+					}
+					
+					rule top {
+						@# => ..
+						 _     .
+					}
+					
+					rule top {
+						_     .
+						#@ => ..
+					}
+					
+					rule top {
+						 _     .
+						@# => ..
+					}
+					
+				}
+			`
 			
-			makeDemo("slideAny0", "slideAny", getBaseRule(6))
-			makeDemo("slideAny1", "slideAny", getBaseRule(7))
-			makeDemo("slideAny2", "slideAny", getBaseRule(8))
-			makeDemo("slideAny3", "slideAny", getBaseRule(9))
-			makeDemo("slideAny4", "slideAny", getBaseRule(10))
-			makeDemo("slideAny5", "slideAny", getBaseRule(11))
-			makeDemo("slideAny6", "slideAny", getBaseRule(12))
-			makeDemo("slideAny7", "slideAny", getBaseRule(13))
-			makeDemo("slideAny8", "slideAny", getBaseRule(14))
-			makeDemo("slideAny9", "slideAny", getBaseRule(15))
-			makeDemo("slideAny10", "slideAny", getBaseRule(16))
-			makeDemo("slideAny11", "slideAny", getBaseRule(17))
+			makeDemo("slideAny0", "slideAny", getBaseRule(0, SlideAny))
+			makeDemo("slideAny1", "slideAny", getBaseRule(1, SlideAny))
+			makeDemo("slideAny2", "slideAny", getBaseRule(2, SlideAny))
+			makeDemo("slideAny3", "slideAny", getBaseRule(3, SlideAny))
+			makeDemo("slideAny4", "slideAny", getBaseRule(4, SlideAny))
+			makeDemo("slideAny5", "slideAny", getBaseRule(5, SlideAny))
+			makeDemo("slideAny6", "slideAny", getBaseRule(6, SlideAny))
+			makeDemo("slideAny7", "slideAny", getBaseRule(7, SlideAny))
+			makeDemo("slideAny8", "slideAny", getBaseRule(8, SlideAny))
+			makeDemo("slideAny9", "slideAny", getBaseRule(9, SlideAny))
+			makeDemo("slideAny10", "slideAny", getBaseRule(10, SlideAny))
+			makeDemo("slideAny11", "slideAny", getBaseRule(11, SlideAny))
+			makeDemo("slideAny12", "slideAny", getBaseRule(12, SlideAny))
+			makeDemo("slideAny13", "slideAny", getBaseRule(13, SlideAny))
+			makeDemo("slideAny14", "slideAny", getBaseRule(14, SlideAny))
+			makeDemo("slideAny15", "slideAny", getBaseRule(15, SlideAny))
+			makeDemo("slideAny16", "slideAny", getBaseRule(16, SlideAny))
+			makeDemo("slideAny17", "slideAny", getBaseRule(17, SlideAny))
+			makeDemo("slideAny18", "slideAny", getBaseRule(18, SlideAny))
+			makeDemo("slideAny19", "slideAny", getBaseRule(19, SlideAny))
+			makeDemo("slideAny20", "slideAny", getBaseRule(20, SlideAny))
+			makeDemo("slideAny21", "slideAny", getBaseRule(21, SlideAny))
+			makeDemo("slideAny22", "slideAny", getBaseRule(22, SlideAny))
+			makeDemo("slideAny23", "slideAny", getBaseRule(23, SlideAny))
 			
 			requestAnimationFrame(render)
 		})
