@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <head>
 	<title>Sandboy Symmetries</title>
-	<meta name="viewport" content="height=device-height, width=device-width, initial-scale=1.0">
 	<meta charset="utf-8"/>
+	<meta name="viewport" content="height=device-height, width=device-width, initial-scale=1.0">
 
 	<!-- My Stuff -->
 	<script src="Libraries/Array.js"></script>
@@ -87,10 +87,12 @@
 			position: absolute;
 			left: 0;
 			top: 0;
-			width: 100vw;
+			width: 100%;
 			height: 100vh;
 			display: block;
 			z-index: -1;
+			margin: 0;
+			padding: 0;
 		}
 	
 	</style>
@@ -110,9 +112,9 @@
 In TodeSplat, you draw 2D diagrams to program elements.<br>
 For example:
 <pre>
-	rule {
-		@_ => _@
-	}
+rule {
+	@_ => _@
+}
 </pre>
 This makes an atom move to the right each tick.<br>
 Let's represent the left-hand-side of our 2D diagram like this:<br>
@@ -123,11 +125,11 @@ Let's represent the left-hand-side of our 2D diagram like this:<br>
 
 <h1>Left and Right</h1>
 Now let's imagine you want this atom to randomly move left or right.<br>
-You can add the 'x' rule label, that flips the x-axis randomly:
+You can write 'x', which flips the x-axis randomly:
 <pre>
-	rule x {
-		@_ => _@
-	}
+rule x {
+	@_ => _@
+}
 </pre>
 This means that one of two diagrams will be chosen:<br>
 
@@ -135,6 +137,7 @@ This means that one of two diagrams will be chosen:<br>
 <div class="demo" id="rightLeft0"></div>
 <div class="demo" id="rightLeft1"></div>
 </div>
+When you write the 'x' label, you are saying, "I don't care which way round the x-axis is."<br>
 With this 'x' label, there are only two translations:
 <pre>
 ( x, y, 0 )
@@ -154,6 +157,7 @@ rule xz {
 <div class="demo" id="side2"></div>
 <div class="demo" id="side3"></div>
 </div>
+By writing 'xz', you are saying, "I don't care which way round the x-axis or z-axis are."
 <pre>
 ( x, y, 0 )
 (-x, y, 0 )
@@ -164,7 +168,7 @@ rule xz {
 <h1>Any Direction</h1>
 You can use the 'xyz' label to make it go in ANY direction:
 <pre>
-rule xz {
+rule xyz {
 	@_ => _@
 }
 </pre>
@@ -176,6 +180,8 @@ rule xz {
 	<div class="demo" id="any4"></div>
 	<div class="demo" id="any5"></div>
 </div>
+By writing 'xyz', you are saying, "I don't care which way round the x, y, or z-axes are."<br>
+In this case, there are 6 relevant translations:
 <pre>
 ( x, y, 0 )
 (-x, y, 0 )
@@ -184,6 +190,95 @@ rule xz {
 ( y, x, 0 )
 ( y,-x, 0 )
 </pre>
+<br>
+<h1>Slide Right</h1>
+Let's look at a slightly more complicated example now:
+<pre>
+rule {
+	@  => _
+	#_    #@
+}
+</pre>
+This makes an atom slide down and to the right if there is an atom below it.<br>
+<div id="slideRight">
+	<div class="demo" id="slideRight0"></div>
+</div>
+<h1>Slide Sideways</h1>
+Again, we can use a symmetry label to make it randomly choose a certain direction sideways:
+<pre>
+rule xz {
+	@  => _
+	#_    #@
+}
+</pre>
+<div id="slideSide">
+	<div class="demo" id="slideSide0"></div>
+	<div class="demo" id="slideSide1"></div>
+	<div class="demo" id="slideSide2"></div>
+	<div class="demo" id="slideSide3"></div>
+</div>
+<pre>
+( x, y, 0 )
+(-x, y, 0 )
+( 0, y, x )
+( 0, y,-x )
+</pre><br>
+<h1 id="here">Slide Anywhere</h1>
+Sliding in any direction gets a lot more complicated.
+<pre>
+rule xyz {
+	@  => _
+	#_    #@
+}
+</pre>
+To be continued...
+<!--<div id="slideAny">
+	<p style="margin-bottom: -20px; font-weight: bold;">Normal</p>
+	<div class="demo" id="slideAny0"></div><br>
+	
+	<p style="margin-bottom: -20px; font-weight: bold;">Rotate around y-axis</p>
+	<div class="demo" id="slideAny1"></div>
+	<div class="demo" id="slideAny2"></div>
+	<div class="demo" id="slideAny3"></div><br>
+	
+	<p style="margin-bottom: -20px; font-weight: bold;">Rotate around x-axis</p>
+	<div class="demo" id="slideAny4"></div>
+	<div class="demo" id="slideAny5"></div>
+	<div class="demo" id="slideAny6"></div><br>
+	
+	<p style="margin-bottom: -20px; font-weight: bold;">Rotate around z-axis</p>
+	<div class="demo" id="slideAny7"></div>
+	<div class="demo" id="slideAny8"></div>
+	<div class="demo" id="slideAny9"></div><br>
+	
+	<p style="margin-bottom: -20px; font-weight: bold;">Reflected in x=y</p>
+	<div class="demo" id="slideAny10"></div>
+	<div class="demo" id="slideAny11"></div>
+</div>
+<pre>
+Normal
+( x, y, 0 )
+
+Rotate around y-axis
+(-x, y, 0 )
+( 0, y, x )
+( 0, y,-x )
+
+Rotate around x-axis
+( x,-y, 0 )
+( x, 0, y )
+( x, 0,-y )
+
+Rotate around z-axis
+(-x,-y, 0 )
+( y,-x, 0 )
+(-y,-x, 0 )
+
+Reflected in x=y
+( y, x, 0 )
+
+TODO: more
+</pre>-->
 
 
 		</article>
@@ -227,213 +322,299 @@ rule xz {
 	<!-- Main -->
 	<script>
 		
-		TodeSplat `
-			element Dummy {
-				rule {
-					@_ => _@
-				}
+		document.fonts.ready.then(() => {
+			const boxGeometry = new THREE.BoxGeometry(1, 1, 1)
+			const boxLabelGeometry = new THREE.BoxGeometry(1.01, 1.01, 1.01)
+		
+			const makeBox = (character, colour, emissive = colour) => {
+			
+				const size = 32
+			
+				const dynamicTexture = new THREEx.DynamicTexture(size, size)
+				dynamicTexture.context.font	= `${size * 3/4}px UbuntuMono`;
+				dynamicTexture.clear(emissive)
+				dynamicTexture.texture.anisotropy = renderer.capabilities.getMaxAnisotropy()
+				dynamicTexture.drawText(character, (size * 1/4)+(size*1/8)/2, (size*3/4)-(size*1/8)/2, "rgb(23, 29, 40)")
 				
-				rule {
-					_@ => @_
-				}
+				const alphaTexture = new THREEx.DynamicTexture(size, size)
+				alphaTexture.context.font	= `${size * 3/4}px UbuntuMono`;
+				alphaTexture.clear("black")
+				alphaTexture.texture.anisotropy = renderer.capabilities.getMaxAnisotropy()
+				alphaTexture.drawText(character, (size * 1/4)+(size*1/8)/2, (size*3/4)-(size*1/8)/2, "white")
 				
-				rule side {
-					_@ => @_
-				}
+				const dynamicMaterial = new THREE.MeshBasicMaterial({
+					map: dynamicTexture.texture,
+					alphaMap: alphaTexture.texture,
+					alphaTest: 0.5,
+				})
 				
-				rule side {
-					@_ => _@
-				}
-				
-				rule {
-					_ => @
-					@    _
-				}
-				
-				rule {
-					@ => _
-					_    @
-				}
+				const boxLabel = new THREE.Mesh(boxLabelGeometry, dynamicMaterial)
+				/*const boxLabel = new THREEx.DynamicText2DObject(character)
+				boxLabel.dynamicTexture.texture.anisotropy = renderer.capabilities.getMaxAnisotropy()
+				*/
+			
+				const boxMaterial = new THREE.MeshStandardMaterial({color: colour, emissive})
+				const box = new THREE.Mesh(boxGeometry, boxMaterial)
+				return {box, boxLabel}
 			}
-		`
-		
-		const boxGeometry = new THREE.BoxGeometry(1, 1, 1)
-		const boxLabelGeometry = new THREE.BoxGeometry(1.01, 1.01, 1.01)
-	
-		const makeBox = (character, colour, emissive = colour) => {
-		
-			const size = 32
-		
-			const dynamicTexture = new THREEx.DynamicTexture(size, size)
-			dynamicTexture.context.font	= `${size * 3/4}px UbuntuMono`;
-			dynamicTexture.clear(emissive)
-			dynamicTexture.texture.anisotropy = renderer.capabilities.getMaxAnisotropy()
-			dynamicTexture.drawText(character, (size * 1/4)+(size*1/8)/2, (size*3/4)-(size*1/8)/2, "rgb(23, 29, 40)")
 			
-			const alphaTexture = new THREEx.DynamicTexture(size, size)
-			alphaTexture.context.font	= `${size * 3/4}px UbuntuMono`;
-			alphaTexture.clear("black")
-			alphaTexture.texture.anisotropy = renderer.capabilities.getMaxAnisotropy()
-			alphaTexture.drawText(character, (size * 1/4)+(size*1/8)/2, (size*3/4)-(size*1/8)/2, "white")
-			
-			const dynamicMaterial = new THREE.MeshBasicMaterial({
-				map: dynamicTexture.texture,
-				alphaMap: alphaTexture.texture,
-				alphaTest: 0.5,
-			})
-			
-			const boxLabel = new THREE.Mesh(boxLabelGeometry, dynamicMaterial)
-			/*const boxLabel = new THREEx.DynamicText2DObject(character)
-			boxLabel.dynamicTexture.texture.anisotropy = renderer.capabilities.getMaxAnisotropy()
-			*/
-		
-			const boxMaterial = new THREE.MeshStandardMaterial({color: colour, emissive})
-			const box = new THREE.Mesh(boxGeometry, boxMaterial)
-			return {box, boxLabel}
-		}
-		
-		const getColours = (character) => {
-			if (character == "@") return ["#ffcc00", "#ffa34d"]
-			return ["grey"]
-		}
-		
-		let dummyCamera = undefined
-		
-		const canvas = $("#canvasContainer")
-		const renderer = new THREE.WebGLRenderer({canvas, alpha: true, antialias: true, powerPreference: "high-performance"})
-		
-		const sceneElements = []
-		const addScene = (elem, fn) => {
-			sceneElements.push({elem, fn})
-		}
-		
-		function resizeRendererToDisplaySize(renderer) {
-			const canvas = renderer.domElement;
-			const width = canvas.clientWidth;
-			const height = canvas.clientHeight;
-			const needResize = canvas.width !== width || canvas.height !== height;
-			if (needResize) {
-				renderer.setSize(width, height, false);
+			const getColours = (character) => {
+				if (character == "@") return ["#ffcc00", "#ffa34d"]
+				if (character == "#") return ["#4b5971"]
+				if (character == "_") return ["grey"]
+				return ["grey"]
 			}
-			return needResize;
-		}
-		
-		const clearColor = new THREE.Color('#000')
-		
-		const render = (time) => {
-			time *= 0.001
-			resizeRendererToDisplaySize(renderer)
-			renderer.setScissorTest(false)
-			renderer.setClearColor(clearColor, 0)
-			renderer.clear(true, true)
-			renderer.setScissorTest(true)
 			
-			const transform = `translateY(${window.scrollY}px)`
-			renderer.domElement.style.transform = transform
+			let dummyCamera = undefined
 			
-			for (const {elem, fn} of sceneElements) {
-				const rect = elem.getBoundingClientRect()
-				const {left, right, top, bottom, width, height} = rect
+			const canvas = $("#canvasContainer")
+			const renderer = new THREE.WebGLRenderer({canvas, alpha: true, antialias: true, powerPreference: "high-performance"})
+			
+			const sceneElements = []
+			const addScene = (elem, fn) => {
+				sceneElements.push({elem, fn})
+			}
+			
+			function resizeRendererToDisplaySize(renderer) {
+				const canvas = renderer.domElement;
+				const width = canvas.clientWidth;
+				const height = canvas.clientHeight;
+				const needResize = canvas.width !== width || canvas.height !== height;
+				if (needResize) {
+					renderer.setSize(width, height, false);
+				}
+				return needResize;
+			}
+			
+			const clearColor = new THREE.Color('#000')
+			
+			const render = (time) => {
+				time *= 0.001
+				resizeRendererToDisplaySize(renderer)
+				renderer.setScissorTest(false)
+				renderer.setClearColor(clearColor, 0)
+				renderer.clear(true, true)
+				renderer.setScissorTest(true)
 				
-				const isOffscreen = 
-					bottom < 0 ||
-					top > renderer.domElement.clientHeight ||
-					right < 0 ||
-					left > renderer.domElement.clientWidth
+				const transform = `translateY(${window.scrollY}px)`
+				renderer.domElement.style.transform = transform
+				
+				for (const {elem, fn} of sceneElements) {
+					const rect = elem.getBoundingClientRect()
+					const {left, right, top, bottom, width, height} = rect
 					
-				if (!isOffscreen) {
-					const positiveYUpBottom = renderer.domElement.clientHeight - bottom
-					renderer.setScissor(left, positiveYUpBottom, width, height)
-					renderer.setViewport(left, positiveYUpBottom, width, height)
+					const isOffscreen = 
+						bottom < 0 ||
+						top > renderer.domElement.clientHeight ||
+						right < 0 ||
+						left > renderer.domElement.clientWidth
+						
+					if (!isOffscreen) {
+						const positiveYUpBottom = renderer.domElement.clientHeight - bottom
+						renderer.setScissor(left, positiveYUpBottom, width, height)
+						renderer.setViewport(left, positiveYUpBottom, width, height)
+						
+						fn(time, rect)
+					}
 					
-					fn(time, rect)
 				}
 				
+				requestAnimationFrame(render)
 			}
+			
+			const makeDemo = (name, group, rule, bothSides = false) => {
+				
+				const scene = new THREE.Scene()
+				
+				const fov = 30
+				const camera = new THREE.PerspectiveCamera(fov)
+				camera.position.set(0, 2, 10)
+				camera.lookAt(0, 0, 0)
+				
+				/*{
+					const color = 0xFFFFFF;
+					const intensity = 1;
+					const light = new THREE.DirectionalLight(color, intensity);
+					light.position.set(-1, 2, 4);
+					scene.add(light);
+				}*/
+				
+				const sun = makeSun()
+				//sun.position.set(200, 400, 400)
+				scene.add(sun)
+				
+				const elem = $(`#${name}`)
+				
+				if (elem == null) return
+				if (rule == undefined) return
+				
+				for (const event of rule) {
+					const colours = getColours(event.input.name)
+					const {box, boxLabel} = makeBox(event.input.name, ...colours)
+					const position = SITE_POSITIONS[event.siteNumber]
+					box.position.set(...position)
+					boxLabel.position.set(...position)
+					//boxLabel.position.set(position[0], position[1], position[2] + 0.51)
+					scene.add(box)
+					scene.add(boxLabel)				
+				}
+				
+				let orbit = undefined
+				if (true || !dummyCamera) {
+					orbit = new THREE.OrbitControls(camera, $(`#${group}`))
+					orbit.mouseButtons.RIGHT = THREE.MOUSE.ROTATE
+					orbit.enableKeys = false
+					orbit.enableDamping = true
+					orbit.enableZoom = false
+					orbit.touches = {
+						ONE: THREE.TOUCH.ROTATE,
+					}
+					//stage.on.process(orbit.o.update)
+					dummyCamera = camera
+				}
+				else {
+					/*stage.on.process(() => {
+						stage.camera.position.set(...dummyCamera.position)
+						stage.camera.lookAt(0, 0, 0)
+					})*/
+				}
+				
+				addScene(elem, (time, rect) => {
+					camera.aspect = rect.width / rect.height
+					camera.updateProjectionMatrix()
+					orbit.update()
+					renderer.render(scene, camera)
+				})
+				
+			}
+					
+			TodeSplat `
+				element Dummy {
+					rule {
+						@_ => _@
+					}
+					
+					rule {
+						_@ => @_
+					}
+					
+					rule side {
+						_@ => @_
+					}
+					
+					rule side {
+						@_ => _@
+					}
+					
+					rule {
+						_ => @
+						@    _
+					}
+					
+					rule {
+						@ => _
+						_    @
+					}
+					
+					// 6
+					rule {
+						@  => _
+						#_    #@
+					}
+					
+					rule {
+						 @ =>  _
+						_#    @#
+					}
+					
+					rule side {
+						 @ =>  _
+						_#    @#
+					}
+					
+					rule side {
+						@  => _
+						#_    #@
+					}
+					
+					//10
+					rule {
+						#_    #@
+						@  => _
+					}
+					
+					rule top {
+						#_    #@
+						@  => _
+					}
+					
+					rule top {
+						@  => _
+						#_    #@
+					}
+					
+					//??
+					rule {
+						_#    @#
+						 @ =>  _
+					}
+					
+					rule {
+						#@ => ..
+						_     .
+					}
+					
+					rule {
+						 _     .
+						@# => ..
+					}
+					
+					//Reflected
+					rule {
+						_     @
+						#@ => #_
+					}
+				}
+			`
+			
+			const getBaseRule = (ruleNumber) => Dummy.rules[ruleNumber] && Dummy.rules[ruleNumber].reflections[0][0]
+			
+			makeDemo("right", "rightGroup", getBaseRule(0))
+			makeDemo("rightLeft0", "rightLeft", getBaseRule(0))
+			makeDemo("rightLeft1", "rightLeft", getBaseRule(1))
+			makeDemo("side0", "side", getBaseRule(0))
+			makeDemo("side1", "side", getBaseRule(1))
+			makeDemo("side2", "side", getBaseRule(2))
+			makeDemo("side3", "side", getBaseRule(3))
+			makeDemo("any0", "any", getBaseRule(0))
+			makeDemo("any1", "any", getBaseRule(1))
+			makeDemo("any2", "any", getBaseRule(2))
+			makeDemo("any3", "any", getBaseRule(3))
+			makeDemo("any4", "any", getBaseRule(4))
+			makeDemo("any5", "any", getBaseRule(5))
+			makeDemo("slideRight0", "slideRight", getBaseRule(6))
+			makeDemo("slideSide0", "slideSide", getBaseRule(6))
+			makeDemo("slideSide1", "slideSide", getBaseRule(7))
+			makeDemo("slideSide2", "slideSide", getBaseRule(8))
+			makeDemo("slideSide3", "slideSide", getBaseRule(9))
+			
+			const anySlideRule = Dummy.rules[6]
+			
+			makeDemo("slideAny0", "slideAny", getBaseRule(6))
+			makeDemo("slideAny1", "slideAny", getBaseRule(7))
+			makeDemo("slideAny2", "slideAny", getBaseRule(8))
+			makeDemo("slideAny3", "slideAny", getBaseRule(9))
+			makeDemo("slideAny4", "slideAny", getBaseRule(10))
+			makeDemo("slideAny5", "slideAny", getBaseRule(11))
+			makeDemo("slideAny6", "slideAny", getBaseRule(12))
+			makeDemo("slideAny7", "slideAny", getBaseRule(13))
+			makeDemo("slideAny8", "slideAny", getBaseRule(14))
+			makeDemo("slideAny9", "slideAny", getBaseRule(15))
+			makeDemo("slideAny10", "slideAny", getBaseRule(16))
+			makeDemo("slideAny11", "slideAny", getBaseRule(17))
 			
 			requestAnimationFrame(render)
-		}
-		
-		const makeDemo = (name, group, rule, bothSides = false) => {
-			
-			const scene = new THREE.Scene()
-			
-			const fov = 30
-			const camera = new THREE.PerspectiveCamera(fov)
-			camera.position.set(0, 2, 10)
-			camera.lookAt(0, 0, 0)
-			
-			/*{
-				const color = 0xFFFFFF;
-				const intensity = 1;
-				const light = new THREE.DirectionalLight(color, intensity);
-				light.position.set(-1, 2, 4);
-				scene.add(light);
-			}*/
-			
-			const sun = makeSun()
-			//sun.position.set(200, 400, 400)
-			scene.add(sun)
-			
-			const elem = $(`#${name}`)
-			
-			for (const event of rule) {
-				const colours = getColours(event.input.name)
-				const {box, boxLabel} = makeBox(event.input.name, ...colours)
-				const position = SITE_POSITIONS[event.siteNumber]
-				box.position.set(...position)
-				boxLabel.position.set(...position)
-				//boxLabel.position.set(position[0], position[1], position[2] + 0.51)
-				scene.add(box)
-				scene.add(boxLabel)				
-			}
-			
-			let orbit = undefined
-			if (true || !dummyCamera) {
-				orbit = new THREE.OrbitControls(camera, $(`#${group}`))
-				orbit.mouseButtons.RIGHT = THREE.MOUSE.ROTATE
-				orbit.enableKeys = false
-				orbit.enableDamping = true
-				orbit.enableZoom = false
-				orbit.touches = {
-					ONE: THREE.TOUCH.ROTATE,
-				}
-				//stage.on.process(orbit.o.update)
-				dummyCamera = camera
-			}
-			else {
-				/*stage.on.process(() => {
-					stage.camera.position.set(...dummyCamera.position)
-					stage.camera.lookAt(0, 0, 0)
-				})*/
-			}
-			
-			addScene(elem, (time, rect) => {
-				camera.aspect = rect.width / rect.height
-				camera.updateProjectionMatrix()
-				orbit.update()
-				renderer.render(scene, camera)
-			})
-			
-		}
-		
-		const getBaseRule = (ruleNumber) => Dummy.rules[ruleNumber].reflections[0][0]
-		
-		makeDemo("right", "rightGroup", getBaseRule(0))
-		makeDemo("rightLeft0", "rightLeft", getBaseRule(0))
-		makeDemo("rightLeft1", "rightLeft", getBaseRule(1))
-		makeDemo("side0", "side", getBaseRule(0))
-		makeDemo("side1", "side", getBaseRule(1))
-		makeDemo("side2", "side", getBaseRule(2))
-		makeDemo("side3", "side", getBaseRule(3))
-		makeDemo("any0", "any", getBaseRule(0))
-		makeDemo("any1", "any", getBaseRule(1))
-		makeDemo("any2", "any", getBaseRule(2))
-		makeDemo("any3", "any", getBaseRule(3))
-		makeDemo("any4", "any", getBaseRule(4))
-		makeDemo("any5", "any", getBaseRule(5))
-		
-		requestAnimationFrame(render)
+		})
 		
 	</script>
 	
