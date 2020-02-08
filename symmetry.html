@@ -133,9 +133,9 @@ With this 'x' label, there are only two translations:
 <h1>Sideways</h1>
 You could also use the 'xz' label to make it go in every direction sideways:
 <pre>
-rule xz {
-	@_ => _@
-}
+	rule xz {
+		@_ => _@
+	}
 </pre>
 <div class="demo" id="side0"></div>
 <div class="demo" id="side1"></div>
@@ -147,7 +147,29 @@ rule xz {
 ( z, y, x )
 ( z, y,-x )
 </pre>
-
+<br>
+			
+			<h1>Any Direction</h1>
+			You could use the 'xyz' label to make it go in any direction:
+<pre>
+	rule xyz {
+		@_ => _@
+	}
+</pre>
+			<div class="demo" id="any0"></div>
+			<div class="demo" id="any1"></div>
+			<div class="demo" id="any2"></div>
+			<div class="demo" id="any3"></div>
+			<div class="demo" id="any4"></div>
+			<div class="demo" id="any5"></div>
+<pre>
+( x, y, z )
+(-x, y, z )
+( z, y, x )
+( z, y,-x )
+( y, x, z )
+( y,-x, z )
+</pre>
 		</article>
 	
 	</main>
@@ -205,6 +227,16 @@ rule xz {
 				
 				rule side {
 					_@ => @_
+				}
+
+				rule {
+					_ => @
+					@    _
+				}
+
+				rule {
+					@ => _
+					_    @
 				}
 			}
 		`
@@ -349,6 +381,12 @@ rule xz {
 		makeDemo("side1", getBaseRule(1))
 		makeDemo("side2", getBaseRule(2))
 		makeDemo("side3", getBaseRule(3))
+		makeDemo("any0", getBaseRule(0))
+		makeDemo("any1", getBaseRule(1))
+		makeDemo("any2", getBaseRule(2))
+		makeDemo("any3", getBaseRule(3))
+		makeDemo("any4", getBaseRule(4))
+		makeDemo("any5", getBaseRule(5))
 		
 		requestAnimationFrame(render)
 		
