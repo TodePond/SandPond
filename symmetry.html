@@ -73,9 +73,19 @@
 		}
 		
 		.demo {
-			max-width: 250px;
+			width: 250px;
 			height: 200px;
 			display: inline-block;
+		}
+		
+		#canvasContainer {
+			position: absolute;
+			left: 0;
+			top: 0;
+			width: 100vw;
+			height: 100vh;
+			display: block;
+			z-index: -1;
 		}
 	
 	</style>
@@ -83,6 +93,7 @@
 
 <body>
 
+	<canvas id="canvasContainer"></canvas>
 	<header>
 		<h1>Sandboy Symmetries</h1>
 	</header>
@@ -213,11 +224,95 @@ rule xz {
 		
 		let dummyCamera = undefined
 		
-		const makeDemo = (name, rule, bothSides = false) => {
-			const stage = new Stage($(`#${name}`), {alpha: true})
+		const canvas = $("#canvasContainer")
+		const renderer = new THREE.WebGLRenderer({canvas, alpha: true, antialias: true, powerPreference: "high-performance"})
+		
+		const sceneElements = []
+		const addScene = (elem, fn) => {
+			sceneElements.push({elem, fn})
+		}
+		
+		function resizeRendererToDisplaySize(renderer) {
+			const canvas = renderer.domElement;
+			const width = canvas.clientWidth;
+			const height = canvas.clientHeight;
+			const needResize = canvas.width !== width || canvas.height !== height;
+			if (needResize) {
+				renderer.setSize(width, height, false);
+			}
+			return needResize;
+		}
+		
+		const clearColor = new THREE.Color('#000')
+		
+		const render = (time) => {
+			time *= 0.001
+			resizeRendererToDisplaySize(renderer)
+			renderer.setScissorTest(false)
+			renderer.setClearColor(clearColor, 0)
+			renderer.clear(true, true)
+			renderer.setScissorTest(true)
 			
-			if (!dummyCamera) {
-				const orbit = new THREE.OrbitControls(stage.camera)
+			const transform = `translateY(${window.scrollY}px)`
+			renderer.domElement.style.transform = transform
+			
+			for (const {elem, fn} of sceneElements) {
+				const rect = elem.getBoundingClientRect()
+				const {left, right, top, bottom, width, height} = rect
+				
+				const isOffscreen = 
+					bottom < 0 ||
+					top > renderer.domElement.clientHeight ||
+					right < 0 ||
+					left > renderer.domElement.clientWidth
+					
+				if (!isOffscreen) {
+					const positiveYUpBottom = renderer.domElement.clientHeight - bottom
+					renderer.setScissor(left, positiveYUpBottom, width, height)
+					renderer.setViewport(left, positiveYUpBottom, width, height)
+					
+					fn(time, rect)
+				}
+				
+			}
+			
+			requestAnimationFrame(render)
+		}
+		
+		const makeDemo = (name, rule, bothSides = false) => {
+			
+			const scene = new THREE.Scene()
+			
+			const fov = 30
+			const camera = new THREE.PerspectiveCamera(fov)
+			camera.position.set(0, 2, 10)
+			camera.lookAt(0, 0, 0)
+			
+			/*{
+				const color = 0xFFFFFF;
+				const intensity = 1;
+				const light = new THREE.DirectionalLight(color, intensity);
+				light.position.set(-1, 2, 4);
+				scene.add(light);
+			}*/
+			
+			const sun = makeSun()
+			//sun.position.set(200, 400, 400)
+			scene.add(sun)
+			
+			const elem = $(`#${name}`)
+			
+			for (const event of rule) {
+				const colours = getColours(event.input.name)
+				const box = makeBox(...colours)
+				const position = SITE_POSITIONS[event.siteNumber]
+				box.position.set(...position)
+				scene.add(box)
+			}
+			
+			let orbit = undefined
+			if (true || !dummyCamera) {
+				orbit = new THREE.OrbitControls(camera)
 				orbit.mouseButtons.RIGHT = THREE.MOUSE.ROTATE
 				orbit.enableKeys = false
 				orbit.enableDamping = true
@@ -226,32 +321,23 @@ rule xz {
 					ONE: undefined,
 					TWO: THREE.TOUCH.DOLLY_ROTATE,
 				}
-				stage.on.process(orbit.o.update)
-				dummyCamera = stage.camera
+				//stage.on.process(orbit.o.update)
+				dummyCamera = camera
 			}
 			else {
-				stage.on.process(() => {
+				/*stage.on.process(() => {
 					stage.camera.position.set(...dummyCamera.position)
 					stage.camera.lookAt(0, 0, 0)
-				})
+				})*/
 			}
 			
-			for (const event of rule) {
-				
-				const colours = getColours(event.input.name)
-				const box = makeBox(...colours)
-				const position = SITE_POSITIONS[event.siteNumber]
-				box.position.set(...position)
-				stage.scene.add(box)
-			}
+			addScene(elem, (time, rect) => {
+				camera.aspect = rect.width / rect.height
+				camera.updateProjectionMatrix()
+				orbit.update()
+				renderer.render(scene, camera)
+			})
 			
-			stage.camera.position.set(0, 2, 10)
-			//stage.camera.position.set(0, 10, 50)
-			const sun = makeSun()
-			//sun.position.set(200, 400, 400)
-			stage.scene.add(sun)
-			
-			return stage
 		}
 		
 		const getBaseRule = (ruleNumber) => Dummy.rules[ruleNumber].reflections[0][0]
@@ -264,6 +350,7 @@ rule xz {
 		makeDemo("side2", getBaseRule(2))
 		makeDemo("side3", getBaseRule(3))
 		
+		requestAnimationFrame(render)
 		
 	</script>
 	

@@ -49,7 +49,7 @@
 	
 	//=======//
 	// Class //
-	//=======//	
+	//=======//
 	Stage = class Stage {
 		
 		constructor(element, {start = true, alpha = false} = {}) {
