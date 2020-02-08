@@ -278,6 +278,36 @@ And this is what they look like in 3D (not necessarily in order):
 	<div class="demo" id="slideAny23"></div>
 </div>
 
+<h1>Follow Through</h1>
+During an event, only one symmetry is selected, even for multiple rules.<br>
+In the following code, the second rule will NEVER be reached:
+<pre>
+element Foo {
+	
+	rule x {
+		@_ => _@
+	}
+	
+	rule x {
+		@_ => _@
+		#     #
+	}
+}
+</pre>
+For all rules, the x-axis is either (1) flipped, or (2) not flipped.<br>
+It is not flipped on a per-rule basis.<br>
+So the potential diagrams are either these:<br>
+<div id="follow">
+	<div class="demo" id="follow0"></div>
+	<div class="demo" id="follow1"></div>
+</div>
+	Or these:
+<div id="followOther">
+	<div class="demo" id="follow2"></div>
+	<div class="demo" id="follow3"></div>
+</div>
+
+
 		</article>
 	
 	</main>
@@ -754,6 +784,35 @@ And this is what they look like in 3D (not necessarily in order):
 			makeDemo("slideAny21", "slideAny", getBaseRule(21, SlideAny))
 			makeDemo("slideAny22", "slideAny", getBaseRule(22, SlideAny))
 			makeDemo("slideAny23", "slideAny", getBaseRule(23, SlideAny))
+			
+			TodeSplat `
+				element FollowDummy {
+					
+					rule {
+						@_ => _@
+					}
+					
+					rule {
+						_@ => @_
+					}
+					
+					rule {
+						@_ => _@
+						#     #
+					}
+					
+					rule {
+						_@ => @_
+						 #     #
+					}
+				}
+			`
+			
+			makeDemo("follow0", "follow", getBaseRule(0, FollowDummy))
+			makeDemo("follow1", "follow", getBaseRule(2, FollowDummy))
+			
+			makeDemo("follow2", "followOther", getBaseRule(1, FollowDummy))
+			makeDemo("follow3", "followOther", getBaseRule(3, FollowDummy))
 			
 			requestAnimationFrame(render)
 		})
