@@ -172,6 +172,31 @@ element WallSeed {
 	
 }
 
+element Platform {
+	colour "rgb(128, 128, 128)"
+	emissive "rgb(2, 128, 200)"
+	category "Sandbox"
+	state "solid"
+	data fuel 100
+	//default true
+	precise true
+	pour false
+	
+	given f (self) => self.fuel <= 0
+	rule { f => _ }
+	
+	change S () => new Static()
+	change P (self) => new Platform({fuel: (self.fuel-1)/2})
+	rule { _@_ => PSP}
+	
+	change B (self) => new Platform({fuel: self.fuel-1})
+	rule x { @_ => SB }
+	
+	/*rule { #@# => ._. }*/
+	
+	rule x { @x => _. }
+}
+
 element Ball {
 	colour "grey"
 	emissive "black"
