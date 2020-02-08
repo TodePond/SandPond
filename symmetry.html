@@ -27,6 +27,8 @@
 	<script src="Libraries/BufferGeometryUtils.js"></script>
 	<script src="Libraries/OrbitControls.js"></script>
 	<script src="Libraries/WebVR.js"></script>
+	<script src="Libraries/threex.dynamictexture.js"></script>
+	<script src="Libraries/threex.dynamictext2dobject.js"></script>
 	
 	<style>
 		
@@ -255,11 +257,38 @@ rule xz {
 		`
 		
 		const boxGeometry = new THREE.BoxGeometry(1, 1, 1)
+		const boxLabelGeometry = new THREE.BoxGeometry(1.01, 1.01, 1.01)
 	
-		const makeBox = (colour, emissive = colour) => {
+		const makeBox = (character, colour, emissive = colour) => {
+		
+			const size = 32
+		
+			const dynamicTexture = new THREEx.DynamicTexture(size, size)
+			dynamicTexture.context.font	= `${size * 3/4}px UbuntuMono`;
+			dynamicTexture.clear(emissive)
+			dynamicTexture.texture.anisotropy = renderer.capabilities.getMaxAnisotropy()
+			dynamicTexture.drawText(character, (size * 1/4)+(size*1/8)/2, (size*3/4)-(size*1/8)/2, "rgb(23, 29, 40)")
+			
+			const alphaTexture = new THREEx.DynamicTexture(size, size)
+			alphaTexture.context.font	= `${size * 3/4}px UbuntuMono`;
+			alphaTexture.clear("black")
+			alphaTexture.texture.anisotropy = renderer.capabilities.getMaxAnisotropy()
+			alphaTexture.drawText(character, (size * 1/4)+(size*1/8)/2, (size*3/4)-(size*1/8)/2, "white")
+			
+			const dynamicMaterial = new THREE.MeshBasicMaterial({
+				map: dynamicTexture.texture,
+				alphaMap: alphaTexture.texture,
+				alphaTest: 0.5,
+			})
+			
+			const boxLabel = new THREE.Mesh(boxLabelGeometry, dynamicMaterial)
+			/*const boxLabel = new THREEx.DynamicText2DObject(character)
+			boxLabel.dynamicTexture.texture.anisotropy = renderer.capabilities.getMaxAnisotropy()
+			*/
+		
 			const boxMaterial = new THREE.MeshStandardMaterial({color: colour, emissive})
 			const box = new THREE.Mesh(boxGeometry, boxMaterial)
-			return box
+			return {box, boxLabel}
 		}
 		
 		const getColours = (character) => {
@@ -349,10 +378,13 @@ rule xz {
 			
 			for (const event of rule) {
 				const colours = getColours(event.input.name)
-				const box = makeBox(...colours)
+				const {box, boxLabel} = makeBox(event.input.name, ...colours)
 				const position = SITE_POSITIONS[event.siteNumber]
 				box.position.set(...position)
+				boxLabel.position.set(...position)
+				//boxLabel.position.set(position[0], position[1], position[2] + 0.51)
 				scene.add(box)
+				scene.add(boxLabel)				
 			}
 			
 			let orbit = undefined
