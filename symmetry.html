@@ -972,7 +972,8 @@ Note: Some rules have more chance of happening than others.
 			if (!isStatic) return requestAnimationFrame(render)
 			
 			$$(".demo").forEach(e => {
-				const img = new Image(200, 200)
+				const img = new Image()
+				img.style = "width: 100%;"
 				img.src = `SymmetryCache/${e.id}.png`
 				e.append(img)
 			})
