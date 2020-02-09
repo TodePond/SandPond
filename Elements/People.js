@@ -5,7 +5,7 @@ element LukeWilson {
 	colour "red"
 	emissive "darkred"
 	category "People"
-	//default true
+	default true
 	precise true
 	pour false
 	
@@ -44,11 +44,19 @@ element LukeWilson {
 		 L L      . .
 	}
 	
+	given l (element, atom, self) => atom && (element != LukeLeg || atom.id != self.id)
 	rule {
 		 HHH      HHH
-		_HFH     AB@B
-		AB@B_ => .L.LA
-		 L .      . .
+		_HFH_    AB@BA
+		AB@B  => _L_L
+		 L l      _ .
+	}
+	
+	rule {
+		 ___      HHH
+		 HHH  =>  .F.
+		AB@BA    .....
+		 L L      . .
 	}
 	
 	// Fall
@@ -73,7 +81,7 @@ element LukeWilson {
 		 HHH_     _HHH
 		 HFH_     _HFH
 		AB@BA => _AB@B
-		 L_L#     _L_.
+		 L_L      _L_.
 	}
 	
 	
