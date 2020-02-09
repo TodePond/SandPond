@@ -414,8 +414,10 @@ Note: Some rules have more chance of happening than others.
 		
 		document.fonts.ready.then(() => {
 		
-			const boxGeometry = new THREE.BoxGeometry(1, 1, 1)
-			const boxLabelGeometry = new THREE.BoxGeometry(1.01, 1.01, 1.01)
+			if (!isStatic) {
+				boxGeometry = new THREE.BoxGeometry(1, 1, 1)
+				boxLabelGeometry = new THREE.BoxGeometry(1.01, 1.01, 1.01)
+			}
 		
 			const makeBox = (character, colour, emissive = colour) => {
 			
@@ -459,7 +461,7 @@ Note: Some rules have more chance of happening than others.
 			let dummyCamera = undefined
 			
 			const canvas = $("#canvasContainer")
-			const renderer = new THREE.WebGLRenderer({canvas, alpha: true, antialias: true})
+			if (!isStatic) renderer = new THREE.WebGLRenderer({canvas, alpha: true, antialias: true})
 			
 			const sceneElements = []
 			const addScene = (elem, fn) => {
@@ -566,6 +568,8 @@ Note: Some rules have more chance of happening than others.
 			}
 			
 			const makeDemo = (name, group, rule) => {
+				
+				if (isStatic) return
 				
 				const scene = new THREE.Scene()
 				
