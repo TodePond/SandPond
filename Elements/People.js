@@ -5,7 +5,7 @@ element LukeWilson {
 	colour "red"
 	emissive "darkred"
 	category "People"
-	default true
+	//default true
 	precise true
 	pour false
 	
