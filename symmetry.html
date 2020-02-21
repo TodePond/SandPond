@@ -509,7 +509,7 @@ To recap, there are two possible translations here:<br>
 		<div class="demo" id="recap1"></div>
 	</div>
 </div>
-This means that this rule chooses between two possible orders of translations (2 factorial):
+This means that this rule chooses between 2 possible sequences of translations (2 factorial):
 <div class="container">
 	<div id="loopx" class="group">
 		<div class="demo" id="loopx0"></div>
@@ -518,6 +518,182 @@ This means that this rule chooses between two possible orders of translations (2
 	<div id="recap" class="group">
 		<div class="demo" id="loopx2"></div>
 		<div class="demo" id="loopx3"></div>
+	</div>
+</div>
+
+<br>
+<h1 id="longlooping">Long Looping</h1>
+But what if there are more possible translations?
+Let's look at this example:
+<pre>
+for(xz) rule {
+	@_ => _@
+}
+</pre>
+It loops through each possible x-axis and z-axis translation.<br>
+In other words, any direction sideways.<br>
+To recap, these are the 4 possible translations:<br>
+<div class="container">
+	<div id="recapxz" class="group">
+		<div class="demo" id="recapxz0"></div>
+	</div>
+	<div id="recapxz" class="group">
+		<div class="demo" id="recapxz1"></div>
+	</div>
+	<div id="recapxz" class="group">
+		<div class="demo" id="recapxz2"></div>
+	</div>
+	<div id="recapxz" class="group">
+		<div class="demo" id="recapxz3"></div>
+	</div>
+</div>
+
+This means that there are 24 different potential sequences (4 factorial):<br>
+<!-- generated html -->
+<div class="container">
+	<div id="loopxz" class="group">
+		<div class="demo" id="loopxz0"></div>
+		<div class="demo" id="loopxz1"></div>
+		<div class="demo" id="loopxz2"></div>
+		<div class="demo" id="loopxz3"></div>
+	</div>
+	<div id="loopxz" class="group">
+		<div class="demo" id="loopxz4"></div>
+		<div class="demo" id="loopxz5"></div>
+		<div class="demo" id="loopxz6"></div>
+		<div class="demo" id="loopxz7"></div>
+	</div>
+	<div id="loopxz" class="group">
+		<div class="demo" id="loopxz8"></div>
+		<div class="demo" id="loopxz9"></div>
+		<div class="demo" id="loopxz10"></div>
+		<div class="demo" id="loopxz11"></div>
+	</div>
+	<div id="loopxz" class="group">
+		<div class="demo" id="loopxz12"></div>
+		<div class="demo" id="loopxz13"></div>
+		<div class="demo" id="loopxz14"></div>
+		<div class="demo" id="loopxz15"></div>
+	</div>
+	<div id="loopxz" class="group">
+		<div class="demo" id="loopxz16"></div>
+		<div class="demo" id="loopxz17"></div>
+		<div class="demo" id="loopxz18"></div>
+		<div class="demo" id="loopxz19"></div>
+	</div>
+	<div id="loopxz" class="group">
+		<div class="demo" id="loopxz20"></div>
+		<div class="demo" id="loopxz21"></div>
+		<div class="demo" id="loopxz22"></div>
+		<div class="demo" id="loopxz23"></div>
+	</div>
+	<div id="loopxz" class="group">
+		<div class="demo" id="loopxz24"></div>
+		<div class="demo" id="loopxz25"></div>
+		<div class="demo" id="loopxz26"></div>
+		<div class="demo" id="loopxz27"></div>
+	</div>
+	<div id="loopxz" class="group">
+		<div class="demo" id="loopxz28"></div>
+		<div class="demo" id="loopxz29"></div>
+		<div class="demo" id="loopxz30"></div>
+		<div class="demo" id="loopxz31"></div>
+	</div>
+	<div id="loopxz" class="group">
+		<div class="demo" id="loopxz32"></div>
+		<div class="demo" id="loopxz33"></div>
+		<div class="demo" id="loopxz34"></div>
+		<div class="demo" id="loopxz35"></div>
+	</div>
+	<div id="loopxz" class="group">
+		<div class="demo" id="loopxz36"></div>
+		<div class="demo" id="loopxz37"></div>
+		<div class="demo" id="loopxz38"></div>
+		<div class="demo" id="loopxz39"></div>
+	</div>
+	<div id="loopxz" class="group">
+		<div class="demo" id="loopxz40"></div>
+		<div class="demo" id="loopxz41"></div>
+		<div class="demo" id="loopxz42"></div>
+		<div class="demo" id="loopxz43"></div>
+	</div>
+	<div id="loopxz" class="group">
+		<div class="demo" id="loopxz44"></div>
+		<div class="demo" id="loopxz45"></div>
+		<div class="demo" id="loopxz46"></div>
+		<div class="demo" id="loopxz47"></div>
+	</div>
+	<div id="loopxz" class="group">
+		<div class="demo" id="loopxz48"></div>
+		<div class="demo" id="loopxz49"></div>
+		<div class="demo" id="loopxz50"></div>
+		<div class="demo" id="loopxz51"></div>
+	</div>
+	<div id="loopxz" class="group">
+		<div class="demo" id="loopxz52"></div>
+		<div class="demo" id="loopxz53"></div>
+		<div class="demo" id="loopxz54"></div>
+		<div class="demo" id="loopxz55"></div>
+	</div>
+	<div id="loopxz" class="group">
+		<div class="demo" id="loopxz56"></div>
+		<div class="demo" id="loopxz57"></div>
+		<div class="demo" id="loopxz58"></div>
+		<div class="demo" id="loopxz59"></div>
+	</div>
+	<div id="loopxz" class="group">
+		<div class="demo" id="loopxz60"></div>
+		<div class="demo" id="loopxz61"></div>
+		<div class="demo" id="loopxz62"></div>
+		<div class="demo" id="loopxz63"></div>
+	</div>
+	<div id="loopxz" class="group">
+		<div class="demo" id="loopxz64"></div>
+		<div class="demo" id="loopxz65"></div>
+		<div class="demo" id="loopxz66"></div>
+		<div class="demo" id="loopxz67"></div>
+	</div>
+	<div id="loopxz" class="group">
+		<div class="demo" id="loopxz68"></div>
+		<div class="demo" id="loopxz69"></div>
+		<div class="demo" id="loopxz70"></div>
+		<div class="demo" id="loopxz71"></div>
+	</div>
+	<div id="loopxz" class="group">
+		<div class="demo" id="loopxz72"></div>
+		<div class="demo" id="loopxz73"></div>
+		<div class="demo" id="loopxz74"></div>
+		<div class="demo" id="loopxz75"></div>
+	</div>
+	<div id="loopxz" class="group">
+		<div class="demo" id="loopxz76"></div>
+		<div class="demo" id="loopxz77"></div>
+		<div class="demo" id="loopxz78"></div>
+		<div class="demo" id="loopxz79"></div>
+	</div>
+	<div id="loopxz" class="group">
+		<div class="demo" id="loopxz80"></div>
+		<div class="demo" id="loopxz81"></div>
+		<div class="demo" id="loopxz82"></div>
+		<div class="demo" id="loopxz83"></div>
+	</div>
+	<div id="loopxz" class="group">
+		<div class="demo" id="loopxz84"></div>
+		<div class="demo" id="loopxz85"></div>
+		<div class="demo" id="loopxz86"></div>
+		<div class="demo" id="loopxz87"></div>
+	</div>
+	<div id="loopxz" class="group">
+		<div class="demo" id="loopxz88"></div>
+		<div class="demo" id="loopxz89"></div>
+		<div class="demo" id="loopxz90"></div>
+		<div class="demo" id="loopxz91"></div>
+	</div>
+	<div id="loopxz" class="group">
+		<div class="demo" id="loopxz92"></div>
+		<div class="demo" id="loopxz93"></div>
+		<div class="demo" id="loopxz94"></div>
+		<div class="demo" id="loopxz95"></div>
 	</div>
 </div>
 
@@ -1143,6 +1319,8 @@ This means that this rule chooses between two possible orders of translations (2
 				element Recap {
 					rule { @_ => ..}
 					rule { _@ => ..}
+					rule side { _@ => ..}
+					rule side { @_ => ..}
 				}
 			`
 			
@@ -1153,6 +1331,44 @@ This means that this rule chooses between two possible orders of translations (2
 			makeDemo("loopx1", "loopx", getBaseRule(1, Recap))
 			makeDemo("loopx2", "loopx", getBaseRule(1, Recap))
 			makeDemo("loopx3", "loopx", getBaseRule(0, Recap))
+			
+			makeDemo("recapxz0", "recapxz", getBaseRule(0, Recap))
+			makeDemo("recapxz1", "recapxz", getBaseRule(1, Recap))
+			makeDemo("recapxz2", "recapxz", getBaseRule(2, Recap))
+			makeDemo("recapxz3", "recapxz", getBaseRule(3, Recap))
+			
+			
+			// Thanks stackoverflow
+			perm = (xs) => {
+			  let ret = [];
+
+			  for (let i = 0; i < xs.length; i = i + 1) {
+				let rest = perm(xs.slice(0, i).concat(xs.slice(i + 1)));
+
+				if(!rest.length) {
+				  ret.push([xs[i]])
+				} else {
+				  for(let j = 0; j < rest.length; j = j + 1) {
+					ret.push([xs[i]].concat(rest[j]))
+				  }
+				}
+			  }
+			  return ret;
+			}
+			
+			const xzperms = perm([0, 1, 2, 3])
+			
+			let xzid = 0
+			
+			for (const xzperm of xzperms) {
+				makeDemo(`loopxz${xzid++}`, "loopxz", getBaseRule(xzperm[0], Recap))
+				makeDemo(`loopxz${xzid++}`, "loopxz", getBaseRule(xzperm[1], Recap))
+				makeDemo(`loopxz${xzid++}`, "loopxz", getBaseRule(xzperm[2], Recap))
+				makeDemo(`loopxz${xzid++}`, "loopxz", getBaseRule(xzperm[3], Recap))
+			}
+			
+			
+			
 			
 			if (!isStatic) return requestAnimationFrame(render)
 			
