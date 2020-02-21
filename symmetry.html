@@ -60,6 +60,12 @@
 			tab-size: 4;
 		}
 		
+		html {
+		
+		}
+		
+		p {}
+		
 		body {
 			font-family: Rosario;
 			margin: 20px;
@@ -77,10 +83,12 @@
 		
 		.demo {
 			max-width: 200px;
-			width: 30vw;
+			width: 35vw;
 			max-height: 200px;
 			height: 35vw;
 			display: inline-block;
+			position: relative;
+			pointer-events: all;
 		}
 		
 		#canvasContainer {
@@ -90,9 +98,26 @@
 			width: 100%;
 			height: 100vh;
 			display: block;
-			z-index: -1;
 			margin: 0;
 			padding: 0;
+			z-index: 1;
+			pointer-events: none;
+		}
+		
+		.group {
+			background-color: rgb(45, 56, 77);
+			position: relative;
+			display: inline-block;
+			border-radius: 15px;
+			padding: 10px;
+			margin-bottom: 4px;
+		}
+		
+		.container {
+			margin-top: 9px;
+			margin-bottom: 9px;
+			margin-right: 4.5px;
+			pointer-events: none;
 		}
 	
 	</style>
@@ -109,36 +134,41 @@
 		<article>
 
 <h1>Intro</h1>
-In TodeSplat, you draw 2D diagrams to program elements.<br>
-For example:
+<p>In TodeSplat, you draw 2D diagrams to program elements.<br>
+For example:</p>
 <pre>
 rule {
 	@_ => _@
 }
 </pre>
-This makes an atom move to the right each tick.<br>
-Let's represent the left-hand-side of our 2D diagram like this:<br>
+<p>This makes an atom move to the right each tick.<br>
+Let's represent the left-hand-side of our 2D diagram like this:</p>
 
-<div id="rightGroup">
-<div class="demo" id="right"></div>
+<div class="container">
+	<div id="rightGroup" class="group">
+		<div class="demo" id="right"></div>
+	</div>
 </div>
-
+<br>
 <h1>Left and Right</h1>
-Now let's imagine you want this atom to randomly move left or right.<br>
-You can write 'x', which flips the x-axis randomly:
+<p>Now let's imagine you want this atom to randomly move left or right.<br>
+You can write 'x', which flips the x-axis randomly:</p>
 <pre>
 rule x {
 	@_ => _@
 }
 </pre>
-This means that one of two diagrams will be chosen:<br>
+<p>This means that one of two diagrams will be chosen:<br></p>
 
-<div id="rightLeft">
+<div class="container">
+<div id="rightLeft" class="group">
 <div class="demo" id="rightLeft0"></div>
-<div class="demo" id="rightLeft1"></div>
 </div>
-When you write the 'x' label, you are saying, "I don't care which way round the x-axis is."<br>
-With this 'x' label, there are only two translations:
+<div id="rightLeft" class="group">
+<div class="demo" id="rightLeft1"></div>
+</div></div>
+<p>When you write the 'x' label, you are saying, "I don't care which way round the x-axis is."<br>
+With this 'x' label, there are only two translations:</p>
 <pre>
 ( x, y, 0 )
 (-x, y, 0 )
@@ -151,11 +181,19 @@ rule xz {
 	@_ => _@
 }
 </pre>
-<div id="side">
-<div class="demo" id="side0"></div>
-<div class="demo" id="side1"></div>
-<div class="demo" id="side2"></div>
-<div class="demo" id="side3"></div>
+<div class="container">
+	<div id="side" class="group">
+		<div class="demo" id="side0"></div>
+	</div>
+	<div id="side" class="group">
+		<div class="demo" id="side1"></div>
+	</div>
+	<div id="side" class="group">
+		<div class="demo" id="side2"></div>
+	</div>
+	<div id="side" class="group">
+		<div class="demo" id="side3"></div>
+	</div>
 </div>
 By writing 'xz', you are saying, "I don't care which way round the x-axis or z-axis are."
 <pre>
@@ -172,13 +210,25 @@ rule xyz {
 	@_ => _@
 }
 </pre>
-<div id="any">
-	<div class="demo" id="any0"></div>
-	<div class="demo" id="any1"></div>
-	<div class="demo" id="any2"></div>
-	<div class="demo" id="any3"></div>
-	<div class="demo" id="any4"></div>
-	<div class="demo" id="any5"></div>
+<div class="container">
+	<div id="any" class="group">
+		<div class="demo" id="any0"></div>
+	</div>
+	<div id="any" class="group">
+		<div class="demo" id="any1"></div>
+	</div>
+	<div id="any" class="group">
+		<div class="demo" id="any2"></div>
+	</div>
+	<div id="any" class="group">
+		<div class="demo" id="any3"></div>
+	</div>
+	<div id="any" class="group">
+		<div class="demo" id="any4"></div>
+	</div>
+	<div id="any" class="group">
+		<div class="demo" id="any5"></div>
+	</div>
 </div>
 By writing 'xyz', you are saying, "I don't care which way round the x, y, or z-axes are."<br>
 In this case, there are 6 relevant transformations:
@@ -200,9 +250,11 @@ rule {
 }
 </pre>
 This makes an atom slide down and to the right if there is an atom below it.<br>
-<div id="slideRight">
-	<div class="demo" id="slideRight0"></div>
-</div>
+<div class="container">
+	<div id="slideRight" class="group">
+		<div class="demo" id="slideRight0"></div>
+	</div>
+</div><br>
 <h1>Slide Sideways</h1>
 Again, we can use a symmetry label to make it randomly choose a certain direction sideways:
 <pre>
@@ -211,11 +263,19 @@ rule xz {
 	#_    #@
 }
 </pre>
-<div id="slideSide">
-	<div class="demo" id="slideSide0"></div>
-	<div class="demo" id="slideSide1"></div>
-	<div class="demo" id="slideSide2"></div>
-	<div class="demo" id="slideSide3"></div>
+<div class="container">
+	<div id="slideSide" class="group">
+		<div class="demo" id="slideSide0"></div>
+	</div>
+	<div id="slideSide" class="group">
+		<div class="demo" id="slideSide1"></div>
+	</div>
+	<div id="slideSide" class="group">
+		<div class="demo" id="slideSide2"></div>
+	</div>
+	<div id="slideSide" class="group">
+		<div class="demo" id="slideSide3"></div>
+	</div>
 </div>
 <pre>
 ( x, y, 0 )
@@ -251,33 +311,81 @@ I think these are all the possible transformations:
 
 </pre>
 And this is what they look like in 3D (not necessarily in order):
-<div id="slideAny">
-	<div class="demo" id="slideAny0"></div>
-	<div class="demo" id="slideAny1"></div>
-	<div class="demo" id="slideAny2"></div>
-	<div class="demo" id="slideAny3"></div>
-	<div class="demo" id="slideAny4"></div>
-	<div class="demo" id="slideAny5"></div>
-	<div class="demo" id="slideAny6"></div>
-	<div class="demo" id="slideAny7"></div>
-	<div class="demo" id="slideAny8"></div>
-	<div class="demo" id="slideAny9"></div>
-	<div class="demo" id="slideAny10"></div>
-	<div class="demo" id="slideAny11"></div>
-	<div class="demo" id="slideAny12"></div>
-	<div class="demo" id="slideAny13"></div>
-	<div class="demo" id="slideAny14"></div>
-	<div class="demo" id="slideAny15"></div>
-	<div class="demo" id="slideAny16"></div>
-	<div class="demo" id="slideAny17"></div>
-	<div class="demo" id="slideAny18"></div>
-	<div class="demo" id="slideAny19"></div>
-	<div class="demo" id="slideAny20"></div>
-	<div class="demo" id="slideAny21"></div>
-	<div class="demo" id="slideAny22"></div>
-	<div class="demo" id="slideAny23"></div>
+<div class="container">
+	<div id="slideAny" class="group">
+		<div class="demo" id="slideAny0"></div>
+	</div>
+	<div id="slideAny" class="group">
+		<div class="demo" id="slideAny1"></div>
+	</div>
+	<div id="slideAny" class="group">
+		<div class="demo" id="slideAny2"></div>
+	</div>
+	<div id="slideAny" class="group">
+		<div class="demo" id="slideAny3"></div>
+	</div>
+	<div id="slideAny" class="group">
+		<div class="demo" id="slideAny4"></div>
+	</div>
+	<div id="slideAny" class="group">
+		<div class="demo" id="slideAny5"></div>
+	</div>
+	<div id="slideAny" class="group">
+		<div class="demo" id="slideAny6"></div>
+	</div>
+	<div id="slideAny" class="group">
+		<div class="demo" id="slideAny7"></div>
+	</div>
+	<div id="slideAny" class="group">
+		<div class="demo" id="slideAny8"></div>
+	</div>
+	<div id="slideAny" class="group">
+		<div class="demo" id="slideAny9"></div>
+	</div>
+	<div id="slideAny" class="group">
+		<div class="demo" id="slideAny10"></div>
+	</div>
+	<div id="slideAny" class="group">
+		<div class="demo" id="slideAny11"></div>
+	</div>
+	<div id="slideAny" class="group">
+		<div class="demo" id="slideAny12"></div>
+	</div>
+	<div id="slideAny" class="group">
+		<div class="demo" id="slideAny13"></div>
+	</div>
+	<div id="slideAny" class="group">
+		<div class="demo" id="slideAny14"></div>
+	</div>
+	<div id="slideAny" class="group">
+		<div class="demo" id="slideAny15"></div>
+	</div>
+	<div id="slideAny" class="group">
+		<div class="demo" id="slideAny16"></div>
+	</div>
+	<div id="slideAny" class="group">
+		<div class="demo" id="slideAny17"></div>
+	</div>
+	<div id="slideAny" class="group">
+		<div class="demo" id="slideAny18"></div>
+	</div>
+	<div id="slideAny" class="group">
+		<div class="demo" id="slideAny19"></div>
+	</div>
+	<div id="slideAny" class="group">
+		<div class="demo" id="slideAny20"></div>
+	</div>
+	<div id="slideAny" class="group">
+		<div class="demo" id="slideAny21"></div>
+	</div>
+	<div id="slideAny" class="group">
+		<div class="demo" id="slideAny22"></div>
+	</div>
+	<div id="slideAny" class="group">
+		<div class="demo" id="slideAny23"></div>
+	</div>
 </div>
-
+<br>
 <h1>Follow Through</h1>
 During an event, only one symmetry is selected, even for multiple rules.<br>
 In the following code, the second rule will NEVER be reached:
@@ -296,17 +404,20 @@ element Foo {
 </pre>
 For all rules, the x-axis is either (1) flipped, or (2) not flipped.<br>
 It is not flipped on a per-rule basis.<br>
-So the potential diagrams are either these:<br>
-<div id="follow">
-	<div class="demo" id="follow0"></div>
-	<div class="demo" id="follow1"></div>
+So the potential sequences of diagrams are either these:<br>
+<div class="container">
+	<div id="follow" class="group">
+		<div class="demo" id="follow0"></div>
+		<div class="demo" id="follow1"></div>
+	</div><br>
+	<br>Or these:<br><br>
+	<div id="followOther" class="group">
+		<div class="demo" id="follow2"></div>
+		<div class="demo" id="follow3"></div>
+	</div>
 </div>
-	Or these:
-<div id="followOther">
-	<div class="demo" id="follow2"></div>
-	<div class="demo" id="follow3"></div>
-</div>
-
+Please note that I have grouped together the linked diagrams in the same box to demonstrate that they are in a sequence together.<br>
+<br>
 <h1 id="diffo">Follow Through - Different Symmetries</h1>
 The chosen symmetry follows through even when rules have different symmetry labels.<br>
 ie: Where applicable, a chosen symmetry will stay consistent from one rule to the next.<br>
@@ -325,46 +436,90 @@ element Foo {
 }
 </pre>
 When the first rule points to the right, the second rule points right too:
-<div id="diffoRight">
+<div class="container">
+<div id="diffoRight" class="group">
 	<div class="demo" id="diffoRight0"></div>
 	<div class="demo" id="diffoRight1"></div>
 </div>
+</div>
 When the first rule points to the left, the second rule points left too:
-<div id="diffoLeft">
+<div class="container">
+<div id="diffoLeft" class="group">
 	<div class="demo" id="diffoLeft0"></div>
 	<div class="demo" id="diffoLeft1"></div>
+</div>
 </div>
 But sometimes the first rule points along the z-axis.<br>
 In these cases, it wouldn't make much sense to try to match this to the second rule.<br>
 When this happens, the second rule randomly picks one of its translations.<br>
 For example, you could have this combination:
-<div id="diffoZ">
+<div class="container">
+<div id="diffoZ" class="group">
 	<div class="demo" id="diffoZ0"></div>
 	<div class="demo" id="diffoZ1"></div>
 </div>
+</div>
 For completeness, let's now list all possible combinations of these rules:<br>
 Note: Some rules have more chance of happening than others.
-<div id="diffoAll">
-	<div class="demo" id="diffoAll0"></div>
-	<div class="demo" id="diffoAll1"></div>
-	<p style="width: 70vw; max-width: 400px; text-align: center;">--- or ---</p>
-	<div class="demo" id="diffoAll2"></div>
-	<div class="demo" id="diffoAll3"></div>
-	<p style="width: 70vw; max-width: 400px; text-align: center;">--- or ---</p>
-	<div class="demo" id="diffoAll4"></div>
-	<div class="demo" id="diffoAll5"></div>
-	<p style="width: 70vw; max-width: 400px; text-align: center;">--- or ---</p>
-	<div class="demo" id="diffoAll6"></div>
-	<div class="demo" id="diffoAll7"></div>
-	<p style="width: 70vw; max-width: 400px; text-align: center;">--- or ---</p>
-	<div class="demo" id="diffoAll8"></div>
-	<div class="demo" id="diffoAll9"></div>
-	<p style="width: 70vw; max-width: 400px; text-align: center;">--- or ---</p>
-	<div class="demo" id="diffoAll10"></div>
-	<div class="demo" id="diffoAll11"></div>
-	
+<div class="container">
+	<div id="diffoAll" class="group">
+		<div class="demo" id="diffoAll0"></div>
+		<div class="demo" id="diffoAll1"></div>
+	</div>
+	<div id="diffoAll" class="group">
+		<div class="demo" id="diffoAll2"></div>
+		<div class="demo" id="diffoAll3"></div>
+	</div>
+	<div id="diffoAll" class="group">
+		<div class="demo" id="diffoAll4"></div>
+		<div class="demo" id="diffoAll5"></div>
+	</div>
+	<div id="diffoAll" class="group">
+		<div class="demo" id="diffoAll6"></div>
+		<div class="demo" id="diffoAll7"></div>
+	</div>
+	<div id="diffoAll" class="group">
+		<div class="demo" id="diffoAll8"></div>
+		<div class="demo" id="diffoAll9"></div>
+	</div>
+	<div id="diffoAll" class="group">
+		<div class="demo" id="diffoAll10"></div>
+		<div class="demo" id="diffoAll11"></div>
+	</div>
 </div>
 
+<br>
+<h1 id="looping">Looping</h1>
+In all these examples so far, one random translation is chosen per event.<br>
+However, in some programs, you might want to loop through all translations instead of only picking one.<br>
+In the next version of TodeSplat, you will be able to use the "for" keyword to do this.<br>
+For example:
+<pre>
+for(x) {
+	@_ => _@
+}
+</pre>
+This example loops through each possible x-axis translation.<br>
+To recap, there are two possible translations here:<br>
+<div class="container">
+	<div id="recap" class="group">
+		<div class="demo" id="recap0"></div>
+	</div>
+	<div id="recap" class="group">
+		<div class="demo" id="recap1"></div>
+	</div>
+</div>
+This means that this rule chooses between two possible orders of translations (2 factorial):
+<div class="container">
+	<div id="loopx" class="group">
+		<div class="demo" id="loopx0"></div>
+		<div class="demo" id="loopx1"></div>
+	</div>
+	<div id="recap" class="group">
+		<div class="demo" id="loopx2"></div>
+		<div class="demo" id="loopx3"></div>
+	</div>
+</div>
 
 
 		</article>
@@ -501,7 +656,7 @@ Note: Some rules have more chance of happening than others.
 						top > renderer.domElement.clientHeight ||
 						right < 0 ||
 						left > renderer.domElement.clientWidth
-						
+					
 					if (!isOffscreen) {
 						const positiveYUpBottom = renderer.domElement.clientHeight - bottom
 						renderer.setScissor(left, positiveYUpBottom, width, height)
@@ -611,17 +766,20 @@ Note: Some rules have more chance of happening than others.
 				
 				let orbit = undefined
 				if (true || !dummyCamera) {
-					orbit = new THREE.OrbitControls(camera, $(`#${group}`))
-					orbit.mouseButtons.RIGHT = THREE.MOUSE.ROTATE
-					orbit.mouseButtons.MIDDLE = undefined
-					orbit.enableKeys = false
-					orbit.enableDamping = true
-					orbit.enableZoom = false
-					orbit.touches = {
-						ONE: THREE.TOUCH.ROTATE,
+					const container = $(`#${group}`).parentElement
+					if (container.classList.contains("container")) {
+						orbit = new THREE.OrbitControls(camera, container)
+						orbit.mouseButtons.RIGHT = THREE.MOUSE.ROTATE
+						orbit.mouseButtons.MIDDLE = undefined
+						orbit.enableKeys = false
+						orbit.enableDamping = true
+						orbit.enableZoom = false
+						orbit.touches = {
+							ONE: THREE.TOUCH.ROTATE,
+						}
+						//stage.on.process(orbit.o.update)
+						dummyCamera = camera
 					}
-					//stage.on.process(orbit.o.update)
-					dummyCamera = camera
 				}
 				else {
 					/*stage.on.process(() => {
@@ -633,7 +791,7 @@ Note: Some rules have more chance of happening than others.
 				addScene(elem, (time, rect) => {
 					camera.aspect = rect.width / rect.height
 					camera.updateProjectionMatrix()
-					orbit.update()
+					if (orbit) orbit.update()
 					renderer.render(scene, camera)
 				})
 				
@@ -946,8 +1104,8 @@ Note: Some rules have more chance of happening than others.
 			makeDemo("follow2", "followOther", getBaseRule(1, FollowDummy))
 			makeDemo("follow3", "followOther", getBaseRule(3, FollowDummy))
 			
-			makeDemo("diffoRight0", "diffoRight", getBaseRule(0, FollowDummy))
-			makeDemo("diffoRight1", "diffoRight", getBaseRule(2, FollowDummy))
+			makeDemo("diffoRight0", "diffoRight", getBaseRule(0, FollowDummy), "group")
+			makeDemo("diffoRight1", "diffoRight", getBaseRule(2, FollowDummy), "group")
 			
 			makeDemo("diffoLeft0", "diffoLeft", getBaseRule(1, FollowDummy))
 			makeDemo("diffoLeft1", "diffoLeft", getBaseRule(3, FollowDummy))
@@ -968,6 +1126,33 @@ Note: Some rules have more chance of happening than others.
 			makeDemo("diffoAll9", "diffoAll", getBaseRule(2, FollowDummy))
 			makeDemo("diffoAll10", "diffoAll", getBaseRule(5, FollowDummy))
 			makeDemo("diffoAll11", "diffoAll", getBaseRule(3, FollowDummy))
+			
+			TodeSplat `
+				element EventWindowDummy {
+					rule XYZ {
+						  .      .
+						 ..     ..
+						@.. => ...
+					}
+				}
+			`	
+			
+			//makeDemo("eventWindow0", "diffoAll", getBaseRule(0, EventWindowDummy))		
+			
+			TodeSplat `
+				element Recap {
+					rule { @_ => ..}
+					rule { _@ => ..}
+				}
+			`
+			
+			makeDemo("recap0", "recap", getBaseRule(0, Recap))
+			makeDemo("recap1", "recap", getBaseRule(1, Recap))
+			
+			makeDemo("loopx0", "loopx", getBaseRule(0, Recap))
+			makeDemo("loopx1", "loopx", getBaseRule(1, Recap))
+			makeDemo("loopx2", "loopx", getBaseRule(1, Recap))
+			makeDemo("loopx3", "loopx", getBaseRule(0, Recap))
 			
 			if (!isStatic) return requestAnimationFrame(render)
 			
