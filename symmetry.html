@@ -496,7 +496,8 @@ In the next version of TodeSplat, you will be able to use the "for" keyword to d
 For example:
 <pre>
 for(x) rule {
-	@_ => _@
+	@  => _
+	#_    #@
 }
 </pre>
 This example loops through each possible x-axis translation.<br>
@@ -527,10 +528,11 @@ But what if there are more possible translations?
 Let's look at this example:
 <pre>
 for(xz) rule {
-	@_ => _@
+	@  => _
+	#_    #@
 }
 </pre>
-It loops through each possible x-axis and z-axis translation.<br>
+It loops through each possible x-axis and z-axis translation (and combinations of the two).<br>
 In other words, any direction sideways.<br>
 To recap, these are the 4 possible translations:<br>
 <div class="container">
@@ -697,6 +699,111 @@ This means that there are 24 different potential sequences (4 factorial):<br>
 	</div>
 </div>
 
+These sequences are calculated and processed when the page loads.<br>
+This means that TodeSplat generates Javascript that runs faster.<br>
+Faster Javascript means more sand to test out.<br>
+Is this a good idea? Probably not, but I want to experiment with it and learn.<br>
+<br>
+<h1 id="xlonglooping">Extremely Long Looping</h1>
+But what if we wanted to loop through even more translations?<br>
+Let's look at this example:<br>
+<pre>
+for(xyz) rule {
+	@  => _
+	#_    #@
+}
+</pre>
+It loops through each possible x-axis and z-axis and y-axis translation (and combinations of the three).<br>
+To recap, these are the 24 possible translations:<br>
+<div class="container">
+	<div id="slideAnyLoop" class="group">
+		<div class="demo" id="slideAnyLoop0"></div>
+	</div>
+	<div id="slideAnyLoop" class="group">
+		<div class="demo" id="slideAnyLoop1"></div>
+	</div>
+	<div id="slideAnyLoop" class="group">
+		<div class="demo" id="slideAnyLoop2"></div>
+	</div>
+	<div id="slideAnyLoop" class="group">
+		<div class="demo" id="slideAnyLoop3"></div>
+	</div>
+	<div id="slideAnyLoop" class="group">
+		<div class="demo" id="slideAnyLoop4"></div>
+	</div>
+	<div id="slideAnyLoop" class="group">
+		<div class="demo" id="slideAnyLoop5"></div>
+	</div>
+	<div id="slideAnyLoop" class="group">
+		<div class="demo" id="slideAnyLoop6"></div>
+	</div>
+	<div id="slideAnyLoop" class="group">
+		<div class="demo" id="slideAnyLoop7"></div>
+	</div>
+	<div id="slideAnyLoop" class="group">
+		<div class="demo" id="slideAnyLoop8"></div>
+	</div>
+	<div id="slideAnyLoop" class="group">
+		<div class="demo" id="slideAnyLoop9"></div>
+	</div>
+	<div id="slideAnyLoop" class="group">
+		<div class="demo" id="slideAnyLoop10"></div>
+	</div>
+	<div id="slideAnyLoop" class="group">
+		<div class="demo" id="slideAnyLoop11"></div>
+	</div>
+	<div id="slideAnyLoop" class="group">
+		<div class="demo" id="slideAnyLoop12"></div>
+	</div>
+	<div id="slideAnyLoop" class="group">
+		<div class="demo" id="slideAnyLoop13"></div>
+	</div>
+	<div id="slideAnyLoop" class="group">
+		<div class="demo" id="slideAnyLoop14"></div>
+	</div>
+	<div id="slideAnyLoop" class="group">
+		<div class="demo" id="slideAnyLoop15"></div>
+	</div>
+	<div id="slideAnyLoop" class="group">
+		<div class="demo" id="slideAnyLoop16"></div>
+	</div>
+	<div id="slideAnyLoop" class="group">
+		<div class="demo" id="slideAnyLoop17"></div>
+	</div>
+	<div id="slideAnyLoop" class="group">
+		<div class="demo" id="slideAnyLoop18"></div>
+	</div>
+	<div id="slideAnyLoop" class="group">
+		<div class="demo" id="slideAnyLoop19"></div>
+	</div>
+	<div id="slideAnyLoop" class="group">
+		<div class="demo" id="slideAnyLoop20"></div>
+	</div>
+	<div id="slideAnyLoop" class="group">
+		<div class="demo" id="slideAnyLoop21"></div>
+	</div>
+	<div id="slideAnyLoop" class="group">
+		<div class="demo" id="slideAnyLoop22"></div>
+	</div>
+	<div id="slideAnyLoop" class="group">
+		<div class="demo" id="slideAnyLoop23"></div>
+	</div>
+</div>
+<br>
+This means that there would be 620448401733239439360000 possible sequences of translations.<br>
+Clearly, this is too many to pre-process.<br>
+<br>
+On one hand, I could give up on trying to pre-process sequences of translations.<br>
+This would be much easier but would cause a huge performance hit for the next batch of elements I want to make.<br>
+<br>
+However, I won't give up yet because I have a theory about how to get around this issue.<br>
+Instead of pre-processing all (24 factorial) potential sequences, perhaps I could just pre-process a smaller subset of them.<br>
+Sort of like... a pseudo-random list of possible sequences.<br>
+Because... when I'm coding with TodeSplat I don't really care about 'completeness' of these symmetries.<br>
+I care more about just making my elements work (without any biases in any direction).<br>
+To help understand this better, I'm going to make a new demo to test out some ideas.<br>
+I'll link it here when I've started work on it.<br>
+<br>
 
 		</article>
 	
@@ -1317,10 +1424,25 @@ This means that there are 24 different potential sequences (4 factorial):<br>
 			
 			TodeSplat `
 				element Recap {
-					rule { @_ => ..}
-					rule { _@ => ..}
-					rule side { _@ => ..}
-					rule side { @_ => ..}
+					rule { 
+						@  => .
+						#_    ..
+					}
+					
+					rule { 
+						 @ =>  .
+						_#    ..
+					}
+					
+					rule side { 
+						 @ =>  .
+						_#    ..
+					}
+					
+					rule side { 
+						@  => .
+						#_    ..
+					}
 				}
 			`
 			
@@ -1366,6 +1488,33 @@ This means that there are 24 different potential sequences (4 factorial):<br>
 				makeDemo(`loopxz${xzid++}`, "loopxz", getBaseRule(xzperm[2], Recap))
 				makeDemo(`loopxz${xzid++}`, "loopxz", getBaseRule(xzperm[3], Recap))
 			}
+			
+			
+			
+			makeDemo("slideAnyLoop0", "slideAnyLoop", getBaseRule(0, SlideAny))
+			makeDemo("slideAnyLoop1", "slideAnyLoop", getBaseRule(1, SlideAny))
+			makeDemo("slideAnyLoop2", "slideAnyLoop", getBaseRule(2, SlideAny))
+			makeDemo("slideAnyLoop3", "slideAnyLoop", getBaseRule(3, SlideAny))
+			makeDemo("slideAnyLoop4", "slideAnyLoop", getBaseRule(4, SlideAny))
+			makeDemo("slideAnyLoop5", "slideAnyLoop", getBaseRule(5, SlideAny))
+			makeDemo("slideAnyLoop6", "slideAnyLoop", getBaseRule(6, SlideAny))
+			makeDemo("slideAnyLoop7", "slideAnyLoop", getBaseRule(7, SlideAny))
+			makeDemo("slideAnyLoop8", "slideAnyLoop", getBaseRule(8, SlideAny))
+			makeDemo("slideAnyLoop9", "slideAnyLoop", getBaseRule(9, SlideAny))
+			makeDemo("slideAnyLoop10", "slideAnyLoop", getBaseRule(10, SlideAny))
+			makeDemo("slideAnyLoop11", "slideAnyLoop", getBaseRule(11, SlideAny))
+			makeDemo("slideAnyLoop12", "slideAnyLoop", getBaseRule(12, SlideAny))
+			makeDemo("slideAnyLoop13", "slideAnyLoop", getBaseRule(13, SlideAny))
+			makeDemo("slideAnyLoop14", "slideAnyLoop", getBaseRule(14, SlideAny))
+			makeDemo("slideAnyLoop15", "slideAnyLoop", getBaseRule(15, SlideAny))
+			makeDemo("slideAnyLoop16", "slideAnyLoop", getBaseRule(16, SlideAny))
+			makeDemo("slideAnyLoop17", "slideAnyLoop", getBaseRule(17, SlideAny))
+			makeDemo("slideAnyLoop18", "slideAnyLoop", getBaseRule(18, SlideAny))
+			makeDemo("slideAnyLoop19", "slideAnyLoop", getBaseRule(19, SlideAny))
+			makeDemo("slideAnyLoop20", "slideAnyLoop", getBaseRule(20, SlideAny))
+			makeDemo("slideAnyLoop21", "slideAnyLoop", getBaseRule(21, SlideAny))
+			makeDemo("slideAnyLoop22", "slideAnyLoop", getBaseRule(22, SlideAny))
+			makeDemo("slideAnyLoop23", "slideAnyLoop", getBaseRule(23, SlideAny))
 			
 			
 			
