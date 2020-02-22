@@ -63,8 +63,16 @@
 			cursor: pointer;
 			outline: 2px solid #ffcc00;
 			outline-offset: -1px;
+			user-select: none;
 		}
 		
+		section {
+			margin-top: 40px;
+		}
+		
+		section h1 {
+			
+		}
 	
 	</style>
 </head>
@@ -79,13 +87,33 @@
 		<article>
 			
 			<section>
-				<h1>Introduction</h1>
+				<h1>Right</h1>
 				<p>Let's say we have an element that follows this rule:</p>
 				<pre>rule { @_ => _@ }</pre>
 				<p>We could represent it on a 2D grid like this:
 				<br>(Click on the grid to run or reset it)</p>
 				<canvas class="demo load:one run:right"></canvas>
-				
+			</section>
+			
+			<section>
+				<h1>Left</h1>
+				<p>We could manually flip around the x-axis of our diagram to make it move to the left instead:</p>
+				<pre>rule { _@ => @_ }</pre>
+				<canvas class="demo load:one run:left"></canvas>
+			</section>
+			
+			<section>
+				<h1>Sideways</h1>
+				<p>We can add the 'x' label to randomly flip the rule on the x-axis.</p>
+				<pre>rule x { @_ => _@ }</pre>
+				<canvas class="demo load:one run:sideways"></canvas>
+			</section>
+			
+			<section>
+				<h1>Any Direction</h1>
+				<p>We can add the 'xy' label to randomly flip the x-axis or y-axis, or swap them around.</p>
+				<pre>rule xy { @_ => _@ }</pre>
+				<canvas class="demo load:one run:any"></canvas>
 			</section>
 			
 		</article>
@@ -132,8 +160,8 @@
 		//===========//
 		// Constants //
 		//===========//
-		const DEMO_WIDTH = 11
-		const DEMO_HEIGHT = 11
+		const DEMO_WIDTH = 41
+		const DEMO_HEIGHT = 15
 		
 		const MAX_X = DEMO_WIDTH / 2 - 0.5
 		const MIN_X = -MAX_X
@@ -141,7 +169,7 @@
 		const MAX_Y = DEMO_HEIGHT / 2 - 0.5
 		const MIN_Y = -MAX_Y
 		
-		const SPACE_WIDTH = 20
+		const SPACE_WIDTH = 15
 		const SPACE_HEIGHT = SPACE_WIDTH
 		
 		const CANVAS_WIDTH = SPACE_WIDTH * DEMO_WIDTH
@@ -150,6 +178,8 @@
 		const LOAD_PREFIX = "load:"
 		const RUN_PREFIX = "run:"
 		
+		const TICK_INTERVAL = 45
+		
 		//=========//
 		// Element //
 		//=========//
@@ -157,9 +187,10 @@
 			return {name, colour}
 		}
 		
-		const Empty = makeElement({name: "Empty", colour: "grey"})
+		const Empty = makeElement({name: "Empty", colour: "rgb(65, 76, 97)"})
 		const Sand = makeElement({name: "Sand", colour: "#ffcc00"})
 		const Wall = makeElement({name: "Wall", colour: "#4b5971"})
+		const NonLive = makeElement({name: "NonLive", colour: "red"})
 		
 		//=======//
 		// World //
@@ -179,18 +210,61 @@
 					grid[x][y] = space
 				}
 			}
-			return {spaces, grid}
+			return {spaces, grid, active: false}
 		}
 		
-		const drawWorld = (world, context) => {
+		const drawWorld = (world) => {
+			const context = world.context
 			const spaces = world.spaces
 			for (const space of spaces) {
 				const element = space.element
 				context.fillStyle = element.colour
 				const x = (space.x + DEMO_WIDTH / 2 - 0.5) * SPACE_WIDTH
-				const y = (space.y + DEMO_HEIGHT / 2 - 0.5) * SPACE_HEIGHT
+				const y = (space.y * -1 + DEMO_HEIGHT / 2 - 0.5) * SPACE_HEIGHT
 				context.fillRect(x, y, SPACE_WIDTH - 1, SPACE_HEIGHT - 1)
 			}
+		}
+		
+		const resetWorld = (world, template) => {
+			const spaces = []
+			const grid = []
+			for (let x = MIN_X; x <= MAX_X; x++) {
+				grid[x] = []
+				for (let y = MIN_Y; y <= MAX_Y; y++) {
+					const element = template.grid[x][y].element
+					const space = makeSpace(x, y, element)
+					spaces.push(space)
+					grid[x][y] = space
+				}
+			}
+			world.spaces = spaces
+			world.grid = grid
+		}
+		
+		//==============//
+		// Event Window //
+		//==============//
+		const ewSwap = (a, b) => {
+			const aElement = b.element
+			const bElement = a.element
+			a.element = aElement
+			b.element = bElement
+		}
+		
+		const makeEventWindow = (space, world) => {
+			const ew = (x, y) => {
+				const siteX = space.x + x
+				const siteY = space.y + y
+				const siteRow = world.grid[siteX]
+				if (siteRow == undefined) return {x: siteX, y: siteY, element: NonLive}
+				const site = siteRow[siteY]
+				if (site == undefined) return {x: siteX, y: siteY, element: NonLive}
+				else return site
+			}
+			
+			ew.swap = ewSwap
+			
+			return ew
 		}
 		
 		//==========//
@@ -206,13 +280,66 @@
 		const runtimes = {}
 		runtimes.right = (ew) => {
 			if (ew(0, 0).element == Sand && ew(1, 0).element == Empty) {
-				ew.swap([0, 0], [1, 0])
+				ew.swap(ew(0, 0), ew(1, 0))
 			}
+		}
+		
+		runtimes.left = (ew) => {
+			if (ew(0, 0).element == Sand && ew(-1, 0).element == Empty) {
+				ew.swap(ew(0, 0), ew(-1, 0))
+			}
+		}
+		
+		runtimes.up = (ew) => {
+			if (ew(0, 0).element == Sand && ew(0, 1).element == Empty) {
+				ew.swap(ew(0, 0), ew(0, 1))
+			}
+		}
+		
+		runtimes.down = (ew) => {
+			if (ew(0, 0).element == Sand && ew(0, -1).element == Empty) {
+				ew.swap(ew(0, 0), ew(0, -1))
+			}
+		}
+		
+		runtimes.sideways = (ew) => {
+			const right = Math.random() < 0.5
+			if (right) return runtimes.right(ew)
+			else return runtimes.left(ew)
+		}
+		
+		const directions = [
+			runtimes.right,
+			runtimes.left,
+			runtimes.up,
+			runtimes.down,
+		]
+		
+		runtimes.any = (ew) => {
+			const directionNumber = Math.floor(Math.random() * 4)
+			return directions[directionNumber](ew)
+		}
+		
+		//======//
+		// Tick //
+		//======//		
+		const tick = (world) => {
+			if (!world.active) return setTimeout(() => tick(world), TICK_INTERVAL)
+			//const spaces = world.spaces
+			const spaces = world.spaces.sort(() => Math.random() - 0.5)
+			for (const space of spaces) {
+				const ew = makeEventWindow(space, world)
+				world.runtime(ew)
+			}
+			
+			drawWorld(world)
+			setTimeout(() => tick(world), TICK_INTERVAL)
 		}
 		
 		//========//
 		// Canvas //
 		//========//
+		let activeWorld = undefined
 		const initCanvas = (canvas) => {
 			
 			canvas.width = CANVAS_WIDTH
@@ -237,10 +364,26 @@
 			if (runtimeName == undefined) throw new Error("No runtime name found.")
 			
 			const template = templates[templateName]
-			const world = {...template}
+			const runtime = runtimes[runtimeName]
+			const context = canvas.getContext("2d")			
+			const world = {runtime, context, template}
 			
-			const context = canvas.getContext("2d")
-			drawWorld(world, context)
+			resetWorld(world, template)
+			drawWorld(world)
+			
+			canvas.on.click(e => {
+				if (activeWorld != undefined) {
+					activeWorld.active = false
+					resetWorld(activeWorld, activeWorld.template)
+					drawWorld(activeWorld)
+				}
+				resetWorld(world, template)
+				drawWorld(world)
+				world.active = true
+				activeWorld = world
+			})
+			
+			setTimeout(() => tick(world), TICK_INTERVAL)
 		}
 		
 		$$(".demo").forEach(initCanvas)
