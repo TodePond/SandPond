@@ -161,10 +161,43 @@
 			</section>
 			
 			<section>
-				<h1>Biased Distribution with Walls</h1>
+				<h1>Maze: Unbiased</h1>
+				<p>Let's run lots of simulations at the same time to see the random distributions of atoms.
+				<br>You should see that the atoms get evenly spread out, without any biases towards any directions.</p>
+				<pre>for(xy) rule { @_ => _@ }</pre>
+				<canvas class="demo multi load:maze run:forAny"></canvas>
+			</section>
+			
+			<section>
+				<h1>Maze: Biased</h1>
 				<p></p>
 				<canvas class="demo multi load:maze run:forAnyBiased"></canvas>
 			</section>
+			
+			<section>
+				<h1>Maze: Semi-Biased</h1>
+				<p></p>
+				<canvas class="demo multi load:maze run:forAnySemiBiased"></canvas>
+			</section>
+			
+			<section>
+				<h1>Puzzle Room: Unbiased</h1>
+				<p></p>
+				<canvas class="demo multi load:road run:forAny"></canvas>
+			</section>
+			
+			<section>
+				<h1>Puzzle Room: Biased</h1>
+				<p></p>
+				<canvas class="demo multi load:road run:forAny"></canvas>
+			</section>
+			
+			<section>
+				<h1>Puzzle Room: Semi-Biased</h1>
+				<p></p>
+				<canvas class="demo multi load:road run:forAny"></canvas>
+			</section>
+			
 			
 		</article>
 	
@@ -338,9 +371,20 @@
 		
 		templates.maze = makeWorld()
 		for (const space of templates.maze.spaces) {
-			if (space.x % 2 == 0 && space.y % 2 != 0) space.element = Wall
+			if (space.x % 2 == 0 && space.y % 2 == 0) space.element = Wall
+			/*if (space.x % 2 == 0 && space.y % 4 == 0) space.element = Wall
+			if (space.x % 2 != 0 && space.y % 2 == 0 && space.y % 4 != 0) space.element = Wall
+			if (space.x % 4 == 0 && space.y % 2 == 0) space.element = Wall*/
 		}
 		templates.maze.grid[0][0].element = Sand
+		
+		templates.road = makeWorld()
+		for (let x = MIN_X; x <= MAX_X; x++) {
+			templates.road.grid[x][1].element = Wall
+			templates.road.grid[x][-1].element = Wall
+		}
+		
+		templates.road.grid[0][0].element = Sand
 		
 		//=========//
 		// Runtime //
@@ -440,6 +484,27 @@
 		runtimes.forAnyBiased = (ew) => {
 			const rando = Math.floor(Math.random() * 4)
 			const sequence = forAnyBiased[rando]
+			for (const direction of sequence) {
+				if (runtimes[direction](ew)) return true
+			}
+			return false
+		}
+		
+		const forAnySemiBiased = [
+			["right", "left", "up", "down"],
+			["left", "up", "down", "right"],
+			["up", "down", "right", "left"],
+			["down", "right", "left", "up"],
+			
+			["down", "up", "left", "right"],
+			["up", "left", "right", "down"],
+			["left", "right", "down", "up"],
+			["right", "down", "up", "left"],
+		]
+		
+		runtimes.forAnySemiBiased = (ew) => {
+			const rando = Math.floor(Math.random() * 8)
+			const sequence = forAnySemiBiased[rando]
 			for (const direction of sequence) {
 				if (runtimes[direction](ew)) return true
 			}
