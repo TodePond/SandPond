@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<head>
+	<title>Sandboy Symmetries - 2D Demo</title>
+	<meta charset="utf-8"/>
+	<meta name="viewport" content="height=device-height, width=device-width, initial-scale=1.0">
+
+	<!-- My Stuff -->
+	<script src="Libraries/Array.js"></script>
+	<script src="Libraries/Async.js"></script>
+	<script src="Libraries/Console.js"></script>
+	<script src="Libraries/Bracketless.js"></script>
+	<script src="Libraries/Document.js"></script>
+	<script src="Libraries/Loop.js"></script>
+	<script src="Libraries/Match.js"></script>
+	<script src="Libraries/Report.js"></script>
+	<script src="Libraries/Type.js"></script>
+	<script src="Libraries/Event.js"></script>
+	<script src="Libraries/Worker.js"></script>
+	<script src="Libraries/Vector.js"></script>
+	<script src="Libraries/PropertyEditor.js"></script>
+	<script src="Libraries/Controls.js"></script>
+	<script src="Libraries/Stage.js"></script>
+	<script src="Libraries/Javascript.js"></script>
+	<script src="Libraries/Math.js"></script>
+	
+	<!-- Someone Else's Stuff -->
+	<script src="Libraries/three.min.js"></script>
+	<script src="Libraries/BufferGeometryUtils.js"></script>
+	<script src="Libraries/OrbitControls.js"></script>
+	<script src="Libraries/WebVR.js"></script>
+	<script src="Libraries/threex.dynamictexture.js"></script>
+	<script src="Libraries/threex.dynamictext2dobject.js"></script>
+	
+	<style>
+		
+		@font-face {
+			font-family: UbuntuMono;
+			src: url("Fonts/UbuntuMono-R.ttf")
+		}
+		
+		@font-face {
+			font-family: Rosario;
+			src: url("Fonts/Rosario-Regular.ttf")
+		}
+		
+		pre {
+			tab-size: 4;
+			font-family: UbuntuMono;
+		}
+		
+		body {
+			font-family: Rosario;
+			margin: 20px;
+			background-color: rgb(23, 29, 40);
+			color: rgb(224, 224, 224);
+		}
+		
+		article {
+			font-size: 18px;
+		}
+		
+		canvas:hover {
+			cursor: pointer;
+			outline: 2px solid #ffcc00;
+			outline-offset: -1px;
+		}
+		
+	
+	</style>
+</head>
+
+<body>
+
+	<header>
+		<h1>Sandboy Symmetries - 2D Demo</h1>
+	</header>
+	<main>
+	
+		<article>
+			
+			<section>
+				<h1>Introduction</h1>
+				<p>Let's say we have an element that follows this rule:</p>
+				<pre>rule { @_ => _@ }</pre>
+				<p>We could represent it on a 2D grid like this:
+				<br>(Click on the grid to run or reset it)</p>
+				<canvas class="demo load:one run:right"></canvas>
+				
+			</section>
+			
+		</article>
+	
+	</main>
+
+	<!-- Structure -->
+	<!--<script src="Source/Universe.js"></script>-->
+	<script src="Source/World.js"></script>
+	<script src="Source/Space.js"></script>
+	<script src="Source/Site.js"></script>
+	<script src="Source/Atom.js"></script>
+	<script src="Source/Element.js"></script>
+	<script src="Source/Rule.js"></script>
+	<script src="Source/Event.js"></script>
+	<script src="Source/Character.js"></script>
+	
+	<!-- Helpers -->
+	<script src="Source/Symmetry.js"></script>
+	<script src="Source/EventWindow.js"></script>
+	<script src="Source/Behave.js"></script>
+	<script src="Source/Random.js"></script>
+	<script src="Source/TodeSplat.js"></script>
+	
+	<!-- Entities -->
+	<!--<script src="Source/Dropper.js"></script>-->
+	<script src="Source/Floor.js"></script>
+	<script src="Source/Lighting.js"></script>
+	
+	<!-- Elements -->
+	<script src="Elements/Globals.js"></script>
+	<script src="Elements/Simple.js"></script>
+	<!--<script src="Elements/Presets.js"></script>
+	<script src="Elements/Sandbox.js"></script>
+	<script src="Elements/Weather.js"></script>
+	<script src="Elements/Explosive.js"></script>
+	<script src="Elements/Life.js"></script>
+	<script src="Elements/T2Tile.js"></script>-->
+	<!--<script src="Elements/Tutorial.js"></script>-->
+	
+	<!-- Main -->
+	<script>
+		
+		//===========//
+		// Constants //
+		//===========//
+		const DEMO_WIDTH = 11
+		const DEMO_HEIGHT = 11
+		
+		const MAX_X = DEMO_WIDTH / 2 - 0.5
+		const MIN_X = -MAX_X
+		
+		const MAX_Y = DEMO_HEIGHT / 2 - 0.5
+		const MIN_Y = -MAX_Y
+		
+		const SPACE_WIDTH = 20
+		const SPACE_HEIGHT = SPACE_WIDTH
+		
+		const CANVAS_WIDTH = SPACE_WIDTH * DEMO_WIDTH
+		const CANVAS_HEIGHT = SPACE_HEIGHT * DEMO_HEIGHT
+		
+		const LOAD_PREFIX = "load:"
+		const RUN_PREFIX = "run:"
+		
+		//=========//
+		// Element //
+		//=========//
+		const makeElement = ({name, colour}) => {
+			return {name, colour}
+		}
+		
+		const Empty = makeElement({name: "Empty", colour: "grey"})
+		const Sand = makeElement({name: "Sand", colour: "#ffcc00"})
+		const Wall = makeElement({name: "Wall", colour: "#4b5971"})
+		
+		//=======//
+		// World //
+		//=======//
+		const makeSpace = (x, y, element) => {
+			return {x, y, element}
+		}
+		
+		const makeWorld = () => {
+			const spaces = []
+			const grid = []
+			for (let x = MIN_X; x <= MAX_X; x++) {
+				grid[x] = []
+				for (let y = MIN_X; y <= MAX_Y; y++) {
+					const space = makeSpace(x, y, Empty)
+					spaces.push(space)
+					grid[x][y] = space
+				}
+			}
+			return {spaces, grid}
+		}
+		
+		const drawWorld = (world, context) => {
+			const spaces = world.spaces
+			for (const space of spaces) {
+				const element = space.element
+				context.fillStyle = element.colour
+				const x = (space.x + DEMO_WIDTH / 2 - 0.5) * SPACE_WIDTH
+				const y = (space.y + DEMO_HEIGHT / 2 - 0.5) * SPACE_HEIGHT
+				context.fillRect(x, y, SPACE_WIDTH - 1, SPACE_HEIGHT - 1)
+			}
+		}
+		
+		//==========//
+		// Template //
+		//==========//
+		const templates = {}
+		templates.one = makeWorld()
+		templates.one.grid[0][0].element = Sand
+		
+		//=========//
+		// Runtime //
+		//=========//
+		const runtimes = {}
+		runtimes.right = (ew) => {
+			if (ew(0, 0).element == Sand && ew(1, 0).element == Empty) {
+				ew.swap([0, 0], [1, 0])
+			}
+		}
+		
+		//========//
+		// Canvas //
+		//========//
+		const initCanvas = (canvas) => {
+			
+			canvas.width = CANVAS_WIDTH
+			canvas.height = CANVAS_HEIGHT
+			canvas.style = `
+				width: ${CANVAS_WIDTH}px;
+				height: ${CANVAS_HEIGHT}px;
+			`
+			
+			let templateName = undefined
+			let runtimeName = undefined
+			canvas.classList.forEach(className => {
+				if (className.slice(0, LOAD_PREFIX.length) == LOAD_PREFIX) {
+					templateName = className.slice(LOAD_PREFIX.length)
+				}
+				else if (className.slice(0, RUN_PREFIX.length) == RUN_PREFIX) {
+					runtimeName = className.slice(RUN_PREFIX.length)
+				}
+			})
+			
+			if (templateName == undefined) throw new Error("No template name found.")
+			if (runtimeName == undefined) throw new Error("No runtime name found.")
+			
+			const template = templates[templateName]
+			const world = {...template}
+			
+			const context = canvas.getContext("2d")
+			drawWorld(world, context)
+		}
+		
+		$$(".demo").forEach(initCanvas)
+		
+	</script>
+	
+</body>
