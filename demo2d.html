@@ -156,93 +156,96 @@
 			
 			<section>
 				<h1>Biased Distribution (4 possible sequences)</h1>
-				<p></p>
+				<p>Can we represent this distribution with a smaller number of sequences?
+				<br>A simple (but biased) approach would be to alternate the starting translation and then cycle through the others.
+				<br>This results in this:</p>
 				<canvas class="demo multi load:one run:forAnyBiased"></canvas>
 			</section>
 			
-			<section>
+			<!--<section>
 				<h1>Semi-Biased Distribution (8 possible sequences)</h1>
 				<p></p>
 				<canvas class="demo multi load:one run:forAnySemiBiased"></canvas>
-			</section>
+			</section>-->
 			
-			<section>
+			<!--<section>
 				<h1>Pseudo-Biased Distribution (8 selected sequences)</h1>
 				<p></p>
 				<canvas class="demo multi load:one run:forAnyPseudo"></canvas>
-			</section>
+			</section>-->
 			
-			<section>
+			<!--<section>
 				<h1>Pseudo-Biased Distribution (16 selected sequences)</h1>
 				<p></p>
 				<canvas class="demo multi load:one run:forAnyPseudoPlus"></canvas>
-			</section>
+			</section>-->
 			
 			<section>
 				<h1>Maze: Unbiased (24 possible sequences)</h1>
-				<p>Let's run lots of simulations at the same time to see the random distributions of atoms.
-				<br>You should see that the atoms get evenly spread out, without any biases towards any directions.</p>
+				<p>The biased approach looked fine in empty space.
+				<br>But what about this environment? This is what the unbiased distribution looks like:</p>
 				<pre>for(xy) rule { @_ => _@ }</pre>
 				<canvas class="demo multi load:maze run:forAny"></canvas>
 			</section>
 			
 			<section>
 				<h1>Maze: Biased (4 possible sequences)</h1>
-				<p></p>
+				<p>And this is what the biased distribution looks like:</p>
 				<canvas class="demo multi load:maze run:forAnyBiased"></canvas>
 			</section>
 			
-			<section>
+			<!--<section>
 				<h1>Maze: Semi-Biased (8 possible sequences)</h1>
 				<p></p>
 				<canvas class="demo multi load:maze run:forAnySemiBiased"></canvas>
-			</section>
+			</section>-->
 			
 			<section>
 				<h1>Maze: Pseudo-Biased (8 selected sequences)</h1>
-				<p></p>
+				<p>I tried to make a pseudo-random approach that selects specific sequences.
+				<br>Its behaviour isn't totally correct, but it hopefully leads to an expected result:</p>
 				<canvas class="demo multi load:maze run:forAnyPseudo"></canvas>
 			</section>
 			
-			<section>
+			<!--<section>
 				<h1>Maze: PseudoPlus-Biased (16 selected sequences)</h1>
 				<p></p>
 				<canvas class="demo multi load:maze run:forAnyPseudoPlus"></canvas>
-			</section>
+			</section>-->
 			
 			<section>
 				<h1>Road: Unbiased (24 possible sequences)</h1>
-				<p></p>
+				<p>Here's another example.</p>
 				<canvas class="demo multi load:road run:forAny"></canvas>
 			</section>
 			
 			<section>
 				<h1>Road: Biased (4 possible sequences)</h1>
-				<p></p>
+				<p>The biased approach gets it wrong:</p>
 				<canvas class="demo multi load:road run:forAnyBiased"></canvas>
 			</section>
 			
-			<section>
+			<!--<section>
 				<h1>Road: Semi-Biased (8 possible sequences)</h1>
 				<p></p>
 				<canvas class="demo multi load:road run:forAnySemiBiased"></canvas>
-			</section>
+			</section>-->
 			
 			<section>
 				<h1>Road: Pseudo-Biased (8 selected sequences)</h1>
-				<p></p>
+				<p>The pseudo-random approach gets close to the unbiased distribution:</p>
 				<canvas class="demo multi load:road run:forAnyPseudo"></canvas>
 			</section>
 			
-			<section>
+			<!--<section>
 				<h1>Road: PseudoPlus-Biased (16 selected sequences)</h1>
 				<p></p>
 				<canvas class="demo multi load:road run:forAnyPseudoPlus"></canvas>
-			</section>
+			</section>-->
 			
 			<section>
 				<h1>Loop: Unbiased (24 possible sequences)</h1>
-				<p></p>
+				<p>Here are a few more examples.</p>
 				<canvas class="demo multi load:loop run:forAny"></canvas>
 			</section>
 			
@@ -252,11 +255,11 @@
 				<canvas class="demo multi load:loop run:forAnyBiased"></canvas>
 			</section>
 			
-			<section>
+			<!--<section>
 				<h1>Loop: Semi-Biased (8 possible sequences)</h1>
 				<p></p>
 				<canvas class="demo multi load:loop run:forAnySemiBiased"></canvas>
-			</section>
+			</section>-->
 			
 			<section>
 				<h1>Loop: Pseudo-Biased (8 selected sequences)</h1>
@@ -264,11 +267,11 @@
 				<canvas class="demo multi load:loop run:forAnyPseudo"></canvas>
 			</section>
 			
-			<section>
+			<!--<section>
 				<h1>Loop: PseudoPlus-Biased (16 selected sequences)</h1>
 				<p></p>
 				<canvas class="demo multi load:loop run:forAnyPseudoPlus"></canvas>
-			</section>
+			</section>-->
 			
 			<section>
 				<h1>Wide Road: Unbiased (24 possible sequences)</h1>
@@ -282,11 +285,11 @@
 				<canvas class="demo multi load:wideRoad run:forAnyBiased"></canvas>
 			</section>
 			
-			<section>
+			<!--<section>
 				<h1>Wide Road: Semi-Biased (8 possible sequences)</h1>
 				<p></p>
 				<canvas class="demo multi load:wideRoad run:forAnySemiBiased"></canvas>
-			</section>
+			</section>-->
 			
 			<section>
 				<h1>Wide Road: Pseudo-Biased (8 selected sequences)</h1>
@@ -294,11 +297,11 @@
 				<canvas class="demo multi load:wideRoad run:forAnyPseudo"></canvas>
 			</section>
 			
-			<section>
+			<!--<section>
 				<h1>Wide Road: PseudoPlus-Biased (16 selected sequences)</h1>
 				<p></p>
 				<canvas class="demo multi load:wideRoad run:forAnyPseudoPlus"></canvas>
-			</section>
+			</section>-->
 			
 			
 		</article>
