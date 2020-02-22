@@ -46,6 +46,7 @@
 		pre {
 			tab-size: 4;
 			font-family: UbuntuMono;
+			overflow: auto;
 		}
 		
 		body {
@@ -345,8 +346,9 @@
 			canvas.width = CANVAS_WIDTH
 			canvas.height = CANVAS_HEIGHT
 			canvas.style = `
-				width: ${CANVAS_WIDTH}px;
-				height: ${CANVAS_HEIGHT}px;
+				max-width: ${CANVAS_WIDTH}px;
+				max-height: ${CANVAS_HEIGHT}px;
+				width: 100%;
 			`
 			
 			let templateName = undefined
