@@ -146,6 +146,26 @@
 				<canvas class="demo load:one run:forOrderedAny"></canvas>
 			</section>
 			
+			<section>
+				<h1>Distribution</h1>
+				<p>Let's run lots of simulations at the same time to see the random distributions of atoms.
+				<br>You should see that the atoms get evenly spread out, without any biases towards any directions.</p>
+				<pre>for(xy) rule { @_ => _@ }</pre>
+				<canvas class="demo multi load:one run:forAny"></canvas>
+			</section>
+			
+			<section>
+				<h1>Biased Distribution</h1>
+				<p></p>
+				<canvas class="demo multi load:one run:forAnyBiased"></canvas>
+			</section>
+			
+			<section>
+				<h1>Biased Distribution with Walls</h1>
+				<p></p>
+				<canvas class="demo multi load:maze run:forAnyBiased"></canvas>
+			</section>
+			
 		</article>
 	
 	</main>
@@ -191,7 +211,7 @@
 		// Constants //
 		//===========//
 		const DEMO_WIDTH = 41
-		const DEMO_HEIGHT = 15
+		const DEMO_HEIGHT = 21
 		
 		const MAX_X = DEMO_WIDTH / 2 - 0.5
 		const MIN_X = -MAX_X
@@ -210,6 +230,8 @@
 		
 		const TICK_INTERVAL = 45
 		
+		const MULTI_COUNT = 100
+		
 		//=========//
 		// Element //
 		//=========//
@@ -219,7 +241,7 @@
 		
 		const Empty = makeElement({name: "Empty", colour: "rgb(65, 76, 97)"})
 		const Sand = makeElement({name: "Sand", colour: "#ffcc00"})
-		const Wall = makeElement({name: "Wall", colour: "#4b5971"})
+		const Wall = makeElement({name: "Wall", colour: "white"})
 		const NonLive = makeElement({name: "NonLive", colour: "red"})
 		
 		//=======//
@@ -243,15 +265,21 @@
 			return {spaces, grid, active: false}
 		}
 		
-		const drawWorld = (world) => {
-			const context = world.context
+		const drawWorld = (world, context = world.context, drawEmpty = true) => {
 			const spaces = world.spaces
 			for (const space of spaces) {
 				const element = space.element
+				if (!drawEmpty && element == Empty) continue
+				if (element == Empty || (drawEmpty && world.multiWorlds.length == 0)) context.globalAlpha = 1.0
+				else context.globalAlpha = 0.3
 				context.fillStyle = element.colour
 				const x = (space.x + DEMO_WIDTH / 2 - 0.5) * SPACE_WIDTH
 				const y = (space.y * -1 + DEMO_HEIGHT / 2 - 0.5) * SPACE_HEIGHT
 				context.fillRect(x, y, SPACE_WIDTH - 1, SPACE_HEIGHT - 1)
+			}
+			
+			for (const multiWorld of world.multiWorlds) {
+				drawWorld(multiWorld, context, false)
 			}
 		}
 		
@@ -269,6 +297,10 @@
 			}
 			world.spaces = spaces
 			world.grid = grid
+			
+			for (const multiWorld of world.multiWorlds) {
+				resetWorld(multiWorld, template)
+			}
 		}
 		
 		//==============//
@@ -303,6 +335,12 @@
 		const templates = {}
 		templates.one = makeWorld()
 		templates.one.grid[0][0].element = Sand
+		
+		templates.maze = makeWorld()
+		for (const space of templates.maze.spaces) {
+			if (space.x % 2 == 0 && space.y % 2 != 0) space.element = Wall
+		}
+		templates.maze.grid[0][0].element = Sand
 		
 		//=========//
 		// Runtime //
@@ -384,12 +422,26 @@
 		}
 		
 		runtimes.forOrderedAny = (ew) => {
-			const remaining = [0, 2, 1, 3]
-			while (remaining.length > 0) {
-				const index = 0
-				const number = remaining[index]
-				if (directions[number](ew)) return true
-				remaining.splice(index, 1)
+			if (runtimes.right(ew)) return true
+			if (runtimes.up(ew)) return true
+			if (runtimes.left(ew)) return true
+			if (runtimes.down(ew)) return true
+			return false
+		}
+		
+		
+		const forAnyBiased = [
+			["right", "left", "up", "down"],
+			["left", "up", "down", "right"],
+			["up", "down", "right", "left"],
+			["down", "right", "left", "up"],
+		]
+		
+		runtimes.forAnyBiased = (ew) => {
+			const rando = Math.floor(Math.random() * 4)
+			const sequence = forAnyBiased[rando]
+			for (const direction of sequence) {
+				if (runtimes[direction](ew)) return true
 			}
 			return false
 		}
@@ -404,6 +456,14 @@
 			for (const space of spaces) {
 				const ew = makeEventWindow(space, world)
 				world.runtime(ew)
+			}
+			
+			for (const multiWorld of world.multiWorlds) {
+				const multiSpaces = world.spaces.sort(() => Math.random() - 0.5)
+				for (const space of multiSpaces) {
+					const ew = makeEventWindow(space, multiWorld)
+					multiWorld.runtime(ew)
+				}
 			}
 			
 			drawWorld(world)
@@ -441,7 +501,14 @@
 			const template = templates[templateName]
 			const runtime = runtimes[runtimeName]
 			const context = canvas.getContext("2d")			
-			const world = {runtime, context, template}
+			const world = {runtime, context, template, multiWorlds: []}
+			
+			if (canvas.classList.contains("multi")) {
+				for (let i = 0; i < MULTI_COUNT; i++) {
+					const multiWorld = {runtime, template, multiWorlds: []}
+					world.multiWorlds.push(multiWorld)
+				}
+			}
 			
 			resetWorld(world, template)
 			drawWorld(world)
