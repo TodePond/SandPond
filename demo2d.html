@@ -117,6 +117,13 @@
 				<canvas class="demo load:one run:any"></canvas>
 			</section>
 			
+			<section>
+				<h1>For(Sideways)</h1>
+				<p></p>
+				<pre>for(x) rule { @_ => _@ }</pre>
+				<canvas class="demo load:one run:forSideways"></canvas>
+			</section>
+			
 		</article>
 	
 	</main>
@@ -282,25 +289,33 @@
 		runtimes.right = (ew) => {
 			if (ew(0, 0).element == Sand && ew(1, 0).element == Empty) {
 				ew.swap(ew(0, 0), ew(1, 0))
+				return true
 			}
+			return false
 		}
 		
 		runtimes.left = (ew) => {
 			if (ew(0, 0).element == Sand && ew(-1, 0).element == Empty) {
 				ew.swap(ew(0, 0), ew(-1, 0))
+				return true
 			}
+			return false
 		}
 		
 		runtimes.up = (ew) => {
 			if (ew(0, 0).element == Sand && ew(0, 1).element == Empty) {
 				ew.swap(ew(0, 0), ew(0, 1))
+				return true
 			}
+			return false
 		}
 		
 		runtimes.down = (ew) => {
 			if (ew(0, 0).element == Sand && ew(0, -1).element == Empty) {
 				ew.swap(ew(0, 0), ew(0, -1))
+				return true
 			}
+			return false
 		}
 		
 		runtimes.sideways = (ew) => {
@@ -319,6 +334,16 @@
 		runtimes.any = (ew) => {
 			const directionNumber = Math.floor(Math.random() * 4)
 			return directions[directionNumber](ew)
+		}
+		
+		runtimes.forSideways = (ew) => {
+			const rightFirst = Math.random() < 0.5
+			if (rightFirst) {
+				if (!runtimes.right(ew)) runtimes.left(ew)
+			}
+			else {
+				if (!runtimes.left(ew)) runtimes.right(ew)
+			}
 		}
 		
 		//======//
