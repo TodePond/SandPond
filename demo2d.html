@@ -118,10 +118,18 @@
 			</section>
 			
 			<section>
-				<h1>For(Sideways)</h1>
-				<p></p>
+				<h1>For: Sideways</h1>
+				<p>We can use the 'for' keyword to loop through all translations of a chosen label.</p>
 				<pre>for(x) rule { @_ => _@ }</pre>
 				<canvas class="demo load:one run:forSideways"></canvas>
+			</section>
+			
+			<section>
+				<h1>For: Ordered Sideways</h1>
+				<p>The sequences that 'for' chooses are in a random order.
+				<br>If they weren't in a random order, this would happen:</p>
+				<pre>for(xOrdered) rule { @_ => _@ }</pre>
+				<canvas class="demo load:one run:forOrderedSideways"></canvas>
 			</section>
 			
 		</article>
@@ -344,6 +352,10 @@
 			else {
 				if (!runtimes.left(ew)) runtimes.right(ew)
 			}
+		}
+		
+		runtimes.forOrderedSideways = (ew) => {
+			if (!runtimes.right(ew)) runtimes.left(ew)
 		}
 		
 		//======//
