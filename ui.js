@@ -24,6 +24,7 @@ const UI = {}
 			#ui {
 				position: absolute;
 				top: 0px;
+				user-select: none;
 			}
 			
 			.menu {

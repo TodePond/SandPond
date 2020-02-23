@@ -700,8 +700,8 @@
 		if (lhs == undefined) throw new Error(`[TodeSplat] Failed to split rule with arrow(s)...`)
 		
 		// Find the "@" symbol on the left-hand-side
-		let originX = -1
-		let originY = -1
+		let originX = 1
+		let originY = 0
 		for (let i = 0; i < lhs.length; i++) {
 			const leftLine = lhs[i]
 			const originIndex = leftLine.indexOf("@")
@@ -709,8 +709,13 @@
 				originX = originIndex
 				originY = i
 				break
-			}
+			} 
 		}
+		
+		/*if (originX == -1 && originY == -1) {
+			print("[TodeSplat] Couldn't find '@' symbol in diagram.")
+			print(source)
+		}*/
 		
 		// Get the relative positions of other spaces on the left-hand-side
 		// Add the inputs to those positions as you go

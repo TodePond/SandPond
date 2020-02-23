@@ -1,5 +1,12 @@
 TodeSplat`
 
+element Static {
+	colour "grey"
+	emissive "black"
+	category "Rulesets"
+	state "solid"
+}
+
 element Powder {
 	
 	colour "grey"

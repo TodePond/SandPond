@@ -142,4 +142,115 @@ element Steam {
 	
 }
 
+element WallSeed {
+	colour "rgb(128, 128, 128)"
+	emissive "rgb(2, 128, 200)"
+	category "Sandbox"
+	state "solid"
+	
+	data fuel 10
+	
+	ruleset Solid
+	
+	given W (element) => element == Solid || element == WallSeed
+	given W (self) => self.fuel == 10
+	rule {
+		@ => _
+		W    .
+	}
+	
+	change W () => new Solid()
+	change S (self) => {
+		self.fuel--
+		if (self.fuel > 0) return self
+	}
+
+	rule {
+		_ => S
+		@    W
+	}
+	
+}
+
+element Platform {
+	colour "rgb(128, 128, 128)"
+	emissive "rgb(2, 128, 200)"
+	category "Sandbox"
+	state "solid"
+	data fuel 100
+	//default true
+	precise true
+	pour false
+	
+	given f (self) => self.fuel <= 0
+	rule { f => _ }
+	
+	change S () => new Static()
+	change P (self) => new Platform({fuel: (self.fuel-1)/2})
+	rule { _@_ => PSP}
+	
+	change B (self) => new Platform({fuel: self.fuel-1})
+	rule x { @_ => SB }
+	
+	/*rule { #@# => ._. }*/
+	
+	rule x { @x => _. }
+}
+
+element Ball {
+	colour "grey"
+	emissive "black"
+	state "solid"
+	category "Sandbox"
+	
+	data fallSpeed 0
+	
+	keep f (self) => {
+		self.fallSpeed += 0.015
+		if (self.fallSpeed > 2) self.fallSpeed = 2
+	}
+	action {
+		@ => f
+		_    .
+	}
+	
+	given s (atom) => atom
+	select s (atom) => atom
+	keep s (self, selected) => {
+		self.fallSpeed += 0.015
+		if (selected.fallSpeed != undefined) {
+			if (selected.fallSpeed < self.fallSpeed) {
+				selected.fallSpeed = self.fallSpeed
+			}
+		}
+		if (self.fallSpeed < 0) self.fallSpeed = 0
+	}
+	action {
+		@ => s
+		s    .
+	}
+	
+	keep c (self) => self.fallSpeed = 0
+	action {
+		@ => c
+		x    .
+	}
+	
+	given q (space, atom) => space && !atom
+	given q (self) => Math.random() < self.fallSpeed / 2
+	rule {
+		@ => _
+		_    _
+		q    @
+	}
+	
+	given e (space, atom) => space && !atom
+	given e (self) => Math.random() < self.fallSpeed
+	rule {
+		@ => _
+		e    @
+	}
+	
+}
+
 `
