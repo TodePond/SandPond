@@ -12,41 +12,52 @@ const RULE = {}
 	
 	//========//
 	// Public //
-	//========//
-	RULE.make = (rawDiagram, oneSymmetries = "", allSymmetries = "", isAction = false, forSymmetries = "") => {
+	//========//	
+	// reflections
+	// - reflection0
+	// - reflection1
+	// - ...
+	// - reflection47
 	
-		const diagram = SYMMETRY.getAllDiagram(rawDiagram, allSymmetries) 
-		const forDiagrams = SYMMETRY.getSymmetryDiagrams(diagram, forSymmetries)
-		const oneForDiagrams = []
-		for (const forDiagram of forDiagrams) {
-			const oneDiagrams = SYMMETRY.getSymmetryDiagrams(forDiagram, oneSymmetries)
-			oneForDiagrams.push(oneDiagrams)
+	// reflection
+	// - iteration0
+	// - iteration1
+	// - ...
+	// - iterationN
+	
+	// iteration
+	// - event0
+	// - event1
+	// - ...
+	// - eventN
+	
+	// event
+	// - siteNumber
+	// - input
+	// - output
+	
+	RULE.make = (rawDiagram, oneSymmetries = "", allSymmetries = "", isAction = false, forSymmetries = "") => {
+		
+		const reflections = []
+		
+		const allDiagram = SYMMETRY.getAllDiagram(rawDiagram, allSymmetries)
+		const oneDiagrams = SYMMETRY.getSymmetryDiagrams(allDiagram, oneSymmetries)
+		
+		let i = 0
+		for (const oneDiagram of oneDiagrams) {
+			const iterations = SYMMETRY.getIterations(oneDiagram, forSymmetries, i)
+			reflections.push(iterations)
+			i++
 		}
-		
-		const oneDiagrams = SYMMETRY.getSymmetryDiagrams(diagram, oneSymmetries)
-		const eventLists = getEventLists(oneDiagrams)
-		
 		
 		const rule = {
 		
-			diagrams: oneForDiagrams,
-			eventLists,
 			isAction,
+			reflections, 
 			
 		}
 		
 		return rule
-	}
-	
-	//=========//
-	// Private //
-	//=========//
-	const getEventLists = (spaceLists) => {
-		const eventLists = spaceLists.map(spaces => {
-			const events = spaces.map(space => EVENT.make(space))
-			return events
-		})
-		return eventLists
 	}
 	
 }

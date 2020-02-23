@@ -32,13 +32,13 @@ element DReg {
 	given D (element) => element == DReg
 	given n (atom, element) => atom && element != DReg
 	
-	change R () => ATOM.make(Res)
-	change D () => ATOM.make(DReg)
+	change R () => new Res()
+	change D () => new DReg()
 	
-	rule xyz 0.001 { @_ => @D }
-	rule xyz 0.005 { @_ => @R }
-	rule xyz 0.1 { @D => @_ }
-	rule xyz 0.01 { @n => @_ }
+	rule xyz 0.001 { @_ => D@ }
+	rule xyz 0.005 { @_ => R@ }
+	rule xyz 0.1 { @D => _@ }
+	rule xyz 0.01 { @n => _@ }
 	rule xyz { @_ => _@ }
 	
 }

@@ -148,7 +148,7 @@ element EggDemo {
 	precise true
 	pour false
 	
-	data timer 1000
+	data timer 100
 	
 	// Countdown
 	keep t (self) => self.timer--
@@ -157,7 +157,7 @@ element EggDemo {
 	// Hatch
 	given h (self) => self.timer < 0
 	change H () => new HerbivoreDemo()
-	action { h => H }
+	rule { h => H }
 	
 	// Fall
 	rule {

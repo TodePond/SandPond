@@ -41,6 +41,16 @@ Reflect.defineProperty(Array.prototype, "trim", {
 	}
 })
 
+Reflect.defineProperty(Array.prototype, "repeat", {
+	value(n) {
+		const array = []
+		for (let i = 0; i < n; i++) {
+			array.push(...this)
+		}
+		return array
+	}
+})
+
 Number.prototype.to = function(target) {
 	const number = this.valueOf()
 	const array = []

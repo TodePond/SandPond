@@ -752,7 +752,7 @@ THREE.OrbitControls = function ( object, domElement ) {
 
 		// Prevent the browser from scrolling.
 
-		event.preventDefault();
+		//event.preventDefault();
 
 		// Manually set the focus since calling preventDefault above
 		// prevents the browser from setting it automatically.
@@ -876,6 +876,8 @@ THREE.OrbitControls = function ( object, domElement ) {
 		}
 
 		if ( state !== STATE.NONE ) {
+		
+			event.preventDefault();
 
 			document.addEventListener( 'mousemove', onMouseMove, false );
 			document.addEventListener( 'mouseup', onMouseUp, false );
