@@ -8,34 +8,14 @@ const RULE = {}
 	
 	// Rule Job Description
 	//=======================
-	// "I describe how an atom behaves."
+	// "I am a data structure for holding rules."
 	
 	//========//
 	// Public //
-	//========//	
-	// reflections
-	// - reflection0
-	// - reflection1
-	// - ...
-	// - reflection47
+	//========//
 	
-	// reflection
-	// - iteration0
-	// - iteration1
-	// - ...
-	// - iterationN
-	
-	// iteration
-	// - event0
-	// - event1
-	// - ...
-	// - eventN
-	
-	// event
-	// - siteNumber
-	// - input
-	// - output
-	
+	// This function is all wrong - should not perform optimizations here. It makes it very hard to work with.
+	// Optimisations should ONLY happen in Javascript.js
 	RULE.make = (rawDiagram, oneSymmetries = "", allSymmetries = "", isAction = false, forSymmetries = "") => {
 		
 		const reflections = []

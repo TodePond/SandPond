@@ -18,6 +18,9 @@ const ELEMENT = {}
 		rules = [], data = {}, ...properties
 	}) => {
 	
+		// This is all wrong. It should not take in 'rules' as a parameter.
+		// Instead, it should take something like 'instructions' or 'blocks' or 'nodes'.
+		// This includes for() and any() instructions, and maybe mimic() instructions.
 		const code = makeCode(rules, name)
 		const func = new Function(code)()
 		
