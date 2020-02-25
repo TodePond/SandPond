@@ -111,7 +111,7 @@ on.process(() => {
 		const space = world.spaces[i]
 		if (space) {
 			const atom = space.atom
-			if (atom !== undefined) atom.element.func(atom, space.sites)
+			if (atom !== undefined) atom.element.behave(atom, space.sites)
 		}
 	}
 })
