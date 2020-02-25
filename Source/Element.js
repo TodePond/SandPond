@@ -40,8 +40,7 @@ const ELEMENT = {}
 			
 		}
 		
-		element = constructor
-		
+		const element = constructor
 		element.o= elementInfo
 		
 		ELEMENT.globalElements[name] = element
