@@ -110,7 +110,8 @@ on.process(() => {
 	for (let i = 0; i < spaceCount; i++) {
 		const space = world.spaces[i]
 		if (space) {
-			BEHAVE.spaceBehave(space)
+			const atom = space.atom
+			if (atom !== undefined) atom.element.func(atom, space.sites)
 		}
 	}
 })
