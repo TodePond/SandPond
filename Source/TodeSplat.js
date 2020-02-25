@@ -756,7 +756,7 @@
 		readSides(nextSide, rawSpaces, xAxis, yAxis, events)
 		
 		// Make the rule
-		const rule = RULE.make(rawSpaces, axes, superSymmetries, isAction, forSymmetries)
+		const rule = JAVASCRIPT.makeInstruction("diagram", rawSpaces)
 		elementArgs.rules.push(rule)
 		
 		return {

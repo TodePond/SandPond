@@ -36,8 +36,6 @@ const JAVASCRIPT = {}
 		return {type, value}
 	}
 	
-
-	
 	//=========//
 	// Private //
 	//=========//

@@ -127,4 +127,4 @@ function measureConcentration() {
 	return atomCount / spaceCount
 }
 
-//print(Sand.code)
+console.dir(Sand)
