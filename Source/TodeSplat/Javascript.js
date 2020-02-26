@@ -32,10 +32,6 @@ const JAVASCRIPT = {}
 		}`
 	}
 	
-	JAVASCRIPT.makeInstruction = (type, value) => {
-		return {type, value}
-	}
-	
 	//=========//
 	// Private //
 	//=========//
