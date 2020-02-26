@@ -235,7 +235,7 @@
 			input = result.input
 			const test = JS(result.javascript)
 			
-			const ruleInput = events.get(key) || CHARACTER.make(key)
+			const ruleInput = events.get(key) || SYMBOL.make(key)
 			ruleInput.givens.push(test)
 			events.set(key, ruleInput)
 			return {
@@ -259,7 +259,7 @@
 			input = result.input
 			const test = JS(result.javascript)
 			
-			const ruleInput = events.get(key) || CHARACTER.make(key)
+			const ruleInput = events.get(key) || SYMBOL.make(key)
 			ruleInput.votes.push(test)
 			events.set(key, ruleInput)
 			return {
@@ -283,7 +283,7 @@
 			input = result.input
 			const test = JS(result.javascript)
 			
-			const ruleInput = events.get(key) || CHARACTER.make(key)
+			const ruleInput = events.get(key) || SYMBOL.make(key)
 			ruleInput.selects.push(test)
 			events.set(key, ruleInput)
 			return {
@@ -304,7 +304,7 @@
 			if (!result.success) return {input: source, success: false}
 			input = result.input
 			const instruction = JS(result.javascript)
-			const ruleOutput = events.get(key) || CHARACTER.make(key)
+			const ruleOutput = events.get(key) || SYMBOL.make(key)
 			ruleOutput.changes.push(instruction)
 			events.set(key, ruleOutput)
 			return {
@@ -325,7 +325,7 @@
 			if (!result.success) return {input: source, success: false}
 			input = result.input
 			const instruction = JS(result.javascript)
-			const ruleOutput = events.get(key) || CHARACTER.make(key)
+			const ruleOutput = events.get(key) || SYMBOL.make(key)
 			ruleOutput.keeps.push(instruction)
 			events.set(key, ruleOutput)
 			return {
@@ -346,7 +346,7 @@
 			if (!result.success) return {input: source, success: false}
 			input = result.input
 			const instruction = JS(result.javascript)
-			const ruleOutput = events.get(key) || CHARACTER.make(key)
+			const ruleOutput = events.get(key) || SYMBOL.make(key)
 			ruleOutput.checks.push(instruction)
 			events.set(key, ruleOutput)
 			return {
@@ -742,7 +742,7 @@
 				
 				// Add chance to origin test
 				if (chance != undefined && relativeX == 0 && relativeY == 0) {
-					ruleInput = CHARACTER.make(ruleInput.name, ruleInput)
+					ruleInput = SYMBOL.make(ruleInput.name, ruleInput)
 					const chanceTest = JS `() => Math.random() < ${chance}`
 					ruleInput.givens = [...ruleInput.givens, chanceTest]
 				}

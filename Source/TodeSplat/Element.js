@@ -19,9 +19,9 @@ const ELEMENT = {}
 	}) => {
 	
 		const behaveCode = JAVASCRIPT.makeBehave(instructions, name)
-		const behave = JS(behaveCode)()
-		
 		const constructorCode = JAVASCRIPT.makeConstructor(name, data, args)
+		
+		const behave = JS(behaveCode)()
 		const constructor = JS(constructorCode)()
 		
 		const elementInfo = {
@@ -36,15 +36,17 @@ const ELEMENT = {}
 			constructorCode, behaveCode, instructions,
 			
 			// Behaviour
-			behave, constructor, ...properties
+			behave, ...properties
 			
 		}
 		
 		const element = constructor
 		element.o= elementInfo
 		createShaderColours(element)
+		
 		ELEMENT.globalElements[name] = element
 		return element
+		
 	}
 	
 	//=========//
