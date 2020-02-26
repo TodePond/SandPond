@@ -2,15 +2,126 @@
 	globalEvents = new Map()
 	
 	function TodeSplat([source]) {
+	
+		const indent = getIndent(source)
+		checkIndent(source, indent)
+		
+		let result = eatWhiteSpace(source)
+		source = result.source
+		
+	}
+	
+	function TodeSplat3([source]) {
 		let input = source
 		
 		const whiteSpaceResult = eatWhiteSpace(input)
 		input = whiteSpaceResult.input
 		const depth = whiteSpaceResult.depth
 		
-		input = eatExpressions(input, depth).input
+		input = eatExpressions(input, depth).input 
 		input = eatWhiteSpace(input).input
 		
+	}
+	
+	const checkIndent = (source, indent) => {
+		
+		let size = undefined
+		
+		const lines = source.split("\n")
+		for (let i = 0; i < lines.length; i++) {
+			const line = lines[i]
+			
+			if (line.is(WhiteSpace)) continue
+			if (line.length == 0) continue
+			
+			const newSize = getIndentSize(line, i, indent)
+			
+			if (size != undefined) {
+				const sizeDiff = Math.abs(newSize - size).d
+				if (sizeDiff > 1) throw new Error(`[TodeSplat] Inconsistent indent found at line ${i}:\n${line}`)
+			}
+			
+			size = newSize
+			
+		}
+	}
+	
+	const getIndentSize = (line, lineNumber, indent) => {
+	
+		if (indent[0] == " " && line[0] == "	") throw new Error(`[TodeSplat] You can't mix tabs with spaces at line ${lineNumber}:\n${line}`)
+		if (indent[0] == "	" && line[0] == " ") throw new Error(`[TodeSplat] You can't mix spaces with tabs at line ${lineNumber}:\n${line}`)
+		if (line[0] != indent[0]) return 0
+		
+		const head = line.slice(0, indent.length)
+		if (head != indent) throw new Error(`[TodeSplat] Inconsistent indent found at line ${lineNumber}:\n${line}`)
+		
+		const tail = line.slice(indent.length)
+		return 1 + getIndentSize(tail, lineNumber, indent)
+	}
+	
+	const getIndent = (source) => {
+		
+		let character = undefined
+		let firstLength = undefined
+		let secondLength = 0
+		
+		let state = "find first indent"
+		
+		const lines = source.split("\n")
+		for (const line of lines) {
+		
+			if (line.length == 0) continue
+			
+			if (state == "find first indent") {
+				character = getIndentCharacter(line)
+				if (character != undefined) {
+					firstLength = getIndentLength(line, character)
+					state = "find second indent"
+					continue
+				}
+			}
+			
+			if (state == "find second indent") {
+				const length = getIndentLength(line, character)
+				if (length > firstLength) {
+					secondLength = length
+					break
+				}
+			}
+		}
+		
+		const length = Math.abs(secondLength - firstLength)
+		const indent = [character].repeat(length).join("")
+		return indent
+	}
+	
+	const getIndentCharacter = (line) => {
+		if (line[0] == " ") return " "
+		if (line[0] == "	") return "	"
+		else return undefined
+	}
+	
+	const getIndentLength = (line, character) => {
+		let i = 0
+		while (i < line.length) {
+			if (line[i] != character) return i
+			i++
+		}
+		return i
+	}
+	
+	// TODO
+	const eatOneIndent = (source) => {
+		let i = 0
+		let character = undefined
+		while (i < input.length) {
+			
+			if (character == undefined) {
+				
+			}
+			
+			i++
+		}
 	}
 	
 	const eatExpressions = (source, depth) => {
