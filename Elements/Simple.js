@@ -1,22 +1,9 @@
-TodeSplat` 
+TodeSplat`
 
-element Sand {
-	default true
-	colour "#ffcc00"
-	emissive "#ffa34d"
-	category "Simple"
-	
-	rule {
-		@ => _
-		_    @
+	element Sand {
+		//blah
+		//lol
 	}
-	
-	for(x) rule {
-		@  => _
-		#_    #@
-	}
-	
-}
 
 `
 

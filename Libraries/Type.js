@@ -97,6 +97,11 @@ const LowerCase = new Type({
 	convert: (s) => s.toLowerCase(),
 })
 
+const WhiteSpace = new Type({
+	name: "WhiteSpace",
+	check: (s) => /^[ |	]*$/.test(s),
+})
+
 const Capitalised = new Type({
 	name: "Capitalised",
 	check: s => s[0] == s[0].as(UpperCase),
