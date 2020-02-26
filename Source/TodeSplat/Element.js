@@ -42,9 +42,8 @@ const ELEMENT = {}
 		
 		const element = constructor
 		element.o= elementInfo
-		
-		ELEMENT.globalElements[name] = element
 		createShaderColours(element)
+		ELEMENT.globalElements[name] = element
 		return element
 	}
 	
@@ -62,12 +61,12 @@ const ELEMENT = {}
 		}
 		
 		element.shaderOpacity = element.opacity * 255
-		
 		element.shaderEmissive = {
 			r: emissiveColour.r * 255,
 			g: emissiveColour.g * 255,
 			b: emissiveColour.b * 255,
 		}
+		
 	}
 	
 }
