@@ -43,7 +43,8 @@ Reflect.defineProperty(Object.prototype, "or", {
 			},
 			depth: Math.min(getTypeDepth(type1), getTypeDepth(type2)) - 0.01,
 		})
-	}
+	},
+	writable: true,
 })
 
 class Type {

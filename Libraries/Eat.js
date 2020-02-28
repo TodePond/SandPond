@@ -16,80 +16,116 @@ const EAT = {}
 
 {
 	
-	//======//
-	// Meta //
-	//======//
-	EAT.many = new Proxy(EAT, {
-		get(...args) {
-			const prop = Reflect.get(...args)
-			if (typeof prop != "function") return prop
-			else return makeManyFunc(prop)
-		}
-	})
-	
-	const makeManyFunc = (func) => {
-		const manyFunc = (source, ...args) => {
+	//====================//
+	// Control Structures //
+	//====================//
+	EAT.many = (func) => (source) => {
 		
-			// Head
+		// Buffers
+		let success = undefined
+		let code = source
+		
+		// Head
+		let headResult = undefined
+		headResult = {success, code} = func(source)
+		if (!success) return {...headResult, code: source}
+		
+		// Tail
+		let tailResult = undefined
+		tailResult = {success, code} = EAT.many(func)(code)
+		if (!success) return headResult
+		tailResult.snippet = headResult.snippet + tailResult.snippet
+		return tailResult
+		
+	}
+	
+	EAT.maybe = (func) => (source) => {
+		
+		let result = undefined
+		let success = undefined
+		let code = source
+		
+		result = {success, code} = func(code)
+		if (!success) {
+			result.success = true
+			result.snippet = ""
+		}
+		
+		return result
+	}
+	
+	EAT.list = (...funcs) => (source) => {
+		
+		// Buffers
+		let success = undefined
+		let code = source
+		
+		// Head
+		let headResult = undefined
+		const headFunc = funcs[0]
+		headResult = {success, code} = headFunc(code)
+		if (!success) return {...headResult, code: source}
+		
+		// Tail
+		let tailResult = undefined
+		const tailFuncs = funcs.slice(1)
+		if (tailFuncs.length == 0) return headResult
+		tailResult = {success, code} = EAT.list(...tailFuncs)(code)
+		tailResult.snippet = headResult.snippet + tailResult.snippet
+		return tailResult
+		
+	}
+	
+	EAT.or = (...funcs) => (source) => {
+	
+		for (const func of funcs) {
+		
 			let result = undefined
 			let success = undefined
 			let code = source
-			result = {success, code} = func(source, ...args)
-			if (!success) return {...result, code: source}
 			
-			// Tail
-			let nextResult = undefined
-			nextResult = {success, code} = manyFunc(code, ...args)
-			nextResult.snippet = result.snippet + nextResult.snippet
-			if (!success) return result
-			else return nextResult
-			
-		}
-		return manyFunc
-	}
-	
-	//========//
-	// Things //
-	//========//
-	EAT.gap = (source) => {
-	
-		let i = 0
-		while (i < source.length) {
-			const c = source[i]
-			if (c == " " || c == "	") {
-				i++
-			}
-			else break
+			result = {success, code} = func(code)
+			if (success) return result
 		}
 		
-		const success = i > 0
-		const snippet = source.slice(0, i)
-		const code = source.slice(i)
+		const success = false
+		const code = source
+		const snippet = undefined
+		return {success, code, snippet}
+	}
+	
+	//====================//
+	// In-Built Functions //
+	//====================//	
+	EAT.string = (string) => (source) => {
+		const success = source.slice(0, string.length) == string
+		const snippet = success? string : undefined
+		const code = success? source.slice(string.length) : source
 		return {success, snippet, code}
 	}
 	
-	EAT.newLine = (source) => {
-		const success = source[0] == "\n"
-		const snippet = success? "\n" : undefined
-		const code = success? source.slice(1) : source
-		return {success, snippet, code}
-	}
+	EAT.space = EAT.string(" ")
+	EAT.tab = EAT.string("	")
+	EAT.newline = EAT.newLine = EAT.string("\n")
 	
-	EAT.emptyLine = (source) => {
-		let code = source
-		let result = undefined
-		let success = undefined
-		
-		result = {code} = EAT.gap(code)
-		result = {code, success} = EAT.newLine(code)
-		
-		const snippetLength = source.length - code.length
-		const snippet = source.slice(0, snippetLength)
-		return {success, snippet, code}
-	}
+	EAT.gap = EAT.many (
+		EAT.or (
+			EAT.space,
+			EAT.tab,
+		)
+	)
 	
-	EAT.lineIndent = (source) => {
-		
-	}
+	EAT.whitespace = EAT.whiteSpace = EAT.many (
+		EAT.or (
+			EAT.space,
+			EAT.tab,
+			EAT.newline,
+		)
+	)
+	
+	EAT.emptyLine = EAT.list (
+		EAT.maybe(EAT.gap),
+		EAT.newline,
+	)
 	
 }
