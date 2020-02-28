@@ -1,9 +1,7 @@
 TodeSplat`
-
-	element Sand {
-		//blah
-		//lol
-	}
-
+	
+	
+	element Sand {}
+	
 `
 

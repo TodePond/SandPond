@@ -3,13 +3,16 @@
 	
 	function TodeSplat([source]) {
 	
-		const indent = getIndent(source)
-		checkIndent(source, indent)
+		let result = undefined
+		let code = source
 		
-		let result = eatWhiteSpace(source)
-		source = result.source
+		result = {code} = EAT.many.emptyLine(code)
+		
+		print(result)
 		
 	}
+	
+	//-----------------------
 	
 	function TodeSplat3([source]) {
 		let input = source
@@ -110,19 +113,7 @@
 		return i
 	}
 	
-	// TODO
-	const eatOneIndent = (source) => {
-		let i = 0
-		let character = undefined
-		while (i < input.length) {
-			
-			if (character == undefined) {
-				
-			}
-			
-			i++
-		}
-	}
+	//-----------------------
 	
 	const eatExpressions = (source, depth) => {
 		
