@@ -104,6 +104,27 @@ const EAT = {}
 		return {success, snippet, code}
 	}
 	
+	EAT.regexp = EAT.regExp = EAT.regex = EAT.regEx = (regex) => (source) => {
+		const fullRegex = new RegExp("^" + regex.source + "$")
+		
+		let i = 0
+		while (i < source.length) {
+			const snippet = source.slice(0, i)
+			const success = fullRegex.test(snippet)
+			if (success) {
+				const code = source.slice(snippet.length)
+				return {success, code, snippet}
+			}
+			i++
+		}
+		
+		const success = false
+		const snippet = undefined
+		const code = source
+		return {success, code, snippet}
+		
+	}
+	
 	EAT.space = EAT.string(" ")
 	EAT.tab = EAT.string("	")
 	EAT.newline = EAT.newLine = EAT.string("\n")
@@ -126,6 +147,13 @@ const EAT = {}
 	EAT.emptyLine = EAT.list (
 		EAT.maybe(EAT.gap),
 		EAT.newline,
+	)
+	
+	EAT.emptyLines = EAT.many(EAT.emptyLine)
+	
+	EAT.name = EAT.list (
+		EAT.regexp(/[a-zA-Z_$]/),
+		EAT.many(EAT.regex(/[a-zA-Z0-9_$]/))
 	)
 	
 }
