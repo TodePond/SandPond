@@ -15,7 +15,7 @@ const ELEMENT = {}
 	ELEMENT.make = ({
 		name, colour = "white", emissive = colour, opacity = 1.0,
 		precise = false, floor = false, hidden = false, pour = true,
-		instructions = [], data = {}, args = {}, ...properties
+		instructions = [], data = {}, args = {}, categories = [], ...properties
 	}) => {
 	
 		const behaveCode = JAVASCRIPT.makeBehave(instructions, name)
@@ -27,7 +27,7 @@ const ELEMENT = {}
 		const elementInfo = {
 			
 			// Appearance
-			name, colour, emissive, opacity,
+			name, colour, emissive, opacity, categories,
 			
 			// Dropper
 			precise, floor, hidden, pour,

@@ -1,8 +1,8 @@
 TodeSplat`
 
-element Sand {
-	colour "#FC0"
-}
+	element Sand {
+
+	}
 	
 `
 

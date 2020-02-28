@@ -156,4 +156,10 @@ const EAT = {}
 		EAT.many(EAT.regex(/[a-zA-Z0-9_$]/))
 	)
 	
+	EAT.margin = EAT.or (
+		EAT.many(EAT.tab),
+		EAT.many(EAT.space),
+	)
+	
+	
 }
