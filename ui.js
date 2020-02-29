@@ -178,6 +178,7 @@ const UI = {}
 					<div class="menu">
 						<div class="heading box clickable sourceType selected" id="todeSplatSource"><div class="label">TodeSplat</div></div>
 						<div class="heading box clickable sourceType" id="javaScriptSource"><div class="label">JavaScript</div></div>
+						<!--<div class="heading box clickable sourceType" id="ulamSource"><div class="label">ULAM</div></div>-->
 					</div>
 					<pre id="sourceBox"></pre>
 				</div>
@@ -242,8 +243,10 @@ const UI = {}
 	
 	const updateSourceUI = () => {
 		if (!UI.selectedElement) return
-		const source = UI.selectedSource == "todeSplat"? UI.selectedElement.source : UI.selectedElement.code
-		$("#sourceBox").textContent = source
+		if (UI.selectedSource == "todeSplat") $("#sourceBox").textContent = UI.selectedElement.source
+		if (UI.selectedSource == "javaScript") $("#sourceBox").textContent = UI.selectedElement.code
+		if (UI.selectedSource == "ulam") $("#sourceBox").textContent = UI.selectedElement.ulam
+		
 	}
 	
 	//=======//
@@ -489,7 +492,8 @@ const UI = {}
 		})
 		this.classList.add("selected")
 		if (this.id == "javaScriptSource") UI.selectedSource = "javaScript"
-		else UI.selectedSource = "todeSplat"
+		else if (this.id == "todeSplatSource") UI.selectedSource = "todeSplat"
+		else if (this.id == "ulamSource") UI.selectedSource = "ulam"
 		updateSourceUI()
 	})
 	

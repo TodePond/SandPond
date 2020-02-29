@@ -11,15 +11,10 @@ const globalSymbols = {}
 		let success = undefined
 		let snippet = undefined
 		let code = source
+		let sandboys = undefined
 		
-		//result = {code} = EAT.string("hello")(source)
-		//result = {code} = EAT.gap(code)
-		//result = {code} = EAT.many(EAT.emptyLine)(code)
-		//result = {code} = EAT.list(EAT.character("L"), EAT.character("B"), EAT.character("W"))(code)
-		//result = EAT.whitespace(source)
-		//result = EAT.regexp(/hello/)(code)
-		
-		result = {code} = EAT.expression(code)
+		result = {success, code, sandboys} = EAT.expression(code)
+		if (success) sandboys()
 		
 		print(result)
 		
@@ -50,7 +45,7 @@ const globalSymbols = {}
 		result = {code, success} = EAT.nonindent(code)
 		if (!success) throw new Error(`[TodeSplat] Expected no change to indent level but found a change`)
 		
-		result = {code, success} = EAT.string("element")(code)
+		result = {success} = EAT.string("element")(code)
 		if (success) return EAT.element(code)
 		
 		return {success: false, code: source, snippet: undefined}
@@ -58,20 +53,21 @@ const globalSymbols = {}
 	}
 	
 	EAT.element = (source) => {
-		
-		const args = {}
-		
+				
 		let result = undefined
 		let success = undefined
 		let snippet = undefined
 		let code = source
+		
+		result = {code, success} = EAT.string("element")(code)
+		if (!success) throw new Error(`[TodeSplat] Expected 'element' keyword at start of element but got '${code[0]}'`)
 		
 		result = {code, success} = EAT.gap(code)
 		if (!success) throw new Error(`[TodeSplat] Expected gap after 'element' keyword but got '${code[0]}'`)
 		
 		result = {code, success, snippet} = EAT.name(code)
 		if (!success) throw new Error(`[TodeSplat] Expected element name but got '${code[0]}'`)
-		args.name = snippet
+		name = snippet
 		
 		result = {code} = EAT.gap(code)
 		result = {code, success} = EAT.string("{")(code)
@@ -85,11 +81,20 @@ const globalSymbols = {}
 		result = {code, success} = EAT.string("}")(code)
 		if (!success) throw new Error(`[TodeSplat] Expected '}' but got '${code[0]}'`)
 		
-		args.source = source.slice(0, source.length - result.code.length)
-		const element = ELEMENT.make(args)
-		window[element.name] = element
+		snippet = source.slice(0, source.length - result.code.length)
+				
+		const sandboys = JS (Code `
+			(source) => () => {
+			
+				${name} = ELEMENT.make({
+					name: "${name}",
+					source,
+				})
+				
+			}
+		`)(source)
 		
-		return {success: true, snippet: args.source, code: result.code}
+		return {success: true, snippet, code: result.code, sandboys}
 	}
 	
 	EAT.elementInner = (source) => {
