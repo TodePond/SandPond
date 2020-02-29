@@ -13,7 +13,7 @@ const ELEMENT = {}
 	//========//
 	ELEMENT.globalElements = {}
 	ELEMENT.make = ({
-		name, colour = "white", emissive = colour, opacity = 1.0,
+		name, colour = "grey", emissive = colour, opacity = 1.0,
 		precise = false, floor = false, hidden = false, pour = true,
 		instructions = [], data = {}, args = {}, categories = [], ...properties
 	}) => {
