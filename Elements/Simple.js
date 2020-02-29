@@ -1,8 +1,5 @@
 TodeSplat`
 
-element Sand {
-
-}
-	
+element Sand bob
 `
 

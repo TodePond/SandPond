@@ -69,19 +69,8 @@ const globalSymbols = {}
 		if (!success) throw new Error(`[TodeSplat] Expected element name but got '${code[0]}'`)
 		args.name = snippet
 		
-		//result = {code, success} = EAT.block(EAT.elementInner)(code)
-		
-		result = {code} = EAT.gap(code)
-		result = {code, success} = EAT.string("{")(code)
-		if (!success) throw new Error(`[TodeSplat] Expected '{' but got '${code[0]}'`)
-		
-		//result = {code} = EAT.elementInner(code)
-		
-		result = {code, success} = EAT.nonindent(code)
-		if (!success) result = {code} = EAT.gap(code)
-		
-		result = {code, success} = EAT.string("}")(code)
-		if (!success) throw new Error(`[TodeSplat] Expected '}' but got '${code[0]}'`)
+		result = {code, success} = EAT.block(EAT.elementInner)(code)
+		if (!success) throw new Error(`[TodeSplat] Expected element block but got something else`)
 		
 		snippet = source.slice(0, source.length - result.code.length)
 		args.source = snippet
@@ -98,9 +87,53 @@ const globalSymbols = {}
 		let snippet = undefined
 		let code = source
 		
+		result = {code} = EAT.gap(code)
+		result = {success} = EAT.string("{")(code)
+		if (success) return EAT.braceBlock(inner)(code)
+		else return EAT.inlineBlock(inner)(code)
+		
 	}
 	
-	EAT.elementInner = (source) => {
+	EAT.braceBlock = (inner) => (source) => {
+	
+		let result = undefined
+		let success = undefined
+		let snippet = undefined
+		let code = source
+		
+		result = {code, success} = EAT.string("{")(code)
+		if (!success) return {success: false, code: source, snippet: undefined}
+		
+		result = {code} = EAT.gap(code)
+		result = {code, success} = EAT.newline(code)
+		if (!success) return {success: false, code: source, snippet: undefined}
+		
+	}
+	
+	EAT.inlineBlock = (inner) => (source) => {
+		
+		let result = undefined
+		let success = undefined
+		let snippet = undefined
+		let code = source
+		
+		result = {code} = EAT.gap(code)
+		result = {code, success} = inner(true)(code)
+		return result
+		
+	}
+	
+	EAT.elementInner = (inline = false) => (source) => {
+		
+		let result = undefined
+		let success = undefined
+		let snippet = undefined
+		let code = source
+		
+		result = {code, success} = EAT.string("bob")(code)
+		if (!success) return {success: false, code: source, snippet: undefined}
+		
+		return result
 		
 	}
 	
