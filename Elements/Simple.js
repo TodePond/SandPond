@@ -15,5 +15,9 @@ element Slime {
 	}
 }
 
+element Lava colour {
+	return "red"
+}
+
 
 `
