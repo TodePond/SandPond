@@ -8,11 +8,5 @@ element Water {
 	colour { return "blue" }
 }
 
-element Slime {
-	colour {
-		return "green"
-	}
-}
-
 
 `

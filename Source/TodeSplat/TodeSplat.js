@@ -141,11 +141,13 @@ const globalSymbols = {}
 		
 		result = {code} = EAT.gap(code)
 		result = {code, success} = inner(true, false)(code, ...args)
-		if (!success) return {success: false, snippet: undefined, code: source}
+		if (!success) return {success: false, snippet: undefined, code: source} 
+		
+		const resultProperties = result
 		
 		result = {code} = EAT.gap(code)
 		result = {code, success} = EAT.string("}")(code)
-		return result
+		return {...resultProperties, ...result}
 	}
 	
 	EAT.blockInline = (inner) => (source, ...args) => {
@@ -268,11 +270,22 @@ const globalSymbols = {}
 		if (inline && naked) {
 			result = {code, snippet, success} = EAT.line(code)
 			if (!success) return {success: false, code: source, snippet: undefined}
-			result.value = JS(snippet)
+			result.value = new Function("return " + snippet)()
 			return result
 		}
 		
-		print("yo")
+		if (inline && !naked) {
+			result = {code, snippet, success} = EAT.many(EAT.regex(/[^}](?!\n)/))(code)
+			if (!success) return {success: false, code: source, snippet: undefined}
+			result.value = new Function(snippet)()
+			return result
+		}
+		
+		if (!inline && !naked) {
+		
+		}
+		
+		print("todo")
 		
 		return result
 	}
