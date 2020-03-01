@@ -12,9 +12,8 @@ const globalSymbols = {}
 		let snippet = undefined
 		let code = source
 		
-		result = {success, code} = EAT.expression(code)
+		result = {success, code} = EAT.many(EAT.expression)(code)
 		
-		print(result)
 		
 	}
 	
@@ -41,7 +40,7 @@ const globalSymbols = {}
 		let code = source
 		
 		result = {code, success} = EAT.nonindent(code)
-		if (!success) throw new Error(`[TodeSplat] Expected no change to indent level but found a change`)
+		if (!success) return {success: false, code: source, snippet: undefined}
 		
 		result = {success} = EAT.string("element")(code)
 		if (success) return EAT.element(code)
@@ -77,7 +76,7 @@ const globalSymbols = {}
 		
 		window[args.name] = ELEMENT.make(args)
 		
-		return {success: true, snippet, code: result.code}
+		return {success: true, snippet, code: result.code}.d
 	}
 	
 	EAT.block = (inner) => (source) => {
@@ -121,13 +120,16 @@ const globalSymbols = {}
 		result = {code, success} = EAT.string("{")(code)
 		if (!success) return {success: false, code: source, snippet: undefined}
 		
-		result = {code, success} = EAT.indent(code)
-		if (!success) return {success: false, code: source, snippet: undefined}
+		/*result = {code, success} = EAT.indent(code)
+		if (!success) return {success: false, code: source, snippet: undefined}*/
 		
 		result = {code, success} = inner(false)(code)
 		if (!success) return {success: false, code: source, snippet: undefined}
 		
-		result = {code, success} = EAT.unindent(code)
+		/*result = {code, success} = EAT.unindent(code)
+		if (!success) return {success: false, code: source, snippet: undefined}*/
+		
+		result = {code, success} = EAT.string("}")(code)
 		if (!success) return {success: false, code: source, snippet: undefined}
 		
 		return result
@@ -172,11 +174,45 @@ const globalSymbols = {}
 		let snippet = undefined
 		let code = source
 		
+		if (!inline) {
+			result = {code, success} = EAT.indent(code)
+			if (!success) return {success: false, code: source, snippet: undefined}
+		}
+		
+		result = {code, success} = EAT.elementInnerLine(code)
+		if (!success) return {success: false, code: source, snippet: undefined}
+		
+		if (!inline) {
+		
+			result = {code} = EAT.many(
+				EAT.list(
+					EAT.nonindent,
+					EAT.elementInnerLine,
+				)
+			)(code)
+		
+			result = {code, success} = EAT.unindent(code)
+			if (!success) return {success: false, code: source, snippet: undefined}
+		}
+		
+		return result
+		
+	}
+	
+	EAT.elementInnerLine = (source) => {
+	
+		let result = undefined
+		let success = undefined
+		let snippet = undefined
+		let code = source
+		
+		/*result = {code, success} = EAT.nonindent(code)
+		if (!success) return {success: false, code: source, snippet: undefined}*/
+		
 		result = {code, success} = EAT.string("bob")(code)
 		if (!success) return {success: false, code: source, snippet: undefined}
 		
 		return result
-		
 	}
 	
 	// Stay on the same indent level
@@ -195,10 +231,10 @@ const globalSymbols = {}
 		if (indentBase == undefined) {
 			indentBase = snippet
 		}
-		if (indentBase && indentUnit && getMargin(indentDepth) != snippet) {
+		if (indentBase != undefined && indentUnit != undefined && getMargin(indentDepth) != snippet) {
 			return {success: false, snippet: undefined, code: source}
 		}
-		if (indentBase && indentDepth == 0 && indentBase != snippet) {
+		if (indentBase != undefined && indentDepth == 0 && indentBase != snippet) {
 			return {success: false, snippet: undefined, code: source}
 		}
 		
