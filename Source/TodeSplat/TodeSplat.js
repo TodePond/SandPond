@@ -89,12 +89,12 @@ const globalSymbols = {}
 		
 		result = {code} = EAT.gap(code)
 		result = {success} = EAT.string("{")(code)
-		if (success) return EAT.braceBlock(inner)(code)
-		else return EAT.inlineBlock(inner)(code)
+		if (success) return EAT.blockBrace(inner)(code)
+		else return EAT.blockInline(inner)(code)
 		
 	}
 	
-	EAT.braceBlock = (inner) => (source) => {
+	EAT.blockBrace = (inner) => (source) => {
 	
 		let result = undefined
 		let success = undefined
@@ -106,11 +106,30 @@ const globalSymbols = {}
 		
 		result = {code} = EAT.gap(code)
 		result = {code, success} = EAT.newline(code)
-		if (!success) return {success: false, code: source, snippet: undefined}
+		if (!success) return EAT.blockBraceInline(inner)(source)
 		
 	}
 	
-	EAT.inlineBlock = (inner) => (source) => {
+	EAT.blockBraceInline = (inner) => (source) => {
+		
+		let result = undefined
+		let success = undefined
+		let snippet = undefined
+		let code = source
+		
+		result = {code, success} = EAT.string("{")(code)
+		if (!success) return {success: false, code: source, snippet: undefined}
+		
+		result = {code} = EAT.gap(code)
+		result = {code, success} = inner(true)(code)
+		if (!success) return {success: false, snippet: undefined, code: source}
+		
+		result = {code} = EAT.gap(code)
+		result = {code, success} = EAT.string("}")(code)
+		return result
+	}
+	
+	EAT.blockInline = (inner) => (source) => {
 		
 		let result = undefined
 		let success = undefined
