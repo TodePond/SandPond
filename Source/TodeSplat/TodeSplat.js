@@ -174,26 +174,43 @@ const globalSymbols = {}
 		let snippet = undefined
 		let code = source
 		
-		if (!inline) {
-			result = {code, success} = EAT.indent(code)
-			if (!success) return {success: false, code: source, snippet: undefined}
+		if (inline) {
+			result = {code, success} = EAT.maybe(EAT.elementInnerLine)(code)
 		}
 		
-		result = {code, success} = EAT.elementInnerLine(code)
-		if (!success) return {success: false, code: source, snippet: undefined}
-		
 		if (!inline) {
-		
-			result = {code} = EAT.many(
-				EAT.list(
-					EAT.nonindent,
-					EAT.elementInnerLine,
-				)
+			
+			return EAT.or (
+				EAT.nonindent,
+				EAT.elementInnerMulti,
 			)(code)
-		
-			result = {code, success} = EAT.unindent(code)
-			if (!success) return {success: false, code: source, snippet: undefined}
 		}
+		
+		return result
+		
+	}
+	
+	EAT.elementInnerMulti = (source) => {
+	
+		let result = undefined
+		let success = undefined
+		let snippet = undefined
+		let code = source
+		
+		result = {code, success} = EAT.indent(code)
+		if (!success) return {success: false, code: source, snippet: undefined}
+	
+		result = {code, success} = EAT.maybe(EAT.elementInnerLine)(code)
+		
+		if (success) result = {code} = EAT.many(
+			EAT.list(
+				EAT.nonindent,
+				EAT.elementInnerLine,
+			)
+		)(code)
+	
+		result = {code, success} = EAT.unindent(code)
+		if (!success) return {success: false, code: source, snippet: undefined}
 		
 		return result
 		
@@ -206,13 +223,27 @@ const globalSymbols = {}
 		let snippet = undefined
 		let code = source
 		
-		/*result = {code, success} = EAT.nonindent(code)
-		if (!success) return {success: false, code: source, snippet: undefined}*/
-		
-		result = {code, success} = EAT.string("bob")(code)
+		result = {code, success} = EAT.propertyName(code)
 		if (!success) return {success: false, code: source, snippet: undefined}
 		
 		return result
+	}
+	
+	const PROPERTY_NAMES = [
+		"colour", "color",
+	]
+	
+	EAT.propertyName = (source) => {
+		let result = undefined
+		let success = undefined
+		let snippet = undefined
+		let code = source
+		
+		result = {code, success} = EAT.name(code)
+		if (!success) return {success: false, code: source, snippet: undefined}
+		
+		return result
+		
 	}
 	
 	// Stay on the same indent level
@@ -234,10 +265,10 @@ const globalSymbols = {}
 		if (indentBase != undefined && indentUnit != undefined && getMargin(indentDepth) != snippet) {
 			return {success: false, snippet: undefined, code: source}
 		}
-		if (indentBase != undefined && indentDepth == 0 && indentBase != snippet) {
+		if (indentDepth == 0 && indentBase != snippet) {
+			print(indentBase, snippet)
 			return {success: false, snippet: undefined, code: source}
 		}
-		
 		return result
 	}
 	

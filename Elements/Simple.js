@@ -1,12 +1,12 @@
 TodeSplat`
 
 element Sand {
-	bob
+	
 }
 
-element Water { bob }
+element Water { sd2 }
 
-element Fire bob
+element Fire jkdfjkdf
 
 element Slime {
 	bob
