@@ -107,7 +107,30 @@ const globalSymbols = {}
 		result = {code} = EAT.gap(code)
 		result = {code, success} = EAT.newline(code)
 		if (!success) return EAT.blockBraceInline(inner)(source)
+		else return EAT.blockBraceMulti(inner)(source)
 		
+	}
+	
+	EAT.blockBraceMulti = (inner) => (source) => {
+	
+		let result = undefined
+		let success = undefined
+		let snippet = undefined
+		let code = source
+		
+		result = {code, success} = EAT.string("{")(code)
+		if (!success) return {success: false, code: source, snippet: undefined}
+		
+		result = {code, success} = EAT.indent(code)
+		if (!success) return {success: false, code: source, snippet: undefined}
+		
+		result = {code, success} = inner(false)(code)
+		if (!success) return {success: false, code: source, snippet: undefined}
+		
+		result = {code, success} = EAT.unindent(code)
+		if (!success) return {success: false, code: source, snippet: undefined}
+		
+		return result
 	}
 	
 	EAT.blockBraceInline = (inner) => (source) => {
@@ -203,14 +226,37 @@ const globalSymbols = {}
 			if (indentBase.length > 0 && indentBase[0] != indentUnit[0]) return {success: false, snippet: undefined, code: source}
 		}
 		
-		if (indentBase && indentUnit && getMargin(indentDepth) != snippet) {
+		if (indentBase != undefined && indentUnit != undefined && getMargin(indentDepth) != snippet) {
 			return {success: false, snippet: undefined, code: source}
 		}
 		
+		return result
+		
 	}
 	
-	// Go one indent level higher
+	// Go one indent level back
 	EAT.unindent = (source) => {
+	
+		indentDepth--
+		if (indentDepth < 0) throw new Error(`[TodeSplat] Can't reduce indent level below zero. This shouldn't happen.`)
+		
+		let result = undefined
+		let success = undefined
+		let snippet = undefined
+		let code = source
+		
+		result = {code, success, snippet} = EAT.emptyLines(code)
+		if (!success) return {success: false, snippet: undefined, code: source}
+		
+		result = {code, snippet} = EAT.maybe(EAT.margin)(code)
+		
+		if (indentBase == undefined) throw new Error(`[TodeSplat] The base indent level should have been discovered by now - something has gone wrong`)
+		if (indentUnit == undefined) throw new Error(`[TodeSplat] The indent unit should have been discovered by now - something has gone wrong`)
+		if (indentBase != undefined && indentUnit != undefined && getMargin(indentDepth) != snippet) {
+			return {success: false, snippet: undefined, code: source}
+		}
+		
+		return result
 		
 	}
 	

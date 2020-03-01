@@ -1,5 +1,7 @@
 TodeSplat`
 
-element Sand { bob }
+element Sand {
+	bob
+}
 
 `
