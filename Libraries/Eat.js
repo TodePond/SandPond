@@ -19,7 +19,7 @@ const EAT = {}
 	//====================//
 	// Control Structures //
 	//====================//
-	EAT.many = (func) => (source) => {
+	EAT.many = (func) => (source, ...args) => {
 		
 		// Buffers
 		let success = undefined
@@ -27,25 +27,25 @@ const EAT = {}
 		
 		// Head
 		let headResult = undefined
-		headResult = {success, code} = func(source)
+		headResult = {success, code} = func(code, ...args)
 		if (!success) return {...headResult, code: source}
 		
 		// Tail
 		let tailResult = undefined
-		tailResult = {success, code} = EAT.many(func)(code)
+		tailResult = {success, code} = EAT.many(func)(code, ...args)
 		if (!success) return headResult
 		tailResult.snippet = headResult.snippet + tailResult.snippet
 		return tailResult
 		
 	}
 	
-	EAT.maybe = (func) => (source) => {
+	EAT.maybe = (func) => (source, ...args) => {
 		
 		let result = undefined
 		let success = undefined
 		let code = source
 		
-		result = {success, code} = func(code)
+		result = {success, code} = func(code, ...args)
 		if (!success) {
 			result.success = true
 			result.snippet = ""
@@ -54,7 +54,7 @@ const EAT = {}
 		return result
 	}
 	
-	EAT.list = (...funcs) => (source) => {
+	EAT.list = (...funcs) => (source, ...args) => {
 		
 		// Buffers
 		let success = undefined
@@ -63,20 +63,20 @@ const EAT = {}
 		// Head
 		let headResult = undefined
 		const headFunc = funcs[0]
-		headResult = {success, code} = headFunc(code)
+		headResult = {success, code} = headFunc(code, ...args)
 		if (!success) return {...headResult, code: source}
 		
 		// Tail
 		let tailResult = undefined
 		const tailFuncs = funcs.slice(1)
 		if (tailFuncs.length == 0) return headResult
-		tailResult = {success, code} = EAT.list(...tailFuncs)(code)
+		tailResult = {success, code} = EAT.list(...tailFuncs)(code, ...args)
 		tailResult.snippet = headResult.snippet + tailResult.snippet
 		return tailResult
 		
 	}
 	
-	EAT.or = (...funcs) => (source) => {
+	EAT.or = (...funcs) => (source, ...args) => {
 	
 		for (const func of funcs) {
 		
@@ -84,14 +84,14 @@ const EAT = {}
 			let success = undefined
 			let code = source
 			
-			result = {success, code} = func(code)
+			result = {success, code} = func(code, ...args)
 			if (success) return result
 		}
 		
 		const success = false
 		const code = source
 		const snippet = undefined
-		return {success, code, snippet}
+		return {success, snippet, code}
 	}
 	
 	//====================//
@@ -113,7 +113,7 @@ const EAT = {}
 			const success = fullRegex.test(snippet)
 			if (success) {
 				const code = source.slice(snippet.length)
-				return {success, code, snippet}
+				return {success, snippet, code}
 			}
 			i++
 		}
@@ -121,7 +121,7 @@ const EAT = {}
 		const success = false
 		const snippet = undefined
 		const code = source
-		return {success, code, snippet}
+		return {success, snippet, code}
 		
 	}
 	
@@ -161,5 +161,5 @@ const EAT = {}
 		EAT.many(EAT.space),
 	)
 	
-	
+	EAT.line = EAT.many(EAT.regex(/[^\n]/))
 }

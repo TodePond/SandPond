@@ -68,7 +68,7 @@ const globalSymbols = {}
 		if (!success) throw new Error(`[TodeSplat] Expected element name but got '${code[0]}'`)
 		args.name = snippet
 		
-		result = {code, success} = EAT.block(EAT.elementInner)(code)
+		result = {code, success} = EAT.block(EAT.elementInner)(code, args)
 		if (!success) throw new Error(`[TodeSplat] Expected element block but got something else`)
 		
 		snippet = source.slice(0, source.length - result.code.length)
@@ -79,7 +79,7 @@ const globalSymbols = {}
 		return {success: true, snippet, code: result.code}.d
 	}
 	
-	EAT.block = (inner) => (source) => {
+	EAT.block = (inner) => (source, ...args) => {
 		
 		let result = undefined
 		let success = undefined
@@ -88,12 +88,12 @@ const globalSymbols = {}
 		
 		result = {code} = EAT.gap(code)
 		result = {success} = EAT.string("{")(code)
-		if (success) return EAT.blockBrace(inner)(code)
-		else return EAT.blockInline(inner)(code)
+		if (success) return EAT.blockBrace(inner)(code, ...args)
+		else return EAT.blockInline(inner)(code, ...args)
 		
 	}
 	
-	EAT.blockBrace = (inner) => (source) => {
+	EAT.blockBrace = (inner) => (source, ...args) => {
 	
 		let result = undefined
 		let success = undefined
@@ -105,12 +105,12 @@ const globalSymbols = {}
 		
 		result = {code} = EAT.gap(code)
 		result = {code, success} = EAT.newline(code)
-		if (!success) return EAT.blockBraceInline(inner)(source)
-		else return EAT.blockBraceMulti(inner)(source)
+		if (!success) return EAT.blockBraceInline(inner)(source, ...args)
+		else return EAT.blockBraceMulti(inner)(source, ...args)
 		
 	}
 	
-	EAT.blockBraceMulti = (inner) => (source) => {
+	EAT.blockBraceMulti = (inner) => (source, ...args) => {
 	
 		let result = undefined
 		let success = undefined
@@ -120,14 +120,8 @@ const globalSymbols = {}
 		result = {code, success} = EAT.string("{")(code)
 		if (!success) return {success: false, code: source, snippet: undefined}
 		
-		/*result = {code, success} = EAT.indent(code)
-		if (!success) return {success: false, code: source, snippet: undefined}*/
-		
-		result = {code, success} = inner(false)(code)
+		result = {code, success} = inner(false, false)(code, ...args)
 		if (!success) return {success: false, code: source, snippet: undefined}
-		
-		/*result = {code, success} = EAT.unindent(code)
-		if (!success) return {success: false, code: source, snippet: undefined}*/
 		
 		result = {code, success} = EAT.string("}")(code)
 		if (!success) return {success: false, code: source, snippet: undefined}
@@ -135,7 +129,7 @@ const globalSymbols = {}
 		return result
 	}
 	
-	EAT.blockBraceInline = (inner) => (source) => {
+	EAT.blockBraceInline = (inner) => (source, ...args) => {
 		
 		let result = undefined
 		let success = undefined
@@ -146,7 +140,7 @@ const globalSymbols = {}
 		if (!success) return {success: false, code: source, snippet: undefined}
 		
 		result = {code} = EAT.gap(code)
-		result = {code, success} = inner(true)(code)
+		result = {code, success} = inner(true, false)(code, ...args)
 		if (!success) return {success: false, snippet: undefined, code: source}
 		
 		result = {code} = EAT.gap(code)
@@ -154,7 +148,7 @@ const globalSymbols = {}
 		return result
 	}
 	
-	EAT.blockInline = (inner) => (source) => {
+	EAT.blockInline = (inner) => (source, ...args) => {
 		
 		let result = undefined
 		let success = undefined
@@ -162,12 +156,12 @@ const globalSymbols = {}
 		let code = source
 		
 		result = {code} = EAT.gap(code)
-		result = {code, success} = inner(true)(code)
+		result = {code, success} = inner(true, true)(code, ...args)
 		return result
 		
 	}
 	
-	EAT.elementInner = (inline = false) => (source) => {
+	EAT.elementInner = (inline = false) => (source, args) => {
 		
 		let result = undefined
 		let success = undefined
@@ -175,7 +169,7 @@ const globalSymbols = {}
 		let code = source
 		
 		if (inline) {
-			result = {code, success} = EAT.maybe(EAT.elementInnerLine)(code)
+			result = {code, success} = EAT.maybe(EAT.elementInnerLine)(code, args)
 		}
 		
 		if (!inline) {
@@ -183,14 +177,14 @@ const globalSymbols = {}
 			return EAT.or (
 				EAT.nonindent,
 				EAT.elementInnerMulti,
-			)(code)
+			)(code, args)
 		}
 		
 		return result
 		
 	}
 	
-	EAT.elementInnerMulti = (source) => {
+	EAT.elementInnerMulti = (source, args) => {
 	
 		let result = undefined
 		let success = undefined
@@ -200,14 +194,14 @@ const globalSymbols = {}
 		result = {code, success} = EAT.indent(code)
 		if (!success) return {success: false, code: source, snippet: undefined}
 	
-		result = {code, success} = EAT.maybe(EAT.elementInnerLine)(code)
+		result = {code, success} = EAT.maybe(EAT.elementInnerLine)(code, args)
 		
 		if (success) result = {code} = EAT.many(
 			EAT.list(
 				EAT.nonindent,
 				EAT.elementInnerLine,
 			)
-		)(code)
+		)(code, args)
 	
 		result = {code, success} = EAT.unindent(code)
 		if (!success) return {success: false, code: source, snippet: undefined}
@@ -216,22 +210,72 @@ const globalSymbols = {}
 		
 	}
 	
-	EAT.elementInnerLine = (source) => {
+	EAT.elementInnerLine = (source, args) => {
 	
 		let result = undefined
 		let success = undefined
 		let snippet = undefined
 		let code = source
 		
-		result = {code, success} = EAT.propertyName(code)
+		result = {code, success} = EAT.property(code, args)
 		if (!success) return {success: false, code: source, snippet: undefined}
 		
 		return result
 	}
 	
 	const PROPERTY_NAMES = [
-		"colour", "color",
+		"colour",
 	]
+	
+	EAT.property = (source, args) => {
+		let result = undefined
+		let success = undefined
+		let snippet = undefined
+		let code = source
+		
+		result = {code, success, snippet} = EAT.propertyName(code)
+		if (!success) return {success: false, code: source, snippet: undefined}
+		const name = result.snippet
+		
+		result = {code} = EAT.gap(code)
+		result = {code, success} = EAT.javascript(code)
+		if (!success) return {success: false, code: source, snippet: undefined}
+		
+		args[name] = result.value
+		
+		return result
+		
+	}
+	
+	EAT.javascript = (source) => {
+		let result = undefined
+		let success = undefined
+		let snippet = undefined
+		let code = source
+		
+		result = {code, success} = EAT.block(EAT.javascriptInner)(code)
+		if (!success) return {success: false, code: source, snippet: undefined}
+		
+		return result
+	}
+	
+	EAT.javascriptInner = (inline, naked) => (source) => {
+		let result = undefined
+		let success = undefined
+		let snippet = undefined
+		let code = source
+		
+		if (inline && naked) {
+			result = {code, snippet, success} = EAT.line(code)
+			if (!success) return {success: false, code: source, snippet: undefined}
+			result.value = JS(snippet)
+			return result
+		}
+		
+		print("yo")
+		
+		return result
+	}
 	
 	EAT.propertyName = (source) => {
 		let result = undefined
@@ -239,8 +283,9 @@ const globalSymbols = {}
 		let snippet = undefined
 		let code = source
 		
-		result = {code, success} = EAT.name(code)
+		result = {code, success, snippet} = EAT.name(code)
 		if (!success) return {success: false, code: source, snippet: undefined}
+		if (!PROPERTY_NAMES.includes(snippet)) return {success: false, code: source, snippet: undefined}
 		
 		return result
 		
@@ -266,7 +311,6 @@ const globalSymbols = {}
 			return {success: false, snippet: undefined, code: source}
 		}
 		if (indentDepth == 0 && indentBase != snippet) {
-			print(indentBase, snippet)
 			return {success: false, snippet: undefined, code: source}
 		}
 		return result

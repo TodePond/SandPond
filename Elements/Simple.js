@@ -1,17 +1,18 @@
 TodeSplat`
 
 element Sand {
-	
+	colour "#FC0"
 }
 
-element Water { sd2 }
-
-element Fire jkdfjkdf
+element Water {
+	colour { return "blue" }
+}
 
 element Slime {
-	bob
-	bob
-	bob
+	colour {
+		return "green"
+	}
 }
+
 
 `
