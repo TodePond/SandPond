@@ -5,7 +5,14 @@ element Sand {
 }
 
 element Water {
-	colour { return "blue" }
+	colour { return "lightblue" }
+}
+
+element Slime {
+	colour {
+		const colour = "green"
+		return colour
+	}
 }
 
 

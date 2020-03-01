@@ -76,7 +76,7 @@ const globalSymbols = {}
 		
 		window[args.name] = ELEMENT.make(args)
 		
-		return {success: true, snippet, code: result.code}.d
+		return {success: true, snippet, code: result.code}
 	}
 	
 	EAT.block = (inner) => (source, ...args) => {
@@ -122,11 +122,12 @@ const globalSymbols = {}
 		
 		result = {code, success} = inner(false, false)(code, ...args)
 		if (!success) return {success: false, code: source, snippet: undefined}
+		const resultProperties = result
 		
 		result = {code, success} = EAT.string("}")(code)
 		if (!success) return {success: false, code: source, snippet: undefined}
 		
-		return result
+		return {...resultProperties, ...result}
 	}
 	
 	EAT.blockBraceInline = (inner) => (source, ...args) => {
@@ -142,7 +143,6 @@ const globalSymbols = {}
 		result = {code} = EAT.gap(code)
 		result = {code, success} = inner(true, false)(code, ...args)
 		if (!success) return {success: false, snippet: undefined, code: source} 
-		
 		const resultProperties = result
 		
 		result = {code} = EAT.gap(code)
@@ -175,7 +175,6 @@ const globalSymbols = {}
 		}
 		
 		if (!inline) {
-			
 			return EAT.or (
 				EAT.nonindent,
 				EAT.elementInnerMulti,
@@ -198,8 +197,8 @@ const globalSymbols = {}
 	
 		result = {code, success} = EAT.maybe(EAT.elementInnerLine)(code, args)
 		
-		if (success) result = {code} = EAT.many(
-			EAT.list(
+		if (success) result = {code} = EAT.many (
+			EAT.list (
 				EAT.nonindent,
 				EAT.elementInnerLine,
 			)
@@ -255,7 +254,7 @@ const globalSymbols = {}
 		let snippet = undefined
 		let code = source
 		
-		result = {code, success} = EAT.block(EAT.javascriptInner)(code)
+		result = {code, success} = EAT.block(EAT.javascriptInner)(code).d
 		if (!success) return {success: false, code: source, snippet: undefined}
 		
 		return result
@@ -282,12 +281,36 @@ const globalSymbols = {}
 		}
 		
 		if (!inline && !naked) {
-		
+			indentDepth++
+			result = {code, snippet, success} = EAT.list (
+				EAT.maybe(EAT.many(EAT.javascriptLine)),
+			)(code)
+			result.value = new Function(snippet)()
+			code = EAT.unindent(code).code
+			return {...result, code}
 		}
 		
-		print("todo")
+		return result
+	}
+	
+	EAT.javascriptLine = (source) => {
+		let result = undefined
+		let success = undefined
+		let snippet = undefined
+		let code = source
+		
+		result = {code, success} = EAT.newline(code)
+		result = {code, success} = EAT.maybe(EAT.margin)(code)
+		if (!success) return {success: false, snippet: undefined, code: source}
+		
+		const margin = getMargin(indentDepth)
+		if (result.snippet.slice(0, margin.length) != margin) return {success: false, snippet: undefined, code: source}
+		
+		result = {snippet} = EAT.line(code)
+		result.snippet = "\n" + snippet
 		
 		return result
+
 	}
 	
 	EAT.propertyName = (source) => {
