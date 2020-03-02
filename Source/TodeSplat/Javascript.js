@@ -24,7 +24,7 @@ const JAVASCRIPT = {}
 	
 	JAVASCRIPT.makeConstructor = (name, data, args) => {
 		return `() => {
-			const element = function ${name}(args) {
+			const element = function ${name}() {
 				const atom = {element}
 				return atom
 			}

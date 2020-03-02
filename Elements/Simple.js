@@ -4,6 +4,7 @@ element Sand {
 	colour "#FC0"
 	emissive "#ffa34d"
 	prop state "solid"
+	data temperature 10
 }
 
 element Water {
@@ -27,6 +28,8 @@ element Fire colour [
 	"orange",
 	"lol",
 ][0]
+
+element Wall prop state "solid"
 
 
 `

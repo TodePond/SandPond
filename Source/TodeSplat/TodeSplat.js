@@ -41,7 +41,7 @@ const globalSymbols = {}
 		
 		result = {code, success} = EAT.nonindent(code)
 		if (!success) return {success: false, code: source, snippet: undefined}
-		
+				
 		result = {success} = EAT.string("element")(code)
 		if (success) return EAT.element(code)
 		
@@ -51,7 +51,7 @@ const globalSymbols = {}
 	
 	EAT.element = (source) => {
 				
-		const args = {}
+		const args = {data: []}
 		
 		let result = undefined
 		let success = undefined
@@ -221,6 +221,9 @@ const globalSymbols = {}
 		result = {code, success} = EAT.customProperty(code, args)
 		if (success) return result
 		
+		result = {code, success} = EAT.data(code, args)
+		if (success) return result
+		
 		result = {code, success} = EAT.property(code, args)
 		if (!success) return {success: false, code: source, snippet: undefined}
 		
@@ -257,6 +260,32 @@ const globalSymbols = {}
 		"pour",
 		"default",
 	]
+	
+	EAT.data = (source, args) => {
+		let result = undefined
+		let success = undefined
+		let snippet = undefined
+		let code = source
+		
+		result = {code, success} = EAT.string("data")(code)
+		if (!success) return {success: false, code: source, snippet: undefined}
+		
+		result = {code, success} = EAT.gap(code)
+		if (!success) return {success: false, code: source, snippet: undefined}
+		
+		result = {code, success, snippet} = EAT.name(code)
+		if (!success) return {success: false, code: source, snippet: undefined}
+		const name = result.snippet
+		
+		result = {code} = EAT.gap(code)
+		result = {code, success} = EAT.javascript(code)
+		if (!success) return {success: false, code: source, snippet: undefined}
+		
+		args.data[name] = result.value
+		
+		return result
+		
+	}
 	
 	EAT.customProperty = (source, args) => {
 		let result = undefined
