@@ -3,6 +3,7 @@ TodeSplat`
 element Sand {
 	colour "#FC0"
 	emissive "#ffa34d"
+	prop state "solid"
 }
 
 element Water {
