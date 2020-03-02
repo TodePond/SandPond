@@ -17,15 +17,26 @@ const JAVASCRIPT = {}
 			
 		}
 		
-		return `() => () => {
+		return `() => (self, sites) => {
 			
 		}`
 	}
 	
 	JAVASCRIPT.makeConstructor = (name, data, args) => {
-		return `() => {
+	
+		let dataCode = ``
+		let dataArgs = ``
+		for (const dataName in data) {
+			if (dataArgs.length == 0) dataArgs += `${dataName}`
+			else dataArgs += `, ${dataName}`
+			dataCode += `, ${dataName}`
+		}
+		
+	
+		return `(${dataArgs}) => {
+		
 			const element = function ${name}() {
-				const atom = {element}
+				const atom = {element${dataCode}}
 				return atom
 			}
 			return element

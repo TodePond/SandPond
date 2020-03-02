@@ -51,7 +51,7 @@ const globalSymbols = {}
 	
 	EAT.element = (source) => {
 				
-		const args = {data: []}
+		const args = {data: {}}
 		
 		let result = undefined
 		let success = undefined
@@ -413,7 +413,7 @@ const globalSymbols = {}
 		if (!inline && !naked) {
 			indentDepth++
 			result = {code, snippet, success} = EAT.list (
-				EAT.maybe(EAT.many(EAT.javascriptLine)),
+				EAT.maybe(EAT.many(EAT.javascriptBraceLine)),
 			)(code)
 			result.value = new Function(snippet)()
 			code = EAT.unindent(code).code
@@ -423,7 +423,7 @@ const globalSymbols = {}
 		return result
 	}
 	
-	EAT.javascriptLine = (source) => {
+	EAT.javascriptBraceLine = (source) => {
 		let result = undefined
 		let success = undefined
 		let snippet = undefined
