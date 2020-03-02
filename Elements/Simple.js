@@ -19,5 +19,9 @@ element Lava colour {
 	return "red"
 }
 
+element Fire colour [
+	"orange"
+][0]
+
 
 `

@@ -254,10 +254,74 @@ const globalSymbols = {}
 		let snippet = undefined
 		let code = source
 		
-		result = {code, success} = EAT.block(EAT.javascriptInner)(code).d
+		result = {code, success} = EAT.block(EAT.javascriptInner)(code)
 		if (!success) return {success: false, code: source, snippet: undefined}
 		
 		return result
+	}
+	
+	EAT.javascriptNakedSingle = (source) => {
+		let result = undefined
+		let success = undefined
+		let snippet = undefined
+		let code = source
+		
+		result = {code, snippet, success} = EAT.line(code)
+		if (!success) return {success: false, code: source, snippet: undefined}
+		
+		result.value = new Function("return " + snippet)()
+		return result
+	}
+	
+	EAT.javascriptNakedMulti = (source) => {
+		let result = undefined
+		let success = undefined
+		let snippet = undefined
+		let code = source
+		
+		let js = ""
+		result = {code, snippet, success} = EAT.line(code)
+		if (!success) return {success: false, code: source, snippet: undefined}
+		js += snippet
+		
+		result = {success} = EAT.indent(code)
+		indentDepth--
+		if (!success) {
+			return {success: false, code: source, snippet: undefined}
+		}
+		
+		result = {code, success, snippet} = EAT.many(EAT.javascriptNakedMultiLine)(code)
+		js += snippet
+		
+		result = {code, success, snippet} = EAT.nonindent(code)
+		if (!success) return {success: false, snippet: undefined, code: source}
+		js += "\n"
+		
+		result = {code, success, snippet} = EAT.line(code)
+		if (!success) return {success: false, snippet: undefined, code: source}
+		js += snippet
+		
+		result.value = new Function("return " + js)()
+		
+		return result
+	}
+	
+	EAT.javascriptNakedMultiLine = (source) => {
+		let result = undefined
+		let success = undefined
+		let snippet = undefined
+		let code = source
+		
+		result = {success} = EAT.nonindent(code)
+		if (success) return {success: false, snippet: undefined, code: source}
+		
+		result = {code, success} = EAT.newline(code)
+		if (!success) return {success: false, snippet: undefined, code: source}
+		
+		result = {code, success} = EAT.line(code)
+		if (!success) return {success: false, snippet: undefined, code: source}
+		
+		return {...result, snippet: "\n" + result.snippet}
 	}
 	
 	EAT.javascriptInner = (inline, naked) => (source) => {
@@ -267,10 +331,11 @@ const globalSymbols = {}
 		let code = source
 		
 		if (inline && naked) {
-			result = {code, snippet, success} = EAT.line(code)
-			if (!success) return {success: false, code: source, snippet: undefined}
-			result.value = new Function("return " + snippet)()
-			return result
+			return EAT.or (
+				EAT.javascriptNakedMulti,
+				EAT.javascriptNakedSingle,
+			)(code)
+			
 		}
 		
 		if (inline && !naked) {
