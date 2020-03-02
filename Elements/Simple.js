@@ -2,10 +2,13 @@ TodeSplat`
 
 element Sand {
 	colour "#FC0"
+	emissive "#ffa34d"
 }
 
 element Water {
 	colour { return "lightblue" }
+	emissive "blue"
+	opacity 0.5
 }
 
 element Slime {
@@ -20,7 +23,8 @@ element Lava colour {
 }
 
 element Fire colour [
-	"orange"
+	"orange",
+	"lol",
 ][0]
 
 

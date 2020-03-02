@@ -226,6 +226,14 @@ const globalSymbols = {}
 	
 	const PROPERTY_NAMES = [
 		"colour",
+		"emissive",
+		"opacity",
+		"precise",
+		"floor",
+		"hidden",
+		"category",
+		"pour",
+		"default",
 	]
 	
 	EAT.property = (source, args) => {
