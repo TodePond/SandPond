@@ -6,9 +6,7 @@ TodeSplat`
 		
 		colour "red"
 		
-		element Water {
-			colour "blue"
-		}
+		element Water { colour "blue" }
 		
 	}
 

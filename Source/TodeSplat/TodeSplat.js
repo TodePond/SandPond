@@ -38,6 +38,10 @@
 		"default",
 	]
 	
+	EAT.BLOCK_INLINE = Symbol("BlockInline")
+	EAT.BLOCK_SINGLE = Symbol("BlockSingle")
+	EAT.BLOCK_MULTI = Symbol("BlockMulti")
+	
 	//=========//
 	// Globals //
 	//=========//
@@ -105,7 +109,7 @@
 		result = {code, success} = EAT.string("{")(code)
 		if (!success) return {success: false, code: source, snippet: undefined}
 		
-		result = {code, success} = inner(false, false)(code, ...args)
+		result = {code, success} = inner(EAT.BLOCK_MULTI)(code, ...args)
 		if (!success) return {success: false, code: source, snippet: undefined}
 		const resultProperties = result
 		
@@ -126,7 +130,7 @@
 		if (!success) return {success: false, code: source, snippet: undefined}
 		
 		result = {code} = EAT.gap(code)
-		result = {code, success} = inner(true, false)(code, ...args)
+		result = {code, success} = inner(EAT.BLOCK_SINGLE)(code, ...args)
 		if (!success) return {success: false, snippet: undefined, code: source} 
 		const resultProperties = result
 		
@@ -143,7 +147,7 @@
 		let code = source
 		
 		result = {code} = EAT.gap(code)
-		result = {code, success} = inner(true, true)(code, ...args)
+		result = {code, success} = inner(EAT.BLOCK_INLINE)(code, ...args)
 		return result
 		
 	}
@@ -151,19 +155,32 @@
 	//===========//
 	// TodeSplat //
 	//===========//
-	EAT.todeSplat = (inline = false) => (source, args) => {
+	EAT.todeSplat = (type) => (source, args) => {
 	
 		let result = undefined
 		let success = undefined
 		let snippet = undefined
 		let code = source
 		
-		if (inline) {
+		if (type == EAT.BLOCK_INLINE) {
 			result = {code, success} = EAT.maybe(EAT.todeSplatLine)(code, args)
 		}
 		
-		if (!inline) {
-			return EAT.or (
+		else if (type == EAT.BLOCK_SINGLE) {
+			let lineResult = {snippet} = EAT.line(code)
+			let edoc = snippet.split("").reverse().join("")
+			lineResult = {code: edoc} = EAT.gap(edoc)
+			lineResult = {code: edoc} = EAT.string("}")(edoc)
+			code = edoc.split("").reverse().join("")
+			const lineCode = code
+			const nextCode = source.slice(lineCode.length)
+			
+			result = {code, success} = EAT.maybe(EAT.todeSplatLine)(code, args)
+			return {success, snippet: lineCode, code: nextCode}.d
+		}
+		
+		else if (type == EAT.BLOCK_MULTI) {
+			result = EAT.or (
 				EAT.nonindent,
 				EAT.todeSplatMulti,
 			)(code, args)
@@ -418,13 +435,13 @@
 		return {...result, snippet: "\n" + result.snippet}
 	}
 	
-	EAT.javascriptInner = (inline, naked) => (source) => {
+	EAT.javascriptInner = (type) => (source) => {
 		let result = undefined
 		let success = undefined
 		let snippet = undefined
 		let code = source
 		
-		if (inline && naked) {
+		if (type == EAT.BLOCK_INLINE) {
 			return EAT.or (
 				EAT.javascriptNakedMulti,
 				EAT.javascriptNakedSingle,
@@ -432,14 +449,14 @@
 			
 		}
 		
-		if (inline && !naked) {
+		if (type == EAT.BLOCK_SINGLE) {
 			result = {code, snippet, success} = EAT.many(EAT.regex(/[^}](?!\n)/))(code)
 			if (!success) return {success: false, code: source, snippet: undefined}
 			result.value = new Function(snippet)()
 			return result
 		}
 		
-		if (!inline && !naked) {
+		if (type == EAT.BLOCK_MULTI) {
 			indentDepth++
 			result = {code, snippet, success} = EAT.list (
 				EAT.maybe(EAT.many(EAT.javascriptBraceLine)),
