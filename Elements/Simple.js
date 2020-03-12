@@ -25,7 +25,7 @@ element Lava colour {
 }
 
 element Fire colour [
-	"orange",
+	"darkorange",
 	"lol",
 ][0]
 
