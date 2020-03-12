@@ -1,5 +1,21 @@
 TodeSplat`
 
+	colour "yellow"
+
+	element Sand {
+		
+		colour "red"
+		
+		element Water {
+			colour "blue"
+		}
+		
+	}
+
+`
+
+/*TodeSplat`
+
 element Sand {
 	colour "#FC0"
 	emissive "#ffa34d"
@@ -32,4 +48,4 @@ element Fire colour [
 element Wall prop state "solid"
 
 
-`
+`*/

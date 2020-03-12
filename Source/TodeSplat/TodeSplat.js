@@ -1,4 +1,3 @@
-
 {
 
 	//========//
@@ -13,7 +12,14 @@
 		let snippet = undefined
 		let code = source
 		
-		result = {success, code} = EAT.many(EAT.expression)(code)
+		const globalArgs = {data: {}, children: {}}
+		result = {success, code} = EAT.todeSplatMultiInner(code, globalArgs)
+		
+		for (const name in globalArgs.children) {
+			const element = globalArgs.children[name]
+			ELEMENT.globalElements[name] = element
+			window[name] = element
+		}
 		
 	}
 	
@@ -142,24 +148,24 @@
 		
 	}
 	
-	//=============//
-	// Block Inner //
-	//=============//
-	EAT.blockInner = (inline = false) => (source, args) => {
-		
+	//===========//
+	// TodeSplat //
+	//===========//
+	EAT.todeSplat = (inline = false) => (source, args) => {
+	
 		let result = undefined
 		let success = undefined
 		let snippet = undefined
 		let code = source
 		
 		if (inline) {
-			result = {code, success} = EAT.maybe(EAT.blockInnerLine)(code, args)
+			result = {code, success} = EAT.maybe(EAT.todeSplatLine)(code, args)
 		}
 		
 		if (!inline) {
 			return EAT.or (
 				EAT.nonindent,
-				EAT.blockInnerMulti,
+				EAT.todeSplatMulti,
 			)(code, args)
 		}
 		
@@ -167,7 +173,7 @@
 		
 	}
 	
-	EAT.blockInnerMulti = (source, args) => {
+	EAT.todeSplatMulti = (source, args) => {
 	
 		let result = undefined
 		let success = undefined
@@ -176,15 +182,9 @@
 		
 		result = {code, success} = EAT.indent(code)
 		if (!success) return {success: false, code: source, snippet: undefined}
-	
-		result = {code, success} = EAT.maybe(EAT.blockInnerLine)(code, args)
 		
-		if (success) result = {code} = EAT.many (
-			EAT.list (
-				EAT.nonindent,
-				EAT.blockInnerLine,
-			)
-		)(code, args)
+		result = {code, success} = EAT.todeSplatMultiInner(code, args)
+		if (!success) return {success: false, code: source, snippet: undefined}
 	
 		result = {code, success} = EAT.unindent(code)
 		if (!success) return {success: false, code: source, snippet: undefined}
@@ -193,12 +193,34 @@
 		
 	}
 	
-	EAT.blockInnerLine = (source, args) => {
+	EAT.todeSplatMultiInner = (source, args) => {
 	
 		let result = undefined
 		let success = undefined
 		let snippet = undefined
 		let code = source
+		
+		result = {code, success} = EAT.maybe(EAT.todeSplatLine)(code, args)
+		
+		if (success) result = {code} = EAT.many (
+			EAT.list (
+				EAT.nonindent,
+				EAT.todeSplatLine,
+			)
+		)(code, args)
+		
+		return {success, code, snippet: result.snippet}
+	}
+	
+	EAT.todeSplatLine = (source, args) => {
+	
+		let result = undefined
+		let success = undefined
+		let snippet = undefined
+		let code = source
+		
+		result = {success} = EAT.string("element")(code)
+		if (success) return EAT.element(code, args)
 		
 		result = {code, success} = EAT.customProperty(code, args)
 		if (success) return result
@@ -214,27 +236,10 @@
 	
 	//============//
 	// Expression //
-	//============//
-	EAT.expression = (source) => {
+	//============//	
+	EAT.element = (source, parentArgs) => {
 		
-		let result = undefined
-		let success = undefined
-		let snippet = undefined
-		let code = source
-		
-		result = {code, success} = EAT.nonindent(code)
-		if (!success) return {success: false, code: source, snippet: undefined}
-				
-		result = {success} = EAT.string("element")(code)
-		if (success) return EAT.element(code)
-		
-		return {success: false, code: source, snippet: undefined}
-		
-	}
-	
-	EAT.element = (source) => {
-				
-		const args = {data: {}}
+		const args = {data: {}, children: {}}
 		
 		let result = undefined
 		let success = undefined
@@ -251,18 +256,17 @@
 		if (!success) throw new Error(`[TodeSplat] Expected element name but got '${code[0]}'`)
 		args.name = snippet
 		
-		result = {code, success} = EAT.block(EAT.blockInner)(code, args)
+		result = {code, success} = EAT.block(EAT.todeSplat)(code, args)
 		if (!success) throw new Error(`[TodeSplat] Expected element block but got something else`)
 		
 		snippet = source.slice(0, source.length - result.code.length)
 		args.source = snippet
 		
-		window[args.name] = ELEMENT.make(args)
+		const element = ELEMENT.make(args)
+		parentArgs.children[args.name] = element
 		
 		return {success: true, snippet, code: result.code}
 	}
-	
-	
 	
 	EAT.property = (source, args) => {
 		let result = undefined
@@ -527,8 +531,11 @@
 		if (indentBase == undefined) throw new Error(`[TodeSplat] The base indent level should have been discovered by now - something has gone wrong`)
 		if (indentUnit == undefined) {
 			if (snippet.slice(0, indentBase.length) != indentBase) return {success: false, snippet: undefined, code: source}
-			indentUnit = snippet.slice(indentBase.length)
+			const unit = snippet.slice(indentBase.length)
+			if (unit.length == 0) return {success: false, snippet: undefined, code: source}
+			indentUnit = unit
 			if (indentBase.length > 0 && indentBase[0] != indentUnit[0]) return {success: false, snippet: undefined, code: source}
+			
 		}
 		
 		if (indentBase != undefined && indentUnit != undefined && getMargin(indentDepth) != snippet) {
