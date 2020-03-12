@@ -1,4 +1,4 @@
-TodeSplat`
+/*TodeSplat`
 
 	colour "yellow"
 
@@ -10,9 +10,9 @@ TodeSplat`
 		
 	}
 
-`
+`*/
 
-/*TodeSplat`
+TodeSplat`
 
 element Sand {
 	colour "#FC0"
@@ -45,5 +45,6 @@ element Fire colour [
 
 element Wall prop state "solid"
 
+element DReg { colour "brown" }
 
-`*/
+`

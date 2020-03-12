@@ -163,10 +163,12 @@
 		let code = source
 		
 		if (type == EAT.BLOCK_INLINE) {
-			result = {code, success} = EAT.maybe(EAT.todeSplatLine)(code, args)
+			return EAT.maybe(EAT.todeSplatLine)(code, args)
 		}
 		
 		else if (type == EAT.BLOCK_SINGLE) {
+			
+			// fix inline javascript
 			let lineResult = {snippet} = EAT.line(code)
 			let edoc = snippet.split("").reverse().join("")
 			lineResult = {code: edoc} = EAT.gap(edoc)
@@ -176,17 +178,15 @@
 			const nextCode = source.slice(lineCode.length)
 			
 			result = {code, success} = EAT.maybe(EAT.todeSplatLine)(code, args)
-			return {success, snippet: lineCode, code: nextCode}.d
+			return {success, snippet: lineCode, code: nextCode}
 		}
 		
 		else if (type == EAT.BLOCK_MULTI) {
-			result = EAT.or (
+			return result = EAT.or (
 				EAT.nonindent,
 				EAT.todeSplatMulti,
 			)(code, args)
 		}
-		
-		return result
 		
 	}
 	
