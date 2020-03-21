@@ -45,8 +45,7 @@ element Fire {
 	}
 	
 	rule {
-		x => x
-		@    _
+		@ => _
 	}
 	
 }

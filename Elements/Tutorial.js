@@ -182,6 +182,63 @@ element WindySandDemo {
 
 
 
+element Wood {
+	colour "#946351"
+	emissive "#5E3F34"
+	floor true
+	
+	given F (element) => element == Fire
+	change F () => new Fire()
+	
+	for(xz) rule { @F => FF }
+	
+}
+
+element SymmetrySimple {
+	
+	colour "#FC0"
+	emissive "#ffa34d"
+	
+	default true
+	rule {
+		@_ => _@
+	}
+	
+}
+
+element SymmetryComplex {
+	
+	colour "grey"
+	
+	
+	rule x {
+		@ => _
+		_    @
+	}
+	
+	rule xyz {
+		@  => _
+		#_    #@
+	}
+	
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
