@@ -8,6 +8,8 @@ const D2_MODE = urlParams.has("2d")
 const D1_MODE = urlParams.has("1d")
 const VR_MODE = urlParams.has("vr")
 
+const FLOOR_TYPE = urlParams.has("nofloor")? "nofloor" : "floor"
+
 const MAX_X = (SMALL_MODE? 30 : 50) * (D1_MODE? 2 : 1) * (D2_MODE? 5 : 1)
 const MAX_Z = D1_MODE? 0 : (D2_MODE? 0 : MAX_X)
 const MAX_Y = D1_MODE? 0 : (SMALL_MODE? 30 : 40) * (D2_MODE? 8 : 1)

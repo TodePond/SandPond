@@ -199,7 +199,6 @@ element SymmetrySimple {
 	colour "#FC0"
 	emissive "#ffa34d"
 	
-	default true
 	rule {
 		@_ => _@
 	}
