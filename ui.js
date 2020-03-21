@@ -14,6 +14,7 @@ const UI = {}
 	UI.selectedDimensions = D1_MODE? "d1" : (D2_MODE? "d2" : "d3")
 	UI.selectedReality = VR_MODE? "vr" : "nonvr"
 	UI.selectedSource = "todeSplat"
+	UI.floorTypeOption = FLOOR_TYPE
 	
 	//======//
 	// HTML //
@@ -215,7 +216,12 @@ const UI = {}
 						<div id="vrOption" class="realityOption option box clickable"><div class="label">VR</div></div>
 					</section>
 					<section>
-						<div id="modeGo" class="box option clickable"><div class="label">SUBMIT</div></div>
+						<div class="miniTitle">FLOOR</div>
+						<div id="floorOption" class="floorTypeOption option box clickable"><div class="label">Floor</div></div>
+						<div id="nofloorOption" class="floorTypeOption option box clickable"><div class="label">No Floor</div></div>
+					</section>
+					<section>
+						<div id="modeGo" class="box option clickable"><div class="label">RELOAD</div></div>
 					</section>
 				</div>
 				
@@ -306,6 +312,7 @@ const UI = {}
 	if (UI.selectedReality == "vr") $("#vrOption").classList.add("selected")
 	else if (UI.selectedReality == "nonvr") $("#nonvrOption").classList.add("selected")
 	
+	$(`#${UI.floorTypeOption}Option`).classList.add("selected")
 	
 	if (UI.selectedElement) $(`#${UI.selectedElement.name}Button`).classList.add("selected")
 	
@@ -382,8 +389,9 @@ const UI = {}
 		else if (UI.selectedSize == "big") params += "big&"
 		if (UI.selectedDimensions == "d1") params += "1d&"
 		else if (UI.selectedDimensions == "d2") params += "2d&"
-		if (UI.selectedReality == "nonvr") params += "nonvr"
-		else if (UI.selectedReality == "vr") params += "vr"
+		if (UI.selectedReality == "nonvr") params += "nonvr&"
+		else if (UI.selectedReality == "vr") params += "vr&"
+		params += UI.floorTypeOption
 		const baseUrl = `${window.location.protocol}//${window.location.host}${window.location.pathname}`
 		window.location = `${baseUrl}?${params}`
 	})
@@ -410,6 +418,14 @@ const UI = {}
 		const id = this.id
 		const realityName = id.slice(0, id.length - "Option".length)
 		UI.selectedReality = realityName
+	})
+	
+	$$(".floorTypeOption").on.click(function() {
+		for (const floorTypeOption of $$(".floorTypeOption")) floorTypeOption.classList.remove("selected")
+		this.classList.add("selected")
+		const id = this.id
+		const floorTypeOption = id.slice(0, id.length - "Option".length)
+		UI.floorTypeOption = floorTypeOption
 	})
 	
 	$$(".elementButton").on.click(function() {

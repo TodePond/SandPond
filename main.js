@@ -64,7 +64,7 @@ scene.background = background
 const sun = makeSun(D2_MODE)
 scene.add(sun)
 
-const floor = D2_MODE? make2DFloor(WORLD_WIDTH * ATOM_SIZE, WORLD_HEIGHT * ATOM_SIZE) : makeFloor(WORLD_WIDTH * ATOM_SIZE, WORLD_DEPTH * ATOM_SIZE)
+const floor = D2_MODE? make2DFloor(FLOOR_TYPE, WORLD_WIDTH * ATOM_SIZE, WORLD_HEIGHT * ATOM_SIZE) : makeFloor(FLOOR_TYPE, WORLD_WIDTH * ATOM_SIZE, WORLD_DEPTH * ATOM_SIZE)
 scene.add(floor)
 
 let orbit
