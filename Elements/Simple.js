@@ -1,3 +1,5 @@
+
+/*
 TodeSplat`
 
 
@@ -20,19 +22,23 @@ element Water {
 	
 	
 `
+*/
 
 
 
 
 
-
-/*TodeSplat`
+TodeSplat`
 
 
 element Sand {
-	colour "#FC0"
+	colour {
+		return "#FC0"
+	}
 }
 
+`
+/*
 element Water {
 	colour { return "lightblue" }
 	emissive "blue"
@@ -59,4 +65,5 @@ element Wall prop state "solid"
 
 element DReg { colour "brown" }
 
-`*/
+`
+*/

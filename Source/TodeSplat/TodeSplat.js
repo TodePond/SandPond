@@ -83,7 +83,7 @@
 	}
 	
 	EAT.blockBrace = (inner) => (source, ...args) => {
-	
+		
 		let result = undefined
 		let success = undefined
 		let snippet = undefined
@@ -156,7 +156,7 @@
 	// TodeSplat //
 	//===========//
 	EAT.todeSplat = (type) => (source, args) => {
-	
+		
 		let result = undefined
 		let success = undefined
 		let snippet = undefined
@@ -197,6 +197,7 @@
 		let snippet = undefined
 		let code = source
 		
+		// Maybe not indent tho
 		result = {code, success} = EAT.indent(code)
 		if (!success) return {success: false, code: source, snippet: undefined}
 		
@@ -217,9 +218,9 @@
 		let snippet = undefined
 		let code = source
 		
-		result = {code, success} = EAT.maybe(EAT.todeSplatLine)(code, args)
+		result = {code, success} = EAT.todeSplatLine(code, args)
 		
-		if (success) result = {code} = EAT.many (
+		result = {code} = EAT.many (
 			EAT.list (
 				EAT.nonindent,
 				EAT.todeSplatLine,
@@ -463,8 +464,9 @@
 			result = {code, snippet, success} = EAT.list (
 				EAT.maybe(EAT.many(EAT.javascriptBraceLine)),
 			)(code)
+			let endResult = {code, success} = EAT.unindent(code)
+			if (!success) return endResult
 			result.value = new Function(snippet)()
-			code = EAT.unindent(code).code
 			return {...result, code}
 		}
 		
@@ -545,22 +547,24 @@
 		
 		result = {code, success, snippet} = EAT.emptyLines(code)
 		if (!success) return {success: false, snippet: undefined, code: source}
-		result = {code, snippet} = EAT.maybe(EAT.margin)(code)
 		
+		// NO BASE INDENT
 		if (indentBase == undefined) throw new Error(`[TodeSplat] The base indent level should have been discovered by now - something has gone wrong`)
-		if (indentUnit == undefined) {
+		
+		// GET INDENT UNIT
+		else if (indentUnit == undefined) {
+			result = {code, snippet} = EAT.maybe(EAT.margin)(code)
 			if (snippet.slice(0, indentBase.length) != indentBase) return {success: false, snippet: undefined, code: source}
 			const unit = snippet.slice(indentBase.length)
 			if (unit.length == 0) return {success: false, snippet: undefined, code: source}
 			indentUnit = unit
 			if (indentBase.length > 0 && indentBase[0] != indentUnit[0]) return {success: false, snippet: undefined, code: source}
-			
+			return result
 		}
 		
-		if (indentBase != undefined && indentUnit != undefined && getMargin(indentDepth) != snippet) {
-			return {success: false, snippet: undefined, code: source}
-		}
-		
+		// CHECK INDENT
+		const expectedMargin = getMargin(indentDepth)
+		result = {code, snippet} = EAT.string(expectedMargin)(code)
 		return result
 		
 	}
@@ -579,15 +583,16 @@
 		result = {code, success, snippet} = EAT.emptyLines(code)
 		if (!success) return {success: false, snippet: undefined, code: source}
 		
-		result = {code, snippet} = EAT.maybe(EAT.margin)(code)
+		//result = {code, snippet} = EAT.maybe(EAT.margin)(code)
 		
 		if (indentBase == undefined) throw new Error(`[TodeSplat] The base indent level should have been discovered by now - something has gone wrong`)
 		if (indentUnit == undefined) throw new Error(`[TodeSplat] The indent unit should have been discovered by now - something has gone wrong`)
-		if (indentBase != undefined && indentUnit != undefined && getMargin(indentDepth) != snippet) {
-			return {success: false, snippet: undefined, code: source}
-		}
 		
+		// CHECK INDENT
+		const expectedMargin = getMargin(indentDepth)
+		result = {code, snippet} = EAT.string(expectedMargin.d)(code.d)
 		return result
+		
 		
 	}
 	
