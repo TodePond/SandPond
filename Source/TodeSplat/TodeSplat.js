@@ -253,10 +253,10 @@
 	
 	//============//
 	// Expression //
-	//============//	
+	//============//
 	EAT.element = (source, parentArgs) => {
 		
-		const args = {data: {}, children: {}}
+		const args = {data: {}, children: {}, categories: []}
 		
 		let result = undefined
 		let success = undefined
@@ -292,6 +292,7 @@
 		let code = source
 		
 		result = {code, success, snippet} = EAT.propertyName(code)
+		const propertyName = snippet
 		if (!success) return {success: false, code: source, snippet: undefined}
 		const name = result.snippet
 		
@@ -299,7 +300,8 @@
 		result = {code, success} = EAT.javascript(code)
 		if (!success) return {success: false, code: source, snippet: undefined}
 		
-		args[name] = result.value
+		if (propertyName == "category") args.categories.push(result.value)
+		else args[name] = result.value
 		
 		return result
 	}

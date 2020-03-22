@@ -287,10 +287,10 @@ const UI = {}
 		}
 		
 		for (const category of element.categories) {
-			const categoryElement = $(`#${category}Heading.category`)
+			let categoryElement = $(`#${category}Heading.category`)
 			if (!categoryElement) {
-				const newCategoryElement = HTML `<div class="category heading box clickable" id="${category}Heading"><div class="label">${category}</div></div>`
-				$("#elements > .menu").appendChild(newCategoryElement)
+				categoryElement = HTML `<div class="category heading box clickable" id="${category}Heading"><div class="label">${category}</div></div>`
+				$("#elements > .menu").appendChild(categoryElement)
 			}
 		}
 
@@ -366,7 +366,7 @@ const UI = {}
 				if (categories.length == 0/* && $("#searchHeading").classList.contains("selected")*/) {
 					elementButton.classList.remove("minimised")
 				}
-				else if (categories.some(category => category == element.category)) {
+				else if (categories.some(category => element.categories.includes(category))) {
 					elementButton.classList.remove("minimised")
 				}
 			}

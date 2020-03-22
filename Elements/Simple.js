@@ -1,24 +1,36 @@
+TodeSplat`
+
+
+	
+element Sand {
+	category "Sandbox"
+	category "Powder"
+	colour "#FC0"
+}
+
+element Water {
+	category "Sandbox"
+	category "Liquid"
+	colour "lightblue"
+	emissive "blue"
+	opacity 0.5
+}
+
+	
+	
+	
+`
+
+
+
+
+
+
 /*TodeSplat`
 
-	colour "yellow"
-
-	element Sand {
-		
-		colour "red"
-		
-		element Water { colour "blue" }
-		
-	}
-
-`*/
-
-TodeSplat`
 
 element Sand {
 	colour "#FC0"
-	emissive "#ffa34d"
-	prop state "solid"
-	data temperature 10
 }
 
 element Water {
@@ -47,4 +59,4 @@ element Wall prop state "solid"
 
 element DReg { colour "brown" }
 
-`
+`*/
