@@ -510,6 +510,7 @@
 	//========//
 	// Indent //
 	//========//
+	// TODO: make this work the same way as unindent and indent
 	// Stay on the same indent level
 	EAT.nonindent = (source) => {
 		
@@ -590,7 +591,7 @@
 		
 		// CHECK INDENT
 		const expectedMargin = getMargin(indentDepth)
-		result = {code, snippet} = EAT.string(expectedMargin.d)(code.d)
+		result = {code, snippet} = EAT.string(expectedMargin)(code)
 		return result
 		
 		
