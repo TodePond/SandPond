@@ -30,15 +30,10 @@ element Water {
 
 TodeSplat`
 
-
 element Sand {
-	colour {
-		return "#FC0"
-	}
+	colour "#FC0"
 }
 
-`
-/*
 element Water {
 	colour { return "lightblue" }
 	emissive "blue"
@@ -50,6 +45,7 @@ element Slime {
 		const colour = "green"
 		return colour
 	}
+	opacity 0.65
 }
 
 element Lava colour {
@@ -66,4 +62,3 @@ element Wall prop state "solid"
 element DReg { colour "brown" }
 
 `
-*/

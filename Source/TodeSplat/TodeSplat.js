@@ -183,7 +183,7 @@
 		
 		else if (type == EAT.BLOCK_MULTI) {
 			return result = EAT.or (
-				EAT.nonindent,
+				//EAT.nonindent,
 				EAT.todeSplatMulti,
 			)(code, args)
 		}
@@ -197,7 +197,6 @@
 		let snippet = undefined
 		let code = source
 		
-		// Maybe not indent tho
 		result = {code, success} = EAT.indent(code)
 		if (!success) return {success: false, code: source, snippet: undefined}
 		
@@ -404,9 +403,11 @@
 			return {success: false, code: source, snippet: undefined}
 		}
 		
+		indentDepth++
 		result = {code, success, snippet} = EAT.many(EAT.javascriptNakedMultiLine)(code)
 		js += snippet
 		
+		indentDepth--
 		result = {code, success, snippet} = EAT.nonindent(code)
 		if (!success) return {success: false, snippet: undefined, code: source}
 		js += "\n"
@@ -427,7 +428,7 @@
 		let code = source
 		
 		result = {success} = EAT.nonindent(code)
-		if (success) return {success: false, snippet: undefined, code: source}
+		if (!success) return {success: false, snippet: undefined, code: source}
 		
 		result = {code, success} = EAT.newline(code)
 		if (!success) return {success: false, snippet: undefined, code: source}
@@ -522,18 +523,28 @@
 		result = {code, success, snippet} = EAT.emptyLines(code)
 		if (!success) return {success: false, snippet: undefined, code: source}
 		
-		result = {code, snippet} = EAT.maybe(EAT.margin)(code)
-		
+		// NO BASE INDENT
 		if (indentBase == undefined) {
+			result = {code, snippet} = EAT.maybe(EAT.margin)(code)
 			indentBase = snippet
+			return result
 		}
-		if (indentBase != undefined && indentUnit != undefined && getMargin(indentDepth) != snippet) {
-			return {success: false, snippet: undefined, code: source}
+		
+		// FULL CHECK
+		else if (indentBase != undefined && indentUnit != undefined) {
+			const expectedMargin = getMargin(indentDepth)
+			result = {success, code, snippet} = EAT.string(expectedMargin)(code)
+			if (success) return result
 		}
-		if (indentDepth == 0 && indentBase != snippet) {
-			return {success: false, snippet: undefined, code: source}
-		}
-		return result
+		
+		// PARTIAL CHECK: TODO
+		/*else if (indentBase != undefined) {
+			result = {code, snippet} = EAT.maybe(EAT.margin)(code)
+			if (indentDepth == 0 && indentBase == snippet) return result
+		}*/
+		
+		return {success: false, snippet: undefined, code: source}
+		
 	}
 	
 	// Go one indent level deeper
@@ -547,7 +558,9 @@
 		let code = source
 		
 		result = {code, success, snippet} = EAT.emptyLines(code)
-		if (!success) return {success: false, snippet: undefined, code: source}
+		if (!success) {
+			return {success: false, snippet: undefined, code: source}
+		}
 		
 		// NO BASE INDENT
 		if (indentBase == undefined) throw new Error(`[TodeSplat] The base indent level should have been discovered by now - something has gone wrong`)
