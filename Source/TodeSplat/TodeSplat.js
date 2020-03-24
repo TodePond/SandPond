@@ -182,10 +182,8 @@
 		}
 		
 		else if (type == EAT.BLOCK_MULTI) {
-			return result = EAT.or (
-				//EAT.nonindent,
-				EAT.todeSplatMulti,
-			)(code, args)
+			// TODO: support empty multi-line block
+			return result = EAT.todeSplatMulti(code, args)
 		}
 		
 	}
@@ -538,10 +536,12 @@
 		}
 		
 		// PARTIAL CHECK: TODO
-		/*else if (indentBase != undefined) {
-			result = {code, snippet} = EAT.maybe(EAT.margin)(code)
-			if (indentDepth == 0 && indentBase == snippet) return result
-		}*/
+		else if (indentBase != undefined) {
+			if (indentDepth == 0) {
+				result = {success} = EAT.string(indentBase)(code)
+				if (success) return result
+			}
+		}
 		
 		return {success: false, snippet: undefined, code: source}
 		
