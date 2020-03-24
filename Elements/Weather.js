@@ -45,6 +45,20 @@ element WeatherBoy {
 	rule xz { @_ => _@ }
 }
 
+element LightningStorm {
+	colour "yellow"
+	emissive "darkblue"
+	opacity 0.0
+	category "Weather"
+	state "effect"
+	
+	isWeatherBoy true
+	chance 0.0001
+	drop Lightning
+	
+	ruleset WeatherBoy
+}
+
 element Rainy {
 	colour "lightblue"
 	emissive "darkblue"
