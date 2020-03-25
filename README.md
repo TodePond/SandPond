@@ -24,6 +24,3 @@ Or try out the [live demo](http://www.sandboys.land).
 
 To learn more, check out the [TodeSplat Documentation](https://github.com/l2wilson94/Sandboys/wiki/TodeSplat-Documentation).<br>
 Or check out the examples in the [Elements](https://github.com/l2wilson94/Sandboys/tree/master/Elements) folder.
-
-## To-do
-Check out my [to-do list](https://github.com/l2wilson94/Sandboys/wiki/Todo-List) to see what I'm working on.
