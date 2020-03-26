@@ -236,31 +236,98 @@
 		return {success, code, snippet: result.snippet}
 	}
 	
-	EAT.todeSplatLine = (source, args) => {
+	EAT.todeSplatLine = (source, args, ignoreDiagram=false) => {
 	
 		let result = undefined
 		let success = undefined
 		let snippet = undefined
 		let code = source
 		
+		// 'element' keyword
 		result = {success} = EAT.string("element")(code)
 		if (success) return EAT.element(code, args)
 		
+		// 'prop'
 		result = {code, success} = EAT.customProperty(code, args)
 		if (success) return result
 		
+		// 'data'
 		result = {code, success} = EAT.data(code, args)
 		if (success) return result
 		
-		result = {code, success} = EAT.property(code, args)
-		if (!success) return {success: false, code: source, snippet: undefined}
+		// TODO: 'arg' or 'param' ???
+		// ...
 		
-		return result
+		// 'colour', 'emissive', 'category', etc
+		result = {code, success} = EAT.property(code, args)
+		if (success) return result
+		
+		// IF ALL ELSE FAILS
+		// rule diagram!
+		if (!ignoreDiagram) {
+			result = {code, success} = EAT.diagram(code, args)
+			if (success) return result
+		}
+		
+		return {success: false, code: source, snippet: undefined}
 	}
 	
 	//============//
 	// Expression //
 	//============//
+	EAT.diagram = (source, args) => {
+		let result = undefined
+		let success = undefined
+		let snippet = undefined
+		let code = source
+		const lines = code.split("\n")
+		
+		// CUTOUT DIAGRAM
+		const diagram = []
+		
+		// reject empty starting line
+		if (lines[0].is(WhiteSpace)) return {success: false, code: source, snippet: undefined}
+		
+		// scoop up first line
+		result = {code, success, snippet} = EAT.diagramLine(code)
+		if (!success) return {success: false, code: source, snippet: undefined}
+		diagram.push(snippet)
+		
+		// scoop up each line
+		result = {code, success, snippet} = EAT.many (
+			EAT.list (
+				EAT.nonindent,
+				EAT.diagramLine,
+			)	
+		)(code).d
+		
+		if (success) diagram.push(snippet)
+		
+		diagram.d
+		
+		
+		// READ DIAGRAM
+		
+		
+		return {success: false, code: source, snippet: undefined}
+		
+	}
+	
+	EAT.diagramLine = (source) => {
+		let result = undefined
+		let success = undefined
+		let snippet = undefined
+		let code = source
+		
+		// reject if it's another todesplat line
+		const dummyArgs = {}
+		result = {success} = EAT.todeSplatLine(code, dummyArgs, true)
+		if (success) return {success: false, code: source, snippet: undefined}
+		
+		return EAT.line(code)
+		
+	}
+	
 	EAT.element = (source, parentArgs) => {
 		
 		const args = {data: {}, children: {}, categories: []}
@@ -288,6 +355,7 @@
 		
 		const element = ELEMENT.make(args)
 		parentArgs.children[args.name] = element
+		print(args.name)
 		
 		return {success: true, snippet, code: result.code}
 	}
@@ -544,7 +612,7 @@
 			if (success) return result
 		}
 		
-		// PARTIAL CHECK: TODO
+		// PARTIAL CHECK
 		else if (indentBase != undefined) {
 			if (indentDepth == 0) {
 				result = {success} = EAT.string(indentBase)(code)

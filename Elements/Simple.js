@@ -1,4 +1,13 @@
 
+/*TodeSplat`
+
+element Res {
+	opacity 0.5
+	@_ => _@
+}
+
+`*/
+
 /*
 TodeSplat`
 
@@ -65,5 +74,11 @@ element Fire colour [
 element Wall prop state "solid"
 
 element DReg { colour "brown" }
+
+element Res {
+	opacity 0.5
+	@_ => _@
+	#     #
+}
 
 `
