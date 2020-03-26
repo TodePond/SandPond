@@ -182,8 +182,17 @@
 		}
 		
 		else if (type == EAT.BLOCK_MULTI) {
-			// TODO: support empty multi-line block
-			return result = EAT.todeSplatMulti(code, args)
+		
+			// EMPTY
+			result = {success} = EAT.list (
+				EAT.nonindent,
+				EAT.string("}"),
+			)(code)
+			
+			if (success) return EAT.nonindent(code)
+			
+			// NON-EMPTY
+			return EAT.todeSplatMulti(code, args)
 		}
 		
 	}

@@ -30,10 +30,13 @@ element Water {
 
 TodeSplat`
 
-element Foo {}
 
 element Sand {
 	colour "#FC0"
+}
+
+element Foo {
+
 }
 
 element Water {
