@@ -275,7 +275,7 @@
 	//============//
 	// Expression //
 	//============//
-	EAT.diagram = (source, args) => {
+	EAT.diagram = (source, args, arrowOnly=false) => {
 		let result = undefined
 		let success = undefined
 		let snippet = undefined
@@ -288,41 +288,148 @@
 		// reject empty starting line
 		if (lines[0].is(WhiteSpace)) return {success: false, code: source, snippet: undefined}
 		
+		// reject non-arrow lines
+		if (arrowOnly && !lines[0].includes("=>")) return {success: false, code: source, snippet: undefined}
+		
 		// scoop up first line
-		result = {code, success, snippet} = EAT.diagramLine(code)
+		const notes = {arrowFound: false}
+		result = {code, success, snippet} = EAT.diagramLine(code, notes)
 		if (!success) return {success: false, code: source, snippet: undefined}
 		diagram.push(snippet)
 		
 		// scoop up each line
 		result = {code, success, snippet} = EAT.many (
 			EAT.list (
-				EAT.nonindent,
+				EAT.oneNonindent,
 				EAT.diagramLine,
 			)	
-		)(code).d
+		)(code, notes)
 		
-		if (success) diagram.push(snippet)
-		
-		diagram.d
-		
+		if (success) diagram.push(...snippet.split("\n").slice(1))
+		print(diagram)
 		
 		// READ DIAGRAM
+		// find arrow position
+		let arrowX = undefined
+		let arrowY = undefined
+		for (let i = 0; i < diagram.length; i++) {
+			const line = diagram[i]
+			const arrowIndex = line.indexOf("=>")
+			if (arrowIndex != -1) {
+				arrowX = arrowIndex
+				arrowY = i
+				break
+			}
+		}
+		
+		if (arrowX == undefined) throw new Error(`[TodeSplat] Couldn't find arrow's x position. This shouldn't happen.`)
+		if (arrowY == undefined) throw new Error(`[TodeSplat] Couldn't find arrow's y position. This shouldn't happen.`)
+		
+		// split into lhs and rhs
+		const lhs = diagram.map(line => line.slice(0, arrowX))
+		const mid = diagram.map(line => line.slice(arrowX, arrowX + "=>".length))
+		const rhs = diagram.map(line => line.slice(arrowX + "=>".length))
+		
+		// reject if junk in middle
+		for (let i = 0; i < mid.length; i++) {
+			if (i == arrowY) continue
+			const line = mid[i]
+			if (!line.is(WhiteSpace)) throw new Error(`[TodeSplat] You can't have any symbols crossing over with a diagram's arrow.`)
+		}
+		
+		// TODO: trim each side down
+		// TODO: check that the silhouettes of both sides are the same
+		
+		// find origin
+		// TODO: allow for custom origin symbols
+		let originX = undefined
+		let originY = undefined
+		if (lhs.length == 1 && lhs[0].trim().length == 1) {
+			originX = 0
+			originY = 0
+		}
+		else for (let i = 0; i < lhs.length; i++) {
+			const line = lhs[i]
+			const originIndex = line.indexOf("@")
+			if (originIndex != -1) {
+				if (originX != undefined) throw new Error(`[TodeSplat] You can't have more than one origin in the left-hand-side of a diagram.`)
+				originX = originIndex
+				originY = i
+			}
+		}
+		
+		if (originX == undefined) throw new Error(`[TodeSplat] Couldn't find origin in left-hand-side of diagram.`)
+		if (originY == undefined) throw new Error(`[TodeSplat] Couldn't find origin's y position. This shouldn't happen.`)
+		
+		// get positions of lhs symbols
+		const inputs = []
+		let firstInputX = undefined
+		let firstInputY = undefined
+		for (let i = 0; i < lhs.length; i++) {
+			const line = lhs[i]
+			for (let j = 0; j < line.length; j++) {
+				const char = line[j]
+				if (char == " " || char == "	") continue
+				if (firstInputX == undefined) {
+					firstInputX = j
+					firstInputY = i
+				}
+				
+				const x = j - originX
+				const y = originY - i
+				
+				inputs.push({x, y, char})
+			}
+		}
+		
+		// get position of rhs symbols
+		/*let firstOutputX = undefined
+		let firstOutputY = undefined
+		for (let i = 0; i < rhs.length; i++) {
+			const line = rhs[i]
+			for (let j = 0; j < line.length; j++) {
+				const char = line[j]
+				if (char == " " || char == "	") continue
+				if (firstOutputX == undefined) {
+					firstOutputX = j
+					firstOutputY = i
+				}
+				
+				const x = j - originX
+				const y = originY - i
+				
+				inputs.push({x, y, char})
+				
+				print(char)
+			}
+		}*/
 		
 		
 		return {success: false, code: source, snippet: undefined}
 		
 	}
 	
-	EAT.diagramLine = (source) => {
+	EAT.diagramLine = (source, notes) => {
 		let result = undefined
 		let success = undefined
 		let snippet = undefined
 		let code = source
+		const lines = code.split("\n")
+		const line = lines[0]
 		
 		// reject if it's another todesplat line
 		const dummyArgs = {}
 		result = {success} = EAT.todeSplatLine(code, dummyArgs, true)
 		if (success) return {success: false, code: source, snippet: undefined}
+		
+		// reject tabs
+		if (line.includes("	")) throw new Error("[TodeSplat] You can't use tabs inside a diagram.")
+		
+		// find arrow
+		if (line.includes("=>")) {
+			if (!notes.arrowFound) notes.arrowFound = true
+			else return {success: false, code: source, snippet: undefined}
+		}
 		
 		return EAT.line(code)
 		
@@ -586,9 +693,10 @@
 	//========//
 	// Indent //
 	//========//
-	// TODO: make this work the same way as unindent and indent
+	EAT.oneNonindent = (source, args) => EAT.nonindent(source, {...args, oneOnly: true})
+	
 	// Stay on the same indent level
-	EAT.nonindent = (source) => {
+	EAT.nonindent = (source, {oneOnly=false} = {}) => {
 		
 		let result = undefined
 		let success = undefined
@@ -598,10 +706,14 @@
 		result = {code, success, snippet} = EAT.emptyLines(code)
 		if (!success) return {success: false, snippet: undefined, code: source}
 		
+		const numberOfLines = snippet.split("\n").length - 1
+		if (oneOnly == true && numberOfLines > 1) return {success: false, snippet: undefined, code: source}
+		
 		// NO BASE INDENT
 		if (indentBase == undefined) {
 			result = {code, snippet} = EAT.maybe(EAT.margin)(code)
 			indentBase = snippet
+			result.snippet = "\n"
 			return result
 		}
 		
@@ -609,14 +721,20 @@
 		else if (indentBase != undefined && indentUnit != undefined) {
 			const expectedMargin = getMargin(indentDepth)
 			result = {success, code, snippet} = EAT.string(expectedMargin)(code)
-			if (success) return result
+			if (success) {
+				result.snippet = "\n"
+				return result
+			}
 		}
 		
 		// PARTIAL CHECK
 		else if (indentBase != undefined) {
 			if (indentDepth == 0) {
 				result = {success} = EAT.string(indentBase)(code)
-				if (success) return result
+				if (success) {
+					result.snippet = "\n"
+					return result
+				}
 			}
 		}
 		
