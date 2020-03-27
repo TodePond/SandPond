@@ -17,8 +17,8 @@ const INSTRUCTION = {}
 	//========//
 	// Public //
 	//========//	
-	INSTRUCTION.makeInstruction = (type, value) => {
-		return {type, value}
+	INSTRUCTION.make = (type, value) => {
+		return {type, ...value}
 	}
 	
 	//=========//

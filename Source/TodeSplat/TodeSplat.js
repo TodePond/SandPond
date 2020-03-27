@@ -334,9 +334,9 @@
 		if (arrowY == undefined) throw new Error(`[TodeSplat] Couldn't find arrow's y position. This shouldn't happen.`)
 		
 		// split into lhs and rhs
-		const lhs = diagram.map(line => line.slice(0, arrowX))
+		let lhs = diagram.map(line => line.slice(0, arrowX))
 		const mid = diagram.map(line => line.slice(arrowX, arrowX + "=>".length))
-		const rhs = diagram.map(line => line.slice(arrowX + "=>".length))
+		let rhs = diagram.map(line => line.slice(arrowX + "=>".length))
 		
 		// reject if junk in middle
 		for (let i = 0; i < mid.length; i++) {
@@ -355,8 +355,8 @@
 		const lhsTrimmed = lhs.map(line => line.slice(lhsMarginLeft, line.length - lhsMarginRight))
 		const rhsTrimmed = rhs.map(line => line.slice(rhsMarginLeft, line.length - rhsMarginRight))
 		
-		lhsTrimmed.d
-		rhsTrimmed.d
+		lhs = lhsTrimmed
+		rhs = rhsTrimmed
 		
 		// check that the silhouettes of both sides are the same
 		for (let i = 0; i < diagram.length; i++) {
@@ -394,17 +394,11 @@
 		
 		// get positions of lhs symbols
 		const inputs = []
-		let firstInputX = undefined
-		let firstInputY = undefined
 		for (let i = 0; i < lhs.length; i++) {
 			const line = lhs[i]
 			for (let j = 0; j < line.length; j++) {
 				const char = line[j]
 				if (char == " " || char == "	") continue
-				if (firstInputX == undefined) {
-					firstInputX = j
-					firstInputY = i
-				}
 				
 				const x = j - originX
 				const y = originY - i
@@ -414,29 +408,25 @@
 		}
 		
 		// get position of rhs symbols
-		/*let firstOutputX = undefined
-		let firstOutputY = undefined
+		const outputs = []
 		for (let i = 0; i < rhs.length; i++) {
 			const line = rhs[i]
 			for (let j = 0; j < line.length; j++) {
 				const char = line[j]
 				if (char == " " || char == "	") continue
-				if (firstOutputX == undefined) {
-					firstOutputX = j
-					firstOutputY = i
-				}
 				
 				const x = j - originX
 				const y = originY - i
 				
-				inputs.push({x, y, char})
+				outputs.push({x, y, char})
 				
-				print(char)
 			}
-		}*/
+		}
 		
+		const instruction = INSTRUCTION.make(INSTRUCTION.TYPE.DIAGRAM, {inputs, outputs})
+		args.instructions.push(instruction)
 		
-		return {success: false, code: source, snippet: undefined}
+		return {success: true, code: result.code, snippet: diagram.join("\n")}
 		
 	}
 	
@@ -460,7 +450,7 @@
 		const line = lines[0]
 		
 		// reject if it's another todesplat line
-		const dummyArgs = {}
+		const dummyArgs = {data: {}, children: {}, categories: [], instructions: []}
 		result = {success} = EAT.todeSplatLine(code, dummyArgs, true)
 		if (success) return {success: false, code: source, snippet: undefined}
 		
@@ -479,7 +469,7 @@
 	
 	EAT.element = (source, parentArgs) => {
 		
-		const args = {data: {}, children: {}, categories: []}
+		const args = {data: {}, children: {}, categories: [], instructions: []}
 		
 		let result = undefined
 		let success = undefined

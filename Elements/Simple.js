@@ -39,9 +39,18 @@ element Water {
 
 TodeSplat`
 
+element Forkbomb @_ => @@
+
 
 element Sand {
 	colour "#FC0"
+	
+	@ => _
+	_    @
+	
+	@  => _
+	#_    #@
+	
 }
 
 element Foo {
@@ -52,6 +61,12 @@ element Water {
 	colour { return "lightblue" }
 	emissive "blue"
 	opacity 0.5
+	
+	@ => _
+	_    @
+	
+	@_ => _@
+	
 }
 
 element Slime {
@@ -80,7 +95,7 @@ element Res {
 	
 	 _     @
 	@# => _#
-	
+	category "blue"
 	@_    _@
 	#  => #
 	.     _
