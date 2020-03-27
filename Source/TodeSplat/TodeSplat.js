@@ -3,6 +3,10 @@
 	//========//
 	// Export //
 	//========//
+	TODESPLAT = {}
+	TODESPLAT.globalElements = {}
+	TODESPLAT.globalSymbols = {}
+	
 	function TodeSplat([source]) {
 	
 		resetIndentInfo()
@@ -17,7 +21,7 @@
 		
 		for (const name in globalArgs.children) {
 			const element = globalArgs.children[name]
-			ELEMENT.globalElements[name] = element
+			TODESPLAT.globalElements[name] = element
 			window[name] = element
 		}
 		

@@ -62,10 +62,6 @@ element Water {
 	emissive "blue"
 	opacity 0.5
 	
-	@ => _
-	_    @
-	
-	@_ => _@
 	
 }
 
@@ -92,13 +88,6 @@ element DReg { colour "brown" }
 
 element Res {
 	opacity 0.5
-	
-	 _     @
-	@# => _#
-	category "blue"
-	@_    _@
-	#  => #
-	.     _
 }
 
 `

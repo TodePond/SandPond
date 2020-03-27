@@ -21,11 +21,6 @@ const INSTRUCTION = {}
 		return {type, ...value}
 	}
 	
-	//=========//
-	// Private //
-	//=========//
-	
-	
 }
 
 

@@ -13,13 +13,29 @@ const JAVASCRIPT = {}
 	//========//
 	JAVASCRIPT.makeBehave = (instructions, name) => {
 	
+		let behave = `(self, sites) => {\n`
+	
 		for (const instruction of instructions) {
-			
+			if (instruction.type == INSTRUCTION.TYPE.DIAGRAM) {
+				
+				for (const input of instruction.inputs) {
+					const sn = EVENTWINDOW.getSiteNumber(input.x, input.y, 0)
+					
+				}
+				
+			}
 		}
 		
-		return `() => (self, sites) => {
-			
-		}`
+		behave += `	}\n`
+		
+		let code = `() => {\
+		\n\
+		\n	const behave = ${behave}\
+		\n\
+		\n	return behave\
+		\n}`
+		
+		return code
 	}
 	
 	JAVASCRIPT.makeConstructor = (name, data, args) => {
