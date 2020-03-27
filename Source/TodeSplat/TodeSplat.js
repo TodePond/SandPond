@@ -306,7 +306,15 @@
 		)(code, notes)
 		
 		if (success) diagram.push(...snippet.split("\n").slice(1))
-		print(diagram)
+		
+		// pad ends of diagram lines if they're too short
+		const maxLength = Math.max(...diagram.map(line => line.length))
+		for (const i in diagram) {
+			const line = diagram[i]
+			if (line.length < maxLength) {
+				diagram[i] = line + [" "].repeat(maxLength - line.length).join("")
+			}
+		}
 		
 		// READ DIAGRAM
 		// find arrow position
@@ -337,8 +345,31 @@
 			if (!line.is(WhiteSpace)) throw new Error(`[TodeSplat] You can't have any symbols crossing over with a diagram's arrow.`)
 		}
 		
-		// TODO: trim each side down
-		// TODO: check that the silhouettes of both sides are the same
+		// find the shortest margins of the diagram
+		const lhsMarginLeft = Math.min(...lhs.map(getStringMarginLeft))
+		const lhsMarginRight = Math.min(...lhs.map(getStringMarginRight))
+		const rhsMarginLeft = Math.min(...rhs.map(getStringMarginLeft))
+		const rhsMarginRight = Math.min(...rhs.map(getStringMarginRight))
+		
+		// trim each side down
+		const lhsTrimmed = lhs.map(line => line.slice(lhsMarginLeft, line.length - lhsMarginRight))
+		const rhsTrimmed = rhs.map(line => line.slice(rhsMarginLeft, line.length - rhsMarginRight))
+		
+		lhsTrimmed.d
+		rhsTrimmed.d
+		
+		// check that the silhouettes of both sides are the same
+		for (let i = 0; i < diagram.length; i++) {
+		
+			const lhsLine = lhsTrimmed[i]
+			const rhsLine = rhsTrimmed[i]
+			if (lhsLine.length != rhsLine.length) throw new Error(`[TodeSplat] Right-hand-side silhouette did not match left-hand-side silhouette.`)
+		
+			for (let j = 0; j < lhsTrimmed.length; j++) {
+				if (lhsTrimmed[i][j] == " " && rhsTrimmed[i][j] != " ") throw new Error(`[TodeSplat] Right-hand-side silhouette did not match left-hand-side silhouette.`)
+				if (rhsTrimmed[i][j] == " " && lhsTrimmed[i][j] != " ") throw new Error(`[TodeSplat] Right-hand-side silhouette did not match left-hand-side silhouette.`)
+			}
+		}
 		
 		// find origin
 		// TODO: allow for custom origin symbols
@@ -407,6 +438,17 @@
 		
 		return {success: false, code: source, snippet: undefined}
 		
+	}
+	
+	const getStringMarginLeft = (string) => {
+		for (let i = 0; i < string.length; i++) {
+			const char = string[i]
+			if (char != " ") return i
+		}
+	}
+	
+	const getStringMarginRight = (string) => {
+		return getStringMarginLeft(string.split("").reverse().join(""))
 	}
 	
 	EAT.diagramLine = (source, notes) => {
