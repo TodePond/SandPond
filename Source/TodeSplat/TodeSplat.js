@@ -1,13 +1,22 @@
 
 {
 
+	//=======//
+	// Scope //
+	//=======//
+	const makeScope = (parent) => ({
+		parent,
+		elements: {},
+		symbols: {},
+	})
+	
+	
+
 	//========//
 	// Export //
 	//========//
-	TODESPLAT = {}
-	TODESPLAT.globalElements = {}
-	
-	TODESPLAT.globalScope = {}
+	TODESPLAT = {}	
+	TODESPLAT.globalScope = makeScope()
 	
 	function TodeSplat([source]) {
 	
@@ -18,12 +27,12 @@
 		let snippet = undefined
 		let code = source
 		
-		const globalArgs = {data: {}, children: {}}
+		const globalArgs = makeElementArgs()
 		result = {success, code} = EAT.todeSplatMultiInner(code, globalArgs)
 		
 		for (const name in globalArgs.children) {
 			const element = globalArgs.children[name]
-			TODESPLAT.globalElements[name] = element
+			TODESPLAT.globalScope.elements[name] = element
 			window[name] = element
 		}
 		
@@ -465,10 +474,12 @@
 	}
 	
 	const makeElementArgs = () => ({
-		data: {},
 		children: {},
+		data: {},
 		categories: [],
 		instructions: [],
+		
+		origins: {},
 	})
 	
 	EAT.element = (source, parentArgs) => {
