@@ -53,7 +53,7 @@ element Sand {
 	
 }
 
-element Foo {
+`/*element Foo {
 
 }
 
@@ -91,3 +91,4 @@ element Res {
 }
 
 `
+*/

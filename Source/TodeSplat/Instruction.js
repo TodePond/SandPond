@@ -6,7 +6,8 @@ const INSTRUCTION = {}
 {
 	
 	INSTRUCTION.TYPE = {
-		BLOCK: Symbol("Block"),
+		BLOCK_START: Symbol("BlockStart"),
+		BLOCK_END: Symbol("BlockEnd"),
 		DIAGRAM: Symbol("Diagram"),
 		ANY: Symbol("Any"),
 		FOR: Symbol("For"),
@@ -14,12 +15,6 @@ const INSTRUCTION = {}
 		ACTION: Symbol("Action"),
 	}
 	
-	//========//
-	// Public //
-	//========//	
-	INSTRUCTION.make = (type, value) => {
-		return {type, ...value}
-	}
 	
 }
 

@@ -1,3 +1,4 @@
+
 {
 
 	//========//
@@ -5,7 +6,8 @@
 	//========//
 	TODESPLAT = {}
 	TODESPLAT.globalElements = {}
-	TODESPLAT.globalSymbols = {}
+	
+	TODESPLAT.globalScope = {}
 	
 	function TodeSplat([source]) {
 	
@@ -397,37 +399,28 @@
 		if (originY == undefined) throw new Error(`[TodeSplat] Couldn't find origin's y position. This shouldn't happen.`)
 		
 		// get positions of lhs symbols
-		const inputs = []
+		const spaces = []
 		for (let i = 0; i < lhs.length; i++) {
-			const line = lhs[i]
-			for (let j = 0; j < line.length; j++) {
-				const char = line[j]
-				if (char == " " || char == "	") continue
+			const lhsLine = lhs[i]
+			const rhsLine = rhs[i]
+			for (let j = 0; j < lhsLine.length; j++) {
+				const lhsChar = lhsLine[j]
+				const rhsChar = rhsLine[j]
+				
+				if (lhsChar == " ") continue
 				
 				const x = j - originX
 				const y = originY - i
 				
-				inputs.push({x, y, char})
+				const space = {x, y}
+				space.input = lhsChar
+				space.output = rhsChar
+				
+				spaces.push(space)
 			}
 		}
 		
-		// get position of rhs symbols
-		const outputs = []
-		for (let i = 0; i < rhs.length; i++) {
-			const line = rhs[i]
-			for (let j = 0; j < line.length; j++) {
-				const char = line[j]
-				if (char == " " || char == "	") continue
-				
-				const x = j - originX
-				const y = originY - i
-				
-				outputs.push({x, y, char})
-				
-			}
-		}
-		
-		const instruction = INSTRUCTION.make(INSTRUCTION.TYPE.DIAGRAM, {inputs, outputs})
+		const instruction = {type: INSTRUCTION.TYPE.DIAGRAM, spaces}
 		args.instructions.push(instruction)
 		
 		return {success: true, code: result.code, snippet: diagram.join("\n")}
@@ -454,7 +447,7 @@
 		const line = lines[0]
 		
 		// reject if it's another todesplat line
-		const dummyArgs = {data: {}, children: {}, categories: [], instructions: []}
+		const dummyArgs = makeElementArgs()
 		result = {success} = EAT.todeSplatLine(code, dummyArgs, true)
 		if (success) return {success: false, code: source, snippet: undefined}
 		
@@ -471,9 +464,16 @@
 		
 	}
 	
+	const makeElementArgs = () => ({
+		data: {},
+		children: {},
+		categories: [],
+		instructions: [],
+	})
+	
 	EAT.element = (source, parentArgs) => {
 		
-		const args = {data: {}, children: {}, categories: [], instructions: []}
+		const args = makeElementArgs()
 		
 		let result = undefined
 		let success = undefined
@@ -490,8 +490,12 @@
 		if (!success) throw new Error(`[TodeSplat] Expected element name but got '${code[0]}'`)
 		args.name = snippet
 		
+		args.instructions.push({type: INSTRUCTION.TYPE.BLOCK_START})
+		
 		result = {code, success} = EAT.block(EAT.todeSplat)(code, args)
 		if (!success) throw new Error(`[TodeSplat] Expected element block but got something else`)
+		
+		args.instructions.push({type: INSTRUCTION.TYPE.BLOCK_END})
 		
 		snippet = source.slice(0, source.length - result.code.length)
 		args.source = snippet

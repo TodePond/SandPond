@@ -16,11 +16,12 @@ const JAVASCRIPT = {}
 		let behave = `(self, sites) => {\n`
 	
 		for (const instruction of instructions) {
+		
 			if (instruction.type == INSTRUCTION.TYPE.DIAGRAM) {
 				
-				for (const input of instruction.inputs) {
-					const sn = EVENTWINDOW.getSiteNumber(input.x, input.y, 0)
-					
+				for (const space of instruction.spaces) {
+					const sn = EVENTWINDOW.getSiteNumber(space.x, space.y, 0)
+					print(space)
 				}
 				
 			}
