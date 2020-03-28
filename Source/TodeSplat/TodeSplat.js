@@ -1,22 +1,29 @@
 
 {
-
-	//=======//
-	// Scope //
-	//=======//
-	const makeScope = (parent) => ({
+	
+	const makeElementArgs = (parent) => ({
 		parent,
 		elements: {},
+		data: {},
+		categories: [],
+		instructions: [],
 		symbols: {},
 	})
 	
+	const getSymbol = (name, args) => {
+		if (args.symbols[name] != undefined) {
+			return args.symbols[name]
+		}
+		else if (args.parent != undefined) {
+			return getSymbol(name, args.parent)
+		}
+	}
 	
-
 	//========//
 	// Export //
 	//========//
 	TODESPLAT = {}	
-	TODESPLAT.globalScope = makeScope()
+	TODESPLAT.globalScope = makeElementArgs()
 	
 	function TodeSplat([source]) {
 	
@@ -27,14 +34,14 @@
 		let snippet = undefined
 		let code = source
 		
-		const globalArgs = makeElementArgs()
-		result = {success, code} = EAT.todeSplatMultiInner(code, globalArgs)
+		result = {success, code} = EAT.todeSplatMultiInner(code, TODESPLAT.globalScope)
 		
-		for (const name in globalArgs.children) {
-			const element = globalArgs.children[name]
-			TODESPLAT.globalScope.elements[name] = element
+		for (const name in TODESPLAT.globalScope.elements) {
+			const element = TODESPLAT.globalScope.elements[name]
 			window[name] = element
 		}
+		
+		return TODESPLAT.globalScope
 		
 	}
 	
@@ -51,6 +58,12 @@
 		"category",
 		"pour",
 		"default",
+	]
+	
+	const SYMBOL_PART_NAMES = [
+		"origin",
+		"given",
+		"change",
 	]
 	
 	EAT.BLOCK_INLINE = Symbol("BlockInline")
@@ -273,6 +286,10 @@
 		// TODO: 'arg' or 'param' ???
 		// ...
 		
+		// symbol part
+		result = {success} = EAT.symbolPart(code, args)
+		if (success) return result
+		
 		// 'colour', 'emissive', 'category', etc
 		result = {code, success} = EAT.property(code, args)
 		if (success) return result
@@ -307,7 +324,7 @@
 		if (arrowOnly && !lines[0].includes("=>")) return {success: false, code: source, snippet: undefined}
 		
 		// scoop up first line
-		const notes = {arrowFound: false}
+		const notes = {arrowFound: false, firstLine: true}
 		result = {code, success, snippet} = EAT.diagramLine(code, notes)
 		if (!success) return {success: false, code: source, snippet: undefined}
 		diagram.push(snippet)
@@ -396,11 +413,14 @@
 		}
 		else for (let i = 0; i < lhs.length; i++) {
 			const line = lhs[i]
-			const originIndex = line.indexOf("@")
-			if (originIndex != -1) {
-				if (originX != undefined) throw new Error(`[TodeSplat] You can't have more than one origin in the left-hand-side of a diagram.`)
-				originX = originIndex
-				originY = i
+			for (let j = 0; j < line.length; j++) {
+				const char = line[j]
+				const symbol = getSymbol(char, args)
+				if (symbol && symbol.has("origin")) {
+					if (originX != undefined) throw new Error(`[TodeSplat] You can't have more than one origin in the left-hand-side of a diagram.`)
+					originX = j
+					originY = i
+				}
 			}
 		}
 		
@@ -456,9 +476,12 @@
 		const line = lines[0]
 		
 		// reject if it's another todesplat line
-		const dummyArgs = makeElementArgs()
-		result = {success} = EAT.todeSplatLine(code, dummyArgs, true)
-		if (success) return {success: false, code: source, snippet: undefined}
+		if (!notes.firstLine) {
+			const dummyArgs = makeElementArgs()
+			result = {success} = EAT.todeSplatLine(code, dummyArgs, true)
+			if (success) return {success: false, code: source, snippet: undefined}
+		}
+		else notes.firstLine = false
 		
 		// reject tabs
 		if (line.includes("	")) throw new Error("[TodeSplat] You can't use tabs inside a diagram.")
@@ -473,18 +496,9 @@
 		
 	}
 	
-	const makeElementArgs = () => ({
-		children: {},
-		data: {},
-		categories: [],
-		instructions: [],
-		
-		origins: {},
-	})
-	
 	EAT.element = (source, parentArgs) => {
 		
-		const args = makeElementArgs()
+		const args = makeElementArgs(parentArgs)
 		
 		let result = undefined
 		let success = undefined
@@ -512,7 +526,7 @@
 		args.source = snippet
 		
 		const element = ELEMENT.make(args)
-		parentArgs.children[args.name] = element
+		parentArgs.elements[args.name] = element
 		print(args.name)
 		
 		return {success: true, snippet, code: result.code}
@@ -537,6 +551,39 @@
 		else args[name] = result.value
 		
 		return result
+	}
+	
+	EAT.symbolName = EAT.many(EAT.regex(/[^ 	\n]/))
+	
+	EAT.symbolPart = (source, args) => {
+		let result = undefined
+		let success = undefined
+		let snippet = undefined
+		let code = source
+		
+		result = {code, success, snippet} = EAT.symbolPartName(code)
+		const symbolPartName = snippet
+		if (!success) return {success: false, code: source, snippet: undefined}
+		
+		result = {code} = EAT.gap(code)
+		result = {code, success, snippet} = EAT.symbolName(code)
+		const symbolName = snippet
+		if (!success) return {success: false, code: source, snippet: undefined}
+		const nojsResult = result
+		
+		result = {code} = EAT.gap(code)
+		result = {code, success, snippet} = EAT.javascript(code)
+		const javascript = snippet
+		
+		if (!(symbolPartName in args.symbols)) {
+			args.symbols[symbolName] = {}
+		}
+		
+		const symbol = args.symbols[symbolName]
+		symbol[symbolPartName] = javascript
+		
+		if (!success) return nojsResult
+		else return result
 	}
 	
 	EAT.data = (source, args) => {
@@ -739,6 +786,19 @@
 		
 		return result
 		
+	}
+	
+	EAT.symbolPartName = (source) => {
+		let result = undefined
+		let success = undefined
+		let snippet = undefined
+		let code = source
+		
+		result = {code, success, snippet} = EAT.name(code)
+		if (!success) return {success: false, code: source, snippet: undefined}
+		if (!SYMBOL_PART_NAMES.includes(snippet)) return {success: false, code: source, snippet: undefined}
+		
+		return result
 	}
 	
 	//========//
