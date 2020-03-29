@@ -461,19 +461,24 @@
 		scope.source = snippet
 		
 		const element = ELEMENT.make(scope)
-		parentScope.elements[scope.name] = element
-		parentScope
+		
+		let fullName = ""
+		if (parentScope.name != undefined) fullName += parentScope.name + "."
+		fullName += scope.name
+		
+		parentScope.elements[fullName] = element
 		
 		return {success: true, snippet, code: result.code}
 	}
 	
 	EAT.elementReference = (source, scope) => {
+	
 		let result = undefined
 		let success = undefined
 		let snippet = undefined
 		let code = source
 		
-		result = {code, success, snippet} = EAT.name(code)
+		result = {code, success, snippet} = EAT.fullName(code)
 		if (!success) return EAT.fail(code)
 		
 		const elementName = snippet
@@ -483,6 +488,18 @@
 		return {success: true, snippet: elementName, code: result.code}
 		
 	}
+	
+	EAT.fullName = EAT.list (
+		EAT.name,
+		EAT.maybe (
+			EAT.many (
+				EAT.list (
+					EAT.string("."),
+					EAT.name
+				)
+			),
+		),
+	)
 	
 	//========//
 	// Symbol //

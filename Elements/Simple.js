@@ -60,7 +60,6 @@ element Snow {
 
 	@ => _
 
-	mimic(Sand)
 }
 
 element Forkbomb @_ => @@
@@ -75,7 +74,8 @@ element Water {
 	opacity 0.5
 	
 	element Hot { @ => _ }
-	mimic(Hot)
+	mimic(Water.Hot)
+	
 	
 }
 
