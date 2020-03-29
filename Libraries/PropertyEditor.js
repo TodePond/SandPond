@@ -26,12 +26,19 @@
 		typeCheck: undefined,
 	}
 	
+	const __SYMBOL = Symbol("_")
+	
 	Reflect.defineProperty(Object.prototype, "_", {
+		set(v) { this[__SYMBOL] = v },
 		get() {
+			if (this[__SYMBOL] !== undefined) return this[__SYMBOL]
 			return new Proxy(this, {
 				get: forceGetEditor,
 				set: forceSetEditor,
 			})
+		},
+		has() {
+			return this[__SYMBOL] == undefined
 		}
 	})
 	

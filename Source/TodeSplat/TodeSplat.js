@@ -7,7 +7,7 @@
 		data: {},
 		categories: [],
 		instructions: [],
-		symbols: {},
+		symbols: {_: undefined},
 	})
 	
 	const getSymbol = (name, args) => {
@@ -441,10 +441,21 @@
 				const x = j - originX
 				const y = originY - i
 				
-				const space = {x, y}
-				space.input = lhsChar
-				space.output = rhsChar
+				const input = getSymbol(lhsChar, args)
+				const output = getSymbol(rhsChar, args)
 				
+				if (input == undefined) throw new Error(`[TodeSplat] Unrecognised symbol: ${lhsChar}`)
+				if (output == undefined) throw new Error(`[TodeSplat] Unrecognised symbol: ${rhsChar}`)
+				
+				if (input.origin == undefined && input.given == undefined) {
+					throw new Error(`[TodeSplat] Symbol '${lhsChar}' used on left-hand-side but doesn't have any left-hand-side parts, eg: given`)
+				}
+				
+				if (output.change == undefined) {
+					throw new Error(`[TodeSplat] Symbol '${rhsChar}' used on right-hand-side but doesn't have any right-hand-side parts, eg: change`)
+				}
+				
+				const space = {x, y, input, output}
 				spaces.push(space)
 			}
 		}
@@ -527,7 +538,6 @@
 		
 		const element = ELEMENT.make(args)
 		parentArgs.elements[args.name] = element
-		print(args.name)
 		
 		return {success: true, snippet, code: result.code}
 	}
@@ -575,12 +585,16 @@
 		result = {code, success, snippet} = EAT.javascript(code)
 		const javascript = snippet
 		
-		if (!(symbolPartName in args.symbols)) {
+		if (args.symbols[symbolName] == undefined) {
 			args.symbols[symbolName] = {}
 		}
-		
 		const symbol = args.symbols[symbolName]
-		symbol[symbolPartName] = javascript
+		
+		if (symbol[symbolPartName] == undefined) {
+			symbol[symbolPartName] = []
+		}
+		const symbolPart = symbol[symbolPartName]
+		symbolPart.push(javascript)
 		
 		if (!success) return nojsResult
 		else return result

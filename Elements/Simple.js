@@ -39,11 +39,13 @@ element Water {
 
 TodeSplat`
 
-origin @ 
 
+origin @
+given @ (self, atom) => self == atom
+change @ (self) => self
 
-element Forkbomb @_ => @@
-
+change _ () => undefined
+given _ (space) => space
 
 element Sand {
 	colour "#FC0"
@@ -51,12 +53,15 @@ element Sand {
 	@ => _
 	_    @
 	
-	@  => _
-	#_    #@
-	
 }
 
-`/*element Foo {
+element Forkbomb @_ => @@
+
+
+
+`
+
+/*element Foo {
 
 }
 

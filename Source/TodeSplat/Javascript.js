@@ -13,12 +13,15 @@ const JAVASCRIPT = {}
 	//========//
 	JAVASCRIPT.makeBehave = (instructions, name) => {
 	
+		print("")
+		print(name)
+		
 		let behave = `(self, sites) => {\n`
 	
 		for (const instruction of instructions) {
 		
+			print(instruction.type.toDescription())
 			if (instruction.type == INSTRUCTION.TYPE.DIAGRAM) {
-				
 				for (const space of instruction.spaces) {
 					const sn = EVENTWINDOW.getSiteNumber(space.x, space.y, 0)
 					print(space)
