@@ -13,7 +13,7 @@ const JAVASCRIPT = {}
 	//========//
 	JAVASCRIPT.makeBehave = (instructions, name) => {
 	
-		print("")
+		/*print("")
 		print(name)
 		
 		let behave = `(self, sites) => {\n`
@@ -39,7 +39,9 @@ const JAVASCRIPT = {}
 		\n	return behave\
 		\n}`
 		
-		return code
+		return code*/
+		
+		return "() => {}"
 	}
 	
 	JAVASCRIPT.makeConstructor = (name, data, args) => {

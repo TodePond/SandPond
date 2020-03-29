@@ -255,7 +255,7 @@ const UI = {}
 	document.head.appendChild(UI_STYLE)
 	document.body.appendChild(UI_ELEMENT)
 	
-	for (const element of TODESPLAT.globalScope.elements) {
+	for (const element of TodeSplat.global.elements) {
 		if (element.hidden) continue
 		
 		const searchItemButton = makeElementButton(element)
@@ -357,7 +357,7 @@ const UI = {}
 		for (const elementButton of $$("#searchItems > .elementButton")) {
 			const id = elementButton.id
 			const name = id.slice(0, id.length - "Button".length)
-			const element = TODESPLAT.globalScope.elements[name]
+			const element = TodeSplat.global.elements[name]
 			const index = name.as(LowerCase).indexOf(query)
 			
 			elementButton.classList.add("minimised")
@@ -422,7 +422,7 @@ const UI = {}
 		const idEnd = "Button"
 		
 		const name = newId.slice(0, newId.length - idEnd.length)
-		const newElement = TODESPLAT.globalScope.elements[name]
+		const newElement = TodeSplat.global.elements[name]
 		const oldElement = UI.selectedElement
 		
 		const oldId = oldElement.name + idEnd

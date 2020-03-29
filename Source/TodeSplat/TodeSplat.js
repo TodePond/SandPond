@@ -10,6 +10,19 @@
 		symbols: {_: undefined},
 	})
 	
+	const absorbScope = (receiver, target) => {
+		receiver.elements.o= target.elements
+		receiver.data.o= target.data
+		receiver.categories.push(...target.categories)
+		receiver.instructions.push(...target.instructions)
+		for (const symbolName in target.symbols) {
+			if (receiver.symbols[symbolName] == undefined) {
+				receiver.symbols[symbolName] = {}
+			}
+			receiver.symbols[symbolName].o= target.symbols[symbolName]
+		}
+	}
+	
 	const getSymbol = (name, args) => {
 		if (args.symbols[name] != undefined) {
 			return args.symbols[name]
@@ -22,9 +35,6 @@
 	//========//
 	// Export //
 	//========//
-	TODESPLAT = {}	
-	TODESPLAT.globalScope = makeElementArgs()
-	
 	function TodeSplat([source]) {
 	
 		resetIndentInfo()
@@ -34,16 +44,22 @@
 		let snippet = undefined
 		let code = source
 		
-		result = {success, code} = EAT.todeSplatMultiInner(code, TODESPLAT.globalScope)
+		const sourceArgs = makeElementArgs(TodeSplat.global)
+		result = {success, code} = EAT.todeSplatMultiInner(code, sourceArgs)
 		
-		for (const name in TODESPLAT.globalScope.elements) {
-			const element = TODESPLAT.globalScope.elements[name]
+		for (const name in sourceArgs.elements) {
+			const element = sourceArgs.elements[name]
 			window[name] = element
 		}
 		
-		return TODESPLAT.globalScope
+		absorbScope(TodeSplat.global, sourceArgs)
+		
+		return sourceArgs
 		
 	}
+	
+	TodeSplat.global = makeElementArgs()
+	
 	
 	//===========//
 	// Constants //
