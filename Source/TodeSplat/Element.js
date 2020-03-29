@@ -43,10 +43,10 @@ const ELEMENT = {}
 		element.o= elementInfo
 		createShaderColours(element)
 		
-		for (const childName in element.children) {
-			const child = element.children[childName]
+		/*for (const childName in element.elements) {
+			const child = element.elements[childName]
 			element[childName] = child
-		}
+		}*/
 		
 		return element
 		

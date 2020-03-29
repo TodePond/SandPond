@@ -41,7 +41,7 @@ const JAVASCRIPT = {}
 		
 		return code*/
 		
-		return "() => {}"
+		return "() => () => {}"
 	}
 	
 	show = (element) => {

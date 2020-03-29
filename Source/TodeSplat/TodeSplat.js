@@ -274,9 +274,9 @@
 		
 	}
 	
-	//========//
-	// Export //
-	//========//
+	//===========//
+	// TodeSplat //
+	//===========//
 	function TodeSplat([source]) {
 	
 		resetIndentInfo()
@@ -303,9 +303,6 @@
 	
 	TodeSplat.global = makeScope()
 	
-	//===========//
-	// TodeSplat //
-	//===========//
 	EAT.todeSplat = (type) => (source, scope) => {
 		
 		let result = undefined
@@ -465,6 +462,7 @@
 		
 		const element = ELEMENT.make(scope)
 		parentScope.elements[scope.name] = element
+		parentScope
 		
 		return {success: true, snippet, code: result.code}
 	}

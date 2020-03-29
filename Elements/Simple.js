@@ -74,6 +74,8 @@ element Water {
 	emissive "blue"
 	opacity 0.5
 	
+	element Hot { @ => _ }
+	mimic(Hot)
 	
 }
 
