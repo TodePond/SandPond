@@ -205,7 +205,7 @@
 	//===========//
 	// TodeSplat //
 	//===========//
-	EAT.todeSplat = (type) => (source, args) => {
+	EAT.todeSplat = (type) => (source, scope) => {
 		
 		let result = undefined
 		let success = undefined
@@ -213,7 +213,7 @@
 		let code = source
 		
 		if (type == EAT.BLOCK_INLINE) {
-			return EAT.maybe(EAT.todeSplatLine)(code, args)
+			return EAT.maybe(EAT.todeSplatLine)(code, scope)
 		}
 		
 		else if (type == EAT.BLOCK_SINGLE) {
@@ -228,7 +228,7 @@
 			const nextCode = source.slice(lineCode.length)
 			// bandage ends
 			
-			result = {code, success} = EAT.maybe(EAT.todeSplatLine)(code, args)
+			result = {code, success} = EAT.maybe(EAT.todeSplatLine)(code, scope)
 			return {success, snippet: lineCode, code: nextCode}
 		}
 		
@@ -243,12 +243,12 @@
 			if (success) return EAT.nonindent(code)
 			
 			// NON-EMPTY
-			return EAT.todeSplatMulti(code, args)
+			return EAT.todeSplatMulti(code, scope)
 		}
 		
 	}
 	
-	EAT.todeSplatMulti = (source, args) => {
+	EAT.todeSplatMulti = (source, scope) => {
 	
 		let result = undefined
 		let success = undefined
@@ -258,7 +258,7 @@
 		result = {code, success} = EAT.indent(code)
 		if (!success) return EAT.fail(code)
 		
-		result = {code, success} = EAT.todeSplatMultiInner(code, args)
+		result = {code, success} = EAT.todeSplatMultiInner(code, scope)
 		if (!success) return EAT.fail(code)
 	
 		result = {code, success} = EAT.unindent(code)
@@ -268,26 +268,26 @@
 		
 	}
 	
-	EAT.todeSplatMultiInner = (source, args) => {
+	EAT.todeSplatMultiInner = (source, scope) => {
 	
 		let result = undefined
 		let success = undefined
 		let snippet = undefined
 		let code = source
 		
-		result = {code, success} = EAT.todeSplatLine(code, args)
+		result = {code, success} = EAT.todeSplatLine(code, scope)
 		
 		result = {code} = EAT.many (
 			EAT.list (
 				EAT.nonindent,
 				EAT.todeSplatLine,
 			)
-		)(code, args)
+		)(code, scope)
 		
 		return {success, code, snippet: result.snippet}
 	}
 	
-	EAT.todeSplatLine = (source, args, ignoreDiagram=false) => {
+	EAT.todeSplatLine = (source, scope, ignoreDiagram=false) => {
 	
 		let result = undefined
 		let success = undefined
@@ -296,35 +296,35 @@
 		
 		// 'element' keyword
 		result = {success} = EAT.string("element")(code)
-		if (success) return EAT.element(code, args)
+		if (success) return EAT.element(code, scope)
 		
 		// 'prop'
-		result = {success} = EAT.customProperty(code, args)
+		result = {success} = EAT.customProperty(code, scope)
 		if (success) return result
 		
 		// 'data'
-		result = {success} = EAT.data(code, args)
+		result = {success} = EAT.data(code, scope)
 		if (success) return result
 		
 		// TODO: 'arg' or 'param' ???
 		// ...
 		
-		result = {success} = EAT.mimic(code, args)
+		result = {success} = EAT.mimic(code, scope)
 		if (success) return result
 		
 		// symbol part
-		result = {success} = EAT.symbolPart(code, args)
+		result = {success} = EAT.symbolPart(code, scope)
 		if (success) return result
 		
 		// 'colour', 'emissive', 'category', etc
-		result = {success} = EAT.property(code, args)
+		result = {success} = EAT.property(code, scope)
 		if (success) return result
 		
 		// IF ALL ELSE FAILS
 		// rule diagram!
 		if (!ignoreDiagram) {
 			// TODO: some error message(s) injected somehow to warn that it may not actually a diagram
-			result = {success} = EAT.diagram(code, args)
+			result = {success} = EAT.diagram(code, scope)
 			if (success) return result
 		}
 		
@@ -334,7 +334,7 @@
 	//============//
 	// Expression //
 	//============//
-	EAT.mimic = (source, args) => {
+	EAT.mimic = (source, scope) => {
 		let result = undefined
 		let success = undefined
 		let snippet = undefined
@@ -348,16 +348,16 @@
 		if (!success) return EAT.fail(code)
 		
 		result = {code} = EAT.gap(code)
-		result = {code, success, snippet} = EAT.elementName(code, args)
+		result = {code, success, snippet} = EAT.elementName(code, scope)
 		if (!success) return EAT.fail(code)
 		const elementName = snippet
-		const element = getElement(elementName, args)
+		const element = getElement(elementName, scope)
 		
 		result = {code} = EAT.gap(code)
 		result = {code, success} = EAT.string(")")(code)
 		if (!success) return EAT.fail(code)
 		
-		args.instructions.push(...element.instructions)
+		scope.instructions.push(...element.instructions)
 		
 		return result
 		
@@ -380,7 +380,7 @@
 		
 	}
 	
-	EAT.diagram = (source, args, arrowOnly=false) => {
+	EAT.diagram = (source, scope, arrowOnly=false) => {
 		let result = undefined
 		let success = undefined
 		let snippet = undefined
@@ -488,7 +488,7 @@
 			const line = lhs[i]
 			for (let j = 0; j < line.length; j++) {
 				const char = line[j]
-				const symbol = getSymbol(char, args)
+				const symbol = getSymbol(char, scope)
 				if (symbol && symbol.has("origin")) {
 					if (originX != undefined) throw new Error(`[TodeSplat] You can't have more than one origin in the left-hand-side of a diagram.`)
 					originX = j
@@ -514,8 +514,8 @@
 				const x = j - originX
 				const y = originY - i
 				
-				const input = getSymbol(lhsChar, args)
-				const output = getSymbol(rhsChar, args)
+				const input = getSymbol(lhsChar, scope)
+				const output = getSymbol(rhsChar, scope)
 				
 				if (input == undefined) throw new Error(`[TodeSplat] Unrecognised symbol: ${lhsChar}`)
 				if (output == undefined) throw new Error(`[TodeSplat] Unrecognised symbol: ${rhsChar}`)
@@ -534,7 +534,7 @@
 		}
 		
 		const instruction = {type: INSTRUCTION.TYPE.DIAGRAM, spaces}
-		args.instructions.push(instruction)
+		scope.instructions.push(instruction)
 		
 		return {success: true, code: result.code, snippet: diagram.join("\n")}
 		
@@ -561,8 +561,8 @@
 		
 		// reject if it's another todesplat line
 		if (!notes.firstLine) {
-			const dummyArgs = makeScope()
-			result = {success} = EAT.todeSplatLine(code, dummyArgs, true)
+			const dummyScope = makeScope()
+			result = {success} = EAT.todeSplatLine(code, dummyScope, true)
 			if (success) return EAT.fail(code)
 		}
 		else notes.firstLine = false
@@ -580,9 +580,9 @@
 		
 	}
 	
-	EAT.element = (source, parentArgs) => {
+	EAT.element = (source, parentScope) => {
 		
-		const args = makeScope(parentArgs)
+		const scope = makeScope(parentScope)
 		
 		let result = undefined
 		let success = undefined
@@ -597,25 +597,25 @@
 		
 		result = {code, success, snippet} = EAT.name(code)
 		if (!success) throw new Error(`[TodeSplat] Expected element name but got '${code[0]}'`)
-		args.name = snippet
+		scope.name = snippet
 		
-		args.instructions.push({type: INSTRUCTION.TYPE.BLOCK_START})
+		scope.instructions.push({type: INSTRUCTION.TYPE.BLOCK_START})
 		
-		result = {code, success} = EAT.block(EAT.todeSplat)(code, args)
+		result = {code, success} = EAT.block(EAT.todeSplat)(code, scope)
 		if (!success) throw new Error(`[TodeSplat] Expected element block but got something else`)
 		
-		args.instructions.push({type: INSTRUCTION.TYPE.BLOCK_END})
+		scope.instructions.push({type: INSTRUCTION.TYPE.BLOCK_END})
 		
 		snippet = source.slice(0, source.length - result.code.length)
-		args.source = snippet
+		scope.source = snippet
 		
-		const element = ELEMENT.make(args)
-		parentArgs.elements[args.name] = element
+		const element = ELEMENT.make(scope)
+		parentScope.elements[scope.name] = element
 		
 		return {success: true, snippet, code: result.code}
 	}
 	
-	EAT.property = (source, args) => {
+	EAT.property = (source, scope) => {
 		let result = undefined
 		let success = undefined
 		let snippet = undefined
@@ -630,15 +630,15 @@
 		result = {code, success} = EAT.javascript(code)
 		if (!success) return EAT.fail(code)
 		
-		if (propertyName == "category") args.categories.push(result.value)
-		else args[name] = result.value
+		if (propertyName == "category") scope.categories.push(result.value)
+		else scope[name] = result.value
 		
 		return result
 	}
 	
 	EAT.symbolName = EAT.many(EAT.regex(/[^ 	\n]/))
 	
-	EAT.symbolPart = (source, args) => {
+	EAT.symbolPart = (source, scope) => {
 		let result = undefined
 		let success = undefined
 		let snippet = undefined
@@ -666,10 +666,10 @@
 		result = {code, success, snippet} = EAT.javascript(code)
 		const javascript = snippet
 		
-		if (args.symbols[symbolName] == undefined) {
-			args.symbols[symbolName] = {}
+		if (scope.symbols[symbolName] == undefined) {
+			scope.symbols[symbolName] = {}
 		}
-		const symbol = args.symbols[symbolName]
+		const symbol = scope.symbols[symbolName]
 		
 		if (symbol[symbolPartName] == undefined) {
 			symbol[symbolPartName] = []
@@ -681,7 +681,7 @@
 		else return result
 	}
 	
-	EAT.data = (source, args) => {
+	EAT.data = (source, scope) => {
 		let result = undefined
 		let success = undefined
 		let snippet = undefined
@@ -701,13 +701,13 @@
 		result = {code, success} = EAT.javascript(code)
 		if (!success) return EAT.fail(code)
 		
-		args.data[name] = result.value
+		scope.data[name] = result.value
 		
 		return result
 		
 	}
 	
-	EAT.customProperty = (source, args) => {
+	EAT.customProperty = (source, scope) => {
 		let result = undefined
 		let success = undefined
 		let snippet = undefined
@@ -727,7 +727,7 @@
 		result = {code, success} = EAT.javascript(code)
 		if (!success) return EAT.fail(code)
 		
-		args[name] = result.value
+		scope[name] = result.value
 		
 		return result
 		
