@@ -69,6 +69,8 @@ element Forkbomb @_ => @@
 
 `
 
+show(Snow)
+
 /*element Foo {
 
 }

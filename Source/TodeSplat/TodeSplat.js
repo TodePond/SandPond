@@ -1,7 +1,9 @@
 
 {
-	
-	const makeElementArgs = (parent) => ({
+	//=======//
+	// Scope //
+	//=======//
+	const makeScope = (parent) => ({
 		parent,
 		elements: {},
 		data: {},
@@ -53,21 +55,21 @@
 		let snippet = undefined
 		let code = source
 		
-		const sourceArgs = makeElementArgs(TodeSplat.global)
-		result = {success, code} = EAT.todeSplatMultiInner(code, sourceArgs)
+		const scope = makeScope(TodeSplat.global)
+		result = {success, code} = EAT.todeSplatMultiInner(code, scope)
 		
-		for (const name in sourceArgs.elements) {
-			const element = sourceArgs.elements[name]
+		for (const name in scope.elements) {
+			const element = scope.elements[name]
 			window[name] = element
 		}
 		
-		absorbScope(TodeSplat.global, sourceArgs)
+		absorbScope(TodeSplat.global, scope)
 		
-		return sourceArgs
+		return scope
 		
 	}
 	
-	TodeSplat.global = makeElementArgs()
+	TodeSplat.global = makeScope()
 	
 	
 	//===========//
@@ -95,11 +97,9 @@
 	EAT.BLOCK_SINGLE = Symbol("BlockSingle")
 	EAT.BLOCK_MULTI = Symbol("BlockMulti")
 	
-	//=========//
-	// Globals //
-	//=========//
-	const globalSymbols = {}
-	
+	//========//
+	// Indent //
+	//========//
 	let indentBase = undefined
 	let indentUnit = undefined
 	let indentDepth = undefined
@@ -110,9 +110,6 @@
 		indentDepth = 0
 	}
 	
-	//=======//
-	// Tools //
-	//=======//
 	const getMargin = (depth) => {
 		const margin = indentBase + [indentUnit].repeat(depth).join("")
 		return margin
@@ -143,7 +140,7 @@
 		let code = source
 		
 		result = {code, success} = EAT.string("{")(code)
-		if (!success) return {success: false, code: source, snippet: undefined}
+		if (!success) return EAT.fail(code)
 		
 		result = {code} = EAT.gap(code)
 		result = {code, success} = EAT.newline(code)
@@ -160,14 +157,14 @@
 		let code = source
 		
 		result = {code, success} = EAT.string("{")(code)
-		if (!success) return {success: false, code: source, snippet: undefined}
+		if (!success) return EAT.fail(code)
 		
 		result = {code, success} = inner(EAT.BLOCK_MULTI)(code, ...args)
-		if (!success) return {success: false, code: source, snippet: undefined}
+		if (!success) return EAT.fail(code)
 		const resultProperties = result
 		
 		result = {code, success} = EAT.string("}")(code)
-		if (!success) return {success: false, code: source, snippet: undefined}
+		if (!success) return EAT.fail(code)
 		
 		return {...resultProperties, ...result}
 	}
@@ -180,11 +177,11 @@
 		let code = source
 		
 		result = {code, success} = EAT.string("{")(code)
-		if (!success) return {success: false, code: source, snippet: undefined}
+		if (!success) return EAT.fail(code)
 		
 		result = {code} = EAT.gap(code)
 		result = {code, success} = inner(EAT.BLOCK_SINGLE)(code, ...args)
-		if (!success) return {success: false, snippet: undefined, code: source} 
+		if (!success) return EAT.fail(code)
 		const resultProperties = result
 		
 		result = {code} = EAT.gap(code)
@@ -221,7 +218,7 @@
 		
 		else if (type == EAT.BLOCK_SINGLE) {
 			
-			// fix inline javascript
+			// bandage for inline javascript
 			let lineResult = {snippet} = EAT.line(code)
 			let edoc = snippet.split("").reverse().join("")
 			lineResult = {code: edoc} = EAT.gap(edoc)
@@ -229,6 +226,7 @@
 			code = edoc.split("").reverse().join("")
 			const lineCode = code
 			const nextCode = source.slice(lineCode.length)
+			// bandage ends
 			
 			result = {code, success} = EAT.maybe(EAT.todeSplatLine)(code, args)
 			return {success, snippet: lineCode, code: nextCode}
@@ -258,13 +256,13 @@
 		let code = source
 		
 		result = {code, success} = EAT.indent(code)
-		if (!success) return {success: false, code: source, snippet: undefined}
+		if (!success) return EAT.fail(code)
 		
 		result = {code, success} = EAT.todeSplatMultiInner(code, args)
-		if (!success) return {success: false, code: source, snippet: undefined}
+		if (!success) return EAT.fail(code)
 	
 		result = {code, success} = EAT.unindent(code)
-		if (!success) return {success: false, code: source, snippet: undefined}
+		if (!success) return EAT.fail(code)
 		
 		return result
 		
@@ -330,7 +328,7 @@
 			if (success) return result
 		}
 		
-		return {success: false, code: source, snippet: undefined}
+		return EAT.fail(code)
 	}
 	
 	//============//
@@ -343,11 +341,11 @@
 		let code = source
 		
 		result = {code, success} = EAT.string("mimic")(code)
-		if (!success) return {success: false, code: source, snippet: undefined}
+		if (!success) return EAT.fail(code)
 		
 		result = {code} = EAT.gap(code)
 		result = {code, success} = EAT.string("(")(code)
-		if (!success) return {success: false, code: source, snippet: undefined}
+		if (!success) return EAT.fail(code)
 		
 		result = {code} = EAT.gap(code)
 		result = {code, success, snippet} = EAT.elementName(code, args)
@@ -393,15 +391,15 @@
 		const diagram = []
 		
 		// reject empty starting line
-		if (lines[0].is(WhiteSpace)) return {success: false, code: source, snippet: undefined}
+		if (lines[0].is(WhiteSpace)) return EAT.fail(code)
 		
 		// reject non-arrow lines
-		if (arrowOnly && !lines[0].includes("=>")) return {success: false, code: source, snippet: undefined}
+		if (arrowOnly && !lines[0].includes("=>")) return EAT.fail(code)
 		
 		// scoop up first line
 		const notes = {arrowFound: false, firstLine: true}
 		result = {code, success, snippet} = EAT.diagramLine(code, notes)
-		if (!success) return {success: false, code: source, snippet: undefined}
+		if (!success) return EAT.fail(code)
 		diagram.push(snippet)
 		
 		// scoop up each line
@@ -563,9 +561,9 @@
 		
 		// reject if it's another todesplat line
 		if (!notes.firstLine) {
-			const dummyArgs = makeElementArgs()
+			const dummyArgs = makeScope()
 			result = {success} = EAT.todeSplatLine(code, dummyArgs, true)
-			if (success) return {success: false, code: source, snippet: undefined}
+			if (success) return EAT.fail(code)
 		}
 		else notes.firstLine = false
 		
@@ -575,7 +573,7 @@
 		// find arrow
 		if (line.includes("=>")) {
 			if (!notes.arrowFound) notes.arrowFound = true
-			else return {success: false, code: source, snippet: undefined}
+			else return EAT.fail(code)
 		}
 		
 		return EAT.line(code)
@@ -584,7 +582,7 @@
 	
 	EAT.element = (source, parentArgs) => {
 		
-		const args = makeElementArgs(parentArgs)
+		const args = makeScope(parentArgs)
 		
 		let result = undefined
 		let success = undefined
@@ -625,12 +623,12 @@
 		
 		result = {code, success, snippet} = EAT.propertyName(code)
 		const propertyName = snippet
-		if (!success) return {success: false, code: source, snippet: undefined}
+		if (!success) return EAT.fail(code)
 		const name = result.snippet
 		
 		result = {code} = EAT.gap(code)
 		result = {code, success} = EAT.javascript(code)
-		if (!success) return {success: false, code: source, snippet: undefined}
+		if (!success) return EAT.fail(code)
 		
 		if (propertyName == "category") args.categories.push(result.value)
 		else args[name] = result.value
@@ -648,12 +646,12 @@
 		
 		result = {code, success, snippet} = EAT.symbolPartName(code)
 		const symbolPartName = snippet
-		if (!success) return {success: false, code: source, snippet: undefined}
+		if (!success) return EAT.fail(code)
 		
 		result = {code} = EAT.gap(code)
 		result = {code, success, snippet} = EAT.symbolName(code)
 		const symbolName = snippet
-		if (!success) return {success: false, code: source, snippet: undefined}
+		if (!success) return EAT.fail(code)
 		const nojsResult = result
 		
 		result = {code} = EAT.gap(code)
@@ -690,18 +688,18 @@
 		let code = source
 		
 		result = {code, success} = EAT.string("data")(code)
-		if (!success) return {success: false, code: source, snippet: undefined}
+		if (!success) return EAT.fail(code)
 		
 		result = {code, success} = EAT.gap(code)
-		if (!success) return {success: false, code: source, snippet: undefined}
+		if (!success) return EAT.fail(code)
 		
 		result = {code, success, snippet} = EAT.name(code)
-		if (!success) return {success: false, code: source, snippet: undefined}
+		if (!success) return EAT.fail(code)
 		const name = result.snippet
 		
 		result = {code} = EAT.gap(code)
 		result = {code, success} = EAT.javascript(code)
-		if (!success) return {success: false, code: source, snippet: undefined}
+		if (!success) return EAT.fail(code)
 		
 		args.data[name] = result.value
 		
@@ -716,18 +714,18 @@
 		let code = source
 		
 		result = {code, success} = EAT.string("prop")(code)
-		if (!success) return {success: false, code: source, snippet: undefined}
+		if (!success) return EAT.fail(code)
 		
 		result = {code, success} = EAT.gap(code)
-		if (!success) return {success: false, code: source, snippet: undefined}
+		if (!success) return EAT.fail(code)
 		
 		result = {code, success, snippet} = EAT.name(code)
-		if (!success) return {success: false, code: source, snippet: undefined}
+		if (!success) return EAT.fail(code)
 		const name = result.snippet
 		
 		result = {code} = EAT.gap(code)
 		result = {code, success} = EAT.javascript(code)
-		if (!success) return {success: false, code: source, snippet: undefined}
+		if (!success) return EAT.fail(code)
 		
 		args[name] = result.value
 		
@@ -745,7 +743,7 @@
 		let code = source
 		
 		result = {code, success} = EAT.block(EAT.javascriptInner)(code)
-		if (!success) return {success: false, code: source, snippet: undefined}
+		if (!success) return EAT.fail(code)
 		
 		return result
 	}
@@ -757,7 +755,7 @@
 		let code = source
 		
 		result = {code, snippet, success} = EAT.line(code)
-		if (!success) return {success: false, code: source, snippet: undefined}
+		if (!success) return EAT.fail(code)
 		
 		result.value = new Function("return " + snippet)()
 		return result
@@ -771,13 +769,13 @@
 		
 		let js = ""
 		result = {code, snippet, success} = EAT.line(code)
-		if (!success) return {success: false, code: source, snippet: undefined}
+		if (!success) return EAT.fail(code)
 		js += snippet
 		
 		result = {success} = EAT.indent(code)
 		indentDepth--
 		if (!success) {
-			return {success: false, code: source, snippet: undefined}
+			return EAT.fail(code)
 		}
 		
 		indentDepth++
@@ -832,7 +830,7 @@
 		
 		if (type == EAT.BLOCK_SINGLE) {
 			result = {code, snippet, success} = EAT.many(EAT.regex(/[^}](?!\n)/))(code)
-			if (!success) return {success: false, code: source, snippet: undefined}
+			if (!success) return EAT.fail(code)
 			result.value = new Function(snippet)()
 			return result
 		}
@@ -878,8 +876,8 @@
 		let code = source
 		
 		result = {code, success, snippet} = EAT.name(code)
-		if (!success) return {success: false, code: source, snippet: undefined}
-		if (!PROPERTY_NAMES.includes(snippet)) return {success: false, code: source, snippet: undefined}
+		if (!success) return EAT.fail(code)
+		if (!PROPERTY_NAMES.includes(snippet)) return EAT.fail(code)
 		
 		return result
 		
@@ -892,8 +890,8 @@
 		let code = source
 		
 		result = {code, success, snippet} = EAT.name(code)
-		if (!success) return {success: false, code: source, snippet: undefined}
-		if (!SYMBOL_PART_NAMES.includes(snippet)) return {success: false, code: source, snippet: undefined}
+		if (!success) return EAT.fail(code)
+		if (!SYMBOL_PART_NAMES.includes(snippet)) return EAT.fail(code)
 		
 		return result
 	}
