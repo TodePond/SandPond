@@ -48,11 +48,19 @@ change _ () => undefined
 given _ (space) => space
 
 element Sand {
+
 	colour "#FC0"
 	
 	@ => _
 	_    @
 	
+}
+
+element Snow {
+
+	@ => _
+
+	mimic(Sand)
 }
 
 element Forkbomb @_ => @@

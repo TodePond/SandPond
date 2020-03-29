@@ -23,12 +23,21 @@
 		}
 	}
 	
-	const getSymbol = (name, args) => {
-		if (args.symbols[name] != undefined) {
-			return args.symbols[name]
+	const getSymbol = (name, scope) => {
+		if (scope.symbols[name] != undefined) {
+			return scope.symbols[name]
 		}
-		else if (args.parent != undefined) {
-			return getSymbol(name, args.parent)
+		else if (scope.parent != undefined) {
+			return getSymbol(name, scope.parent)
+		}
+	}
+	
+	const getElement = (name, scope) => {
+		if (scope.elements[name] != undefined) {
+			return scope.elements[name]
+		}
+		else if (scope.parent != undefined) {
+			return getElement(name, scope.parent)
 		}
 	}
 	
@@ -292,28 +301,32 @@
 		if (success) return EAT.element(code, args)
 		
 		// 'prop'
-		result = {code, success} = EAT.customProperty(code, args)
+		result = {success} = EAT.customProperty(code, args)
 		if (success) return result
 		
 		// 'data'
-		result = {code, success} = EAT.data(code, args)
+		result = {success} = EAT.data(code, args)
 		if (success) return result
 		
 		// TODO: 'arg' or 'param' ???
 		// ...
+		
+		result = {success} = EAT.mimic(code, args)
+		if (success) return result
 		
 		// symbol part
 		result = {success} = EAT.symbolPart(code, args)
 		if (success) return result
 		
 		// 'colour', 'emissive', 'category', etc
-		result = {code, success} = EAT.property(code, args)
+		result = {success} = EAT.property(code, args)
 		if (success) return result
 		
 		// IF ALL ELSE FAILS
 		// rule diagram!
 		if (!ignoreDiagram) {
-			result = {code, success} = EAT.diagram(code, args)
+			// TODO: some error message(s) injected somehow to warn that it may not actually a diagram
+			result = {success} = EAT.diagram(code, args)
 			if (success) return result
 		}
 		
@@ -323,6 +336,52 @@
 	//============//
 	// Expression //
 	//============//
+	EAT.mimic = (source, args) => {
+		let result = undefined
+		let success = undefined
+		let snippet = undefined
+		let code = source
+		
+		result = {code, success} = EAT.string("mimic")(code)
+		if (!success) return {success: false, code: source, snippet: undefined}
+		
+		result = {code} = EAT.gap(code)
+		result = {code, success} = EAT.string("(")(code)
+		if (!success) return {success: false, code: source, snippet: undefined}
+		
+		result = {code} = EAT.gap(code)
+		result = {code, success, snippet} = EAT.elementName(code, args)
+		if (!success) return EAT.fail(code)
+		const elementName = snippet
+		const element = getElement(elementName, args)
+		
+		result = {code} = EAT.gap(code)
+		result = {code, success} = EAT.string(")")(code)
+		if (!success) return EAT.fail(code)
+		
+		args.instructions.push(...element.instructions)
+		
+		return result
+		
+	}
+	
+	EAT.elementName = (source, scope) => {
+		let result = undefined
+		let success = undefined
+		let snippet = undefined
+		let code = source
+		
+		result = {code, success, snippet} = EAT.name(code)
+		if (!success) return EAT.fail(code)
+		
+		const elementName = snippet
+		const element = getElement(elementName, scope)
+		if (element == undefined) return EAT.fail(code)
+		
+		return {success: true, snippet: elementName, code: result.code}
+		
+	}
+	
 	EAT.diagram = (source, args, arrowOnly=false) => {
 		let result = undefined
 		let success = undefined
@@ -378,7 +437,7 @@
 			}
 		}
 		
-		if (arrowX == undefined) throw new Error(`[TodeSplat] Couldn't find arrow's x position. This shouldn't happen.`)
+		if (arrowX == undefined) throw new Error(`[TodeSplat] Couldn't find arrow's x position.\n\nNOTE: I am trying to interpret a line of code as a diagram, but it is possible that you intended to write something else. The line in question is:\n\n${diagram[0]}\n`)
 		if (arrowY == undefined) throw new Error(`[TodeSplat] Couldn't find arrow's y position. This shouldn't happen.`)
 		
 		// split into lhs and rhs
@@ -598,6 +657,14 @@
 		const nojsResult = result
 		
 		result = {code} = EAT.gap(code)
+		
+		// TODO: before checking for javascript, check for:
+		// (a) another symbol name to copy from
+		//      note: what is copied should be different for symbol, input and output
+		// (b) an element to base myself on - resultant code depends on what part it is
+		
+		// TODO: throw warning if you add javascript to a symbol part that doesn't use it
+		// eg: origin, symbol
 		result = {code, success, snippet} = EAT.javascript(code)
 		const javascript = snippet
 		

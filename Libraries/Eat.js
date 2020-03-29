@@ -94,6 +94,8 @@ const EAT = {}
 		return {success, snippet, code}
 	}
 	
+	EAT.fail = (source) => ({success: false, snippet: undefined, code: source})
+	
 	//====================//
 	// In-Built Functions //
 	//====================//	

@@ -44,6 +44,23 @@ const JAVASCRIPT = {}
 		return "() => {}"
 	}
 	
+	show = (element) => {
+		
+		print(element.name)
+		
+		for (const instruction of element.instructions) {
+		
+			print(instruction.type.toDescription())
+			if (instruction.type == INSTRUCTION.TYPE.DIAGRAM) {
+				for (const space of instruction.spaces) {
+					const sn = EVENTWINDOW.getSiteNumber(space.x, space.y, 0)
+					print(space)
+				}
+				
+			}
+		}
+	}
+	
 	JAVASCRIPT.makeConstructor = (name, data, args) => {
 	
 		let dataCode = ``
