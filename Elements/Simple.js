@@ -74,7 +74,6 @@ element Water {
 	opacity 0.5
 	
 	element Hot { @ => _ }
-	mimic(Water.Hot)
 	
 	
 }

@@ -461,12 +461,7 @@
 		scope.source = snippet
 		
 		const element = ELEMENT.make(scope)
-		
-		let fullName = ""
-		if (parentScope.name != undefined) fullName += parentScope.name + "."
-		fullName += scope.name
-		
-		parentScope.elements[fullName] = element
+		parentScope.elements[scope.name] = element
 		
 		return {success: true, snippet, code: result.code}
 	}
@@ -482,7 +477,8 @@
 		if (!success) return EAT.fail(code)
 		
 		const elementName = snippet
-		const element = getElement(elementName, scope)
+		const element = JS `${elementName}`
+		//const element = getElement(elementName, scope)
 		if (element == undefined) return EAT.fail(code)
 		
 		return {success: true, snippet: elementName, code: result.code}
