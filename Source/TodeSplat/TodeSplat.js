@@ -44,60 +44,6 @@
 	}
 	
 	//========//
-	// Export //
-	//========//
-	function TodeSplat([source]) {
-	
-		resetIndentInfo()
-	
-		let result = undefined
-		let success = undefined
-		let snippet = undefined
-		let code = source
-		
-		const scope = makeScope(TodeSplat.global)
-		result = {success, code} = EAT.todeSplatMultiInner(code, scope)
-		
-		for (const name in scope.elements) {
-			const element = scope.elements[name]
-			window[name] = element
-		}
-		
-		absorbScope(TodeSplat.global, scope)
-		
-		return scope
-		
-	}
-	
-	TodeSplat.global = makeScope()
-	
-	
-	//===========//
-	// Constants //
-	//===========//
-	const PROPERTY_NAMES = [
-		"colour",
-		"emissive",
-		"opacity",
-		"precise",
-		"floor",
-		"hidden",
-		"category",
-		"pour",
-		"default",
-	]
-	
-	const SYMBOL_PART_NAMES = [
-		"origin",
-		"given",
-		"change",
-	]
-	
-	EAT.BLOCK_INLINE = Symbol("BlockInline")
-	EAT.BLOCK_SINGLE = Symbol("BlockSingle")
-	EAT.BLOCK_MULTI = Symbol("BlockMulti")
-	
-	//========//
 	// Indent //
 	//========//
 	let indentBase = undefined
@@ -115,9 +61,135 @@
 		return margin
 	}
 	
+	const getStringMarginLeft = (string) => {
+		for (let i = 0; i < string.length; i++) {
+			const char = string[i]
+			if (char != " ") return i
+		}
+	}
+	
+	const getStringMarginRight = (string) => {
+		return getStringMarginLeft(string.split("").reverse().join(""))
+	}
+	
+	EAT.oneNonindent = (source, args) => EAT.nonindent(source, {...args, oneOnly: true})
+	
+	// Stay on the same indent level
+	EAT.nonindent = (source, {oneOnly=false} = {}) => {
+		
+		let result = undefined
+		let success = undefined
+		let snippet = undefined
+		let code = source
+		
+		result = {code, success, snippet} = EAT.emptyLines(code)
+		if (!success) return EAT.fail(code)
+		
+		const numberOfLines = snippet.split("\n").length - 1
+		if (oneOnly == true && numberOfLines > 1) return EAT.fail(code)
+		
+		// NO BASE INDENT
+		if (indentBase == undefined) {
+			result = {code, snippet} = EAT.maybe(EAT.margin)(code)
+			indentBase = snippet
+			result.snippet = "\n"
+			return result
+		}
+		
+		// FULL CHECK
+		else if (indentBase != undefined && indentUnit != undefined) {
+			const expectedMargin = getMargin(indentDepth)
+			result = {success, code, snippet} = EAT.string(expectedMargin)(code)
+			if (success) {
+				result.snippet = "\n"
+				return result
+			}
+		}
+		
+		// PARTIAL CHECK
+		else if (indentBase != undefined) {
+			if (indentDepth == 0) {
+				result = {success} = EAT.string(indentBase)(code)
+				if (success) {
+					result.snippet = "\n"
+					return result
+				}
+			}
+		}
+		
+		return EAT.fail(code)
+		
+	}
+	
+	// Go one indent level deeper
+	EAT.indent = (source) => {
+		
+		indentDepth++
+		
+		let result = undefined
+		let success = undefined
+		let snippet = undefined
+		let code = source
+		
+		result = {code, success, snippet} = EAT.emptyLines(code)
+		if (!success) {
+			return EAT.fail(code)
+		}
+		
+		// NO BASE INDENT
+		if (indentBase == undefined) throw new Error(`[TodeSplat] The base indent level should have been discovered by now - something has gone wrong`)
+		
+		// GET INDENT UNIT
+		else if (indentUnit == undefined) {
+			result = {code, snippet} = EAT.maybe(EAT.margin)(code)
+			if (snippet.slice(0, indentBase.length) != indentBase) return EAT.fail(code)
+			const unit = snippet.slice(indentBase.length)
+			if (unit.length == 0) return EAT.fail(code)
+			indentUnit = unit
+			if (indentBase.length > 0 && indentBase[0] != indentUnit[0]) return EAT.fail(code)
+			return result
+		}
+		
+		// CHECK INDENT
+		const expectedMargin = getMargin(indentDepth)
+		result = {code, snippet} = EAT.string(expectedMargin)(code)
+		return result
+		
+	}
+	
+	// Go one indent level back
+	EAT.unindent = (source) => {
+	
+		indentDepth--
+		if (indentDepth < 0) throw new Error(`[TodeSplat] Can't reduce indent level below zero. This shouldn't happen.`)
+		
+		let result = undefined
+		let success = undefined
+		let snippet = undefined
+		let code = source
+		
+		result = {code, success, snippet} = EAT.emptyLines(code)
+		if (!success) return EAT.fail(code)
+		
+		//result = {code, snippet} = EAT.maybe(EAT.margin)(code)
+		
+		if (indentBase == undefined) throw new Error(`[TodeSplat] The base indent level should have been discovered by now - something has gone wrong`)
+		if (indentUnit == undefined) throw new Error(`[TodeSplat] The indent unit should have been discovered by now - something has gone wrong`)
+		
+		// CHECK INDENT
+		const expectedMargin = getMargin(indentDepth)
+		result = {code, snippet} = EAT.string(expectedMargin)(code)
+		return result	
+		
+	}
+	
 	//=======//
 	// Block //
 	//=======//
+	EAT.BLOCK_INLINE = Symbol("BlockInline")
+	EAT.BLOCK_SINGLE = Symbol("BlockSingle")
+	EAT.BLOCK_MULTI = Symbol("BlockMulti")
+	
 	EAT.block = (inner) => (source, ...args) => {
 		
 		let result = undefined
@@ -201,6 +273,34 @@
 		return result
 		
 	}
+	
+	//========//
+	// Export //
+	//========//
+	function TodeSplat([source]) {
+	
+		resetIndentInfo()
+	
+		let result = undefined
+		let success = undefined
+		let snippet = undefined
+		let code = source
+		
+		const scope = makeScope(TodeSplat.global)
+		result = {success, code} = EAT.todeSplatMultiInner(code, scope)
+		
+		for (const name in scope.elements) {
+			const element = scope.elements[name]
+			window[name] = element
+		}
+		
+		absorbScope(TodeSplat.global, scope)
+		
+		return scope
+		
+	}
+	
+	TodeSplat.global = makeScope()
 	
 	//===========//
 	// TodeSplat //
@@ -323,7 +423,6 @@
 		// IF ALL ELSE FAILS
 		// rule diagram!
 		if (!ignoreDiagram) {
-			// TODO: some error message(s) injected somehow to warn that it may not actually a diagram
 			result = {success} = EAT.diagram(code, scope)
 			if (success) return result
 		}
@@ -331,39 +430,45 @@
 		return EAT.fail(code)
 	}
 	
-	//============//
-	// Expression //
-	//============//
-	EAT.mimic = (source, scope) => {
+	//=========//
+	// Element //
+	//=========//
+	EAT.element = (source, parentScope) => {
+		
+		const scope = makeScope(parentScope)
+		
 		let result = undefined
 		let success = undefined
 		let snippet = undefined
 		let code = source
 		
-		result = {code, success} = EAT.string("mimic")(code)
-		if (!success) return EAT.fail(code)
+		result = {code, success} = EAT.string("element")(code)
+		if (!success) throw new Error(`[TodeSplat] Expected 'element' keyword at start of element but got '${code[0]}'`)
 		
-		result = {code} = EAT.gap(code)
-		result = {code, success} = EAT.string("(")(code)
-		if (!success) return EAT.fail(code)
+		result = {code, success} = EAT.gap(code)
+		if (!success) throw new Error(`[TodeSplat] Expected gap after 'element' keyword but got '${code[0]}'`)
 		
-		result = {code} = EAT.gap(code)
-		result = {code, success, snippet} = EAT.elementName(code, scope)
-		if (!success) return EAT.fail(code)
-		const elementName = snippet
-		const element = getElement(elementName, scope)
+		result = {code, success, snippet} = EAT.name(code)
+		if (!success) throw new Error(`[TodeSplat] Expected element name but got '${code[0]}'`)
+		scope.name = snippet
 		
-		result = {code} = EAT.gap(code)
-		result = {code, success} = EAT.string(")")(code)
-		if (!success) return EAT.fail(code)
+		scope.instructions.push({type: INSTRUCTION.TYPE.BLOCK_START})
 		
-		scope.instructions.push(...element.instructions)
+		result = {code, success} = EAT.block(EAT.todeSplat)(code, scope)
+		if (!success) throw new Error(`[TodeSplat] Expected element block but got something else`)
 		
-		return result
+		scope.instructions.push({type: INSTRUCTION.TYPE.BLOCK_END})
 		
+		snippet = source.slice(0, source.length - result.code.length)
+		scope.source = snippet
+		
+		const element = ELEMENT.make(scope)
+		parentScope.elements[scope.name] = element
+		
+		return {success: true, snippet, code: result.code}
 	}
 	
-	EAT.elementName = (source, scope) => {
+	EAT.elementReference = (source, scope) => {
 		let result = undefined
 		let success = undefined
 		let snippet = undefined
@@ -380,6 +485,210 @@
 		
 	}
 	
+	//========//
+	// Symbol //
+	//========//
+	const SYMBOL_PART_NAMES = [
+		"origin",
+		"given",
+		"change",
+	]
+	
+	EAT.symbolName = EAT.many(EAT.regex(/[^ 	\n]/))
+	
+	EAT.symbolPartReference = (source) => {
+		let result = undefined
+		let success = undefined
+		let snippet = undefined
+		let code = source
+		
+		result = {code, success, snippet} = EAT.name(code)
+		if (!success) return EAT.fail(code)
+		if (!SYMBOL_PART_NAMES.includes(snippet)) return EAT.fail(code)
+		
+		return result
+	}
+	
+	EAT.symbolPart = (source, scope) => {
+		let result = undefined
+		let success = undefined
+		let snippet = undefined
+		let code = source
+		
+		result = {code, success, snippet} = EAT.symbolPartReference(code)
+		const symbolPartName = snippet
+		if (!success) return EAT.fail(code)
+		
+		result = {code} = EAT.gap(code)
+		result = {code, success, snippet} = EAT.symbolName(code)
+		const symbolName = snippet
+		if (!success) return EAT.fail(code)
+		const nojsResult = result
+		
+		result = {code} = EAT.gap(code)
+		
+		// TODO: before checking for javascript, check for:
+		// (a) another symbol name to copy from
+		//      note: what is copied should be different for symbol, input and output
+		// (b) an element to base myself on - resultant code depends on what part it is
+		
+		// TODO: throw warning if you add javascript to a symbol part that doesn't use it
+		// eg: origin, symbol
+		result = {code, success, snippet} = EAT.javascript(code)
+		const javascript = snippet
+		
+		if (scope.symbols[symbolName] == undefined) {
+			scope.symbols[symbolName] = {}
+		}
+		const symbol = scope.symbols[symbolName]
+		
+		if (symbol[symbolPartName] == undefined) {
+			symbol[symbolPartName] = []
+		}
+		const symbolPart = symbol[symbolPartName]
+		symbolPart.push(javascript)
+		
+		if (!success) return nojsResult
+		else return result
+	}
+	
+	//=============//
+	// Declaration //
+	//=============//
+	const PROPERTY_NAMES = [
+		"colour",
+		"emissive",
+		"opacity",
+		"precise",
+		"floor",
+		"hidden",
+		"category",
+		"pour",
+		"default",
+	]
+	
+	EAT.propertyName = (source) => {
+		let result = undefined
+		let success = undefined
+		let snippet = undefined
+		let code = source
+		
+		result = {code, success, snippet} = EAT.name(code)
+		if (!success) return EAT.fail(code)
+		if (!PROPERTY_NAMES.includes(snippet)) return EAT.fail(code)
+		
+		return result
+		
+	}
+	
+	EAT.property = (source, scope) => {
+		let result = undefined
+		let success = undefined
+		let snippet = undefined
+		let code = source
+		
+		result = {code, success, snippet} = EAT.propertyName(code)
+		const propertyName = snippet
+		if (!success) return EAT.fail(code)
+		const name = result.snippet
+		
+		result = {code} = EAT.gap(code)
+		result = {code, success} = EAT.javascript(code)
+		if (!success) return EAT.fail(code)
+		
+		if (propertyName == "category") scope.categories.push(result.value)
+		else scope[name] = result.value
+		
+		return result
+	}
+	
+	EAT.data = (source, scope) => {
+		let result = undefined
+		let success = undefined
+		let snippet = undefined
+		let code = source
+		
+		result = {code, success} = EAT.string("data")(code)
+		if (!success) return EAT.fail(code)
+		
+		result = {code, success} = EAT.gap(code)
+		if (!success) return EAT.fail(code)
+		
+		result = {code, success, snippet} = EAT.name(code)
+		if (!success) return EAT.fail(code)
+		const name = result.snippet
+		
+		result = {code} = EAT.gap(code)
+		result = {code, success} = EAT.javascript(code)
+		if (!success) return EAT.fail(code)
+		
+		scope.data[name] = result.value
+		
+		return result
+		
+	}
+	
+	EAT.customProperty = (source, scope) => {
+		let result = undefined
+		let success = undefined
+		let snippet = undefined
+		let code = source
+		
+		result = {code, success} = EAT.string("prop")(code)
+		if (!success) return EAT.fail(code)
+		
+		result = {code, success} = EAT.gap(code)
+		if (!success) return EAT.fail(code)
+		
+		result = {code, success, snippet} = EAT.name(code)
+		if (!success) return EAT.fail(code)
+		const name = result.snippet
+		
+		result = {code} = EAT.gap(code)
+		result = {code, success} = EAT.javascript(code)
+		if (!success) return EAT.fail(code)
+		
+		scope[name] = result.value
+		
+		return result
+		
+	}
+	
+	//==========//
+	// Function //
+	//==========//
+	EAT.mimic = (source, scope) => {
+		let result = undefined
+		let success = undefined
+		let snippet = undefined
+		let code = source
+		
+		result = {code, success} = EAT.string("mimic")(code)
+		if (!success) return EAT.fail(code)
+		
+		result = {code} = EAT.gap(code)
+		result = {code, success} = EAT.string("(")(code)
+		if (!success) return EAT.fail(code)
+		
+		result = {code} = EAT.gap(code)
+		result = {code, success, snippet} = EAT.elementReference(code, scope)
+		if (!success) return EAT.fail(code)
+		const elementName = snippet
+		const element = getElement(elementName, scope)
+		
+		result = {code} = EAT.gap(code)
+		result = {code, success} = EAT.string(")")(code)
+		if (!success) return EAT.fail(code)
+		
+		scope.instructions.push(...element.instructions)
+		
+		return result
+		
+	}
+	
+	//=========//
+	// Diagram //
+	//=========//
 	EAT.diagram = (source, scope, arrowOnly=false) => {
 		let result = undefined
 		let success = undefined
@@ -540,17 +849,6 @@
 		
 	}
 	
-	const getStringMarginLeft = (string) => {
-		for (let i = 0; i < string.length; i++) {
-			const char = string[i]
-			if (char != " ") return i
-		}
-	}
-	
-	const getStringMarginRight = (string) => {
-		return getStringMarginLeft(string.split("").reverse().join(""))
-	}
-	
 	EAT.diagramLine = (source, notes) => {
 		let result = undefined
 		let success = undefined
@@ -580,159 +878,6 @@
 		
 	}
 	
-	EAT.element = (source, parentScope) => {
-		
-		const scope = makeScope(parentScope)
-		
-		let result = undefined
-		let success = undefined
-		let snippet = undefined
-		let code = source
-		
-		result = {code, success} = EAT.string("element")(code)
-		if (!success) throw new Error(`[TodeSplat] Expected 'element' keyword at start of element but got '${code[0]}'`)
-		
-		result = {code, success} = EAT.gap(code)
-		if (!success) throw new Error(`[TodeSplat] Expected gap after 'element' keyword but got '${code[0]}'`)
-		
-		result = {code, success, snippet} = EAT.name(code)
-		if (!success) throw new Error(`[TodeSplat] Expected element name but got '${code[0]}'`)
-		scope.name = snippet
-		
-		scope.instructions.push({type: INSTRUCTION.TYPE.BLOCK_START})
-		
-		result = {code, success} = EAT.block(EAT.todeSplat)(code, scope)
-		if (!success) throw new Error(`[TodeSplat] Expected element block but got something else`)
-		
-		scope.instructions.push({type: INSTRUCTION.TYPE.BLOCK_END})
-		
-		snippet = source.slice(0, source.length - result.code.length)
-		scope.source = snippet
-		
-		const element = ELEMENT.make(scope)
-		parentScope.elements[scope.name] = element
-		
-		return {success: true, snippet, code: result.code}
-	}
-	
-	EAT.property = (source, scope) => {
-		let result = undefined
-		let success = undefined
-		let snippet = undefined
-		let code = source
-		
-		result = {code, success, snippet} = EAT.propertyName(code)
-		const propertyName = snippet
-		if (!success) return EAT.fail(code)
-		const name = result.snippet
-		
-		result = {code} = EAT.gap(code)
-		result = {code, success} = EAT.javascript(code)
-		if (!success) return EAT.fail(code)
-		
-		if (propertyName == "category") scope.categories.push(result.value)
-		else scope[name] = result.value
-		
-		return result
-	}
-	
-	EAT.symbolName = EAT.many(EAT.regex(/[^ 	\n]/))
-	
-	EAT.symbolPart = (source, scope) => {
-		let result = undefined
-		let success = undefined
-		let snippet = undefined
-		let code = source
-		
-		result = {code, success, snippet} = EAT.symbolPartName(code)
-		const symbolPartName = snippet
-		if (!success) return EAT.fail(code)
-		
-		result = {code} = EAT.gap(code)
-		result = {code, success, snippet} = EAT.symbolName(code)
-		const symbolName = snippet
-		if (!success) return EAT.fail(code)
-		const nojsResult = result
-		
-		result = {code} = EAT.gap(code)
-		
-		// TODO: before checking for javascript, check for:
-		// (a) another symbol name to copy from
-		//      note: what is copied should be different for symbol, input and output
-		// (b) an element to base myself on - resultant code depends on what part it is
-		
-		// TODO: throw warning if you add javascript to a symbol part that doesn't use it
-		// eg: origin, symbol
-		result = {code, success, snippet} = EAT.javascript(code)
-		const javascript = snippet
-		
-		if (scope.symbols[symbolName] == undefined) {
-			scope.symbols[symbolName] = {}
-		}
-		const symbol = scope.symbols[symbolName]
-		
-		if (symbol[symbolPartName] == undefined) {
-			symbol[symbolPartName] = []
-		}
-		const symbolPart = symbol[symbolPartName]
-		symbolPart.push(javascript)
-		
-		if (!success) return nojsResult
-		else return result
-	}
-	
-	EAT.data = (source, scope) => {
-		let result = undefined
-		let success = undefined
-		let snippet = undefined
-		let code = source
-		
-		result = {code, success} = EAT.string("data")(code)
-		if (!success) return EAT.fail(code)
-		
-		result = {code, success} = EAT.gap(code)
-		if (!success) return EAT.fail(code)
-		
-		result = {code, success, snippet} = EAT.name(code)
-		if (!success) return EAT.fail(code)
-		const name = result.snippet
-		
-		result = {code} = EAT.gap(code)
-		result = {code, success} = EAT.javascript(code)
-		if (!success) return EAT.fail(code)
-		
-		scope.data[name] = result.value
-		
-		return result
-		
-	}
-	
-	EAT.customProperty = (source, scope) => {
-		let result = undefined
-		let success = undefined
-		let snippet = undefined
-		let code = source
-		
-		result = {code, success} = EAT.string("prop")(code)
-		if (!success) return EAT.fail(code)
-		
-		result = {code, success} = EAT.gap(code)
-		if (!success) return EAT.fail(code)
-		
-		result = {code, success, snippet} = EAT.name(code)
-		if (!success) return EAT.fail(code)
-		const name = result.snippet
-		
-		result = {code} = EAT.gap(code)
-		result = {code, success} = EAT.javascript(code)
-		if (!success) return EAT.fail(code)
-		
-		scope[name] = result.value
-		
-		return result
-		
-	}
-	
 	//============//
 	// Javascript //
 	//============//
@@ -748,72 +893,6 @@
 		return result
 	}
 	
-	EAT.javascriptNakedSingle = (source) => {
-		let result = undefined
-		let success = undefined
-		let snippet = undefined
-		let code = source
-		
-		result = {code, snippet, success} = EAT.line(code)
-		if (!success) return EAT.fail(code)
-		
-		result.value = new Function("return " + snippet)()
-		return result
-	}
-	
-	EAT.javascriptNakedMulti = (source) => {
-		let result = undefined
-		let success = undefined
-		let snippet = undefined
-		let code = source
-		
-		let js = ""
-		result = {code, snippet, success} = EAT.line(code)
-		if (!success) return EAT.fail(code)
-		js += snippet
-		
-		result = {success} = EAT.indent(code)
-		indentDepth--
-		if (!success) {
-			return EAT.fail(code)
-		}
-		
-		indentDepth++
-		result = {code, success, snippet} = EAT.many(EAT.javascriptNakedMultiLine)(code)
-		js += snippet
-		
-		indentDepth--
-		result = {code, success, snippet} = EAT.nonindent(code)
-		if (!success) return {success: false, snippet: undefined, code: source}
-		js += "\n"
-		
-		result = {code, success, snippet} = EAT.line(code)
-		if (!success) return {success: false, snippet: undefined, code: source}
-		js += snippet
-		
-		result.value = new Function("return " + js)()
-		
-		return result
-	}
-	
-	EAT.javascriptNakedMultiLine = (source) => {
-		let result = undefined
-		let success = undefined
-		let snippet = undefined
-		let code = source
-		
-		result = {success} = EAT.nonindent(code)
-		if (!success) return {success: false, snippet: undefined, code: source}
-		
-		result = {code, success} = EAT.newline(code)
-		if (!success) return {success: false, snippet: undefined, code: source}
-		
-		result = {code, success} = EAT.line(code)
-		if (!success) return {success: false, snippet: undefined, code: source}
-		
-		return {...result, snippet: "\n" + result.snippet}
-	}
-	
 	EAT.javascriptInner = (type) => (source) => {
 		let result = undefined
 		let success = undefined
@@ -822,8 +901,8 @@
 		
 		if (type == EAT.BLOCK_INLINE) {
 			return EAT.or (
-				EAT.javascriptNakedMulti,
-				EAT.javascriptNakedSingle,
+				EAT.javascriptInlineMulti,
+				EAT.javascriptInlineSingle,
 			)(code)
 			
 		}
@@ -849,6 +928,72 @@
 		return result
 	}
 	
+	EAT.javascriptInlineSingle = (source) => {
+		let result = undefined
+		let success = undefined
+		let snippet = undefined
+		let code = source
+		
+		result = {code, snippet, success} = EAT.line(code)
+		if (!success) return EAT.fail(code)
+		
+		result.value = new Function("return " + snippet)()
+		return result
+	}
+	
+	EAT.javascriptInlineMulti = (source) => {
+		let result = undefined
+		let success = undefined
+		let snippet = undefined
+		let code = source
+		
+		let js = ""
+		result = {code, snippet, success} = EAT.line(code)
+		if (!success) return EAT.fail(code)
+		js += snippet
+		
+		result = {success} = EAT.indent(code)
+		indentDepth--
+		if (!success) {
+			return EAT.fail(code)
+		}
+		
+		indentDepth++
+		result = {code, success, snippet} = EAT.many(EAT.javascriptInlineMultiLine)(code)
+		js += snippet
+		
+		indentDepth--
+		result = {code, success, snippet} = EAT.nonindent(code)
+		if (!success) return EAT.fail(code)
+		js += "\n"
+		
+		result = {code, success, snippet} = EAT.line(code)
+		if (!success) return EAT.fail(code)
+		js += snippet
+		
+		result.value = new Function("return " + js)()
+		
+		return result
+	}
+	
+	EAT.javascriptInlineMultiLine = (source) => {
+		let result = undefined
+		let success = undefined
+		let snippet = undefined
+		let code = source
+		
+		result = {success} = EAT.nonindent(code)
+		if (!success) return EAT.fail(code)
+		
+		result = {code, success} = EAT.newline(code)
+		if (!success) return EAT.fail(code)
+		
+		result = {code, success} = EAT.line(code)
+		if (!success) return EAT.fail(code)
+		
+		return {...result, snippet: "\n" + result.snippet}
+	}
+	
 	EAT.javascriptBraceLine = (source) => {
 		let result = undefined
 		let success = undefined
@@ -857,10 +1002,10 @@
 		
 		result = {code, success} = EAT.newline(code)
 		result = {code, success} = EAT.maybe(EAT.margin)(code)
-		if (!success) return {success: false, snippet: undefined, code: source}
+		if (!success) return EAT.fail(code)
 		
 		const margin = getMargin(indentDepth)
-		if (result.snippet.slice(0, margin.length) != margin) return {success: false, snippet: undefined, code: source}
+		if (result.snippet.slice(0, margin.length) != margin) return EAT.fail(code)
 		
 		result = {snippet} = EAT.line(code)
 		result.snippet = "\n" + snippet
@@ -869,148 +1014,4 @@
 
 	}
 	
-	EAT.propertyName = (source) => {
-		let result = undefined
-		let success = undefined
-		let snippet = undefined
-		let code = source
-		
-		result = {code, success, snippet} = EAT.name(code)
-		if (!success) return EAT.fail(code)
-		if (!PROPERTY_NAMES.includes(snippet)) return EAT.fail(code)
-		
-		return result
-		
-	}
-	
-	EAT.symbolPartName = (source) => {
-		let result = undefined
-		let success = undefined
-		let snippet = undefined
-		let code = source
-		
-		result = {code, success, snippet} = EAT.name(code)
-		if (!success) return EAT.fail(code)
-		if (!SYMBOL_PART_NAMES.includes(snippet)) return EAT.fail(code)
-		
-		return result
-	}
-	
-	//========//
-	// Indent //
-	//========//
-	EAT.oneNonindent = (source, args) => EAT.nonindent(source, {...args, oneOnly: true})
-	
-	// Stay on the same indent level
-	EAT.nonindent = (source, {oneOnly=false} = {}) => {
-		
-		let result = undefined
-		let success = undefined
-		let snippet = undefined
-		let code = source
-		
-		result = {code, success, snippet} = EAT.emptyLines(code)
-		if (!success) return {success: false, snippet: undefined, code: source}
-		
-		const numberOfLines = snippet.split("\n").length - 1
-		if (oneOnly == true && numberOfLines > 1) return {success: false, snippet: undefined, code: source}
-		
-		// NO BASE INDENT
-		if (indentBase == undefined) {
-			result = {code, snippet} = EAT.maybe(EAT.margin)(code)
-			indentBase = snippet
-			result.snippet = "\n"
-			return result
-		}
-		
-		// FULL CHECK
-		else if (indentBase != undefined && indentUnit != undefined) {
-			const expectedMargin = getMargin(indentDepth)
-			result = {success, code, snippet} = EAT.string(expectedMargin)(code)
-			if (success) {
-				result.snippet = "\n"
-				return result
-			}
-		}
-		
-		// PARTIAL CHECK
-		else if (indentBase != undefined) {
-			if (indentDepth == 0) {
-				result = {success} = EAT.string(indentBase)(code)
-				if (success) {
-					result.snippet = "\n"
-					return result
-				}
-			}
-		}
-		
-		return {success: false, snippet: undefined, code: source}
-		
-	}
-	
-	// Go one indent level deeper
-	EAT.indent = (source) => {
-		
-		indentDepth++
-		
-		let result = undefined
-		let success = undefined
-		let snippet = undefined
-		let code = source
-		
-		result = {code, success, snippet} = EAT.emptyLines(code)
-		if (!success) {
-			return {success: false, snippet: undefined, code: source}
-		}
-		
-		// NO BASE INDENT
-		if (indentBase == undefined) throw new Error(`[TodeSplat] The base indent level should have been discovered by now - something has gone wrong`)
-		
-		// GET INDENT UNIT
-		else if (indentUnit == undefined) {
-			result = {code, snippet} = EAT.maybe(EAT.margin)(code)
-			if (snippet.slice(0, indentBase.length) != indentBase) return {success: false, snippet: undefined, code: source}
-			const unit = snippet.slice(indentBase.length)
-			if (unit.length == 0) return {success: false, snippet: undefined, code: source}
-			indentUnit = unit
-			if (indentBase.length > 0 && indentBase[0] != indentUnit[0]) return {success: false, snippet: undefined, code: source}
-			return result
-		}
-		
-		// CHECK INDENT
-		const expectedMargin = getMargin(indentDepth)
-		result = {code, snippet} = EAT.string(expectedMargin)(code)
-		return result
-		
-	}
-	
-	// Go one indent level back
-	EAT.unindent = (source) => {
-	
-		indentDepth--
-		if (indentDepth < 0) throw new Error(`[TodeSplat] Can't reduce indent level below zero. This shouldn't happen.`)
-		
-		let result = undefined
-		let success = undefined
-		let snippet = undefined
-		let code = source
-		
-		result = {code, success, snippet} = EAT.emptyLines(code)
-		if (!success) return {success: false, snippet: undefined, code: source}
-		
-		//result = {code, snippet} = EAT.maybe(EAT.margin)(code)
-		
-		if (indentBase == undefined) throw new Error(`[TodeSplat] The base indent level should have been discovered by now - something has gone wrong`)
-		if (indentUnit == undefined) throw new Error(`[TodeSplat] The indent unit should have been discovered by now - something has gone wrong`)
-		
-		// CHECK INDENT
-		const expectedMargin = getMargin(indentDepth)
-		result = {code, snippet} = EAT.string(expectedMargin)(code)
-		return result
-		
-		
-	}
-	
-	
-
 }

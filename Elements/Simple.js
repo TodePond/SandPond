@@ -65,13 +65,7 @@ element Snow {
 
 element Forkbomb @_ => @@
 
-
-
-`
-
-show(Snow)
-
-/*element Foo {
+element Foo {
 
 }
 
@@ -106,7 +100,8 @@ element DReg { colour "brown" }
 
 element Res {
 	opacity 0.5
+	
+	@_ => _@
 }
 
 `
-*/
