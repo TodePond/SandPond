@@ -291,6 +291,7 @@
 		
 		for (const name in scope.elements) {
 			const element = scope.elements[name]
+			if (window[name] != undefined) console.warn(`[TodeSplat] Overriding existing value with new element: '${name}'`)
 			window[name] = element
 		}
 		
