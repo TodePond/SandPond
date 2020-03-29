@@ -108,7 +108,7 @@ const EAT = {}
 		const fullRegex = new RegExp("^" + regex.source + "$")
 		
 		let i = 0
-		while (i < source.length) {
+		while (i <= source.length) {
 			const snippet = source.slice(0, i)
 			const success = fullRegex.test(snippet)
 			if (success) {
