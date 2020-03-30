@@ -453,6 +453,10 @@
 						state = "lineComment"
 						i++
 					}
+					else if (nextChar == "*") {
+						state = "blockComment"
+						i++
+					}
 					else {
 						codeStripped += char
 					}
@@ -469,6 +473,15 @@
 				}
 				else {
 					codeStripped += char
+				}
+			}
+			else if (state == "blockComment") {
+				if (char == "*") {
+					const nextChar = code[i+1]
+					if (nextChar == "/") {
+						i++
+						state = "normal"
+					}
 				}
 			}
 			else if (state == "lineComment") {

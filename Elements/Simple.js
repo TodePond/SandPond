@@ -46,7 +46,7 @@ change @ (self) => self
 change _ () => undefined
 given _ (space) => space
 
-// This is a line comment!
+/* This is a blckcomment!
 element Sand {
 
 	colour "#FC0"
@@ -55,6 +55,7 @@ element Sand {
 	_    @
 	
 }
+*/
 
 element Snow {
 
