@@ -286,6 +286,8 @@
 		let snippet = undefined
 		let code = source
 		
+		result = {code} = EAT.stripComments(code)
+		
 		const scope = makeScope(TodeSplat.global)
 		result = {success, code} = EAT.todeSplatMultiInner(code, scope)
 		
@@ -407,8 +409,8 @@
 		// TODO: 'arg' or 'param' ???
 		// ...
 		
-		result = {success} = EAT.mimic(code, scope)
-		if (success) return result
+		//result = {success} = EAT.mimic(code, scope)
+		//if (success) return result
 		
 		// symbol part
 		result = {success} = EAT.symbolPart(code, scope)
@@ -426,6 +428,77 @@
 		}
 		
 		return EAT.fail(code)
+	}
+	
+	//=========//
+	// Comment //
+	//=========//
+	EAT.stripComments = (source) => {
+		let result = undefined
+		let success = undefined
+		let snippet = undefined
+		let code = source
+		
+		let codeStripped = ""
+		
+		let state = "normal"
+		let stringEnder = undefined
+		
+		for (let i = 0; i < code.length; i++) {
+			const char = code[i]
+			if (state == "normal") {
+				if (char == "/") {
+					const nextChar = code[i+1]
+					if (nextChar == "/") {
+						state = "lineComment"
+						i++
+					}
+					else {
+						codeStripped += char
+					}
+				}
+				else if (char == '"') {
+					codeStripped += char
+					state = "string"
+					stringEnder = '"'
+				}
+				else if (char == "'") {
+					codeStripped += char
+					state = "string"
+					stringEnder = "'"
+				}
+				else {
+					codeStripped += char
+				}
+			}
+			else if (state == "lineComment") {
+				if (char == "\n") {
+					codeStripped += char
+					state = "normal"
+				}
+			}
+			else if (state == "string") {
+				codeStripped += char
+				if (char == "\\") {
+					state = "stringEscape"
+				}
+				if (char == stringEnder) {
+					state = "normal"
+					stringEnder = undefined
+				}
+			}
+			else if (state == "stringEscape") {
+				codeStripped += char
+				state = "string"
+			}
+			else {
+				throw new Error (`[TodeSplat] Undeclared state while stripping comments: '${state}'`)
+			}
+		}
+		
+		print(codeStripped)
+	
+		return {result: success, code: codeStripped, snippet: source}
 	}
 	
 	//=========//
@@ -477,9 +550,9 @@
 		if (!success) return EAT.fail(code)
 		
 		const elementName = snippet
-		const element = JS `${elementName}`
+		//const element = JS `${elementName}`
 		//const element = getElement(elementName, scope)
-		if (element == undefined) return EAT.fail(code)
+		//if (element == undefined) return EAT.fail(code)
 		
 		return {success: true, snippet: elementName, code: result.code}
 		
@@ -669,6 +742,7 @@
 	//==========//
 	// Function //
 	//==========//
+	// TODO: change to mini JS block, after redoing JS blocks?
 	EAT.mimic = (source, scope) => {
 		let result = undefined
 		let success = undefined
