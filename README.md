@@ -3,6 +3,7 @@ Sandboys are little atoms that follow simple rules.<br>
 Try it out [here](http://www.sandboys.land).<br>
 It's inspired by the [T2Tile project](https://t2tile.org/) and [SPLAT](https://github.com/DaveAckley/SPLAT).
 
+For more info, check out [these videos](https://www.youtube.com/playlist?list=PL9uRa69RF-7wastqKWXT4d9F84BAzfVd4).<br>
 I post daily updates on my [Instagram](https://www.instagram.com/todepond/).
 
 ## Rules
@@ -22,8 +23,4 @@ Or try out the [live demo](http://www.sandboys.land).
 2. Add your TodeSplat function or file to `index.html` in the same place as the other elements.
 
 To learn more, check out the [TodeSplat Documentation](https://github.com/l2wilson94/Sandboys/wiki/TodeSplat-Documentation).<br>
-Or check out the examples in the [Elements](https://github.com/l2wilson94/Sandboys/tree/master/Elements) folder.<br>
-To learn more about how symmetries work, check out my [Symmetry Notes](https://nifty-heyrovsky-333d51.netlify.com/symmetry.html) or my [2D Symmetry Demo](https://nifty-heyrovsky-333d51.netlify.com/demo2d.html) .
-
-## To-do
-Check out my [to-do list](https://github.com/l2wilson94/Sandboys/wiki/Todo-List) to see what I'm working on.
+Or check out the examples in the [Elements](https://github.com/l2wilson94/Sandboys/tree/master/Elements) folder.
