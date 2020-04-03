@@ -40,7 +40,7 @@ element Shock {
 	emissive "orange"
 	state "effect"
 	electric true
-	category "Electronics"
+	//category "Electronics"
 	pour false
 	floor true
 	precise false

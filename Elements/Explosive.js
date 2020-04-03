@@ -219,6 +219,12 @@ element FireworkShooter {
 		@E => ..
 	}
 	
+	rule {
+		_    F 
+		@ => .
+		E    .
+	}
+	
 }
 
 element Firework {
