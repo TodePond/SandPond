@@ -32,6 +32,7 @@ element NonWireSpark {
 	ignites true
 	floor true
 	electric true
+	current true
 	
 	ruleset Spark
 	

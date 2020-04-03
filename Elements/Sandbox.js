@@ -28,6 +28,58 @@ element Water {
 	
 }
 
+element WaterPulse {
+	
+	colour "lightblue"
+	emissive "lightblue"
+	opacity 0.5
+	state "liquid"
+	current true
+	electric true
+	
+	ruleset Water
+	given u (self) => self.id == undefined
+	keep i (self) => self.id = Math.random()
+	action { u => i }
+	
+	given W (element) => element == Wire
+	change T (self) => new WaterPulseTrail({id: self.id})
+	change H (self) => self
+	for(xz) rule { @W => TH }
+	
+	given D (element) => element && element.isDevice
+	for(xz) rule { @D => T. }
+	
+	//given t (element, atom, self) => element == WaterPulseTrail && atom.id != self.id
+	//for(xz) rule { @t => .. }
+	
+	//change S () => new NonWireSpark()
+	//for(xz) rule { @_ => TS }
+	
+	rule { @ => T }
+	
+}
+
+element WaterPulseTrail {
+	
+	colour "lightblue"
+	emissive "blue"
+	opacity 0.5
+	state "liquid"
+	
+	ruleset Water
+	
+	electric true
+	current true
+	
+	given H (element, atom, self) => element == PulseHead && atom.id == self.id
+	change W () => new Wire()
+	for(xz) rule { @H => .. }
+	
+	rule { @ => W }
+	
+}
+
 element Fire {
 	colour "orange"
 	emissive "red"

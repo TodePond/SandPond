@@ -4,7 +4,7 @@ element Wire {
 	category "Electronics"
 	colour "grey"
 	emissive "black"
-	default true
+	//default true
 	//pour false
 	precise true
 	floor true
