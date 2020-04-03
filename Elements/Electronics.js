@@ -4,11 +4,25 @@ element Wire {
 	category "Electronics"
 	colour "grey"
 	emissive "black"
-	//default true
+	default true
 	//pour false
 	precise true
 	floor true
 	state "solid"
+	
+	ruleset Solid
+	
+	given W (element) => element == Wire
+	rule {
+		@ => _
+		.    .
+	}
+	
+	change W () => new Wire()
+	rule top xz {
+		@_ => @.
+		_W    W.
+	}
 	
 	given E (element) => element && element.electric && !element.wireIgnore
 	change H () => new PulseHead()
@@ -50,8 +64,11 @@ element PulseHead {
 	change H (self) => self
 	for(xz) rule { @W => TH }
 	
+	given D (element) => element && element.isDevice
+	for(xz) rule { @D => T. }
+	
 	given t (element, atom, self) => element == PulseTrail && atom.id != self.id
-	for(xz) rule { @t => .. }
+	//for(xz) rule { @t => .. }
 	
 	change S () => new NonWireSpark()
 	for(xz) rule { @_ => TS }
@@ -83,6 +100,7 @@ element Bulb {
 	precise true
 	floor true
 	state "solid"
+	isDevice true
 	
 	data power 10
 	
