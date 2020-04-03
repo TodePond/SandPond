@@ -71,7 +71,7 @@ element PulseHead {
 	//for(xz) rule { @t => .. }
 	
 	change S () => new NonWireSpark()
-	for(xz) rule { @_ => TS }
+	//for(xz) rule { @_ => TS }
 	
 	rule { @ => T }
 }
@@ -89,6 +89,26 @@ element PulseTrail {
 	for(xz) rule { @H => .. }
 	
 	rule { @ => W }
+}
+
+element Cut {
+	opacity 0
+	category "Electronics"
+	
+	floor true
+	precise true
+	//pour false
+	
+	rule {
+		@ => _
+		.    @
+	}
+	
+	rule {
+		@ => _
+		x    .
+	}
+	
 }
 
 element Bulb {
@@ -122,6 +142,11 @@ element Bulb {
 		E    .
 		. => .
 		@    P
+	}
+	
+	action {
+		@ => P
+		E    .
 	}
 	
 	rule {
@@ -166,6 +191,7 @@ element Battery {
 	floor true
 	precise true
 	category "Electronics"
+	pour false
 }
 
 `

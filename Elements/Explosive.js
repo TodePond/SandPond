@@ -9,6 +9,7 @@ element Spark {
 	category "Electronics"
 	state "effect"
 	ignites true
+	opacity 0.5
 	floor true
 	given s (element, self) => element == self.element
 	keep s
@@ -27,6 +28,7 @@ element NonWireSpark {
 	colour "lightyellow"
 	emissive "orange"
 	state "effect"
+	opacity 0.5
 	ignites true
 	floor true
 	electric true
@@ -41,6 +43,7 @@ element BlueSpark {
 	floor true
 	colour "lightblue"
 	emissive "lightblue"
+	opacity 0.5
 	state "effect"
 	ignites true
 	ruleset Spark
@@ -55,6 +58,7 @@ element Explosion {
 	emissive "orange"
 	category "Explosive"
 	state "effect"
+	opacity 0.5
 	ignites true
 	data timer 20
 	isHot true
@@ -76,6 +80,7 @@ element RedExplosion {
 	colour "red"
 	emissive "darkred"
 	category "Explosive"
+	opacity 0.5
 	state "effect"
 	ignites true
 	data timer 20
@@ -91,6 +96,7 @@ element BlueExplosion {
 	colour "blue"
 	emissive "darkblue"
 	category "Explosive"
+	opacity 0.5
 	state "effect"
 	ignites true
 	data timer 20
@@ -122,6 +128,7 @@ element Lightning {
 	state "effect"
 	ignites true
 	precise true
+	opacity 0.5
 	pour false
 	electric true
 	
@@ -149,6 +156,7 @@ element LightningFlash {
 	hidden true
 	state "effect"
 	ignites true
+	opacity 0.5
 	electric true
 	
 	change S () => new BlueSpark()
@@ -166,6 +174,7 @@ element LightningBang {
 	emissive "white"
 	hidden true
 	state "effect"
+	opacity 0.5
 	ignites true
 	electric true
 	
@@ -182,6 +191,35 @@ element LightningBang {
 	
 }
 
+element FireworkShooter {
+	colour "#ffdd00"
+	emissive "#733e05"
+	precise true
+	pour false
+	floor true
+	category "Electronics"
+	state "solid"
+	isDevice true
+	
+	data timer 0
+	
+	given E (element) => element && element.electric 
+	change F (self) => {
+		self.timer = 25
+		return new Firework()
+	}
+	
+	given w (self) => self.timer > 0
+	keep t (self) => self.timer--
+	rule { w => t }
+	
+	for(xz) rule {
+		_     F 
+		@E => ..
+	}
+	
+}
+
 element Firework {
 
 	colour "grey"
@@ -194,8 +232,7 @@ element Firework {
 		
 	data timer 25
 	
-	change E (self) => {
-		if (self.timer > 0) return self
+	change D (self) => {
 		fireworkColour++
 		if (fireworkColour >= 3) fireworkColour = 0
 		if (fireworkColour == 0) return new Explosion()
@@ -208,9 +245,20 @@ element Firework {
 		return new Fire()
 	}
 	
+	given R (self) => self.timer <= 0
+	
 	rule {
-		_ => E
+		R => D
+	}
+	
+	rule {
+		_ => @
 		@    F
+	}
+	
+	keep D (self) => self.timer = 0
+	rule {
+		@ => D
 	}
 	
 }
