@@ -115,4 +115,32 @@ element Sunny {
 	ruleset WeatherBoy
 }
 
+element Gunpowdery {
+	colour "grey"
+	emissive "darkblue"
+	category "Weather"
+	opacity 0.0
+	state "effect"
+	
+	isWeatherBoy true
+	chance 0.01
+	drop GunPowder
+	
+	ruleset WeatherBoy
+}
+
+element Lavary {
+	colour "darkred"
+	emissive "darkblue"
+	category "Weather"
+	opacity 0.0
+	state "effect"
+	
+	isWeatherBoy true
+	chance 0.005
+	drop Lava
+	
+	ruleset WeatherBoy
+}
+
 `

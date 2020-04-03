@@ -35,6 +35,7 @@ element Fire {
 	floor true
 	ignites true
 	isHot true
+	opacity 0.5
 	
 	state "effect"
 	

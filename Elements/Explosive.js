@@ -6,16 +6,32 @@ element Spark {
 
 	colour "lightyellow"
 	emissive "orange"
-	category "Explosive"
+	category "Electronics"
 	state "effect"
 	ignites true
 	floor true
 	given s (element, self) => element == self.element
 	keep s
+	electric true
 	
 	rule 0.2 { @ => _}
 	rule xyz { @s => _s }
 	rule xyz 0.4 { @_ => @@ }
+	
+	
+}
+
+element NonWireSpark {
+
+	wireIgnore true
+	colour "lightyellow"
+	emissive "orange"
+	state "effect"
+	ignites true
+	floor true
+	electric true
+	
+	ruleset Spark
 	
 	
 }
@@ -25,10 +41,10 @@ element BlueSpark {
 	floor true
 	colour "lightblue"
 	emissive "lightblue"
-	category "Explosive"
 	state "effect"
 	ignites true
 	ruleset Spark
+	electric true
 	
 }
 
@@ -102,11 +118,12 @@ element GunPowder {
 element Lightning {
 	colour "yellow"
 	emissive "orange"
-	category "Explosive"
+	category "Electronics"
 	state "effect"
 	ignites true
 	precise true
 	pour false
+	electric true
 	
 	change S () => new Spark()
 	action xz 0.3 { @_ => @S }
@@ -132,6 +149,7 @@ element LightningFlash {
 	hidden true
 	state "effect"
 	ignites true
+	electric true
 	
 	change S () => new BlueSpark()
 	action xz 0.5 { @_ => @S }
@@ -149,6 +167,7 @@ element LightningBang {
 	hidden true
 	state "effect"
 	ignites true
+	electric true
 	
 	given F (element) => element == LightningFlash
 	

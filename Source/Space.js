@@ -37,6 +37,11 @@ const SPACE = {}
 			return
 		}
 		WORLD.setSpaceVisible(space.world, space, true)
+		
+		// April fools
+		if (atom.w != undefined && atom.w != 0) WORLD.setSpaceVisible(space.world, space, false)
+		//=================
+		
 		WORLD.setSpaceOpacity(space.world, space, atom.element.shaderOpacity)
 		WORLD.setSpaceColour(space.world, space, atom.element.shaderColour, atom.element.shaderEmissive)
 	}
