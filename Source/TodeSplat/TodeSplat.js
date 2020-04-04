@@ -409,8 +409,8 @@
 		// TODO: 'arg' or 'param' ???
 		// ...
 		
-		//result = {success} = EAT.mimic(code, scope)
-		//if (success) return result
+		result = {success} = EAT.mimic(code, scope)
+		if (success) return result
 		
 		// symbol part
 		result = {success} = EAT.symbolPart(code, scope)
@@ -471,6 +471,9 @@
 					state = "string"
 					stringEnder = "'"
 				}
+				else if (char == "`") {
+					throw new Error(`[TodeSplat] Template strings are not supported, sorry...`)
+				}
 				else {
 					codeStripped += char
 				}
@@ -508,8 +511,6 @@
 				throw new Error (`[TodeSplat] Undeclared state while stripping comments: '${state}'`)
 			}
 		}
-		
-		print(codeStripped)
 	
 		return {result: success, code: codeStripped, snippet: source}
 	}
@@ -550,25 +551,6 @@
 		parentScope.elements[scope.name] = element
 		
 		return {success: true, snippet, code: result.code}
-	}
-	
-	EAT.elementReference = (source, scope) => {
-	
-		let result = undefined
-		let success = undefined
-		let snippet = undefined
-		let code = source
-		
-		result = {code, success, snippet} = EAT.fullName(code)
-		if (!success) return EAT.fail(code)
-		
-		const elementName = snippet
-		//const element = JS `${elementName}`
-		//const element = getElement(elementName, scope)
-		//if (element == undefined) return EAT.fail(code)
-		
-		return {success: true, snippet: elementName, code: result.code}
-		
 	}
 	
 	EAT.fullName = EAT.list (
@@ -770,18 +752,80 @@
 		if (!success) return EAT.fail(code)
 		
 		result = {code} = EAT.gap(code)
-		result = {code, success, snippet} = EAT.elementReference(code, scope)
-		if (!success) return EAT.fail(code)
-		const elementName = snippet
-		const element = getElement(elementName, scope)
-		
-		result = {code} = EAT.gap(code)
-		result = {code, success} = EAT.string(")")(code)
+		result = {code, success, snippet} = EAT.javascriptArg(code, scope)
 		if (!success) return EAT.fail(code)
 		
-		scope.instructions.push(...element.instructions)
+		scope.instructions.push({type: INSTRUCTION.TYPE.MIMIC, value: result.value})
 		
 		return result
+		
+	}
+	
+	//=====//
+	// Arg //
+	//=====//
+	EAT.javascriptArg = (source) => {
+		let result = undefined
+		let success = undefined
+		let snippet = undefined
+		let code = source
+		
+		let innerCode = ""
+		let state = "normal"
+		let nestLevel = 1
+		let stringEnder = undefined
+		
+		for (let i = 0; i < code.length; i++) {
+			const char = code[i]
+			
+			if (state == "normal") {
+				if (char == "(") {
+					nestLevel++
+				}
+				else if (char == ")") {
+					nestLevel--
+					if (nestLevel <= 0) {
+						state = "finished"
+						break
+					}
+				}
+				else if (char == '"') {
+					state = "string"
+					stringEnder = '"'
+				}
+				else if (char == "'") {
+					state = "string"
+					stringEnder = "'"
+				}
+				else if (char == "`") {
+					throw new Error(`[TodeSplat] Template strings are not supported, sorry...`)
+				}
+				innerCode += char
+			}
+			
+			else if (state == "string") {
+				innerCode += char
+				if (char == "\\") {
+					state = "stringEscape"
+				}
+				if (char == stringEnder) {
+					state = "normal"
+					stringEnder = undefined
+				}
+			}
+			
+			else if (state == "stringEscape") {
+				innerCode += char
+				state = "string"
+			}
+		}
+		
+		if (state != "finished") return EAT.fail()
+		
+		result = {success} = EAT.javascript(innerCode)
+		if (!success) return EAT.fail()
+		
+		return {success, snippet: innerCode+")", code: source.slice(innerCode.length+1), value: result.value}
 		
 	}
 	
@@ -941,7 +985,7 @@
 			}
 		}
 		
-		const instruction = {type: INSTRUCTION.TYPE.DIAGRAM, spaces}
+		const instruction = {type: INSTRUCTION.TYPE.DIAGRAM, value: spaces}
 		scope.instructions.push(instruction)
 		
 		return {success: true, code: result.code, snippet: diagram.join("\n")}

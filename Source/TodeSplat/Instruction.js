@@ -13,6 +13,7 @@ const INSTRUCTION = {}
 		FOR: Symbol("For"),
 		MAYBE: Symbol("Maybe"),
 		ACTION: Symbol("Action"),
+		MIMIC: Symbol("Mimic"),
 	}
 	
 	

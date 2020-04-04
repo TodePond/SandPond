@@ -1,43 +1,12 @@
 
-/*TodeSplat`
-
-element Res {
-	opacity 0.5
-	@_ => _@
-}
-
-`*/
-
-/*
-TodeSplat`
-
-
-	
-element Sand {
-	category "Sandbox"
-	category "Powder"
-	colour "#FC0"
-}
-
-element Water {
-	category "Sandbox"
-	category "Liquid"
-	colour "lightblue"
-	emissive "blue"
-	opacity 0.5
-}
-
-	
-	
-	
-`
-*/
 
 
 
 
 
 TodeSplat`
+
+
 
 origin @
 given @ (self, atom) => self == atom
@@ -46,7 +15,6 @@ change @ (self) => self
 change _ () => undefined
 given _ (space) => space
 
-/* This is a blckcomment!
 element Sand {
 
 	colour "#FC0"
@@ -55,18 +23,11 @@ element Sand {
 	_    @
 	
 }
-*/
-
-element Snow {
-
-	@ => _
-
-}
 
 element Forkbomb @_ => @@
 
 element Foo {
-
+	
 }
 
 element Water {
@@ -87,8 +48,11 @@ element Slime {
 	opacity 0.65
 }
 
-element Lava colour {
-	return "red"
+element Lava {
+	colour {
+		return "red"
+	}
+	mimic("Lava")
 }
 
 element Fire colour [
