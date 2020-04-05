@@ -72,23 +72,46 @@ const JAVASCRIPT = {}
 	
 	JAVASCRIPT.makeConstructor = (name, data, args) => {
 	
-		let dataCode = ``
-		let dataArgs = ``
-		for (const dataName in data) {
-			if (dataArgs.length == 0) dataArgs += `${dataName}`
-			else dataArgs += `, ${dataName}`
-			dataCode += `, ${dataName}`
+		let closureArgNames = ``
+		let constructorArgNames = ``
+		let propertyNames = ``
+	
+		for (const argName in data) {
+			if (closureArgNames.length == 0) {
+				closureArgNames += `${argName}Default`
+				propertyNames += `${argName}: ${argName}Default`
+			}
+			else {
+				closureArgNames += `, ${argName}Default`
+				propertyNames += `, ${argName}: ${argName}Default`
+			}
 		}
 		
-	
-		return `(${dataArgs}) => {
-		
-			const element = function ${name}() {
-				const atom = {element${dataCode}}
-				return atom
+		for (const argName in args) {
+			if (closureArgNames.length == 0) {
+				closureArgNames += `${argName}Default`
 			}
-			return element
-		}`
+			else {
+				closureArgNames += `, ${argName}Default`
+			}
+			if (constructorArgNames.length == 0) {
+				constructorArgNames += `${argName} = ${argName}Default`
+				propertyNames += `, ${argName}: ${argName}`
+			}
+			else {
+				constructorArgNames += `, ${argName} = ${argName}Default`
+				propertyNames += `, ${argName}: ${argName}`
+			}
+		}
+	
+		return `(${closureArgNames}) => {\n` +
+		`\n`+
+		`const element = function ${name}(${constructorArgNames}) {\n`+
+		`	const atom = {element, ${propertyNames}}\n`+
+		`	return atom\n`+
+		`}\n`+
+		`	return element\n`+
+		`}`
 	}
 	
 	//=========//

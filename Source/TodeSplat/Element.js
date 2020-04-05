@@ -21,7 +21,7 @@ const ELEMENT = {}
 		const constructorCode = JAVASCRIPT.makeConstructor(name, data, args)
 		
 		const behave = JS(behaveCode)()
-		const constructor = JS(constructorCode)(...data)
+		const constructor = JS(constructorCode)(...data, ...args)
 		
 		const elementInfo = {
 			

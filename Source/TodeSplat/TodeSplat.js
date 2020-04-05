@@ -7,6 +7,7 @@
 		parent,
 		elements: {},
 		data: {},
+		args: {},
 		categories: [],
 		instructions: [],
 		symbols: {_: undefined},
@@ -422,8 +423,8 @@
 		result = {success} = EAT.data(code, scope)
 		if (success) return result
 		
-		// TODO: 'arg' or 'param' ???
-		// ...
+		result = {success} = EAT.arg(code, scope)
+		if (success) return result
 		
 		result = {success} = EAT.mimic(code, scope)
 		if (success) return result
@@ -742,6 +743,32 @@
 		scope.data[name] = result.value
 		
 		return result
+		
+	}
+	
+	EAT.arg = (source, scope) => {
+		let result = undefined
+		let success = undefined
+		let snippet = undefined
+		let code = source
+		
+		result = {code, success} = EAT.string("arg")(code)
+		if (!success) return EAT.fail(code)
+		
+		result = {code, success} = EAT.gap(code)
+		if (!success) return EAT.fail(code)
+		
+		result = {code, success, snippet} = EAT.name(code)
+		if (!success) return EAT.fail(code)
+		const name = result.snippet
+		
+		result = {code} = EAT.gap(code)
+		result = {code, success} = EAT.javascript(code)
+		//if (!success) code 
+		
+		scope.args[name] = result.value
+		
+		return {...result, success: true}
 		
 	}
 	

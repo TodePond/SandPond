@@ -43,7 +43,8 @@ element Water {
 	colour { return "lightblue" }
 	emissive "blue"
 	opacity 0.5
-	
+	arg temperature 25
+	data state "liquid"
 	element Hot { @ => _ }
 	
 	
