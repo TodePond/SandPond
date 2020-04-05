@@ -83,7 +83,7 @@ element DReg { colour "brown" }
 element Res {
 	opacity 0.5
 	
-	@_ => _@
+	pov(right) @_ => _@
 }
 
 `

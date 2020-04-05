@@ -433,6 +433,9 @@
 		result = {success} = EAT.action(code, scope)
 		if (success) return result
 		
+		result = {success} = EAT.pov(code, scope)
+		if (success) return result
+		
 		// symbol part
 		result = {success} = EAT.symbolPart(code, scope)
 		if (success) return result
@@ -778,7 +781,7 @@
 		if (!success) return EAT.fail(code)
 		
 		result = {code} = EAT.gap(code)
-		result = {code, success, snippet} = EAT.javascriptArg(code, scope)
+		result = {code, success, snippet} = EAT.javascriptArg(code)
 		if (!success) return EAT.fail(code)
 		
 		scope.instructions.push({type: INSTRUCTION.TYPE.MIMIC, value: result.value})
@@ -801,7 +804,7 @@
 		if (!success) return EAT.fail(code)
 		
 		result = {code} = EAT.gap(code)
-		result = {code, success, snippet} = EAT.javascriptArg(code, scope)
+		result = {code, success, snippet} = EAT.javascriptArg(code)
 		if (!success) return EAT.fail(code)
 		
 		const chance = result.value
@@ -815,6 +818,42 @@
 		scope.instructions.push(...result.blockScope.instructions)
 		scope.instructions.push({type: INSTRUCTION.TYPE.BLOCK_END})
 		
+		return result
+		
+	}
+	
+	EAT.pov = (source, scope) => {
+		let result = undefined
+		let success = undefined
+		let snippet = undefined
+		let code = source
+		
+		result = {code, success} = EAT.string("pov")(code)
+		if (!success) return EAT.fail(code)
+		
+		result = {code} = EAT.gap(code)
+		result = {code, success} = EAT.string("(")(code)
+		if (!success) return EAT.fail(code)
+		
+		let jsHead = ``
+		for (const povName in POV.TYPE) {
+			jsHead += `const ${povName.as(LowerCase)} = POV.TYPE.${povName}\n`
+		}
+		
+		result = {code} = EAT.gap(code)
+		result = {code, success, snippet} = EAT.javascriptArg(code, jsHead)
+		if (!success) return EAT.fail(code)
+		
+		const chance = result.value
+		
+		scope.instructions.push({type: INSTRUCTION.TYPE.POV, value: result.value})
+		
+		result = {code} = EAT.gap(code)
+		result = {code, success} = EAT.todeSplatBlock(code, scope)
+		if (!success) return EAT.fail(code)
+		
+		scope.instructions.push(...result.blockScope.instructions)
+		scope.instructions.push({type: INSTRUCTION.TYPE.BLOCK_END})
 		
 		return result
 		
@@ -839,13 +878,13 @@
 		scope.instructions.push({type: INSTRUCTION.TYPE.BLOCK_END})
 		
 		return result
-		 
+		
 	}
 	
 	//=====//
 	// Arg //
 	//=====//
-	EAT.javascriptArg = (source) => {
+	EAT.javascriptArg = (source, head="", tail="") => {
 		let result = undefined
 		let success = undefined
 		let snippet = undefined
@@ -903,7 +942,7 @@
 		
 		if (state != "finished") return EAT.fail(code)
 		
-		result = {success} = EAT.javascript(innerCode)
+		result = {success} = EAT.javascript(innerCode, head, tail)
 		if (!success) return EAT.fail(code)
 		
 		return {success, snippet: innerCode+")", code: source.slice(innerCode.length+1), value: result.value}
@@ -1105,19 +1144,19 @@
 	//============//
 	// Javascript //
 	//============//
-	EAT.javascript = (source) => {
+	EAT.javascript = (source, head="", tail="") => {
 		let result = undefined
 		let success = undefined
 		let snippet = undefined
 		let code = source
 		
-		result = {code, success} = EAT.block(EAT.javascriptInner)(code)
+		result = {code, success} = EAT.block(EAT.javascriptInner)(code, head, tail)
 		if (!success) return EAT.fail(code)
 		
 		return result
 	}
 	
-	EAT.javascriptInner = (type) => (source) => {
+	EAT.javascriptInner = (type) => (source, head="", tail="") => {
 		let result = undefined
 		let success = undefined
 		let snippet = undefined
@@ -1127,14 +1166,14 @@
 			return EAT.or (
 				EAT.javascriptInlineMulti,
 				EAT.javascriptInlineSingle,
-			)(code)
+			)(code, head, tail)
 			
 		}
 		
 		if (type == EAT.BLOCK_SINGLE) {
 			result = {code, snippet, success} = EAT.many(EAT.regex(/[^}](?!\n)/))(code)
 			if (!success) return EAT.fail(code)
-			result.value = new Function(snippet)()
+			result.value = new Function(head + snippet + tail)()
 			return result
 		}
 		
@@ -1145,14 +1184,14 @@
 			)(code)
 			let endResult = {code, success} = EAT.unindent(code)
 			if (!success) return endResult
-			result.value = new Function(snippet)()
+			result.value = new Function(head + snippet + tail)()
 			return {...result, code}
 		}
 		
 		return result
 	}
 	
-	EAT.javascriptInlineSingle = (source) => {
+	EAT.javascriptInlineSingle = (source, head="", tail="") => {
 		let result = undefined
 		let success = undefined
 		let snippet = undefined
@@ -1161,11 +1200,11 @@
 		result = {code, snippet, success} = EAT.line(code)
 		if (!success) return EAT.fail(code)
 		
-		result.value = new Function("return " + snippet)()
+		result.value = new Function(head + "return " + snippet + tail)()
 		return result
 	}
 	
-	EAT.javascriptInlineMulti = (source) => {
+	EAT.javascriptInlineMulti = (source, head="", tail="") => {
 		let result = undefined
 		let success = undefined
 		let snippet = undefined
@@ -1195,7 +1234,7 @@
 		if (!success) return EAT.fail(code)
 		js += snippet
 		
-		result.value = new Function("return " + js)()
+		result.value = new Function(head + "return " + js + tail)()
 		
 		return result
 	}
