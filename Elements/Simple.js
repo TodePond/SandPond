@@ -26,7 +26,7 @@ element Sand {
 	@ => _
 	_    @
 	
-	any(xz) {
+	any({return xz}) {
 		@  => _
 		#_    .@
 	}

@@ -884,11 +884,8 @@
 			jsHead += `const ${symmetryName.as(LowerCase)} = SYMMETRY.TYPE.${symmetryName}\n`
 		}
 		
-		let jsInnerHead = `[`
-		let jsTail = `]`
-		
 		result = {code} = EAT.gap(code)
-		result = {code, success, snippet} = EAT.javascriptArg(code, jsHead, jsInnerHead, jsTail)
+		result = {code, success, snippet} = EAT.javascriptArg(code, jsHead)
 		if (!success) return EAT.fail(code)
 		
 		const chance = result.value
@@ -925,11 +922,8 @@
 			jsHead += `const ${symmetryName.as(LowerCase)} = SYMMETRY.TYPE.${symmetryName}\n`
 		}
 		
-		let jsInnerHead = `[`
-		let jsTail = `]`
-		
 		result = {code} = EAT.gap(code)
-		result = {code, success, snippet} = EAT.javascriptArg(code, jsHead, jsInnerHead, jsTail)
+		result = {code, success, snippet} = EAT.javascriptArg(code, jsHead)
 		if (!success) return EAT.fail(code)
 		
 		const chance = result.value
@@ -1233,19 +1227,19 @@
 	//============//
 	// Javascript //
 	//============//
-	EAT.javascript = (source, head="", innerHead="", tail="") => {
+	EAT.javascript = (source, head="", innerHead="", innerTail="", tail="") => {
 		let result = undefined
 		let success = undefined
 		let snippet = undefined
 		let code = source
 		
-		result = {code, success} = EAT.block(EAT.javascriptInner)(code, head, innerHead, tail)
+		result = {code, success} = EAT.block(EAT.javascriptInner)(code, head, innerHead, innerTail, tail)
 		if (!success) return EAT.fail(code)
 		
 		return result
 	}
 	
-	EAT.javascriptInner = (type) => (source, head="", innerHead="", tail="") => {
+	EAT.javascriptInner = (type) => (source, head="", innerHead="", innerTail="", tail="") => {
 		let result = undefined
 		let success = undefined
 		let snippet = undefined
@@ -1255,14 +1249,14 @@
 			return EAT.or (
 				EAT.javascriptInlineMulti,
 				EAT.javascriptInlineSingle,
-			)(code, head, innerHead, tail)
+			)(code, head, innerHead, innerTail, tail)
 			
 		}
 		
 		if (type == EAT.BLOCK_SINGLE) {
 			result = {code, snippet, success} = EAT.many(EAT.regex(/[^}](?!\n)/))(code)
 			if (!success) return EAT.fail(code)
-			result.value = new Function(head + innerHead + snippet + tail)()
+			result.value = new Function(head + snippet + tail)()
 			return result
 		}
 		
@@ -1273,14 +1267,14 @@
 			)(code)
 			let endResult = {code, success} = EAT.unindent(code)
 			if (!success) return endResult
-			result.value = new Function(head + innerHead + snippet + tail)()
+			result.value = new Function(head + snippet + tail)()
 			return {...result, code}
 		}
 		
 		return result
 	}
 	
-	EAT.javascriptInlineSingle = (source, head="", innerHead="", tail="") => {
+	EAT.javascriptInlineSingle = (source, head="", innerHead="", innerTail="", tail="") => {
 		let result = undefined
 		let success = undefined
 		let snippet = undefined
@@ -1289,11 +1283,11 @@
 		result = {code, snippet, success} = EAT.line(code)
 		if (!success) return EAT.fail(code)
 		
-		result.value = new Function(head + "return " + innerHead + snippet + tail)()
+		result.value = new Function(head + "return " + innerHead + snippet + innerTail + tail)()
 		return result
 	}
 	
-	EAT.javascriptInlineMulti = (source, head="", innerHead="", tail="") => {
+	EAT.javascriptInlineMulti = (source, head="", innerHead="", innerTail="", tail="") => {
 		let result = undefined
 		let success = undefined
 		let snippet = undefined
@@ -1323,7 +1317,7 @@
 		if (!success) return EAT.fail(code)
 		js += snippet
 		
-		result.value = new Function(head + "return " + innerHead + js + tail)()
+		result.value = new Function(head + "return " + innerHead + js + innerTail + tail)()
 		
 		return result
 	}
