@@ -88,4 +88,6 @@ element Res any(xyz) {
 	@_ => _@
 }
 
+element SuperForkbomb for(xyz) @_ => @@
+
 `

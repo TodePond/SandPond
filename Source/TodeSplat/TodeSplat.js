@@ -437,6 +437,9 @@
 		result = {success} = EAT.any(code, scope)
 		if (success) return result
 		
+		result = {success} = EAT.for(code, scope)
+		if (success) return result
+		
 		result = {success} = EAT.pov(code, scope)
 		if (success) return result
 		
@@ -856,6 +859,47 @@
 		result = {code, success} = EAT.todeSplatBlock(code, scope)
 		if (!success) return EAT.fail(code)
 		
+		scope.instructions.push(...result.blockScope.instructions)
+		scope.instructions.push({type: INSTRUCTION.TYPE.BLOCK_END})
+		
+		return result
+		
+	}
+	
+	EAT.for = (source, scope) => {
+		let result = undefined
+		let success = undefined
+		let snippet = undefined
+		let code = source
+		
+		result = {code, success} = EAT.string("for")(code)
+		if (!success) return EAT.fail(code)
+		
+		result = {code} = EAT.gap(code)
+		result = {code, success} = EAT.string("(")(code)
+		if (!success) return EAT.fail(code)
+		
+		let jsHead = ``
+		for (const symmetryName in SYMMETRY.TYPE) {
+			jsHead += `const ${symmetryName.as(LowerCase)} = SYMMETRY.TYPE.${symmetryName}\n`
+		}
+		
+		let jsInnerHead = `[`
+		let jsTail = `]`
+		
+		result = {code} = EAT.gap(code)
+		result = {code, success, snippet} = EAT.javascriptArg(code, jsHead, jsInnerHead, jsTail)
+		if (!success) return EAT.fail(code)
+		
+		const chance = result.value
+		
+		scope.instructions.push({type: INSTRUCTION.TYPE.FOR, value: result.value})
+		
+		result = {code} = EAT.gap(code)
+		result = {code, success} = EAT.todeSplatBlock(code, scope)
+		if (!success) return EAT.fail(code)
+		
+		scope.properties.o= result.blockScope.properties
 		scope.instructions.push(...result.blockScope.instructions)
 		scope.instructions.push({type: INSTRUCTION.TYPE.BLOCK_END})
 		
