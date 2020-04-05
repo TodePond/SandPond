@@ -839,7 +839,7 @@
 		scope.instructions.push({type: INSTRUCTION.TYPE.BLOCK_END})
 		
 		return result
-		
+		 
 	}
 	
 	//=====//
