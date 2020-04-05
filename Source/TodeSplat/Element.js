@@ -11,11 +11,11 @@ const ELEMENT = {}
 	//========//
 	// Public //
 	//========//
-	ELEMENT.make = ({
-		name, colour = "grey", emissive = colour, opacity = 1.0,
+	ELEMENT.make = ({name, instructions = [], data = {}, args = {}, categories = []}, {
+		colour = "grey", emissive = colour, opacity = 1.0,
 		precise = false, floor = false, hidden = false, pour = true,
-		instructions = [], data = {}, args = {}, categories = [], ...properties
-	}) => {
+		...otherProperties
+	} = {}) => {
 	
 		const behaveCode = JAVASCRIPT.makeBehave(instructions, name)
 		const constructorCode = JAVASCRIPT.makeConstructor(name, data, args)
@@ -35,7 +35,7 @@ const ELEMENT = {}
 			constructorCode, behaveCode, instructions,
 			
 			// Behaviour
-			behave, ...properties
+			behave, ...otherProperties
 			
 		}
 		

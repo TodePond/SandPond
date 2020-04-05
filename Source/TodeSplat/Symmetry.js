@@ -3,6 +3,16 @@
 //==========//
 const SYMMETRY = {}
 
+SYMMETRY.TYPE = {
+	X: Symbol("X"),
+	Y: Symbol("Y"),
+	Z: Symbol("Z"),
+	XZ: Symbol("XZ"),
+	XY: Symbol("XY"),
+	YZ: Symbol("YZ"),
+	XYZ: Symbol("XYZ"),
+}
+
 {
 
 	// Symmetry Job Description

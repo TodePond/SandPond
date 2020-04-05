@@ -26,8 +26,10 @@ element Sand {
 	@ => _
 	_    @
 	
-	@  => _
-	#_    .@
+	any(xz) {
+		@  => _
+		#_    .@
+	}
 	
 }
 
@@ -80,10 +82,10 @@ element Wall prop state "solid"
 
 element DReg { colour "brown" }
 
-element Res {
+element Res any(xyz) {
 	opacity 0.5
-	
-	pov(right) @_ => _@
+	prop lol "losl"
+	@_ => _@
 }
 
 `
