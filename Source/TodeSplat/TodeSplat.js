@@ -289,13 +289,14 @@
 		result = {code} = EAT.stripComments(code)
 		
 		const scope = makeScope(TodeSplat.global)
+		scope.global = true
 		result = {success, code} = EAT.todeSplatMultiInner(code, scope)
 		
-		for (const name in scope.elements) {
+		/*for (const name in scope.elements) {
 			const element = scope.elements[name]
 			if (window[name] != undefined) console.warn(`[TodeSplat] Overriding existing value with new element: '${name}'`)
 			window[name] = element
-		}
+		}*/
 		
 		absorbScope(TodeSplat.global, scope)
 		
@@ -550,6 +551,11 @@
 		const element = ELEMENT.make(scope)
 		parentScope.elements[scope.name] = element
 		
+		if (parentScope.global == true) {
+			if (window[scope.name] != undefined) console.warn(`[TodeSplat] Overriding existing value with new element: '${scope.name}'`)
+			window[scope.name] = element
+		}
+		
 		return {success: true, snippet, code: result.code}
 	}
 	
@@ -572,6 +578,7 @@
 		"origin",
 		"given",
 		"change",
+		"keep",
 	]
 	
 	EAT.symbolName = EAT.many(EAT.regex(/[^ 	\n]/))
@@ -976,7 +983,7 @@
 					throw new Error(`[TodeSplat] Symbol '${lhsChar}' used on left-hand-side but doesn't have any left-hand-side parts, eg: given`)
 				}
 				
-				if (output.change == undefined) {
+				if (output.change == undefined && output.keep == undefined) {
 					throw new Error(`[TodeSplat] Symbol '${rhsChar}' used on right-hand-side but doesn't have any right-hand-side parts, eg: change`)
 				}
 				

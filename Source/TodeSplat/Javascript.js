@@ -44,7 +44,7 @@ const JAVASCRIPT = {}
 		return "() => () => {}"
 	}
 	
-	showRaw = (element) => {
+	showInstructions = (element) => {
 		element.instructions.forEach(instruction => print(instruction))
 	}
 	
@@ -54,7 +54,8 @@ const JAVASCRIPT = {}
 		
 		for (const instruction of element.instructions) {
 		
-			print(instruction.type.toDescription())
+			print(instruction)
+			//print(instruction.type.toDescription())
 			
 			if (instruction.type == INSTRUCTION.TYPE.DIAGRAM) {
 				for (const space of instruction.value) {

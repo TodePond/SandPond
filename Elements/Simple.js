@@ -15,12 +15,19 @@ change @ (self) => self
 change _ () => undefined
 given _ (space) => space
 
+given # (atom) => atom
+
+keep .
+
 element Sand {
 
 	colour "#FC0"
 	
 	@ => _
 	_    @
+	
+	@  => _
+	#_    .@
 	
 }
 
@@ -52,7 +59,7 @@ element Lava {
 	colour {
 		return "red"
 	}
-	mimic("Lava")
+	mimic(Slime)
 }
 
 element Fire colour [
