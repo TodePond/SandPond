@@ -306,6 +306,20 @@
 	
 	TodeSplat.global = makeScope()
 	
+	EAT.todeSplatBlock = (source, scope) => {
+		let result = undefined
+		let success = undefined
+		let snippet = undefined
+		let code = source
+		
+		const blockScope = makeScope(scope)
+		result = {code, success} = EAT.block(EAT.todeSplat)(code, blockScope)
+		if (!success) return EAT.fail(code)
+		
+		return {...result, blockScope}
+		
+	}
+	
 	EAT.todeSplat = (type) => (source, scope) => {
 		
 		let result = undefined
@@ -411,6 +425,12 @@
 		// ...
 		
 		result = {success} = EAT.mimic(code, scope)
+		if (success) return result
+		
+		result = {success} = EAT.random(code, scope)
+		if (success) return result
+		
+		result = {success} = EAT.action(code, scope)
 		if (success) return result
 		
 		// symbol part
@@ -538,12 +558,12 @@
 		if (!success) throw new Error(`[TodeSplat] Expected element name but got '${code[0]}'`)
 		scope.name = snippet
 		
-		scope.instructions.push({type: INSTRUCTION.TYPE.BLOCK_START})
+		//scope.instructions.push({type: INSTRUCTION.TYPE.BLOCK_START})
 		
 		result = {code, success} = EAT.block(EAT.todeSplat)(code, scope)
 		if (!success) throw new Error(`[TodeSplat] Expected element block but got something else`)
 		
-		scope.instructions.push({type: INSTRUCTION.TYPE.BLOCK_END})
+		//scope.instructions.push({type: INSTRUCTION.TYPE.BLOCK_END})
 		
 		snippet = source.slice(0, source.length - result.code.length)
 		scope.source = snippet
@@ -744,7 +764,6 @@
 	//==========//
 	// Function //
 	//==========//
-	// TODO: change to mini JS block, after redoing JS blocks?
 	EAT.mimic = (source, scope) => {
 		let result = undefined
 		let success = undefined
@@ -763,6 +782,61 @@
 		if (!success) return EAT.fail(code)
 		
 		scope.instructions.push({type: INSTRUCTION.TYPE.MIMIC, value: result.value})
+		
+		return result
+		
+	}
+	
+	EAT.random = (source, scope) => {
+		let result = undefined
+		let success = undefined
+		let snippet = undefined
+		let code = source
+		
+		result = {code, success} = EAT.string("maybe")(code)
+		if (!success) return EAT.fail(code)
+		
+		result = {code} = EAT.gap(code)
+		result = {code, success} = EAT.string("(")(code)
+		if (!success) return EAT.fail(code)
+		
+		result = {code} = EAT.gap(code)
+		result = {code, success, snippet} = EAT.javascriptArg(code, scope)
+		if (!success) return EAT.fail(code)
+		
+		const chance = result.value
+		
+		scope.instructions.push({type: INSTRUCTION.TYPE.MAYBE, value: result.value})
+		
+		result = {code} = EAT.gap(code)
+		result = {code, success} = EAT.todeSplatBlock(code, scope)
+		if (!success) return EAT.fail(code)
+		
+		scope.instructions.push(...result.blockScope.instructions)
+		scope.instructions.push({type: INSTRUCTION.TYPE.BLOCK_END})
+		
+		
+		return result
+		
+	}
+	
+	EAT.action = (source, scope) => {
+		let result = undefined
+		let success = undefined
+		let snippet = undefined
+		let code = source
+		
+		result = {code, success} = EAT.string("action")(code)
+		if (!success) return EAT.fail(code)
+		
+		scope.instructions.push({type: INSTRUCTION.TYPE.ACTION})
+		
+		result = {code} = EAT.gap(code)
+		result = {code, success} = EAT.todeSplatBlock(code, scope)
+		if (!success) return EAT.fail(code)
+		
+		scope.instructions.push(...result.blockScope.instructions)
+		scope.instructions.push({type: INSTRUCTION.TYPE.BLOCK_END})
 		
 		return result
 		
@@ -827,10 +901,10 @@
 			}
 		}
 		
-		if (state != "finished") return EAT.fail()
+		if (state != "finished") return EAT.fail(code)
 		
 		result = {success} = EAT.javascript(innerCode)
-		if (!success) return EAT.fail()
+		if (!success) return EAT.fail(code)
 		
 		return {success, snippet: innerCode+")", code: source.slice(innerCode.length+1), value: result.value}
 		

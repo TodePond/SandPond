@@ -6,13 +6,13 @@ const INSTRUCTION = {}
 {
 	
 	INSTRUCTION.TYPE = {
-		BLOCK_START: Symbol("BlockStart"),
-		BLOCK_END: Symbol("BlockEnd"),
+		//BLOCK_START: Symbol("BlockStart"),
+		BLOCK_END: Symbol("EndBlock"),
 		DIAGRAM: Symbol("Diagram"),
-		ANY: Symbol("Any"),
-		FOR: Symbol("For"),
-		MAYBE: Symbol("Maybe"),
-		ACTION: Symbol("Action"),
+		ANY: Symbol("AnyBlock"),
+		FOR: Symbol("ForBlock"),
+		MAYBE: Symbol("MaybeBlock"),
+		ACTION: Symbol("ActionBlock"),
 		MIMIC: Symbol("Mimic"),
 	}
 	

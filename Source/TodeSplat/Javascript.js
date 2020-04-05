@@ -60,12 +60,12 @@ const JAVASCRIPT = {}
 			if (instruction.type == INSTRUCTION.TYPE.DIAGRAM) {
 				for (const space of instruction.value) {
 					const sn = EVENTWINDOW.getSiteNumber(space.x, space.y, 0)
-					print(space)
+					//print(space)
 				}
 			}
 			
 			if (instruction.type == INSTRUCTION.TYPE.MIMIC) {
-				print(instruction.value)
+				//print(instruction.value)
 			}
 		}
 	}

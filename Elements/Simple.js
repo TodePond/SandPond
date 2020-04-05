@@ -59,13 +59,22 @@ element Lava {
 	colour {
 		return "red"
 	}
+	action {
+		_ => _
+		@    @
+	}
 	mimic(Slime)
 }
 
-element Fire colour [
-	"darkorange",
-	"lol",
-][0]
+element Fire {
+	colour [
+		"darkorange",
+		"lol",
+	][0]
+	
+	maybe(0.5) @_ => _@
+	
+}
 
 element Wall prop state "solid"
 
