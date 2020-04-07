@@ -227,6 +227,78 @@ element FireworkShooter {
 	
 }
 
+element Torch {
+	category "Electronics"
+	colour "grey"
+	emissive "grey"
+	
+	//pour false
+	precise true
+	floor true
+	state "solid"
+	conductor true
+	
+	data power 10
+	
+	given L (element) => element == LightOn || element == LightOff
+	change L (self) => {
+		if (self.power > 0) {
+			self.power--
+			self.electric = true
+			return new Fire()
+		} else {
+			self.electric = false
+		}
+	}
+	
+	given E (atom, element) => atom && (element.electric || atom.electric)
+	select E (atom) => {
+		if (atom.power != undefined) return atom.power
+		else return 20
+	}
+	keep E (self, selected) => self.power = selected
+	
+	for(xz) action { @E => E. }
+	action {
+		E    .
+		. => .
+		@    E
+	}
+	
+	action {
+		@ => E
+		E    .
+	}
+	
+	rule {
+		L    _
+		@ => L
+		_    @
+	}
+	
+	rule {
+		@ => L
+		_    @
+	}
+	
+	rule {
+		_ => L
+		@    @
+	}
+	
+	given W (element, self) => element == Water && self.power > 0
+	rule {
+		W => L
+		@    @
+	}
+	
+	rule {
+		L => L
+		@    @
+	}
+	
+}
+
 element Firework {
 
 	colour "grey"

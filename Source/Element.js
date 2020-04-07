@@ -415,6 +415,7 @@ const ELEMENT = {}
 						}
 						else return param
 					})
+					
 					const changeId = globals.changes.indexOf(change)
 					ruleCode += `		const newAtom${s} = change${changeId}(${changeSiteParams.join(", ")})\n`
 					ruleCode += `		SPACE.setAtom(space${s}, newAtom${s})\n`

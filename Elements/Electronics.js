@@ -9,6 +9,7 @@ element Wire {
 	precise true
 	floor true
 	state "solid"
+	conductor true
 	
 	ruleset Solid
 	
@@ -24,7 +25,7 @@ element Wire {
 		_W    W.
 	}
 	
-	given E (element) => element && element.electric && !element.wireIgnore
+	given E (element) => element && element.electric && element != PulseHead && element != PulseTrail
 	change H () => new PulseHead()
 	for(xz) rule { @E => H. }
 	
@@ -53,7 +54,6 @@ element PulseHead {
 	emissive "lightblue"
 	state "solid"
 	electric true
-	wireIgnore true
 	
 	given u (self) => self.id == undefined
 	keep i (self) => self.id = Math.random()
@@ -64,14 +64,8 @@ element PulseHead {
 	change H (self) => self
 	for(xz) rule { @W => TH }
 	
-	given D (element) => element && element.isDevice
+	given D (element) => element && element.conductor
 	for(xz) rule { @D => T. }
-	
-	given t (element, atom, self) => element == PulseTrail && atom.id != self.id
-	//for(xz) rule { @t => .. }
-	
-	change S () => new NonWireSpark()
-	//for(xz) rule { @_ => TS }
 	
 	rule { @ => T }
 }
@@ -82,7 +76,6 @@ element PulseTrail {
 	state "solid"
 	
 	electric true
-	wireIgnore true
 	
 	given H (element, atom, self) => element == PulseHead && atom.id == self.id
 	change W () => new Wire()
@@ -120,7 +113,7 @@ element Bulb {
 	precise true
 	floor true
 	state "solid"
-	isDevice true
+	conductor true
 	
 	data power 10
 	

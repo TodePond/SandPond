@@ -17,13 +17,22 @@ element Water {
 	opacity 0.5
 	category "Sandbox"
 	state "liquid"
+	conductor
 	
 	given H (element) => element && element.isHot
 	keep H
-	
 	change S () => new Steam()
-	
 	rule xyz { @H => SH }
+	
+	given E (element) => element && element.electric && element != WaterPulse && element != WaterPulseTrail
+	change H () => new WaterPulse()
+	for(xz) rule { @E => H. }
+	
+	rule {
+		E => .
+		@    H
+	}
+	
 	ruleset Liquid
 	
 }
@@ -32,29 +41,21 @@ element WaterPulse {
 	
 	colour "lightblue"
 	emissive "lightblue"
-	opacity 0.5
 	state "liquid"
 	current true
 	electric true
 	
-	ruleset Water
 	given u (self) => self.id == undefined
 	keep i (self) => self.id = Math.random()
 	action { u => i }
 	
-	given W (element) => element == Wire
+	given W (element) => element == Water
 	change T (self) => new WaterPulseTrail({id: self.id})
 	change H (self) => self
 	for(xz) rule { @W => TH }
 	
-	given D (element) => element && element.isDevice
+	given D (element) => element && element.conductor
 	for(xz) rule { @D => T. }
-	
-	//given t (element, atom, self) => element == WaterPulseTrail && atom.id != self.id
-	//for(xz) rule { @t => .. }
-	
-	//change S () => new NonWireSpark()
-	//for(xz) rule { @_ => TS }
 	
 	rule { @ => T }
 	
@@ -62,18 +63,16 @@ element WaterPulse {
 
 element WaterPulseTrail {
 	
-	colour "lightblue"
-	emissive "blue"
+	colour "lightyellow"
+	emissive "orange"
 	opacity 0.5
 	state "liquid"
-	
-	ruleset Water
 	
 	electric true
 	current true
 	
-	given H (element, atom, self) => element == PulseHead && atom.id == self.id
-	change W () => new Wire()
+	given H (element, atom, self) => element == WaterPulse && atom.id == self.id
+	change W () => new Water()
 	for(xz) rule { @H => .. }
 	
 	rule { @ => W }
@@ -206,6 +205,36 @@ element WallSeed {
 	
 	given W (element) => element == Solid || element == WallSeed
 	given W (self) => self.fuel == 10
+	rule {
+		@ => _
+		W    .
+	}
+	
+	change W () => new Solid()
+	change S (self) => {
+		self.fuel--
+		if (self.fuel > 0) return self
+	}
+
+	rule {
+		_ => S
+		@    W
+	}
+	
+}
+
+element ShortWallSeed {
+	colour "rgb(128, 128, 128)"
+	emissive "rgb(2, 128, 200)"
+	category "Sandbox"
+	state "solid"
+	
+	data fuel 3
+	
+	ruleset Solid
+	
+	given W (element) => element == Solid || element == WallSeed || element == ShortWallSeed
+	given W (self) => self.fuel == 3
 	rule {
 		@ => _
 		W    .
