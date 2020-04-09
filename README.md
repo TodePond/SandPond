@@ -3,7 +3,7 @@ Sandboys are little atoms that follow simple rules.<br>
 Try it out [here](http://www.sandboys.land).<br>
 It's inspired by the [T2Tile project](https://t2tile.org/) and [SPLAT](https://github.com/DaveAckley/SPLAT).
 
-For more info, check out [these videos](https://www.youtube.com/playlist?list=PL9uRa69RF-7wastqKWXT4d9F84BAzfVd4).<br>
+For more info, check out my [videos](https://www.youtube.com/playlist?list=PL9uRa69RF-7wastqKWXT4d9F84BAzfVd4).<br>
 I post daily updates on my [Instagram](https://www.instagram.com/todepond/).
 
 ## Rules
