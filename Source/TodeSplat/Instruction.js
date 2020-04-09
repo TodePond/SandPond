@@ -25,4 +25,3 @@ POV.TYPE = {
 	TOP: Symbol("Top"),
 }
 
-

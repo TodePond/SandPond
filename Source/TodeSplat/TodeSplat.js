@@ -815,7 +815,7 @@
 		if (!success) return EAT.fail(code)
 		
 		result = {code} = EAT.gap(code)
-		result = {code, success, snippet} = EAT.javascriptArg(code)
+		result = {code, success, snippet} = EAT.javascriptArg(code, undefined, undefined, undefined, undefined, true)
 		if (!success) return EAT.fail(code)
 		
 		scope.instructions.push({type: INSTRUCTION.TYPE.MIMIC, value: result.value})
@@ -994,7 +994,7 @@
 	//=====//
 	// Arg //
 	//=====//
-	EAT.javascriptArg = (source, head="", innerHead="", tail="") => {
+	EAT.javascriptArg = (source, head="", innerHead="", innerTail="", tail="", lazy=false) => {
 		let result = undefined
 		let success = undefined
 		let snippet = undefined
@@ -1052,7 +1052,7 @@
 		
 		if (state != "finished") return EAT.fail(code)
 		
-		result = {success} = EAT.javascript(innerCode, head, innerHead, tail)
+		result = {success} = EAT.javascript(innerCode, head, innerHead, innerTail, tail, lazy)
 		if (!success) return EAT.fail(code)
 		
 		return {success, snippet: innerCode+")", code: source.slice(innerCode.length+1), value: result.value}
@@ -1254,19 +1254,19 @@
 	//============//
 	// Javascript //
 	//============//
-	EAT.javascript = (source, head="", innerHead="", innerTail="", tail="") => {
+	EAT.javascript = (source, head="", innerHead="", innerTail="", tail="", lazy=false) => {
 		let result = undefined
 		let success = undefined
 		let snippet = undefined
 		let code = source
 		
-		result = {code, success} = EAT.block(EAT.javascriptInner)(code, head, innerHead, innerTail, tail)
+		result = {code, success} = EAT.block(EAT.javascriptInner)(code, head, innerHead, innerTail, tail, lazy)
 		if (!success) return EAT.fail(code)
 		
 		return result
 	}
 	
-	EAT.javascriptInner = (type) => (source, head="", innerHead="", innerTail="", tail="") => {
+	EAT.javascriptInner = (type) => (source, head="", innerHead="", innerTail="", tail="", lazy=false) => {
 		let result = undefined
 		let success = undefined
 		let snippet = undefined
@@ -1276,14 +1276,16 @@
 			return EAT.or (
 				EAT.javascriptInlineMulti,
 				EAT.javascriptInlineSingle,
-			)(code, head, innerHead, innerTail, tail)
+			)(code, head, innerHead, innerTail, tail, lazy)
 			
 		}
 		
 		if (type == EAT.BLOCK_SINGLE) {
 			result = {code, snippet, success} = EAT.many(EAT.regex(/[^}](?!\n)/))(code)
 			if (!success) return EAT.fail(code)
-			result.value = new Function(head + snippet + tail)()
+			const func = new Function(head + snippet + tail)
+			const value = lazy? func : func()
+			result.value = value
 			return result
 		}
 		
@@ -1294,14 +1296,16 @@
 			)(code)
 			let endResult = {code, success} = EAT.unindent(code)
 			if (!success) return endResult
-			result.value = new Function(head + snippet + tail)()
+			const func = new Function(head + snippet + tail)
+			const value = lazy? func : func()
+			result.value = value
 			return {...result, code}
 		}
 		
 		return result
 	}
 	
-	EAT.javascriptInlineSingle = (source, head="", innerHead="", innerTail="", tail="") => {
+	EAT.javascriptInlineSingle = (source, head="", innerHead="", innerTail="", tail="", lazy=false) => {
 		let result = undefined
 		let success = undefined
 		let snippet = undefined
@@ -1309,12 +1313,13 @@
 		
 		result = {code, snippet, success} = EAT.line(code)
 		if (!success) return EAT.fail(code)
-		
-		result.value = new Function(head + "return " + innerHead + snippet + innerTail + tail)()
+		const func = new Function(head + "return " + innerHead + snippet + innerTail + tail)
+		const value = lazy? func : func()
+		result.value = value
 		return result
 	}
 	
-	EAT.javascriptInlineMulti = (source, head="", innerHead="", innerTail="", tail="") => {
+	EAT.javascriptInlineMulti = (source, head="", innerHead="", innerTail="", tail="", lazy=false) => {
 		let result = undefined
 		let success = undefined
 		let snippet = undefined
@@ -1343,8 +1348,9 @@
 		result = {code, success, snippet} = EAT.line(code)
 		if (!success) return EAT.fail(code)
 		js += snippet
-		
-		result.value = new Function(head + "return " + innerHead + js + innerTail + tail)()
+		const func = new Function(head + "return " + innerHead + js + innerTail + tail)
+		const value = lazy? func : func()
+		result.value = value
 		
 		return result
 	}

@@ -81,7 +81,10 @@ element Fire {
 
 element Wall prop state "solid"
 
-element DReg { colour "brown" }
+element DReg {
+	colour "brown"
+	mimic(Res)
+}
 
 element Res any(xyz) {
 	opacity 0.5
