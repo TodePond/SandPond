@@ -114,7 +114,7 @@ element GunPowder {
 	category "Explosive"
 	state "solid"
 	
-	given H (element) => element && element.ignites
+	given H (element) => element && (element.ignites || element.electric)
 	change E (self) => new Explosion()
 	
 	rule xyz { @H => EE }

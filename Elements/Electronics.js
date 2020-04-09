@@ -25,8 +25,8 @@ element Wire {
 		_W    W.
 	}
 	
-	given E (element) => element && element.electric && element != PulseHead && element != PulseTrail
-	change H () => new PulseHead()
+	given E (atom, element) => atom && element != PulseHead && element != PulseTrail && (element.electric /*|| atom.electric*/)
+	change H (self) => new PulseHead({parent: self})
 	for(xz) rule { @E => H. }
 	
 	rule {
@@ -59,15 +59,27 @@ element PulseHead {
 	keep i (self) => self.id = Math.random()
 	action { u => i }
 	
-	given W (element) => element == Wire
-	change T (self) => new PulseTrail({id: self.id})
+	given W (element, self, atom) => {
+		if (element == Wire || element == Switch) {
+			self.prevParent = self.parent
+			self.parent = atom
+			return true
+		}
+	}
+	change T (self) => new PulseTrail({id: self.id, parent: self.prevParent})
 	change H (self) => self
 	for(xz) rule { @W => TH }
 	
-	given D (element) => element && element.conductor
+	given D (element, self, atom) => {
+		if (element && element.conductor) {
+			self.parent = atom
+			return true
+		}
+	}
 	for(xz) rule { @D => T. }
 	
-	rule { @ => T }
+	change t (self) => new PulseTrail({id: self.id, parent: self.parent})
+	rule { @ => t }
 }
 
 element PulseTrail {
@@ -78,7 +90,7 @@ element PulseTrail {
 	electric true
 	
 	given H (element, atom, self) => element == PulseHead && atom.id == self.id
-	change W () => new Wire()
+	change W (self) => self.parent
 	for(xz) rule { @H => .. }
 	
 	rule { @ => W }
@@ -187,4 +199,76 @@ element Battery {
 	pour false
 }
 
+element Switch {
+	colour "green"
+	state "solid"
+	floor true
+	precise true
+	category "Electronics"
+	pour false
+	conductor true
+	
+	given S () => !switchOn
+	change S () => new SwitchOff()
+	rule { S => S }
+}
+
+element SwitchOff {
+	colour "lightblue"
+	emissive "blue"
+	state "solid"
+	floor true
+	precise true
+	pour false
+	
+	given S () => switchOn
+	change S () => new Switch()
+	rule { S => S }
+}
+
+element ZappyAnt {
+	colour "grey"
+	emissive "black"
+	state "solid"
+	precise true
+	pour false
+	category "Life"
+	default true
+	
+	given B (element) => element == ZappyAntBum
+	change B () => new ZappyAntBum()
+	
+	rule {
+		@ => B
+		_    @
+	}
+	
+	rule xz { @_ => B@ }
+	rule xz { @B => .. }
+	
+	rule xz {
+		 _ =>  @
+		@     B
+	}
+	
+}
+
+element ZappyAntBum {
+	colour "yellow"
+	state "solid"
+	
+	change S () => new Spark()
+	rule { @ => S }
+	
+}
+
 `
+
+let switchOn = true
+on.keydown(e => {
+	if (e.key == " ") {
+		switchOn = !switchOn
+	}
+})
+
+
