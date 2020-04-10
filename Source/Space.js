@@ -43,7 +43,7 @@ const SPACE = {}
 		//=================
 		
 		WORLD.setSpaceOpacity(space.world, space, atom.element.shaderOpacity)
-		WORLD.setSpaceColour(space.world, space, atom.element.shaderColour, atom.element.shaderEmissive)
+		WORLD.setSpaceColour(space.world, space, atom.shaderColour, atom.shaderEmissive)
 	}
 	
 }

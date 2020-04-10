@@ -43,4 +43,25 @@ element DReg {
 	
 }
 
+element Data {
+
+	category "T2Tile"
+	colour "grey"
+	emissive "black"
+	
+	data initialised false
+	data number undefined
+	
+	given u (self) => !self.initialised
+	keep i (self) => {
+		self.number = Math.floor(Math.random() * 255)
+		self.initialised = true
+		self.shaderEmissive.b = self.number
+		self.shaderEmissive.g = 255 - self.number
+	}
+	action { u => i }
+	rule xyz { @_ => _@ }
+	
+}
+
 `

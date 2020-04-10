@@ -233,7 +233,6 @@ element ZappyAnt {
 	precise true
 	pour false
 	category "Life"
-	default true
 	
 	given B (element) => element == ZappyAntBum
 	change B () => new ZappyAntBum()

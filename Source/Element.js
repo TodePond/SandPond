@@ -39,7 +39,7 @@ const ELEMENT = {}
 		
 		const elementMaker = JS `() => {
 			const element = function ${name}(args) {
-				const atom = {element, ...element.data, ...args}
+				const atom = {element, ...element.data, ...args, shaderColour: {...element.shaderColour}, shaderEmissive: {...element.shaderEmissive}}
 				return atom
 			}
 			return element
