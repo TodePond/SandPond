@@ -54,13 +54,34 @@ element Data {
 	
 	given u (self) => !self.initialised
 	keep i (self) => {
-		self.number = Math.floor(Math.random() * 255)
+		self.number = Math.floor(Math.random() * 100)
 		self.initialised = true
-		self.shaderEmissive.b = self.number
-		self.shaderEmissive.g = 255 - self.number
+		self.shaderEmissive.b = self.number * 2.55
+		self.shaderEmissive.g = 255 - self.number * 2.55
 	}
 	action { u => i }
 	rule xyz { @_ => _@ }
+	
+}
+
+element Input {
+	
+	category "T2Tile"
+	colour "rgb(0, 0, 255)"
+	emissive "rgb(0, 0, 128)"
+	default true
+	
+	given I (element) => element == Input
+	change I () => new Input()
+	change D () => new Data()
+	
+	rule { @_ => _@ }
+	rule { @I => _. }
+	rule { @. => _. }
+	
+	action side yz { @_ => @I }
+	action 0.001 { _@ => D@ }
+	
 	
 }
 
