@@ -69,18 +69,89 @@ element Input {
 	category "T2Tile"
 	colour "rgb(0, 0, 255)"
 	emissive "rgb(0, 0, 128)"
-	default true
+	data portalPower 0
+	data edgePower 0
 	
 	given I (element) => element == Input
 	change I () => new Input()
-	change D () => new Data()
+	change D (self) => new Data()
+	change o (self) => {
+		self.shaderOpacity = self.shaderOpacity - 5
+		if (self.shaderOpacity < 0) self.shaderOpacity = 0
+		return self
+	}
+	
+	keep p (self) => {
+		self.portalPower--
+		if (self.portalPower < 0) self.portalPower = 0
+		if (self.shaderOpacity > self.edgePower * 3 + self.portalPower * 3) return self
+		self.shaderOpacity = self.edgePower * 3 + self.portalPower * 3
+		return self
+	}
+	
+	change P (self) => {
+		self.portalPower = 20
+		if (self.shaderOpacity > self.edgePower * 3 + self.portalPower * 3) return self
+		self.shaderOpacity = self.edgePower * 3 + self.portalPower * 3
+		return self
+	}
+	
+	//action { @ => p }
 	
 	rule { @_ => _@ }
 	rule { @I => _. }
 	rule { @. => _. }
 	
+	action { @ => o }
 	action side yz { @_ => @I }
-	action 0.001 { _@ => D@ }
+	action 0.0001 { _@ => D@ }
+	
+	change e (self) => {
+		self.edgePower = 20
+		if (self.shaderOpacity > self.edgePower * 3 + self.portalPower * 3) return self
+		self.shaderOpacity = self.edgePower * 3 + self.portalPower * 3
+		return self
+	}
+	rule xz side {
+		@x => e.
+		x     .
+	}
+	rule xy side {
+		@x => e.
+		x     .
+	}
+	rule xz side {
+		x     .
+		@x => e.
+	}
+	rule xy side {
+		x@ => .e
+		 x     .
+	}
+	
+	given E (element) => element == Input
+	select E (atom) => atom
+	change E (self, selected) => {
+		self.edgePower = selected.edgePower - 1
+		self.portalPower = selected.portalPower - 1
+		if (selected.portalPower > 0) {}
+		if (self.edgePower < 0.75) self.edgePower = 0.75
+		if (self.portalPower < 0) self.portalPower = 0
+		
+		if (self.shaderOpacity > self.edgePower * 3 + self.portalPower * 3) return self
+		self.shaderOpacity = self.edgePower * 3 + self.portalPower * 3
+		return self
+	}
+	rule xyz { @E => E. }
+	
+	/*change v (self) => {
+		if (self.edgePower != undefined && self.edgePower > 0) {
+			//self.shaderOpacity = self.edgePower * 1
+			self.edgePower--
+		}
+		return self
+	}
+	rule { @ => v }*/
 	
 	
 }
