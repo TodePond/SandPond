@@ -76,6 +76,22 @@ element LukeWilson {
 		 L_L_     _L_L
 	}
 	
+	// Walk Right Armless
+	rule {
+		 HHH_     _HHH
+		 HFH_     _HFH
+		AB@B_ => _AB@B
+		 L_L_     _L_L
+	}
+	
+	// Get torn apart
+	rule {
+		 HH_     __.
+		 HF_     __.
+		AB@_ => ___.
+		 L__     __.
+	}
+	
 	// Walk Right up slope
 	rule {
 		 HHH_     _HHH

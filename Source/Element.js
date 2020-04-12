@@ -415,8 +415,16 @@ const ELEMENT = {}
 					outputLocals.push(spaceName)
 					
 					const changeParams = getParams(change)
+					const atomName = `atom${event.siteNumber}`
+					if (!locals.includes(atomName) && !outputLocals.includes(atomName))
+					if (changeParams.includes("atom") || changeParams.includes("element")) {
+						iterationCode += `	const ${atomName} = ${spaceName}? ${spaceName}.atom : undefined\n`
+						outputLocals.push(atomName)
+					}
+					
 					const changeSiteParams = changeParams.map(param => {
-						if (param == "selected") {
+						if (param == "space" || param == "atom" || param == "element") return `${param}${s}`
+						else if (param == "selected") {
 							const selectedId = selectedRegister[output.name]
 							return `selected${selectedId}`
 						}
