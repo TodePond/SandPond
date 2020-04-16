@@ -1,32 +1,26 @@
-let stackedOutputCount = 0
 const DISPLAY_OUTPUTS = true
-{
-	const outputStyle = HTML`
-		<style>
-			.outputDisplay {
-				position: absolute;
-				right: 10px;
-				font-family: Rosario;
-				font-size: 50px;
-				font-weight: bold;
-				animation: outputRise 3s normal ease-in;
-			}
-			
-			@keyframes outputRise {
-				0% {
-					bottom: 0%;
-					opacity: 100%;
-				}
-				100% {
-					bottom: 50%;
-					opacity: 0%;
-				}
-			}
-		</style>
-	`
-	
-	document.head.appendChild(outputStyle)
-}
+
+const outputFontLoader = new THREE.FontLoader()
+
+let outputFont = undefined
+
+outputFontLoader.load("fonts/Rosario_Regular.json", (font) => {
+	outputFont = font
+})
+
+const OUTPUT_ACCELERATION = 0.003 * ATOM_SIZE
+const OUTPUT_START_SPEED = 0 * ATOM_SIZE
+
+const outputNumbers = []
+on.process(() => {
+	outputNumbers.forEach(mesh => {
+		if (mesh.outputSpeed == undefined) {
+			mesh.outputSpeed = OUTPUT_START_SPEED
+		}
+		mesh.position.x += mesh.outputSpeed
+		mesh.outputSpeed += OUTPUT_ACCELERATION
+	})
+})
 
 TodeSplat`
 
@@ -247,6 +241,9 @@ element Output {
 	data portalPower 0
 	data edgePower 0
 	
+	data y undefined
+	data z undefined
+	
 	given I (element) => element == Output
 	change I () => new Output()
 	change D (self) => new Data()
@@ -266,19 +263,43 @@ element Output {
 	
 	given A (atom) => atom
 	select A (atom) => atom
-	change A (atom, selected) => {
+	change A (atom, selected, self) => {
+		
 		if (selected.element == Data && selected.number != undefined && DISPLAY_OUTPUTS) {
-			const popup = HTML\`<div class="outputDisplay">\${selected.number}</div>\`
-			const right = Math.floor(Math.random() * 100)
-			popup.style = "right: " + right + "%"
-			document.body.appendChild(popup)
-			stackedOutputCount++
-			setTimeout(() => stackedOutputCount--, 200)
+		
+			/*const geometry = new THREE.TextGeometry(selected.number.as(String), {
+				font: outputFont,
+			})
+			
+			const material = new THREE.MeshLambertMaterial({color: "red"})
+			
+			const mesh = new THREE.Mesh(geometry, material)
+			mesh.position.x = MAX_X + 10
+			scene.add(mesh)*/
+			
+			
+			const geometry = new THREE.TextGeometry(selected.number.as(String), {
+				font: outputFont,
+				size: ATOM_SIZE * 2,
+				height: ATOM_SIZE * 2 / 2,
+			})
+			const material = new THREE.MeshLambertMaterial({
+				color: \`rgb(\${Math.floor(selected.shaderColour.r)}, \${Math.floor(selected.shaderColour.g)}, \${Math.floor(selected.shaderColour.b)})\`,
+				emissive: \`rgb(\${Math.floor(selected.shaderEmissive.r)}, \${Math.floor(selected.shaderEmissive.g)}, \${Math.floor(selected.shaderEmissive.b)})\`,
+				transparent: true,
+			})
+			const mesh = new THREE.Mesh(geometry, material)
+			mesh.position.set(MAX_X * ATOM_SIZE, self.y * ATOM_SIZE, self.z * ATOM_SIZE - MAX_Z * ATOM_SIZE)
+			mesh.rotation.y = Math.PI / 2
+			scene.add(mesh)
+			outputNumbers.push(mesh)
 		}
 		atom.portalPower = 30
 		if (atom.shaderOpacity > atom.edgePower * 3 + atom.portalPower * 3) return atom
 		atom.shaderOpacity = (atom.edgePower * 3 + atom.portalPower * 3)
 		return atom
+		
+		
 	}
 	
 	change P (atom) => {
@@ -286,6 +307,32 @@ element Output {
 		if (atom.shaderOpacity > atom.edgePower * 3 + atom.portalPower * 3) return atom
 		atom.shaderOpacity = (atom.edgePower * 3 + atom.portalPower * 3)
 		return atom
+	}
+	
+	keep Y (self) => self.y = 0
+	action {
+		@    Y
+		x => .
+	}
+	
+	given y (atom) => atom && atom.y != undefined
+	select y (atom) => atom
+	keep y (selected, self) => self.y = selected.y + 1
+	action {
+		@ => y
+		y    .
+	}
+	
+	keep Z (self) => self.z = 0
+	action side {
+		@x => Z.
+	}
+	
+	given z (atom) => atom && atom.z != undefined
+	select z (atom) => atom
+	keep z (selected, self) => self.z = selected.z + 1
+	action side {
+		@z => z.
 	}
 	
 	action { @ => p }
