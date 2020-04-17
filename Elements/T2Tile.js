@@ -4,7 +4,7 @@ const outputFont = new THREE.Font({"glyphs":{"0":{"ha":803,"x_min":68,"x_max":73
 
 const OUTPUT_ACCELERATION = 0.003 * ATOM_SIZE
 const OUTPUT_START_SPEED = 0 * ATOM_SIZE
-const OUTPUT_MAX_DISTANCE = 4000 * ATOM_SIZE
+const OUTPUT_MAX_DISTANCE = 2000 * ATOM_SIZE
 
 const outputNumbers = []
 on.process(() => {
@@ -99,6 +99,47 @@ element Pusher {
 		 @_ =>  @D
 		D      _
 	}
+	
+	rule xyz { @R => @@ }
+	rule xyz { @_ => _@ }
+}
+
+element BoolSorter {
+	colour "#ffdd00"
+	emissive "red"
+	category "T2Tile"
+	opacity 0.03
+	isWorker true
+	
+	given R (element) => element == Res
+	
+	given T (atom, element) => atom && !element.isWorker && atom.value == true
+	select T (atom) => atom
+	change T (selected) => selected
+	given F (atom, element) => atom && !element.isWorker && atom.value == false
+	select F (atom) => atom
+	change F (selected) => selected
+	
+	rule top {
+		  _      T
+		T@  => _@
+	}
+	rule top {
+		  _      T
+		 @  =>  @
+		T      _
+	}
+	
+	rule top {
+		F@  => _@
+		  _      F
+	}
+	rule top {
+		F      _
+		 @  =>  @
+		  _      F
+	}
+	
 	rule xyz { @R => @@ }
 	rule xyz { @_ => _@ }
 }
@@ -305,7 +346,7 @@ element Output {
 				transparent: true,
 			})
 			const mesh = new THREE.Mesh(geometry, material)
-			mesh.position.set(MAX_X * ATOM_SIZE, self.y * ATOM_SIZE, self.z * ATOM_SIZE - MAX_Z * ATOM_SIZE)
+			mesh.position.set(MAX_X * ATOM_SIZE, self.y * ATOM_SIZE, -1 * (self.z * ATOM_SIZE - MAX_Z * ATOM_SIZE))
 			mesh.rotation.y = Math.PI / 2
 			scene.add(mesh)
 			outputNumbers.unshift(mesh)
