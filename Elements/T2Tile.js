@@ -4,7 +4,7 @@ const outputFont = new THREE.Font({"glyphs":{"0":{"ha":803,"x_min":68,"x_max":73
 
 const OUTPUT_ACCELERATION = 0.003 * ATOM_SIZE
 const OUTPUT_START_SPEED = 0 * ATOM_SIZE
-const OUTPUT_MAX_DISTANCE = 2000 * ATOM_SIZE
+const OUTPUT_MAX_DISTANCE = 500 * ATOM_SIZE
 
 const outputNumbers = []
 on.process(() => {
@@ -47,7 +47,7 @@ element Res {
 
 	colour "slategrey"
 	emissive "grey"
-	opacity 0.05
+	opacity 0.5
 	category "T2Tile"
 	isFood true
 	isWorker true
@@ -113,10 +113,10 @@ element BoolSorter {
 	
 	given R (element) => element == Res
 	
-	given T (atom, element) => atom && !element.isWorker && atom.value == true
+	given T (atom, element) => atom && !element.isWorker && atom.value
 	select T (atom) => atom
 	change T (selected) => selected
-	given F (atom, element) => atom && !element.isWorker && atom.value == false
+	given F (atom, element) => atom && !element.isWorker && !atom.value
 	select F (atom) => atom
 	change F (selected) => selected
 	
@@ -125,14 +125,23 @@ element BoolSorter {
 		T@  => _@
 	}
 	rule top {
-		  _      T
-		 @  =>  @
-		T      _
+		F@  => _@
+		  _      F
 	}
 	
 	rule top {
-		F@  => _@
-		  _      F
+		   _       T
+		T @  => _ @
+	}
+	rule top {
+		F @  => _ @
+		   _       F
+	}
+	
+	rule top {
+		  _      T
+		 @  =>  @
+		T      _
 	}
 	rule top {
 		F      _
@@ -140,15 +149,86 @@ element BoolSorter {
 		  _      F
 	}
 	
+	rule top {
+		   _      T
+		  @  =>  @
+		T      _
+	}
+	rule top {
+		F      _
+		  @  =>  @
+		   _      F
+	}
+	
 	rule xyz { @R => @@ }
 	rule xyz { @_ => _@ }
 }
 
-element DataNumber {
+element NumberSorter {
+	colour "#ffdd00"
+	emissive "red"
+	category "T2Tile"
+	opacity 0.03
+	
+	isWorker true
+	data referencePoint 50
+	
+	given T (atom, element, self) => element == NumberData && atom.initialised && (atom.value < self.referencePoint)
+	select T (atom) => atom
+	change T (selected, self) => {
+		self.referencePoint = selected.value
+		//self.shaderColour = selected.shaderColour
+		//self.shaderEmissive = selected.shaderEmissive
+		return selected
+	}
+	given F (atom, element, self) => element == NumberData && atom.initialised && (atom.value > self.referencePoint)
+	select F (atom) => atom
+	change F (selected, self) => {
+		self.referencePoint = selected.value
+		//self.shaderColour = selected.shaderColour
+		//self.shaderEmissive = selected.shaderEmissive
+		return selected
+	}
+	
+	rule top {
+		  _      T
+		T@  => _@
+	}
+	rule top {
+		F@  => _@
+		  _      F
+	}
+	
+	rule top {
+		  _      T
+		 @  =>  @
+		T      _
+	}
+	rule top {
+		F      _
+		 @  =>  @
+		  _      F
+	}
+	
+	//action { @ => @ }
+	
+	given R (element) => element == Res
+	change C (self) => {
+		const sorter = new NumberSorter({referencePoint: self.referencePoint})
+		sorter.shaderColour = self.shaderColour
+		sorter.shaderEmissive = self.shaderEmissive
+		return sorter
+	}
+	rule xyz { @R => @C }
+	rule xyz { @_ => _@ }
+}
+
+element NumberData {
 
 	category "T2Tile"
 	colour "grey"
 	emissive "black"
+	opacity 1
 	
 	isData true
 	data initialised false
@@ -166,7 +246,7 @@ element DataNumber {
 	
 }
 
-element DataBool {
+element BoolData {
 
 	category "T2Tile"
 	colour "grey"
@@ -195,7 +275,7 @@ element Input {
 	emissive "rgb(0, 0, 128)"
 	data portalPower 0
 	data edgePower 0
-	data inputElement DataNumber
+	data inputElement NumberData
 	isWorker true
 	
 	given I (element, self) => element == self.element
@@ -234,7 +314,7 @@ element Input {
 	
 	action { @ => o }
 	action side yz { @_ => @I }
-	action 0.0001 { @_ => PD }
+	action 0.001 { @_ => PD }
 	
 	change e (self) => {
 		self.edgePower = 20
@@ -275,27 +355,27 @@ element Input {
 	
 }
 
-element InputNumber {
+element NumberInput {
 	
 	category "T2Tile"
 	colour "rgb(0, 0, 255)"
 	emissive "rgb(0, 0, 128)"
 	data portalPower 0
 	data edgePower 0
-	data inputElement DataNumber
+	data inputElement NumberData
 	isWorker true
 	
 	ruleset Input
 }
 
-element InputBool {
+element BoolInput {
 	
 	category "T2Tile"
 	colour "rgb(0, 0, 255)"
 	emissive "rgb(0, 0, 128)"
 	data portalPower 0
 	data edgePower 0
-	data inputElement DataBool
+	data inputElement BoolData
 	isWorker true
 	
 	ruleset Input
@@ -314,7 +394,7 @@ element Output {
 	data z undefined
 	
 	given I (element) => element == Output
-	change I () => new Output()
+	change I () => new Output({portalPower: 45})
 	change o (self) => {
 		self.shaderOpacity = self.shaderOpacity - 5
 		if (self.shaderOpacity < 0) self.shaderOpacity = 0

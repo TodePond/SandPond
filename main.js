@@ -8,6 +8,7 @@ const D2_MODE = urlParams.has("2d")
 const D1_MODE = urlParams.has("1d")
 const VR_MODE = urlParams.has("vr")
 const TINY_MODE = urlParams.has("tiny")
+const LONG_MODE = urlParams.has("long")
 
 const FLOOR_TYPE = urlParams.has("nofloor")? "nofloor" : "floor"
 
@@ -19,6 +20,12 @@ if (TINY_MODE) {
 	MAX_X = Math.floor(MAX_X * 0.4)
 	MAX_Z = Math.floor(MAX_Z * 0.4)
 	MAX_Y = Math.floor(MAX_Y * 0.7)
+}
+
+if (LONG_MODE) {
+	MAX_X = Math.floor(MAX_X * 2)
+	MAX_Z = Math.floor(MAX_Z * 1.5)
+	MAX_Y = Math.floor(MAX_Y * 0.25)
 }
 
 const MIN_X = -MAX_X
