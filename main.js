@@ -23,9 +23,9 @@ if (TINY_MODE) {
 }
 
 if (LONG_MODE) {
-	MAX_X = Math.floor(MAX_X * 2)
-	MAX_Z = Math.floor(MAX_Z * 1.5)
-	MAX_Y = Math.floor(MAX_Y * 0.25)
+	MAX_X = Math.floor(MAX_X * 1.3)
+	MAX_Z = Math.floor(MAX_Z * 1)
+	MAX_Y = Math.floor(MAX_Y * 0.75)
 }
 
 const MIN_X = -MAX_X
