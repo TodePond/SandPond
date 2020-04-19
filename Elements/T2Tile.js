@@ -6,12 +6,15 @@ const OUTPUT_ACCELERATION = 0.003 * ATOM_SIZE
 const OUTPUT_START_SPEED = 0 * ATOM_SIZE
 const OUTPUT_MAX_DISTANCE = 500 * ATOM_SIZE
 
+const outputCache = []
+
 const outputNumbers = []
 on.process(() => {
 
 	let goneTooFarId = undefined
 
 	for (let i = 0; i < outputNumbers.length; i++) {
+	
 		const mesh = outputNumbers[i]
 		if (mesh.outputSpeed == undefined) {
 			mesh.outputSpeed = OUTPUT_START_SPEED
@@ -414,17 +417,28 @@ element Output {
 	change A (atom, selected, self) => {
 		
 		if (selected.element.isData && selected.value != undefined && DISPLAY_OUTPUTS) {
-					
-			const geometry = new THREE.TextGeometry(selected.value.as(String), {
-				font: outputFont,
-				size: ATOM_SIZE * 2,
-				height: ATOM_SIZE * 2 / 2,
-			})
-			const material = new THREE.MeshLambertMaterial({
-				color: \`rgb(\${Math.floor(selected.shaderColour.r)}, \${Math.floor(selected.shaderColour.g)}, \${Math.floor(selected.shaderColour.b)})\`,
-				emissive: \`rgb(\${Math.floor(selected.shaderEmissive.r)}, \${Math.floor(selected.shaderEmissive.g)}, \${Math.floor(selected.shaderEmissive.b)})\`,
-				transparent: true,
-			})
+				
+			let geometry = undefined
+			let material = undefined
+				
+			if (outputCache[selected.value] != undefined) {
+				geometry = outputCache[selected.value][0]
+				material = outputCache[selected.value][1]
+			}
+			else {
+				geometry = new THREE.TextGeometry(selected.value.as(String), {
+					font: outputFont,
+					size: ATOM_SIZE * 2,
+					height: ATOM_SIZE * 2 / 2,
+				})
+				material = new THREE.MeshLambertMaterial({
+					color: \`rgb(\${Math.floor(selected.shaderColour.r)}, \${Math.floor(selected.shaderColour.g)}, \${Math.floor(selected.shaderColour.b)})\`,
+					emissive: \`rgb(\${Math.floor(selected.shaderEmissive.r)}, \${Math.floor(selected.shaderEmissive.g)}, \${Math.floor(selected.shaderEmissive.b)})\`,
+					transparent: true,
+				})
+				outputCache[selected.value] = [geometry, material]
+			}
+			
 			const mesh = new THREE.Mesh(geometry, material)
 			mesh.position.set(MAX_X * ATOM_SIZE, self.y * ATOM_SIZE, -1 * (self.z * ATOM_SIZE - MAX_Z * ATOM_SIZE))
 			mesh.rotation.y = Math.PI / 2
