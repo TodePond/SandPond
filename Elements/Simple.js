@@ -19,42 +19,34 @@ given # (atom) => atom
 
 keep .
 
-element Sand {
-
+element Sand any(xz) {
 	colour "#FC0"
+	emissive "#ffa34d"
 	
 	@ => _
 	_    @
 	
-	any({return xz}) {
-		@  => _
-		#_    .@
-	}
+	@_ => _.
+	#_    .@
 	
 }
 
-element Forkbomb @_ => @@
+element Forkbomb any(xyz) {
+	colour "grey"
+	emissive "black"
 
-element Foo {
-	
+	@_ => @@
 }
 
 element Water {
-	colour { return "lightblue" }
+	colour "lightblue"
 	emissive "blue"
 	opacity 0.5
-	arg temperature 25
-	data state "liquid"
-	element Hot { @ => _ }
-	
-	
 }
 
 element Slime {
-	colour {
-		const colour = "green"
-		return colour
-	}
+	colour "lightgreen"
+	emissive "green"
 	opacity 0.65
 }
 
