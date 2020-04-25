@@ -8,8 +8,8 @@ const UI = {}
 	//=========//
 	// Globals //
 	//=========//
-	UI.selectedElement = undefined
 	UI.selectedElement = window.Sand
+	UI.highlightedElement = undefined
 	UI.selectedSize = SMALL_MODE? "small" : "big"
 	UI.selectedDimensions = D1_MODE? "d1" : (D2_MODE? "d2" : "d3")
 	UI.selectedReality = VR_MODE? "vr" : "nonvr"
@@ -125,6 +125,11 @@ const UI = {}
 			
 			.box.option.selected {
 				outline: 2px solid black;
+			}
+			
+			.highlighted {
+				background-color: black !important;
+				color: white;
 			}
 			
 			#modeGo {
@@ -429,7 +434,7 @@ const UI = {}
 		UI.floorTypeOption = floorTypeOption
 	})
 	
-	$$(".elementButton").on.click(function() {
+	$$(".elementButton").on.click(function(e) {
 		const newButton = this
 		const newId = newButton.id
 		
@@ -451,6 +456,51 @@ const UI = {}
 			UI.selectedElement = newElement
 			newButton.style.outline = ""
 			updateSourceUI()
+		}
+		
+	})
+	
+	$$(".elementButton").on.mousedown(function(e) {
+		if (e.button != 2) return
+		
+		const newButton = this
+		const newId = newButton.id
+		const idEnd = "Button"
+		const name = newId.slice(0, newId.length - idEnd.length)
+		const newElement = ELEMENT.globalElements[name]
+		
+		const oldElement = UI.highlightedElement
+		if (oldElement) {
+			const oldId = oldElement.name + idEnd
+			const oldButton = $("#" + oldId)
+			oldButton.classList.remove("highlighted")
+		}
+		
+		if (newElement) {
+		
+			if (oldElement == newElement) {
+				UI.highlightedElement = undefined
+				
+				for (const space of spaces) {
+					const atom = space.atom
+					if (!atom) continue
+					atom.shaderOpacity = atom.element.shaderOpacity
+					SPACE.setAtom(space, atom)
+				}
+				return
+			}
+		
+			newButton.classList.add("highlighted")
+			UI.highlightedElement = newElement
+			
+			for (const space of spaces) {
+				const atom = space.atom
+				if (!atom) continue
+				if (atom.element == newElement) atom.shaderOpacity = 255
+				else atom.shaderOpacity = 0
+				
+				SPACE.setAtom(space, atom)
+			}
 		}
 	})
 	
