@@ -104,14 +104,14 @@ const JAVASCRIPT = {}
 			}
 		}
 	
-		return `(${closureArgNames}) => {\n` +
+		return (`(${closureArgNames}) => {\n` +
 		`\n`+
 		`const element = function ${name}(${constructorArgNames}) {\n`+
-		`	const atom = {element, ${propertyNames}}\n`+
+		`	const atom = {element, shaderColour: element.shaderColour, shaderEmissive: element.shaderEmissive, shaderOpacity: element.shaderOpacity, ${propertyNames}}\n`+
 		`	return atom\n`+
 		`}\n`+
 		`	return element\n`+
-		`}`
+		`}`).d
 	}
 	
 	//=========//

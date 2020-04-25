@@ -37,8 +37,8 @@ const SPACE = {}
 			return
 		}
 		WORLD.setSpaceVisible(space.world, space, true)
-		WORLD.setSpaceOpacity(space.world, space, atom.element.shaderOpacity)
-		WORLD.setSpaceColour(space.world, space, atom.element.shaderColour, atom.element.shaderEmissive)
+		WORLD.setSpaceOpacity(space.world, space, atom.shaderOpacity)
+		WORLD.setSpaceColour(space.world, space, atom.shaderColour, atom.shaderEmissive)
 	}
 	
 }

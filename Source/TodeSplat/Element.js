@@ -17,16 +17,18 @@ const ELEMENT = {}
 		...otherProperties
 	} = {}) => {
 	
+	
 		const behaveCode = JAVASCRIPT.makeBehave(instructions, name)
 		const constructorCode = JAVASCRIPT.makeConstructor(name, data, args)
 		
 		const behave = JS(behaveCode)()
 		const constructor = JS(constructorCode)(...data, ...args)
 		
+		const shaderColours = makeShaderColours(colour, emissive, opacity)
 		const elementInfo = {
 			
 			// Appearance
-			name, colour, emissive, opacity, categories,
+			name, colour, emissive, opacity, categories, ...shaderColours,
 			
 			// Dropper
 			precise, floor, hidden, pour,
@@ -41,7 +43,6 @@ const ELEMENT = {}
 		
 		const element = constructor
 		element.o= elementInfo
-		createShaderColours(element)
 		
 		for (const childName in element.elements) {
 			const child = element.elements[childName]
@@ -55,22 +56,24 @@ const ELEMENT = {}
 	//=========//
 	// Private //
 	//=========//
-	const createShaderColours = (element) => {
-		const colourColour = new THREE.Color(element.colour)
-		const emissiveColour = new THREE.Color(element.emissive)
+	const makeShaderColours = (colour, emissive, opacity) => {
+		const colourColour = new THREE.Color(colour)
+		const emissiveColour = new THREE.Color(emissive)
 		
-		element.shaderColour = {
+		const shaderColour = {
 			r: colourColour.r * 255,
 			g: colourColour.g * 255,
 			b: colourColour.b * 255,
 		}
 		
-		element.shaderOpacity = element.opacity * 255
-		element.shaderEmissive = {
+		const shaderOpacity = opacity * 255
+		const shaderEmissive = {
 			r: emissiveColour.r * 255,
 			g: emissiveColour.g * 255,
 			b: emissiveColour.b * 255,
 		}
+		
+		return {shaderColour, shaderEmissive, shaderOpacity}
 		
 	}
 	
