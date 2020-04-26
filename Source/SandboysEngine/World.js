@@ -314,6 +314,7 @@ const ATOM_SCALE = 1.0
 		const gridyx = gridy[x]
 		if (!gridyx) return voidSpace
 		const space = gridyx[z]
+		if (!space) return voidSpace
 		return space
 	}
 	
