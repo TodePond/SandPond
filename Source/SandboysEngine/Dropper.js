@@ -25,7 +25,10 @@ const DROPPER = {}
 		if (UI.clicking) return
 		started = true
 		
-		if (position == undefined) return
+		if (position == undefined) {
+			previousPosition = undefined
+			return
+		}
 		position.x /= ATOM_SIZE
 		position.y /= ATOM_SIZE
 		position.z /= ATOM_SIZE
