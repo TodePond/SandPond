@@ -3,6 +3,7 @@
 // UI //
 //====//
 const UI = {}
+UIstarted = true
 
 {
 	//=========//

@@ -66,6 +66,10 @@ element Fire {
 		"darkorange",
 		"lol",
 	][0]
+	emissive "red"
+	
+	opacity 0.5
+	floor true
 	
 	maybe(0.5) @_ => _@
 	

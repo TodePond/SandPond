@@ -2,6 +2,10 @@
 // Drop //
 //======//
 const DROPPER = {}
+let UIstarted = false
+let DROPPER_LOCATION = "default"
+let DROPPER_SHADOW = true
+
 {
 
 	//===========//
@@ -14,16 +18,14 @@ const DROPPER = {}
 	//=========//
 	let previousPosition
 	let down
-	let started = false
 	
 	//========//
 	// Public //
 	//========//
 	DROPPER.tryDrop = (position) => {
 	
-		if (!started && !Mouse.down) return
+		if (!UIstarted && !Mouse.down) return
 		if (UI.clicking) return
-		started = true
 		
 		if (position == undefined) {
 			previousPosition = undefined
@@ -32,6 +34,12 @@ const DROPPER = {}
 		position.x /= ATOM_SIZE
 		position.y /= ATOM_SIZE
 		position.z /= ATOM_SIZE
+		
+		if (DROPPER_SHADOW) {
+			const x = Math.round(position.x)
+			const y = Math.round(position.y)
+			const z = Math.round(position.z)
+		}
 		
 		const previousDown = down
 		down = Mouse.down
@@ -127,9 +135,13 @@ const DROPPER = {}
 		let alteredZ = z
 		if (!UI) return
 		const atomType = UI.selectedElement
-		if (atomType.floor) alteredY = 0 + yOffset
-		if (D1_MODE) alteredY = 0
+		
+		if (DROPPER_LOCATION == "default" && atomType.floor) alteredY = 0 + yOffset
+		if (DROPPER_LOCATION == "floor") alteredY = 0 + yOffset
+		if (DROPPER_LOCATION == "air") y
+		
 		if (D2_MODE) alteredY = y
+		if (D1_MODE) alteredY = 0
 		if (D2_MODE) alteredZ = 0
 		const space = WORLD.selectSpace(world, x, alteredY, alteredZ)
 		if (!space) return

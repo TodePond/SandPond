@@ -306,7 +306,7 @@ const ATOM_SCALE = 1.0
 	}
 	
 	const voidAtom = new Void()
-	const voidSpace = {atom: voidAtom}
+	const voidSpace = {get atom() { return voidAtom} }
 	
 	const selectGridSpace = (grid, x, y, z) => {
 		const gridy = grid[y]
