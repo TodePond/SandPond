@@ -28,6 +28,11 @@ if (LONG_MODE) {
 	MAX_Y = Math.floor(MAX_Y * 0.75)
 }
 
+let SIZE = SMALL_MODE? "small" : "big"
+if (TINY_MODE) SIZE = "tiny"
+
+const SHAPE = LONG_MODE? "long" : "cube"
+
 const MIN_X = -MAX_X
 const MIN_Z = -MAX_Z
 const MIN_Y = 0
@@ -118,7 +123,8 @@ $("#loading").innerHTML = ""
 // Stuff //
 //=======//
 on.process(() => {
-	DROPPER.tryDrop(stage.cursor.position3D)
+	const cursorPosition3D = stage.getCursorPosition3D((mesh) => mesh == floor)
+	DROPPER.tryDrop(cursorPosition3D)
 })
 
 let paused = false

@@ -10,7 +10,8 @@ const UI = {}
 	//=========//
 	UI.selectedElement = window.Sand
 	UI.highlightedElement = undefined
-	UI.selectedSize = SMALL_MODE? "small" : "big"
+	UI.selectedSize = SIZE
+	UI.selectedShape = SHAPE
 	UI.selectedDimensions = D1_MODE? "d1" : (D2_MODE? "d2" : "d3")
 	UI.selectedReality = VR_MODE? "vr" : "nonvr"
 	UI.selectedSource = "todeSplat"
@@ -206,8 +207,14 @@ const UI = {}
 				<div id="mode" class="form minimised">
 					<section>
 						<div class="miniTitle">SIZE</div>
-						<div id="smallOption" class="sizeOption option box clickable"><div class="label">Small</div></div>
+						<div id="tinyOption" class="sizeOption option box clickable"><div class="label">Tiny</div></div>
+						<div id="smallOption" class="sizeOption option box clickable"><div class="label">Normal</div></div>
 						<div id="bigOption" class="sizeOption option box clickable"><div class="label">Big</div></div>
+					</section>
+					<section>
+						<div class="miniTitle">SHAPE</div>
+						<div id="cubeOption" class="shapeOption option box clickable"><div class="label">Normal</div></div>
+						<div id="longOption" class="shapeOption option box clickable"><div class="label">Long</div></div>
 					</section>
 					<section>
 						<div class="miniTitle">DIMENSIONS</div>
@@ -215,11 +222,11 @@ const UI = {}
 						<div id="d2Option" class="dimensionOption option box clickable"><div class="label">2D</div></div>
 						<div id="d3Option" class="dimensionOption option box clickable"><div class="label">3D</div></div>
 					</section>
-					<section>
+					<!--<section>
 						<div class="miniTitle">DISPLAY</div>
 						<div id="nonvrOption" class="realityOption option box clickable"><div class="label">Screen</div></div>
 						<div id="vrOption" class="realityOption option box clickable"><div class="label">VR</div></div>
-					</section>
+					</section>-->
 					<section>
 						<div class="miniTitle">FLOOR</div>
 						<div id="floorOption" class="floorTypeOption option box clickable"><div class="label">Floor</div></div>
@@ -308,15 +315,15 @@ const UI = {}
 	updatePauseUI()
 	updateSourceUI()
 	
-	if (UI.selectedSize == "small") $("#smallOption").classList.add("selected")
-	else if (UI.selectedSize == "big") $("#bigOption").classList.add("selected")
+	$(`#${UI.selectedSize}Option`).classList.add("selected")
+	$(`#${UI.selectedShape}Option`).classList.add("selected")
 	
 	if (UI.selectedDimensions == "d1") $("#d1Option").classList.add("selected")
 	else if (UI.selectedDimensions == "d2") $("#d2Option").classList.add("selected")
 	else if (UI.selectedDimensions == "d3") $("#d3Option").classList.add("selected")
 	
-	if (UI.selectedReality == "vr") $("#vrOption").classList.add("selected")
-	else if (UI.selectedReality == "nonvr") $("#nonvrOption").classList.add("selected")
+	//if (UI.selectedReality == "vr") $("#vrOption").classList.add("selected")
+	//else if (UI.selectedReality == "nonvr") $("#nonvrOption").classList.add("selected")
 	
 	$(`#${UI.floorTypeOption}Option`).classList.add("selected")
 	
@@ -391,8 +398,8 @@ const UI = {}
 	
 	$("#modeGo").on.click(() => {
 		let params = ""
-		if (UI.selectedSize == "small") params += "small&"
-		else if (UI.selectedSize == "big") params += "big&"
+		params += UI.selectedSize + "&"
+		params += UI.selectedShape + "&"
 		if (UI.selectedDimensions == "d1") params += "1d&"
 		else if (UI.selectedDimensions == "d2") params += "2d&"
 		if (UI.selectedReality == "nonvr") params += "nonvr&"
@@ -408,6 +415,14 @@ const UI = {}
 		const id = this.id
 		const sizeName = id.slice(0, id.length - "Option".length)
 		UI.selectedSize = sizeName
+	})
+	
+	$$(".shapeOption").on.click(function() {
+		for (const shapeOption of $$(".shapeOption")) shapeOption.classList.remove("selected")
+		this.classList.add("selected")
+		const id = this.id
+		const sizeName = id.slice(0, id.length - "Option".length)
+		UI.selectedShape = sizeName
 	})
 	
 	$$(".dimensionOption").on.click(function() {
