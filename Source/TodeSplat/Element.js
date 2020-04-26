@@ -12,7 +12,7 @@ const ELEMENT = {}
 	// Public //
 	//========//
 	ELEMENT.make = ({name, instructions = [], data = {}, args = {}, categories = []}, {
-		colour = "grey", emissive = colour, opacity = 1.0,
+		colour = "grey", emissive = colour, opacity = 1.0, visible = true, source = "",
 		precise = false, floor = false, hidden = false, pour = true,
 		...otherProperties
 	} = {}) => {
@@ -28,13 +28,13 @@ const ELEMENT = {}
 		const elementInfo = {
 			
 			// Appearance
-			name, colour, emissive, opacity, categories, ...shaderColours,
+			name, colour, emissive, opacity, categories, ...shaderColours, visible,
 			
 			// Dropper
 			precise, floor, hidden, pour,
 			
 			// Debug
-			constructorCode, behaveCode, instructions,
+			source, constructorCode, behaveCode, instructions,
 			
 			// Behaviour
 			behave, ...otherProperties
@@ -52,6 +52,7 @@ const ELEMENT = {}
 		return element
 		
 	}
+	
 	
 	//=========//
 	// Private //

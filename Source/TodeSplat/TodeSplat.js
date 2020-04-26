@@ -577,7 +577,7 @@
 		//scope.instructions.push({type: INSTRUCTION.TYPE.BLOCK_END})
 		
 		snippet = source.slice(0, source.length - result.code.length)
-		scope.source = snippet
+		scope.properties.source = snippet
 		
 		const element = ELEMENT.make(scope, scope.properties)
 		parentScope.elements[scope.name] = element
@@ -683,6 +683,7 @@
 		"category",
 		"pour",
 		"default",
+		"visible",
 	]
 	
 	EAT.propertyName = (source) => {
@@ -1394,3 +1395,13 @@
 	}
 	
 }
+
+TodeSplat `
+	element Empty {
+		visible false
+		hidden true
+	}
+	element Void {
+		hidden true
+	}
+`

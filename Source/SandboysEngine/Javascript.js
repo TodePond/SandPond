@@ -12,40 +12,35 @@ const JAVASCRIPT = {}
 	// Public //
 	//========//
 	JAVASCRIPT.makeBehave = (instructions, name) => {
-	
-		/*print("")
-		print(name)
-		
-		let behave = `(self, sites) => {\n`
-	
-		for (const instruction of instructions) {
-		
-			print(instruction.type.toDescription())
-			if (instruction.type == INSTRUCTION.TYPE.DIAGRAM) {
-				for (const space of instruction.spaces) {
-					const sn = EVENTWINDOW.getSiteNumber(space.x, space.y, 0)
-					print(space)
+		if (name == "Sand") return `() => {
+			
+			const behave = (self, origin) => {
+				const sites = origin.sites
+				const spaceBelow = sites[17]
+				if (spaceBelow.atom.element == Empty) {
+					SPACE.setAtom(origin, spaceBelow.atom)
+					SPACE.setAtom(spaceBelow, self)
+					return
 				}
-				
+				const rando = Math.trunc(Math.random() * 4)
+				const slideSite = sites[symms[rando]]
+				if (slideSite.atom.element == Empty) {
+					SPACE.setAtom(origin, slideSite.atom)
+					SPACE.setAtom(slideSite, self)
+				}
 			}
-		}
-		
-		behave += `	}\n`
-		
-		let code = `() => {\
-		\n\
-		\n	const behave = ${behave}\
-		\n\
-		\n	return behave\
-		\n}`
-		
-		return code*/
-		
-		return "() => () => {}"
-	}
-	
-	showInstructions = (element) => {
-		element.instructions.forEach(instruction => print(instruction))
+			
+			const symms = [
+				EVENTWINDOW.getSiteNumber(1, -1, 0),
+				EVENTWINDOW.getSiteNumber(-1, -1, 0),
+				EVENTWINDOW.getSiteNumber(0, -1, 1),
+				EVENTWINDOW.getSiteNumber(0, -1, -1),
+			]
+			
+			return behave
+			
+		}`
+		else return "() => () => {}"
 	}
 	
 	show = (element) => {
@@ -107,7 +102,7 @@ const JAVASCRIPT = {}
 		return (`(${closureArgNames}) => {\n` +
 		`\n`+
 		`const element = function ${name}(${constructorArgNames}) {\n`+
-		`	const atom = {element, shaderColour: element.shaderColour, shaderEmissive: element.shaderEmissive, shaderOpacity: element.shaderOpacity, ${propertyNames}}\n`+
+		`	const atom = {element, visible: element.visible, colour: element.shaderColour, emissive: element.shaderEmissive, opacity: element.shaderOpacity, ${propertyNames}}\n`+
 		`	return atom\n`+
 		`}\n`+
 		`	return element\n`+

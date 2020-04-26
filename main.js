@@ -108,8 +108,7 @@ stage.start()
 //=============//
 // World Setup //
 //=============//
-const universe = UNIVERSE.make(WORLD_AREA)
-const world = universe.world
+const world = WORLD.make(WORLD_AREA)
 const spaceCount = world.spaces.length
 
 const MIN_SPACE = 0
@@ -136,10 +135,8 @@ on.process(() => {
 	}
 	for (let i = 0; i < spaceCount; i++) {
 		const space = world.spaces[i]
-		if (space) {
-			const atom = space.atom
-			if (atom !== undefined) atom.element.behave(atom, space.sites)
-		}
+		const atom = space.atom
+		atom.element.behave(atom, space)
 	}
 })
 

@@ -65,6 +65,13 @@ const ATOM_SCALE = 1.0
 			colourInstances, colourAttribute,
 			emissiveInstances, emissiveAttribute,
 		}
+		
+		for (const space of world.spaces) {
+			SPACE.updateAppearance(space, world)
+		}
+		
+		EVENTWINDOW.updateWorld(world)
+		
 		return world
 	}
 	
@@ -275,7 +282,7 @@ const ATOM_SCALE = 1.0
 			for (const x of area.xStart.to(area.xEnd)) {
 				grid[y][x] = []
 				for (const z of area.zStart.to(area.zEnd)) {
-					const space = SPACE.make(world, id)
+					const space = SPACE.make(world, id, new Empty())
 					grid[y][x][z] = space
 					id++
 				}
@@ -298,11 +305,14 @@ const ATOM_SCALE = 1.0
 		return spaces
 	}
 	
+	const voidAtom = new Void()
+	const voidSpace = {atom: voidAtom}
+	
 	const selectGridSpace = (grid, x, y, z) => {
 		const gridy = grid[y]
-		if (!gridy) return
+		if (!gridy) return voidSpace
 		const gridyx = gridy[x]
-		if (!gridyx) return
+		if (!gridyx) return voidSpace
 		const space = gridyx[z]
 		return space
 	}

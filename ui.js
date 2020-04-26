@@ -260,7 +260,7 @@ const UI = {}
 	
 	const updateSourceUI = () => {
 		if (!UI.selectedElement) return
-		const source = UI.selectedSource == "todeSplat"? UI.selectedElement.source : UI.selectedElement.code
+		const source = UI.selectedSource == "todeSplat"? UI.selectedElement.source : UI.selectedElement.behave
 		$("#sourceBox").textContent = source
 	}
 	

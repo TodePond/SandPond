@@ -131,15 +131,14 @@ const DROPPER = {}
 		if (D1_MODE) alteredY = 0
 		if (D2_MODE) alteredY = y
 		if (D2_MODE) alteredZ = 0
-		const world = UNIVERSE.selectWorld(universe, x, alteredY, alteredZ)
 		const space = WORLD.selectSpace(world, x, alteredY, alteredZ)
 		if (!space) return
-		if ((!D2_MODE && !D1_MODE) && space.atom) {
+		if ((!D2_MODE && !D1_MODE) && space.atom.element != Empty) {
 			if (atomType.floor && atomType != space.atom.element) return dropAtom(x, y, z, yOffset + 1)
 			else return
 		}
 		const atom = new atomType()
-		SPACE.setAtom(space, atom)
+		SPACE.setAtom(space, atom, atomType)
 		return atom
 	}
 	

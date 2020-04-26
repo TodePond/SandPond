@@ -14,13 +14,14 @@ const SITE = {}
 	// Public //
 	//========//
 	SITE.make = (space, x, y, z) => {
-		const site = {
+		return space
+		/*const site = {
 			space,
 			x,
 			y,
 			z,
 		}
-		return space
+		return space*/
 	}
 	
 	

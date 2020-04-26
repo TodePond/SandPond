@@ -17,10 +17,9 @@ const SPACE = {}
 		return {
 		
 			// Real Data
-			atom: undefined,
+			atom: new Empty(),
 			
 			// Cached Data
-			world,
 			id,
 			sites: [], //EVENTWINDOW makes this
 			colourOffset0: id*3 + 0, //not really my job to make this... WORLD should make this
@@ -30,15 +29,20 @@ const SPACE = {}
 		}
 	}
 	
-	SPACE.setAtom = (space, atom) => {
-		space.atom = atom
-		if (atom == undefined) {
-			WORLD.setSpaceVisible(space.world, space, false)
+	SPACE.updateAppearance = (space, world) => {
+		const atom = space.atom
+		if (atom == undefined || !atom.visible) {
+			WORLD.setSpaceVisible(world, space, false)
 			return
 		}
-		WORLD.setSpaceVisible(space.world, space, true)
-		WORLD.setSpaceOpacity(space.world, space, atom.shaderOpacity)
-		WORLD.setSpaceColour(space.world, space, atom.shaderColour, atom.shaderEmissive)
+		WORLD.setSpaceVisible(world, space, true)
+		WORLD.setSpaceOpacity(world, space, atom.opacity)
+		WORLD.setSpaceColour(world, space, atom.colour, atom.emissive)
+	}
+	
+	SPACE.setAtom = (space, atom) => {
+		space.atom = atom
+		SPACE.updateAppearance(space, world)
 	}
 	
 }
