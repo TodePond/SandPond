@@ -34,6 +34,7 @@ element Sand any(xz) {
 element Forkbomb any(xyz) {
 	colour "grey"
 	emissive "black"
+	precise true
 
 	@_ => @@
 }
@@ -68,7 +69,7 @@ element Fire {
 	][0]
 	emissive "red"
 	
-	opacity 0.5
+	opacity 0.3
 	floor true
 	
 	maybe(0.5) @_ => _@

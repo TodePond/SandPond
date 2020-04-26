@@ -136,7 +136,8 @@ on.process(() => {
 	for (let i = 0; i < spaceCount; i++) {
 		const space = world.spaces[i]
 		const atom = space.atom
-		atom.element.behave(atom, space)
+		const element = atom.element
+		if (element != Empty) element.behave(atom, space)
 	}
 })
 

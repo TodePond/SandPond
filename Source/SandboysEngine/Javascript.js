@@ -40,6 +40,43 @@ const JAVASCRIPT = {}
 			return behave
 			
 		}`
+		else if (name == "Fire") return `() => {
+			
+			const behave = (self, origin) => {
+				const sites = origin.sites
+				const spaceAbove = sites[7]
+				if (spaceAbove.atom.element == Empty) {
+					SPACE.setAtom(origin, spaceAbove.atom)
+					if (Math.random() < 0.8) SPACE.setAtom(spaceAbove, self)
+					return
+				}
+				if (spaceAbove.atom.element != Fire) SPACE.setAtom(origin, new Empty())
+			}
+			
+			return behave
+			
+		}`
+		else if (name == "Forkbomb") return `() => {
+			const behave = (self, origin) => {
+				const rando = Math.trunc(Math.random() * 6)
+				const site = origin.sites[symms[rando]]
+				if (site.atom.element == Empty) {
+					SPACE.setAtom(site, self)
+				}
+			}
+			
+			const symms = [
+				EVENTWINDOW.getSiteNumber(1, 0, 0),
+				EVENTWINDOW.getSiteNumber(-1, 0, 0),
+				EVENTWINDOW.getSiteNumber(0, 1, 0),
+				EVENTWINDOW.getSiteNumber(0, -1, 0),
+				EVENTWINDOW.getSiteNumber(0, 0, 1),
+				EVENTWINDOW.getSiteNumber(0, 0, -1),
+			]
+			
+			return behave
+		}
+		`
 		else return "() => () => {}"
 	}
 	
