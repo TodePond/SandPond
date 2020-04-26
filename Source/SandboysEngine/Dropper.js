@@ -60,16 +60,17 @@ let DROPPER_SHADOW = true
 			const z = Math.round(position.z)
 			
 			dropAtom(x, y, z, 0, true, 0)
-			if (UI.selectedElement.precise) return
-			dropAtom(x + 1, y, z, 0, true, 1)
-			dropAtom(x - 1, y, z, 0, true, 2)
-			dropAtom(x, y, z + 1, 0, true, 3)
-			dropAtom(x, y, z - 1, 0, true, 4)
-			
-			dropAtom(x + 1, y, z + 1, 0, true, 5)
-			dropAtom(x + 1, y, z - 1, 0, true, 6)
-			dropAtom(x - 1, y, z + 1, 0, true, 7)
-			dropAtom(x - 1, y, z - 1, 0, true, 8)
+			if (!UI.selectedElement.precise) {
+				dropAtom(x + 1, y, z, 0, true, 1)
+				dropAtom(x - 1, y, z, 0, true, 2)
+				dropAtom(x, y, z + 1, 0, true, 3)
+				dropAtom(x, y, z - 1, 0, true, 4)
+				
+				dropAtom(x + 1, y, z + 1, 0, true, 5)
+				dropAtom(x + 1, y, z - 1, 0, true, 6)
+				dropAtom(x - 1, y, z + 1, 0, true, 7)
+				dropAtom(x - 1, y, z - 1, 0, true, 8)
+			}
 		}
 		
 		const previousDown = down
