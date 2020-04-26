@@ -40,6 +40,19 @@ const JAVASCRIPT = {}
 			return behave
 			
 		}`
+		else if (name == "Wall") return `() => {
+			
+			const behave = (self, origin) => {
+				const sites = origin.sites
+				const spaceBelow = sites[17]
+				if (spaceBelow.atom.element == Empty) {
+					SPACE.setAtom(origin, spaceBelow.atom)
+					SPACE.setAtom(spaceBelow, self)
+					return
+				}
+			}
+			return behave
+		}`
 		else if (name == "Fire") return `() => {
 			
 			const behave = (self, origin) => {
