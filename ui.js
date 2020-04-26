@@ -8,12 +8,13 @@ const UI = {}
 	//=========//
 	// Globals //
 	//=========//
-	UI.selectedElement = undefined
 	UI.selectedElement = window.Sand
+	UI.highlightedElement = undefined
 	UI.selectedSize = SMALL_MODE? "small" : "big"
 	UI.selectedDimensions = D1_MODE? "d1" : (D2_MODE? "d2" : "d3")
 	UI.selectedReality = VR_MODE? "vr" : "nonvr"
 	UI.selectedSource = "todeSplat"
+	UI.floorTypeOption = FLOOR_TYPE
 	
 	//======//
 	// HTML //
@@ -126,6 +127,11 @@ const UI = {}
 				outline: 2px solid black;
 			}
 			
+			.highlighted {
+				background-color: black !important;
+				color: white;
+			}
+			
 			#modeGo {
 				background-color: #ffcc00;
 			}
@@ -178,7 +184,6 @@ const UI = {}
 					<div class="menu">
 						<div class="heading box clickable sourceType selected" id="todeSplatSource"><div class="label">TodeSplat</div></div>
 						<div class="heading box clickable sourceType" id="javaScriptSource"><div class="label">JavaScript</div></div>
-						<!--<div class="heading box clickable sourceType" id="ulamSource"><div class="label">ULAM</div></div>-->
 					</div>
 					<pre id="sourceBox"></pre>
 				</div>
@@ -216,7 +221,12 @@ const UI = {}
 						<div id="vrOption" class="realityOption option box clickable"><div class="label">VR</div></div>
 					</section>
 					<section>
-						<div id="modeGo" class="box option clickable"><div class="label">SUBMIT</div></div>
+						<div class="miniTitle">FLOOR</div>
+						<div id="floorOption" class="floorTypeOption option box clickable"><div class="label">Floor</div></div>
+						<div id="nofloorOption" class="floorTypeOption option box clickable"><div class="label">No Floor</div></div>
+					</section>
+					<section>
+						<div id="modeGo" class="box option clickable"><div class="label">RELOAD</div></div>
 					</section>
 				</div>
 				
@@ -243,10 +253,8 @@ const UI = {}
 	
 	const updateSourceUI = () => {
 		if (!UI.selectedElement) return
-		if (UI.selectedSource == "todeSplat") $("#sourceBox").textContent = UI.selectedElement.source
-		if (UI.selectedSource == "javaScript") $("#sourceBox").textContent = UI.selectedElement.code
-		if (UI.selectedSource == "ulam") $("#sourceBox").textContent = UI.selectedElement.ulam
-		
+		const source = UI.selectedSource == "todeSplat"? UI.selectedElement.source : UI.selectedElement.code
+		$("#sourceBox").textContent = source
 	}
 	
 	//=======//
@@ -287,10 +295,11 @@ const UI = {}
 		}
 		
 		for (const category of element.categories) {
-			let categoryElement = $(`#${category}Heading.category`)
+			const categoryElement = $(`#${category}Heading.category`)
 			if (!categoryElement) {
-				categoryElement = HTML `<div class="category heading box clickable" id="${category}Heading"><div class="label">${category}</div></div>`
-				$("#elements > .menu").appendChild(categoryElement)
+				const newCategoryElement = HTML `<div class="category heading box clickable" id="${category}Heading"><div class="label">${category}</div></div>`
+				$("#elements > .menu").appendChild(newCategoryElement)
+				if (category == "Sandbox") newCategoryElement.classList.add("selected")
 			}
 		}
 
@@ -309,6 +318,7 @@ const UI = {}
 	if (UI.selectedReality == "vr") $("#vrOption").classList.add("selected")
 	else if (UI.selectedReality == "nonvr") $("#nonvrOption").classList.add("selected")
 	
+	$(`#${UI.floorTypeOption}Option`).classList.add("selected")
 	
 	if (UI.selectedElement) $(`#${UI.selectedElement.name}Button`).classList.add("selected")
 	
@@ -366,7 +376,7 @@ const UI = {}
 				if (categories.length == 0/* && $("#searchHeading").classList.contains("selected")*/) {
 					elementButton.classList.remove("minimised")
 				}
-				else if (categories.some(category => element.categories.includes(category))) {
+				else if (categories.some(category => category == element.categories.includes(category))) {
 					elementButton.classList.remove("minimised")
 				}
 			}
@@ -385,8 +395,9 @@ const UI = {}
 		else if (UI.selectedSize == "big") params += "big&"
 		if (UI.selectedDimensions == "d1") params += "1d&"
 		else if (UI.selectedDimensions == "d2") params += "2d&"
-		if (UI.selectedReality == "nonvr") params += "nonvr"
-		else if (UI.selectedReality == "vr") params += "vr"
+		if (UI.selectedReality == "nonvr") params += "nonvr&"
+		else if (UI.selectedReality == "vr") params += "vr&"
+		params += UI.floorTypeOption
 		const baseUrl = `${window.location.protocol}//${window.location.host}${window.location.pathname}`
 		window.location = `${baseUrl}?${params}`
 	})
@@ -415,7 +426,15 @@ const UI = {}
 		UI.selectedReality = realityName
 	})
 	
-	$$(".elementButton").on.click(function() {
+	$$(".floorTypeOption").on.click(function() {
+		for (const floorTypeOption of $$(".floorTypeOption")) floorTypeOption.classList.remove("selected")
+		this.classList.add("selected")
+		const id = this.id
+		const floorTypeOption = id.slice(0, id.length - "Option".length)
+		UI.floorTypeOption = floorTypeOption
+	})
+	
+	$$(".elementButton").on.click(function(e) {
 		const newButton = this
 		const newId = newButton.id
 		
@@ -437,6 +456,51 @@ const UI = {}
 			UI.selectedElement = newElement
 			newButton.style.outline = ""
 			updateSourceUI()
+		}
+		
+	})
+	
+	$$(".elementButton").on.mousedown(function(e) {
+		if (e.button != 2) return
+		
+		const newButton = this
+		const newId = newButton.id
+		const idEnd = "Button"
+		const name = newId.slice(0, newId.length - idEnd.length)
+		const newElement = TodeSplat.global.elements[name]
+		
+		const oldElement = UI.highlightedElement
+		if (oldElement) {
+			const oldId = oldElement.name + idEnd
+			const oldButton = $("#" + oldId)
+			oldButton.classList.remove("highlighted")
+		}
+		
+		if (newElement) {
+		
+			if (oldElement == newElement) {
+				UI.highlightedElement = undefined
+				
+				for (const space of spaces) {
+					const atom = space.atom
+					if (!atom) continue
+					atom.shaderOpacity = atom.element.shaderOpacity
+					SPACE.setAtom(space, atom)
+				}
+				return
+			}
+		
+			newButton.classList.add("highlighted")
+			UI.highlightedElement = newElement
+			
+			for (const space of spaces) {
+				const atom = space.atom
+				if (!atom) continue
+				if (atom.element == newElement) atom.shaderOpacity = 255
+				else atom.shaderOpacity = 0
+				
+				SPACE.setAtom(space, atom)
+			}
 		}
 	})
 	
@@ -492,8 +556,7 @@ const UI = {}
 		})
 		this.classList.add("selected")
 		if (this.id == "javaScriptSource") UI.selectedSource = "javaScript"
-		else if (this.id == "todeSplatSource") UI.selectedSource = "todeSplat"
-		else if (this.id == "ulamSource") UI.selectedSource = "ulam"
+		else UI.selectedSource = "todeSplat"
 		updateSourceUI()
 	})
 	

@@ -111,7 +111,7 @@ const JAVASCRIPT = {}
 		`	return atom\n`+
 		`}\n`+
 		`	return element\n`+
-		`}`).d
+		`}`)
 	}
 	
 	//=========//

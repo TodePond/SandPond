@@ -7,10 +7,26 @@ const SMALL_MODE = urlParams.has("small") || !urlParams.has("big")
 const D2_MODE = urlParams.has("2d")
 const D1_MODE = urlParams.has("1d")
 const VR_MODE = urlParams.has("vr")
+const TINY_MODE = urlParams.has("tiny")
+const LONG_MODE = urlParams.has("long")
 
-const MAX_X = (SMALL_MODE? 30 : 50) * (D1_MODE? 2 : 1) * (D2_MODE? 5 : 1)
-const MAX_Z = D1_MODE? 0 : (D2_MODE? 0 : MAX_X)
-const MAX_Y = D1_MODE? 0 : (SMALL_MODE? 30 : 40) * (D2_MODE? 8 : 1)
+const FLOOR_TYPE = urlParams.has("nofloor")? "nofloor" : "floor"
+
+let MAX_X = (SMALL_MODE? 30 : 50) * (D1_MODE? 2 : 1) * (D2_MODE? 5 : 1)
+let MAX_Z = D1_MODE? 0 : (D2_MODE? 0 : MAX_X)
+let MAX_Y = D1_MODE? 0 : (SMALL_MODE? 30 : 40) * (D2_MODE? 8 : 1)
+
+if (TINY_MODE) {
+	MAX_X = Math.floor(MAX_X * 0.4)
+	MAX_Z = Math.floor(MAX_Z * 0.4)
+	MAX_Y = Math.floor(MAX_Y * 0.7)
+}
+
+if (LONG_MODE) {
+	MAX_X = Math.floor(MAX_X * 1.3)
+	MAX_Z = Math.floor(MAX_Z * 1)
+	MAX_Y = Math.floor(MAX_Y * 0.75)
+}
 
 const MIN_X = -MAX_X
 const MIN_Z = -MAX_Z
@@ -27,8 +43,13 @@ const WORLD_AREA = {
 }
 
 const CAMERA_START_X = 0
-const CAMERA_START_Y = (D2_MODE? WORLD_HEIGHT/2 : SMALL_MODE? 85 : 150) * ATOM_SIZE
-const CAMERA_START_Z = (SMALL_MODE? 100 : 225) * (D2_MODE? 2 : 1) * ATOM_SIZE
+let CAMERA_START_Y = (D2_MODE? WORLD_HEIGHT/2 : SMALL_MODE? 85 : 150) * ATOM_SIZE
+let CAMERA_START_Z = (SMALL_MODE? 100 : 225) * (D2_MODE? 2 : 1) * ATOM_SIZE
+
+if (TINY_MODE) {
+	CAMERA_START_Y = CAMERA_START_Y * 0.65
+	CAMERA_START_Z = CAMERA_START_Z * 0.7
+}
 
 const CAMERA_SPEED = 2
 
@@ -62,7 +83,7 @@ scene.background = background
 const sun = makeSun(D2_MODE)
 scene.add(sun)
 
-const floor = D2_MODE? make2DFloor(WORLD_WIDTH * ATOM_SIZE, WORLD_HEIGHT * ATOM_SIZE) : makeFloor(WORLD_WIDTH * ATOM_SIZE, WORLD_DEPTH * ATOM_SIZE)
+const floor = D2_MODE? make2DFloor(FLOOR_TYPE, WORLD_WIDTH * ATOM_SIZE, WORLD_HEIGHT * ATOM_SIZE) : makeFloor(FLOOR_TYPE, WORLD_WIDTH * ATOM_SIZE, WORLD_DEPTH * ATOM_SIZE)
 scene.add(floor)
 
 let orbit
@@ -127,4 +148,4 @@ function measureConcentration() {
 	return atomCount / spaceCount
 }
 
-//dir(Sand)
+//print(Sand.code)
