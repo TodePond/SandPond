@@ -4,12 +4,15 @@
 const urlParams = new URLSearchParams(window.location.search)
 
 const SMALL_MODE = urlParams.has("small") || !urlParams.has("big")
+const MASSIVE_MODE = urlParams.has("massive")
 const D2_MODE = urlParams.has("2d")
 const D1_MODE = urlParams.has("1d")
 const VR_MODE = urlParams.has("vr")
 const TINY_MODE = urlParams.has("tiny")
 const LONG_MODE = urlParams.has("long")
 const SHUFFLE_MODE = urlParams.has("shuffle")
+const SHAKE_MODE = urlParams.has("shake")
+const TRACK_MODE = urlParams.has("track")
 
 const FLOOR_TYPE = urlParams.has("nofloor")? "nofloor" : "floor"
 
@@ -21,6 +24,12 @@ if (TINY_MODE) {
 	MAX_X = Math.floor(MAX_X * 0.4)
 	MAX_Z = Math.floor(MAX_Z * 0.4)
 	MAX_Y = Math.floor(MAX_Y * 0.7)
+}
+
+if (MASSIVE_MODE) {
+	MAX_X = Math.floor(MAX_X * 2.5)
+	MAX_Z = Math.floor(MAX_Z * 2.5)
+	MAX_Y = Math.floor(MAX_Y * 1.5)
 }
 
 if (LONG_MODE) {
@@ -65,9 +74,10 @@ const CAMERA_SPEED = 2
 const stage = new Stage(document.body, {start: false})
 const {canvas, renderer, scene, camera, raycaster, cursor, dummyCamera} = stage
 if (VR_MODE) {
-	renderer.vr.enabled = true
+	alert("Sorry VR mode is broken at the moment.")
+	/*renderer.vr.enabled = true
 	stage.vrEnabled = true
-	document.body.appendChild(THREE.WEBVR.createButton(renderer))
+	document.body.appendChild(THREE.WEBVR.createButton(renderer))*/
 	
 	/*const gamepads = navigator.getGamepads()
 	for (const gamepad of gamepads) {
@@ -92,17 +102,14 @@ scene.add(sun)
 const floor = D2_MODE? make2DFloor(FLOOR_TYPE, WORLD_WIDTH * ATOM_SIZE, WORLD_HEIGHT * ATOM_SIZE) : makeFloor(FLOOR_TYPE, WORLD_WIDTH * ATOM_SIZE, WORLD_DEPTH * ATOM_SIZE)
 scene.add(floor)
 
-let orbit
-if (!VR_MODE) {
-	orbit = new THREE.OrbitControls(camera)
-	orbit.mouseButtons.LEFT = undefined
-	orbit.mouseButtons.MIDDLE = THREE.MOUSE.DOLLY
-	orbit.mouseButtons.RIGHT = THREE.MOUSE.ROTATE
-	orbit.enableKeys = false
-	orbit.enableDamping = true
-	orbit.target.set(0, MAX_Y/2 * ATOM_SIZE, 0)
-	on.process(orbit.o.update)
-}
+let orbit = new THREE.OrbitControls(camera)
+orbit.mouseButtons.LEFT = undefined
+orbit.mouseButtons.MIDDLE = THREE.MOUSE.DOLLY
+orbit.mouseButtons.RIGHT = THREE.MOUSE.ROTATE
+orbit.enableKeys = false
+orbit.enableDamping = true
+orbit.target.set(0, MAX_Y/2 * ATOM_SIZE, 0)
+on.process(orbit.o.update)
 
 stage.start()
 
@@ -116,6 +123,12 @@ const MIN_SPACE = 0
 const MAX_SPACE = spaceCount - 1
 
 const spaces = world.spaces
+const spacesReversed = spaces.reversed
+const spacesShuffled = [...spaces].sort(() => Math.random() - 0.5)
+const spacesShuffledReversed = spacesShuffled.reversed
+
+const gridXShuffled = [...world.grid].sort(() => Math.random() - 0.5)
+
 let spaceIds = spaces.map(space => space.id).sort(() => Math.random() - 0.5) 
 let shuffling = true
 
@@ -127,9 +140,6 @@ if (shuffleWorker != undefined && SHUFFLE_MODE) {
 	shuffleWorker.onmessage = (({data}) => spaceIds = data)
 	shuffleWorker.shuffle(spaceIds)
 }
-	
-
-//shuffleArray()
 
 $("#loading").innerHTML = ""
 
@@ -144,19 +154,90 @@ on.process(() => {
 let paused = false
 let stepCount = 0
 let shuffleCounter = 0
-on.process(() => {
-	if (paused) {
-		if (stepCount <= 0) return
-		stepCount--
-	}
-	for (const id of spaceIds) {
-		const space = spaces[id]
-		const atom = space.atom
-		const element = atom.element
-		if (element != Empty) element.behave(atom, space)
-	}
-	
-})
+
+if (SHUFFLE_MODE) {
+	on.process(() => {
+		if (paused) {
+			if (stepCount <= 0) return
+			stepCount--
+		}
+		for (const id of spaceIds) {
+			const space = spaces[id]
+			const atom = space.atom
+			const element = atom.element
+			if (element != Empty) element.behave(atom, space)
+		}
+	})
+}
+else if (SHAKE_MODE) {
+
+	on.process(() => {
+		if (paused) {
+			if (stepCount <= 0) return
+			stepCount--
+		}
+		for (const space of spaces) {
+			const atom = space.atom
+			const element = atom.element
+			if (element == Empty || element == Fire) continue
+			element.behave(atom, space)
+		}
+		
+		for (const space of spacesReversed) {
+			const atom = space.atom
+			const element = atom.element
+			if (element == Empty || element == Sand || element == Water || element == Wall || element == Forkbomb) continue
+			element.behave(atom, space)
+		}
+	})
+}
+else if (true || TRACK_MODE) {
+
+	let currentTrack = true
+
+	on.process(() => {
+		if (paused) {
+			if (stepCount <= 0) return
+			stepCount--
+		}
+		if (currentTrack === true) {
+			for (const space of spaces) {
+				const atom = space.atom
+				const element = atom.element
+				if (element === Empty) continue
+				if (atom.track === true) continue
+				atom.track = true
+				element.behave(atom, space)
+			}
+			currentTrack = false
+		}
+		else {
+			for (const space of spacesReversed) {
+				const atom = space.atom
+				const element = atom.element
+				if (element === Empty) continue
+				if (atom.track === false) continue
+				atom.track = false
+				element.behave(atom, space)
+			}
+			currentTrack = true
+		}
+	})
+}
+else {
+	on.process(() => {
+		if (paused) {
+			if (stepCount <= 0) return
+			stepCount--
+		}
+		for (const space of spaces) {
+			const atom = space.atom
+			const element = atom.element
+			if (element === Empty) continue
+			element.behave(atom, space)
+		}
+	})
+}
 
 function measureConcentration() {
 	let atomCount = 0
