@@ -114,7 +114,21 @@ const spaceCount = world.spaces.length
 const MIN_SPACE = 0
 const MAX_SPACE = spaceCount - 1
 
-const spaces = shuffleArray(world.spaces)
+const spaces = world.spaces
+let spaceIds = spaces.map(space => space.id)
+let shuffling = true
+
+let shuffleWorker = undefined
+try { shuffleWorker = new WorkerProxy("Source/SandboysEngine/ShuffleWorker.js") }
+catch {}
+
+if (shuffleWorker != undefined) {
+	shuffleWorker.onmessage = (({data}) => spaceIds = data)
+	shuffleWorker.shuffle(spaceIds)
+}
+	
+
+//shuffleArray()
 
 $("#loading").innerHTML = ""
 
@@ -128,17 +142,19 @@ on.process(() => {
 
 let paused = false
 let stepCount = 0
+let shuffleCounter = 0
 on.process(() => {
 	if (paused) {
 		if (stepCount <= 0) return
 		stepCount--
 	}
-	for (let i = 0; i < spaceCount; i++) {
-		const space = world.spaces[i]
+	for (const id of spaceIds) {
+		const space = spaces[id]
 		const atom = space.atom
 		const element = atom.element
 		if (element != Empty) element.behave(atom, space)
 	}
+	
 })
 
 function measureConcentration() {

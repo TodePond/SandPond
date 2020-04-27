@@ -11,7 +11,7 @@ let DROPPER_SHADOW = true
 	//===========//
 	// Constants //
 	//===========//
-	const SPREAD_CHANCE = 0.9
+	const SPREAD_CHANCE = 1
 	
 	//=========//
 	// Globals //

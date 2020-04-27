@@ -1,3 +1,5 @@
+// only works for global scope workers
+
 importScripts("Libraries/Array.js")
 importScripts("Libraries/Async.js")
 importScripts("Libraries/Console.js")
@@ -13,5 +15,12 @@ importScripts("Libraries/PropertyEditor.js")
 importScripts("Libraries/Stage.js")
 importScripts("Libraries/Vector.js")
 importScripts("Libraries/three.min.js")
+importScripts("Libraries/threex.dynamictext2dobject.js")
+importScripts("Libraries/threex.dynamictexture.js")
 importScripts("Libraries/BufferGeometryUtils.js")
 importScripts("Libraries/Worker.js")
+importScripts("Libraries/Eat.js")
+importScripts("Libraries/Javascript.js")
+importScripts("Libraries/Math.js")
+importScripts("Libraries/OrbitControls.js")
+importScripts("Libraries/WebVR.js")

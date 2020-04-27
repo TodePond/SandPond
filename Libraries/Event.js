@@ -73,6 +73,22 @@ if (this.Element) {
 		},
 	})
 	
+	Reflect.defineProperty(Object.prototype, "when", {
+		get() {
+			return new Proxy(this, {
+				get: (object, eventName, callback) => (callback) => {
+					return new Promise((resolve) => {
+						object.addEventListener(eventName, (...args) => {
+							const result = callback(...args)
+							resolve(result)
+							return result
+						}, {once: true})
+					})
+				}
+			})
+		},
+	})
+	
 	const EVENT_TARGET_SYMBOL = Symbol("EventTarget")
 	const getEventTarget = (object) => object[EVENT_TARGET_SYMBOL]
 	

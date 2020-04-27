@@ -3,46 +3,32 @@
 //========//
 {
 
-	const _Worker = Worker
-
-	Worker = function(...args) {
-		const worker = new _Worker(...args)
-		worker.onmessage = e => {
-			const {eventName, detail} = e.data
-			const event = new CustomEvent(eventName, {detail})
-			worker.dispatchEvent(event)
-		}
-		
+	//============================//
+	// FOR USE INSIDE MAIN SCRIPT //
+	//============================//
+	WorkerProxy = function(...args) {
+		const worker = new Worker(...args)
 		const proxy = new Proxy(worker, {
-			get(_, propertyName) {
+			get(_, name) {
 			
-				if (propertyName in worker) {
-					const property = worker[propertyName]
+				// Normal Behaviour
+				if (name in worker) {
+					const property = worker[name]
 					if (typeof property == "function") return property.bind(worker)
 					else return property
 				}
 				
-				return (...args) => {
-					worker.postMessage({functionName: propertyName, args})
-				}
+				// Custom Behaviour
+				return (...args) => worker.postMessage({name, args})
+				
 			},
-			set(_, propertyName, value) {
-				if (propertyName in worker) {
-					return worker[propertyName] = value
+			set(_, name, value) {
+				if (name in worker) {
+					return worker[name] = value
 				}
 			}
 		})
 		return proxy
-	}
-	
-	onmessage = ({data: {functionName, args = []}}) => {
-		const func = this[functionName]
-		if (typeof func != "function") throw new Error(`Could not find worker function: ${functionName}`)
-		this[functionName](...args)
-	}
-	
-	sendEvent = (eventName, detail) => {
-		return postMessage({eventName, detail})
 	}
 	
 }

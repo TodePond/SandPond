@@ -17,6 +17,36 @@ const JAVASCRIPT = {}
 			const behave = (self, origin) => {
 				const sites = origin.sites
 				const spaceBelow = sites[17]
+				const elementBelow = spaceBelow.atom.element
+				if (elementBelow == Empty || elementBelow == Water) {
+					SPACE.setAtom(origin, spaceBelow.atom)
+					SPACE.setAtom(spaceBelow, self)
+					return
+				}
+				const rando = Math.trunc(Math.random() * 4)
+				const slideSite = sites[symms[rando]]
+				const slideElement = slideSite.atom.element
+				if (slideElement == Empty || slideElement == Water) {
+					SPACE.setAtom(origin, slideSite.atom)
+					SPACE.setAtom(slideSite, self)
+				}
+			}
+			
+			const symms = [
+				EVENTWINDOW.getSiteNumber(1, -1, 0),
+				EVENTWINDOW.getSiteNumber(-1, -1, 0),
+				EVENTWINDOW.getSiteNumber(0, -1, 1),
+				EVENTWINDOW.getSiteNumber(0, -1, -1),
+			]
+			
+			return behave
+			
+		}`
+		else if (name == "Water") return `() => {
+			
+			const behave = (self, origin) => {
+				const sites = origin.sites
+				const spaceBelow = sites[17]
 				if (spaceBelow.atom.element == Empty) {
 					SPACE.setAtom(origin, spaceBelow.atom)
 					SPACE.setAtom(spaceBelow, self)
@@ -31,10 +61,10 @@ const JAVASCRIPT = {}
 			}
 			
 			const symms = [
-				EVENTWINDOW.getSiteNumber(1, -1, 0),
-				EVENTWINDOW.getSiteNumber(-1, -1, 0),
-				EVENTWINDOW.getSiteNumber(0, -1, 1),
-				EVENTWINDOW.getSiteNumber(0, -1, -1),
+				EVENTWINDOW.getSiteNumber(1, 0, 0),
+				EVENTWINDOW.getSiteNumber(-1, 0, 0),
+				EVENTWINDOW.getSiteNumber(0, 0, 1),
+				EVENTWINDOW.getSiteNumber(0, 0, -1),
 			]
 			
 			return behave
