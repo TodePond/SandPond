@@ -9,6 +9,7 @@ const D1_MODE = urlParams.has("1d")
 const VR_MODE = urlParams.has("vr")
 const TINY_MODE = urlParams.has("tiny")
 const LONG_MODE = urlParams.has("long")
+const NO_SHUFFLE_MODE = urlParams.has("noshuffle")
 
 const FLOOR_TYPE = urlParams.has("nofloor")? "nofloor" : "floor"
 
@@ -115,14 +116,14 @@ const MIN_SPACE = 0
 const MAX_SPACE = spaceCount - 1
 
 const spaces = world.spaces
-let spaceIds = spaces.map(space => space.id)
+let spaceIds = spaces.map(space => space.id).sort(() => Math.random() - 0.5) 
 let shuffling = true
 
 let shuffleWorker = undefined
 try { shuffleWorker = new WorkerProxy("Source/SandboysEngine/ShuffleWorker.js") }
 catch {}
 
-if (shuffleWorker != undefined) {
+if (shuffleWorker != undefined && !NO_SHUFFLE_MODE) {
 	shuffleWorker.onmessage = (({data}) => spaceIds = data)
 	shuffleWorker.shuffle(spaceIds)
 }
