@@ -9,7 +9,7 @@ const D1_MODE = urlParams.has("1d")
 const VR_MODE = urlParams.has("vr")
 const TINY_MODE = urlParams.has("tiny")
 const LONG_MODE = urlParams.has("long")
-const NO_SHUFFLE_MODE = urlParams.has("noshuffle")
+const SHUFFLE_MODE = urlParams.has("shuffle")
 
 const FLOOR_TYPE = urlParams.has("nofloor")? "nofloor" : "floor"
 
@@ -123,7 +123,7 @@ let shuffleWorker = undefined
 try { shuffleWorker = new WorkerProxy("Source/SandboysEngine/ShuffleWorker.js") }
 catch {}
 
-if (shuffleWorker != undefined && !NO_SHUFFLE_MODE) {
+if (shuffleWorker != undefined && SHUFFLE_MODE) {
 	shuffleWorker.onmessage = (({data}) => spaceIds = data)
 	shuffleWorker.shuffle(spaceIds)
 }
