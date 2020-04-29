@@ -100,11 +100,33 @@ const JAVASCRIPT = {}
 			return behave
 			
 		}`
-		else if (name == "Seeker") return `() => {
+		else if (name == "Tracker") return `() => {
 			const behave = (self, origin) => {
 				const rando = Math.trunc(Math.random() * 6)
 				const site = origin.sites[symms[rando]]
 				if (site.atom.element == Empty) {
+					SPACE.setAtom(site, self)
+				}
+			}
+			
+			const symms = [
+				EVENTWINDOW.getSiteNumber(1, 0, 0),
+				EVENTWINDOW.getSiteNumber(-1, 0, 0),
+				EVENTWINDOW.getSiteNumber(0, 1, 0),
+				EVENTWINDOW.getSiteNumber(0, -1, 0),
+				EVENTWINDOW.getSiteNumber(0, 0, 1),
+				EVENTWINDOW.getSiteNumber(0, 0, -1),
+			]
+			
+			return behave
+		}
+		`
+		else if (name == "Trailer") return `() => {
+			const behave = (self, origin) => {
+				const rando = Math.trunc(Math.random() * 6)
+				const site = origin.sites[symms[rando]]
+				if (site.atom.element == Empty) {
+					SPACE.setAtom(origin, new Trail())
 					SPACE.setAtom(site, self)
 				}
 			}

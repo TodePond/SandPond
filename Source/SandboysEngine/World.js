@@ -24,7 +24,7 @@ const ATOM_SCALE = 1.0
 		const world = {}
 		
 		const area = readArea(rawArea)
-		const {grid, spaces} = makeSpacesGrid(world, area)
+		const {grid, spaces, pureSpaces} = makeSpacesGrid(world, area)
 		const count = spaces.length
 		
 		const geometry = GEOMETRY_TEMPLATE
@@ -58,7 +58,7 @@ const ATOM_SCALE = 1.0
 		scene.add(mesh)
 		
 		world.o={
-			spaces, grid, area,
+			spaces, grid, area, pureSpaces,
 			visibleInstances, visibleAttribute,
 			opacityInstances, opacityAttribute,
 			colourInstances, colourAttribute,
@@ -299,7 +299,9 @@ const ATOM_SCALE = 1.0
 			}
 		}
 		
-		return {grid, spaces}
+		const pureSpaces = spaces.shuffled
+		
+		return {grid, spaces, pureSpaces}
 	}
 	
 	const voidAtom = new Void()

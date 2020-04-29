@@ -10,9 +10,10 @@ const D1_MODE = urlParams.has("1d")
 const VR_MODE = urlParams.has("vr")
 const TINY_MODE = urlParams.has("tiny")
 const LONG_MODE = urlParams.has("long")
+const PURE_RANDOM_MODE = urlParams.has("pure")
 const SHUFFLE_MODE = urlParams.has("shuffle")
-const SHAKE_MODE = urlParams.has("shake")
-const TRACK_MODE = urlParams.has("track")
+
+const RANDOM = SHUFFLE_MODE? "shuffle" : (PURE_RANDOM_MODE? "pure" : "track")
 
 const FLOOR_TYPE = urlParams.has("nofloor")? "nofloor" : "floor"
 
@@ -124,18 +125,21 @@ const MIN_SPACE = 0
 const MAX_SPACE = spaceCount - 1
 
 const spaces = world.spaces
-const spacesReversed = spaces.reversed
-const spacesShuffled = [...spaces].sort(() => Math.random() - 0.5)
-const spacesShuffledReversed = spacesShuffled.reversed
+const pureSpaces = world.pureSpaces
 
-const gridXShuffled = [...world.grid].sort(() => Math.random() - 0.5)
-
-let spaceIds = spaces.map(space => space.id).sort(() => Math.random() - 0.5) 
-let shuffling = true
+let spaceIds = spaces.map(space => space.id).sort(() => Math.random() - 0.5)
 
 let shuffleWorker = undefined
-try { shuffleWorker = new WorkerProxy("Source/SandboysEngine/ShuffleWorker.js") }
-catch {}
+try {
+	shuffleWorker = new WorkerProxy("Source/SandboysEngine/ShuffleWorker.js")
+}
+catch {
+	if (RANDOM == "shuffle") {
+		const warning = "ERROR: Shuffle worker mode was selected but I couldn't make a web worker...\nIf you see this error, please let @todepond know :)"
+		alert(warning)
+		console.error(warning)
+	}
+}
 
 if (shuffleWorker != undefined && SHUFFLE_MODE) {
 	shuffleWorker.onmessage = (({data}) => spaceIds = data)
@@ -170,29 +174,22 @@ if (SHUFFLE_MODE) {
 		}
 	})
 }
-else if (SHAKE_MODE) {
-
+else if (PURE_RANDOM_MODE) {
 	on.process(() => {
 		if (paused) {
 			if (stepCount <= 0) return
 			stepCount--
 		}
-		for (const space of spaces) {
+		for (const space of pureSpaces) {
 			const atom = space.atom
 			const element = atom.element
-			if (element == Empty || element == Fire) continue
+			if (element === Empty) continue
 			element.behave(atom, space)
 		}
 		
-		for (const space of spacesReversed) {
-			const atom = space.atom
-			const element = atom.element
-			if (element == Empty || element == Sand || element == Water || element == Wall || element == Forkbomb) continue
-			element.behave(atom, space)
-		}
 	})
 }
-else if (true || TRACK_MODE) {
+else {
 
 	let currentTrack = true
 
@@ -225,30 +222,18 @@ else if (true || TRACK_MODE) {
 		}
 	})
 }
-else {
-	on.process(() => {
-		if (paused) {
-			if (stepCount <= 0) return
-			stepCount--
-		}
-		for (const space of spaces) {
-			const atom = space.atom
-			const element = atom.element
-			if (element === Empty) continue
-			element.behave(atom, space)
-		}
-	})
-}
 
-function measureConcentration() {
+function measureConcentration(filter = (atom => atom.element != Empty)) {
 	let atomCount = 0
 	for (let i = 0; i < spaceCount; i++) {
 		const space = world.spaces[i]
-		if (space && space.atom) {
-			atomCount++
-		}
+		const atom = space.atom
+		if (filter(atom)) atomCount++
 	}
-	return atomCount / spaceCount
+	return `${((atomCount / spaceCount) * 100).toFixed(2)}%`
 }
 
-//print(Sand.code)
+function measureConcentrationForever(filter = (atom => atom.element != Empty)) {
+	print(measureConcentration(filter))
+	setTimeout(() => measureConcentrationForever(filter), 1000)
+}

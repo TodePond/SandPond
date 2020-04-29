@@ -13,6 +13,7 @@ UIstarted = true
 	UI.highlightedElement = undefined
 	UI.selectedSize = SIZE
 	UI.selectedShape = SHAPE
+	UI.selectedRandom = RANDOM
 	UI.selectedDimensions = D1_MODE? "d1" : (D2_MODE? "d2" : "d3")
 	UI.selectedReality = VR_MODE? "vr" : "nonvr"
 	UI.selectedSource = "todeSplat"
@@ -235,6 +236,12 @@ UIstarted = true
 						<div id="nofloorOption" class="floorTypeOption option box clickable"><div class="label">No Floor</div></div>
 					</section>
 					<section>
+						<div class="miniTitle">RANDOMNESS</div>
+						<div id="trackOption" class="randomOption option box clickable"><div class="label">Tracking</div></div>
+						<div id="pureOption" class="randomOption option box clickable"><div class="label">Shuffled</div></div>
+						<div id="shuffleOption" class="randomOption option box clickable"><div class="label">Shuffling</div></div>
+					</section>
+					<section>
 						<div id="modeGo" class="box option clickable"><div class="label">RELOAD</div></div>
 					</section>
 				</div>
@@ -319,6 +326,7 @@ UIstarted = true
 	
 	$(`#${UI.selectedSize}Option`).classList.add("selected")
 	$(`#${UI.selectedShape}Option`).classList.add("selected")
+	$(`#${UI.selectedRandom}Option`).classList.add("selected")
 	
 	if (UI.selectedDimensions == "d1") $("#d1Option").classList.add("selected")
 	else if (UI.selectedDimensions == "d2") $("#d2Option").classList.add("selected")
@@ -402,6 +410,7 @@ UIstarted = true
 		let params = ""
 		params += UI.selectedSize + "&"
 		params += UI.selectedShape + "&"
+		params += UI.selectedRandom + "&"
 		if (UI.selectedDimensions == "d1") params += "1d&"
 		else if (UI.selectedDimensions == "d2") params += "2d&"
 		if (UI.selectedReality == "nonvr") params += "nonvr&"
@@ -425,6 +434,14 @@ UIstarted = true
 		const id = this.id
 		const sizeName = id.slice(0, id.length - "Option".length)
 		UI.selectedShape = sizeName
+	})
+	
+	$$(".randomOption").on.click(function() {
+		for (const randomOption of $$(".randomOption")) randomOption.classList.remove("selected")
+		this.classList.add("selected")
+		const id = this.id
+		const randomName = id.slice(0, id.length - "Option".length)
+		UI.selectedRandom = randomName
 	})
 	
 	$$(".dimensionOption").on.click(function() {

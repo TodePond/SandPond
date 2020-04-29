@@ -31,10 +31,27 @@ element Sand any(xz) {
 	
 }
 
-element Seeker any(xyz) {
+element Tracker any(xyz) {
 	colour "grey"
 	emissive "black"
 	precise true
+
+	@_ => @@
+}
+
+element Trailer any(xyz) {
+	colour "grey"
+	emissive "black"
+	precise true
+
+	@_ => @@
+}
+
+element Trail any(xyz) {
+	colour "grey"
+	emissive "black"
+	precise true
+	hidden true
 
 	@_ => @@
 }
