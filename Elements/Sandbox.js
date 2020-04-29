@@ -25,12 +25,12 @@ element Water {
 	rule xyz { @H => SH }
 	
 	given E (element) => element && element.electric && element != WaterPulse && element != WaterPulseTrail
-	change H () => new WaterPulse()
-	for(xz) rule { @E => H. }
+	change P () => new WaterPulse()
+	for(xz) rule { @E => P. }
 	
 	rule {
 		E => .
-		@    H
+		@    P
 	}
 	
 	ruleset Liquid
