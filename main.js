@@ -40,6 +40,7 @@ if (LONG_MODE) {
 
 let SIZE = SMALL_MODE? "small" : "big"
 if (TINY_MODE) SIZE = "tiny"
+else if (MASSIVE_MODE) SIZE = "massive"
 
 const SHAPE = LONG_MODE? "long" : "cube"
 

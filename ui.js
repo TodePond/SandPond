@@ -211,6 +211,7 @@ UIstarted = true
 						<div id="tinyOption" class="sizeOption option box clickable"><div class="label">Tiny</div></div>
 						<div id="smallOption" class="sizeOption option box clickable"><div class="label">Normal</div></div>
 						<div id="bigOption" class="sizeOption option box clickable"><div class="label">Big</div></div>
+						<div id="massiveOption" class="sizeOption option box clickable"><div class="label">Massive</div></div>
 					</section>
 					<section>
 						<div class="miniTitle">SHAPE</div>
