@@ -31,6 +31,14 @@ element Sand any(xz) {
 	
 }
 
+element Seeker any(xyz) {
+	colour "grey"
+	emissive "black"
+	precise true
+
+	@_ => @@
+}
+
 element Forkbomb any(xyz) {
 	colour "grey"
 	emissive "black"

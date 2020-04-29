@@ -17,6 +17,12 @@ Reflect.defineProperty(Array.prototype, "reversed", {
 	},
 })
 
+Reflect.defineProperty(Array.prototype, "shuffled", {
+	get() {
+		return [...this].sort(() => Math.random() - 0.5)
+	},
+})
+
 Reflect.defineProperty(Array.prototype, "first", {
 	get() {
 		return this[0]

@@ -212,7 +212,7 @@ else if (true || TRACK_MODE) {
 			currentTrack = false
 		}
 		else {
-			for (const space of spacesReversed) {
+			for (const space of spaces) {
 				const atom = space.atom
 				const element = atom.element
 				if (element === Empty) continue

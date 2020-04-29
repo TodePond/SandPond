@@ -47,6 +47,7 @@ const JAVASCRIPT = {}
 			const behave = (self, origin) => {
 				const sites = origin.sites
 				const spaceBelow = sites[17]
+				if (spaceBelow.atom.element == Void) return
 				if (spaceBelow.atom.element == Empty) {
 					SPACE.setAtom(origin, spaceBelow.atom)
 					SPACE.setAtom(spaceBelow, self)
@@ -99,11 +100,55 @@ const JAVASCRIPT = {}
 			return behave
 			
 		}`
+		else if (name == "Seeker") return `() => {
+			const behave = (self, origin) => {
+				const rando = Math.trunc(Math.random() * 6)
+				const site = origin.sites[symms[rando]]
+				if (site.atom.element == Empty) {
+					SPACE.setAtom(site, self)
+				}
+			}
+			
+			const symms = [
+				EVENTWINDOW.getSiteNumber(1, 0, 0),
+				EVENTWINDOW.getSiteNumber(-1, 0, 0),
+				EVENTWINDOW.getSiteNumber(0, 1, 0),
+				EVENTWINDOW.getSiteNumber(0, -1, 0),
+				EVENTWINDOW.getSiteNumber(0, 0, 1),
+				EVENTWINDOW.getSiteNumber(0, 0, -1),
+			]
+			
+			return behave
+		}
+		`
 		else if (name == "Forkbomb") return `() => {
 			const behave = (self, origin) => {
 				const rando = Math.trunc(Math.random() * 6)
 				const site = origin.sites[symms[rando]]
 				if (site.atom.element == Empty) {
+					SPACE.setAtom(site, new Forkbomb())
+				}
+			}
+			
+			const symms = [
+				EVENTWINDOW.getSiteNumber(1, 0, 0),
+				EVENTWINDOW.getSiteNumber(-1, 0, 0),
+				EVENTWINDOW.getSiteNumber(0, 1, 0),
+				EVENTWINDOW.getSiteNumber(0, -1, 0),
+				EVENTWINDOW.getSiteNumber(0, 0, 1),
+				EVENTWINDOW.getSiteNumber(0, 0, -1),
+			]
+			
+			return behave
+		}
+		`
+		else if (name == "Res") return `() => {
+			const behave = (self, origin) => {
+				const rando = Math.trunc(Math.random() * 6)
+				const site = origin.sites[symms[rando]]
+				const atom = site.atom
+				if (atom.element == Empty) {
+					SPACE.setAtom(origin, atom)
 					SPACE.setAtom(site, self)
 				}
 			}

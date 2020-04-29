@@ -24,8 +24,7 @@ const ATOM_SCALE = 1.0
 		const world = {}
 		
 		const area = readArea(rawArea)
-		const grid = makeSpacesGrid(world, area)
-		const spaces = getSpacesArray(grid, area)
+		const {grid, spaces} = makeSpacesGrid(world, area)
 		const count = spaces.length
 		
 		const geometry = GEOMETRY_TEMPLATE
@@ -274,35 +273,33 @@ const ATOM_SCALE = 1.0
 		}
 	}
 	
+	
+	
 	const makeSpacesGrid = (world, area) => {
 		const grid = []
+		const spaces = []
 		let id = 0
-		for (const y of area.yStart.to(area.yEnd)) {
+		
+		const ys = area.yStart.to(area.yEnd)
+		const xs = area.xStart.to(area.xEnd)
+		const zs = area.zStart.to(area.zEnd)
+		
+		const xzs = xs.map(x => zs.map(z => [x, z])).flat()
+		
+		for (const y of ys) {
 			grid[y] = []
-			for (const x of area.xStart.to(area.xEnd)) {
-				grid[y][x] = []
-				for (const z of area.zStart.to(area.zEnd)) {
-					const space = SPACE.make(world, id, new Empty())
-					grid[y][x][z] = space
-					id++
-				}
+			for (const xz of xzs.shuffled) {
+				const x = xz[0]
+				const z = xz[1]
+				if (grid[y][x] == undefined) grid[y][x] = []
+				const space = SPACE.make(world, id, new Empty())
+				spaces.push(space)
+				grid[y][x][z] = space
+				id++
 			}
 		}
 		
-		return grid
-	}
-	
-	const getSpacesArray = (grid, area) => {
-		const spaces = []
-		for (const y of area.yStart.to(area.yEnd)) {
-			for (const x of area.xStart.to(area.xEnd)) {
-				for (const z of area.zStart.to(area.zEnd)) {
-					const space = grid[y][x][z]
-					spaces.push(space)
-				}
-			}
-		}
-		return spaces
+		return {grid, spaces}
 	}
 	
 	const voidAtom = new Void()
