@@ -373,7 +373,8 @@ UIstarted = true
 	})
 	
 	const updateSearch = () => {
-		const query = $("#searchBar").value.as(LowerCase)
+		let query = $("#searchBar").value.as(LowerCase)
+		if ($("#searchBar").classList.contains("minimised")) query = ""
 		const categories = []
 		for (const category of $$(".category")) {
 			if (!category.classList.contains("selected")) continue
