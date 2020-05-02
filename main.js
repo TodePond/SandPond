@@ -125,7 +125,7 @@ const MIN_SPACE = 0
 const MAX_SPACE = spaceCount - 1
 
 const spaces = world.spaces
-const pureSpaces = world.pureSpaces
+const spacesShuffled = world.spacesShuffled
 
 let spaceIds = spaces.map(space => space.id).sort(() => Math.random() - 0.5)
 
@@ -166,7 +166,8 @@ if (SHUFFLE_MODE) {
 			if (stepCount <= 0) return
 			stepCount--
 		}
-		for (const id of spaceIds) {
+		for (let i = 0; i < spaceCount; i++) {
+			const id = spaceIds[i]
 			const space = spaces[id]
 			const atom = space.atom
 			const element = atom.element
@@ -180,9 +181,10 @@ else if (PURE_RANDOM_MODE) {
 			if (stepCount <= 0) return
 			stepCount--
 		}
-		for (const space of pureSpaces) {
+		for (let i = 0; i < spaceCount; i++) {
+			const space = spaces[i]
 			const atom = space.atom
-			const element = atom.element
+			const element = space.element
 			if (element === Empty) continue
 			element.behave(atom, space)
 		}
@@ -194,15 +196,27 @@ else {
 	let currentTrack = true
 
 	on.process(() => {
-		if (paused) {
+		if (paused === true) {
 			if (stepCount <= 0) return
 			stepCount--
 		}
-		if (currentTrack === true) {
+
+		for (let i = 0; i < spaceCount; i++) {
+			const space = spaces[i]
+			const atom = space.atom
+			const element = space.element
+			if (element === Empty) continue
+			if (atom.track === currentTrack) continue
+			atom.track = currentTrack
+			element.behave(atom, space)
+		}
+		currentTrack = !currentTrack
+		
+		/*if (currentTrack === true) {
 			for (const space of spaces) {
 				const atom = space.atom
 				const element = atom.element
-				if (element === Empty) continue
+				if (atom.element === Empty) continue
 				if (atom.track === true) continue
 				atom.track = true
 				element.behave(atom, space)
@@ -213,13 +227,13 @@ else {
 			for (const space of spaces) {
 				const atom = space.atom
 				const element = atom.element
-				if (element === Empty) continue
+				if (atom.element === Empty) continue
 				if (atom.track === false) continue
 				atom.track = false
 				element.behave(atom, space)
 			}
 			currentTrack = true
-		}
+		}*/
 	})
 }
 

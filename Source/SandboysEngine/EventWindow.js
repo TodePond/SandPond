@@ -23,11 +23,16 @@ const EVENTWINDOW = {}
 		for (const y of area.yStart.to(area.yEnd)) {
 			for (const x of area.xStart.to(area.xEnd)) {
 				for (const z of area.zStart.to(area.zEnd)) {
+				
 					const space = grid[y][x][z]
 					const sites = makeSites(world, x, y, z)
 					for (let siteNumber = 0; siteNumber < sites.length; siteNumber++) {
-						space.sites[siteNumber] = sites[siteNumber]
+						const site = sites[siteNumber]
+						space.sites.push(site)
 					}
+					
+					//const siteRefs = getSiteRefs(sites)
+					//space.siteRefs = siteRefs
 				}
 			}
 		}
@@ -80,7 +85,16 @@ const EVENTWINDOW = {}
 	
 	//===========//
 	// Functions //
-	//===========//
+	//===========//	
+	const getSiteRefs = (sites) => {
+		const length = sites.length
+		const array = new Uint32Array(length)
+		for (let i = 0; i < length; i++) {
+			array[i] = sites[i].id
+		}
+		return array
+	}
+	
 	const makeSites = (world, x, y, z) => {
 	
 		// Written by hand because it made lookup faster compared to dynamically filling the array

@@ -12,23 +12,23 @@ const JAVASCRIPT = {}
 	// Public //
 	//========//
 	JAVASCRIPT.makeBehave = (instructions, name) => {
-		if (name == "Sand") return `() => {
+		if (name == "Sand") return () => {
 			
 			const behave = (self, origin) => {
 				const sites = origin.sites
 				const spaceBelow = sites[17]
 				const elementBelow = spaceBelow.atom.element
 				if (elementBelow == Empty || elementBelow == Water) {
-					SPACE.setAtom(origin, spaceBelow.atom)
-					SPACE.setAtom(spaceBelow, self)
+					SPACE.setAtom(origin, spaceBelow.atom, elementBelow)
+					SPACE.setAtom(spaceBelow, self, Sand)
 					return
 				}
 				const rando = Math.trunc(Math.random() * 4)
 				const slideSite = sites[symms[rando]]
 				const slideElement = slideSite.atom.element
 				if (slideElement == Empty || slideElement == Water) {
-					SPACE.setAtom(origin, slideSite.atom)
-					SPACE.setAtom(slideSite, self)
+					SPACE.setAtom(origin, slideSite.atom, slideElement)
+					SPACE.setAtom(slideSite, self, Sand)
 				}
 			}
 			
@@ -41,23 +41,23 @@ const JAVASCRIPT = {}
 			
 			return behave
 			
-		}`
-		else if (name == "Water") return `() => {
+		}
+		else if (name == "Water") return () => {
 			
 			const behave = (self, origin) => {
 				const sites = origin.sites
 				const spaceBelow = sites[17]
 				if (spaceBelow.atom.element == Void) return
 				if (spaceBelow.atom.element == Empty) {
-					SPACE.setAtom(origin, spaceBelow.atom)
-					SPACE.setAtom(spaceBelow, self)
+					SPACE.setAtom(origin, spaceBelow.atom, Empty)
+					SPACE.setAtom(spaceBelow, self, Water)
 					return
 				}
 				const rando = Math.trunc(Math.random() * 4)
 				const slideSite = sites[symms[rando]]
 				if (slideSite.atom.element == Empty) {
-					SPACE.setAtom(origin, slideSite.atom)
-					SPACE.setAtom(slideSite, self)
+					SPACE.setAtom(origin, slideSite.atom, Empty)
+					SPACE.setAtom(slideSite, self, Water)
 				}
 			}
 			
@@ -70,42 +70,42 @@ const JAVASCRIPT = {}
 			
 			return behave
 			
-		}`
-		else if (name == "Wall") return `() => {
+		}
+		else if (name == "Wall") return () => {
 			
 			const behave = (self, origin) => {
 				const sites = origin.sites
 				const spaceBelow = sites[17]
 				if (spaceBelow.atom.element == Empty) {
-					SPACE.setAtom(origin, spaceBelow.atom)
-					SPACE.setAtom(spaceBelow, self)
+					SPACE.setAtom(origin, spaceBelow.atom, Empty)
+					SPACE.setAtom(spaceBelow, self, Wall)
 					return
 				}
 			}
 			return behave
-		}`
-		else if (name == "Fire") return `() => {
+		}
+		else if (name == "Fire") return () => {
 			
 			const behave = (self, origin) => {
 				const sites = origin.sites
 				const spaceAbove = sites[7]
 				if (spaceAbove.atom.element == Empty) {
-					SPACE.setAtom(origin, spaceAbove.atom)
-					if (Math.random() < 0.8) SPACE.setAtom(spaceAbove, self)
+					SPACE.setAtom(origin, spaceAbove.atom, Empty)
+					if (Math.random() < 0.8) SPACE.setAtom(spaceAbove, self, Fire)
 					return
 				}
-				if (spaceAbove.atom.element != Fire) SPACE.setAtom(origin, new Empty())
+				if (spaceAbove.atom.element != Fire) SPACE.setAtom(origin, new Empty(), Empty)
 			}
 			
 			return behave
 			
-		}`
-		else if (name == "Tracker") return `() => {
+		}
+		else if (name == "Tracker") return () => {
 			const behave = (self, origin) => {
 				const rando = Math.trunc(Math.random() * 6)
 				const site = origin.sites[symms[rando]]
 				if (site.atom.element == Empty) {
-					SPACE.setAtom(site, self)
+					SPACE.setAtom(site, self, Tracker)
 				}
 			}
 			
@@ -120,14 +120,13 @@ const JAVASCRIPT = {}
 			
 			return behave
 		}
-		`
-		else if (name == "Trailer") return `() => {
+		else if (name == "Trailer") return () => {
 			const behave = (self, origin) => {
 				const rando = Math.trunc(Math.random() * 6)
 				const site = origin.sites[symms[rando]]
 				if (site.atom.element == Empty) {
-					SPACE.setAtom(origin, new Trail())
-					SPACE.setAtom(site, self)
+					SPACE.setAtom(origin, new Trail(), Trail)
+					SPACE.setAtom(site, self, Empty)
 				}
 			}
 			
@@ -142,36 +141,74 @@ const JAVASCRIPT = {}
 			
 			return behave
 		}
-		`
-		else if (name == "Forkbomb") return `() => {
+		else if (name == "Forkbomb") return () => {
 			const behave = (self, origin) => {
-				const rando = Math.trunc(Math.random() * 6)
-				const site = origin.sites[symms[rando]]
-				if (site.atom.element == Empty) {
-					SPACE.setAtom(site, new Forkbomb())
+				const rando = Math.floor(Math.random() * 6)
+				const symm = symms[rando]
+				const sites = origin.sites
+				const site = sites[symm]
+				if (site.element === Empty) {
+					SPACE.setAtom(site, new Forkbomb(), Forkbomb)
 				}
 			}
 			
 			const symms = [
-				EVENTWINDOW.getSiteNumber(1, 0, 0),
-				EVENTWINDOW.getSiteNumber(-1, 0, 0),
-				EVENTWINDOW.getSiteNumber(0, 1, 0),
-				EVENTWINDOW.getSiteNumber(0, -1, 0),
-				EVENTWINDOW.getSiteNumber(0, 0, 1),
-				EVENTWINDOW.getSiteNumber(0, 0, -1),
+				13,
+				11,
+				7,
+				17,
+				32,
+				37,
 			]
-			
+
+			/*const symms = [
+				(sites) => {
+					const site = sites[13]
+					if (site.element === Empty) {
+						SPACE.setAtom(site, new Forkbomb(), Forkbomb)
+					}
+				},
+				(sites) => {
+					const site = sites[11]
+					if (site.element === Empty) {
+						SPACE.setAtom(site, new Forkbomb(), Forkbomb)
+					}
+				},
+				(sites) => {
+					const site = sites[7]
+					if (site.element === Empty) {
+						SPACE.setAtom(site, new Forkbomb(), Forkbomb)
+					}
+				},
+				(sites) => {
+					const site = sites[17]
+					if (site.element === Empty) {
+						SPACE.setAtom(site, new Forkbomb(), Forkbomb)
+					}
+				},
+				(sites) => {
+					const site = sites[32]
+					if (site.element === Empty) {
+						SPACE.setAtom(site, new Forkbomb(), Forkbomb)
+					}
+				},
+				(sites) => {
+					const site = sites[37]
+					if (site.element === Empty) {
+						SPACE.setAtom(site, new Forkbomb(), Forkbomb)
+					}
+				}
+			]*/			
 			return behave
 		}
-		`
-		else if (name == "Res") return `() => {
+		else if (name == "Res") return () => {
 			const behave = (self, origin) => {
 				const rando = Math.trunc(Math.random() * 6)
 				const site = origin.sites[symms[rando]]
 				const atom = site.atom
 				if (atom.element == Empty) {
-					SPACE.setAtom(origin, atom)
-					SPACE.setAtom(site, self)
+					SPACE.setAtom(origin, atom, Empty)
+					SPACE.setAtom(site, self, Res)
 				}
 			}
 			
@@ -186,8 +223,7 @@ const JAVASCRIPT = {}
 			
 			return behave
 		}
-		`
-		else return "() => () => {}"
+		else return () => () => {}
 	}
 	
 	show = (element) => {

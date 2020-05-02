@@ -24,7 +24,7 @@ const ATOM_SCALE = 1.0
 		const world = {}
 		
 		const area = readArea(rawArea)
-		const {grid, spaces, pureSpaces} = makeSpacesGrid(world, area)
+		const {grid, spaces, spacesShuffled} = makeSpacesGrid(world, area)
 		const count = spaces.length
 		
 		const geometry = GEOMETRY_TEMPLATE
@@ -58,7 +58,7 @@ const ATOM_SCALE = 1.0
 		scene.add(mesh)
 		
 		world.o={
-			spaces, grid, area, pureSpaces,
+			spaces, grid, area, spacesShuffled,
 			visibleInstances, visibleAttribute,
 			opacityInstances, opacityAttribute,
 			colourInstances, colourAttribute,
@@ -285,12 +285,19 @@ const ATOM_SCALE = 1.0
 		const zs = area.zStart.to(area.zEnd)
 		
 		const xzs = xs.map(x => zs.map(z => [x, z])).flat()
+		const xyzs = xs.map(x => ys.map(y => zs.map(z => [x, y, z]))).flat().flat()
 		
-		for (const y of ys) {
+		/*if (PURE_RANDOM_MODE) for (const [x, y, z] of xyzs.shuffled) {
+			if (grid[y] == undefined) grid[y] = []
+			if (grid[y][x] == undefined) grid[y][x] = []
+			const space = SPACE.make(world, id, new Empty())
+			spaces.push(space)
+			grid[y][x][z] = space
+			id++
+		}
+		else*/ for (const y of ys) {
 			grid[y] = []
-			for (const xz of xzs.shuffled) {
-				const x = xz[0]
-				const z = xz[1]
+			for (const [x, z] of xzs.shuffled) {
 				if (grid[y][x] == undefined) grid[y][x] = []
 				const space = SPACE.make(world, id, new Empty())
 				spaces.push(space)
@@ -299,13 +306,13 @@ const ATOM_SCALE = 1.0
 			}
 		}
 		
-		const pureSpaces = spaces.shuffled
+		const spacesShuffled = spaces.shuffled
 		
-		return {grid, spaces, pureSpaces}
+		return {grid, spaces, spacesShuffled}
 	}
 	
 	const voidAtom = new Void()
-	const voidSpace = {get atom() { return voidAtom} }
+	const voidSpace = {atom: voidAtom}
 	
 	const selectGridSpace = (grid, x, y, z) => {
 		const gridy = grid[y]

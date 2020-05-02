@@ -18,6 +18,7 @@ const SPACE = {}
 		
 			// Real Data
 			atom: new Empty(),
+			element: Empty,
 			
 			// Cached Data
 			id,
@@ -40,8 +41,9 @@ const SPACE = {}
 		WORLD.setSpaceColour(world, space, atom.colour, atom.emissive)
 	}
 	
-	SPACE.setAtom = (space, atom) => {
+	SPACE.setAtom = (space, atom, element = atom.element) => {
 		space.atom = atom
+		space.element = element
 		SPACE.updateAppearance(space, world)
 	}
 	

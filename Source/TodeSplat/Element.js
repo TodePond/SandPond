@@ -18,10 +18,9 @@ const ELEMENT = {}
 	} = {}) => {
 	
 	
-		const behaveCode = JAVASCRIPT.makeBehave(instructions, name)
+		const behaveMaker = JAVASCRIPT.makeBehave(instructions, name)
+		const behave = behaveMaker()
 		const constructorCode = JAVASCRIPT.makeConstructor(name, data, args)
-		
-		const behave = JS(behaveCode)()
 		const constructor = JS(constructorCode)(...data, ...args)
 		
 		const shaderColours = makeShaderColours(colour, emissive, opacity)
@@ -34,7 +33,7 @@ const ELEMENT = {}
 			precise, floor, hidden, pour,
 			
 			// Debug
-			source, constructorCode, behaveCode, instructions,
+			source, constructorCode, behaveCode: behaveMaker.toString(), instructions,
 			
 			// Behaviour
 			behave, ...otherProperties
