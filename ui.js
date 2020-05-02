@@ -343,19 +343,40 @@ UIstarted = true
 	// Events //
 	//========//
 	on.keydown(e => {
-		const searchWindow = $("#elements")
+		const searchWindow = $("#searchBar")
 		if (!searchWindow.classList.contains("minimised")) {
 			const searchBar = $("#searchBar")
 			searchBar.focus()
 		}
 		else {
-			if (e.key == "p") {
+			if (e.key == " ") {
 				paused = !paused
 				updatePauseUI()
 			}
 			else if (e.key == "ArrowRight") {
 				stepCount++
 			}
+			else if (e.key == "Shift") {
+				orbit.enableZoom = false
+			}
+		}
+	})
+	
+	on.wheel(e => {
+		if (e.deltaY < 0) {
+			MAX_DROPPER++
+			if (MAX_DROPPER > 10) MAX_DROPPER = 10
+		}
+		else if (e.deltaY > 0) {
+			MAX_DROPPER--
+			if (MAX_DROPPER < 0) MAX_DROPPER = 0
+			DROPPER.refreshShadows()
+		}
+	})
+	
+	on.keyup(e => {
+		if (e.key == "Shift") {
+			orbit.enableZoom = true
 		}
 	})
 	
