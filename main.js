@@ -160,6 +160,8 @@ let paused = false
 let stepCount = 0
 let shuffleCounter = 0
 
+let currentTrack = true
+	
 if (SHUFFLE_MODE) {
 	on.process(() => {
 		if (paused) {
@@ -193,7 +195,6 @@ else if (PURE_RANDOM_MODE) {
 }
 else {
 
-	let currentTrack = true
 
 	on.process(() => {
 		if (paused === true) {

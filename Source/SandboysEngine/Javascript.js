@@ -17,18 +17,25 @@ const JAVASCRIPT = {}
 			const behave = (self, origin) => {
 				const sites = origin.sites
 				const spaceBelow = sites[17]
-				const elementBelow = spaceBelow.atom.element
+				const elementBelow = spaceBelow.element
 				if (elementBelow == Empty || elementBelow == Water) {
-					SPACE.setAtom(origin, spaceBelow.atom, elementBelow)
-					SPACE.setAtom(spaceBelow, self, Sand)
-					return
+					const atomBelow = spaceBelow.atom
+					if (elementBelow == Empty || atomBelow.track == currentTrack) {
+						SPACE.setAtom(origin, atomBelow, elementBelow)
+						SPACE.setAtom(spaceBelow, self, Sand)
+						atomBelow.track = !currentTrack
+						return
+					}
 				}
 				const rando = Math.trunc(Math.random() * 4)
 				const slideSite = sites[symms[rando]]
-				const slideElement = slideSite.atom.element
+				const slideAtom = slideSite.atom
+				const slideElement = slideAtom.element
+				if (slideElement !== Empty && slideAtom.track !== currentTrack) return
 				if (slideElement == Empty || slideElement == Water) {
-					SPACE.setAtom(origin, slideSite.atom, slideElement)
+					SPACE.setAtom(origin, slideAtom, slideElement)
 					SPACE.setAtom(slideSite, self, Sand)
+					slideAtom.track = !currentTrack
 				}
 			}
 			
