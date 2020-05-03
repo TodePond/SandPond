@@ -59,8 +59,8 @@ element Trail any(xyz) {
 element Forkbomb any(xyz) {
 	colour "grey"
 	emissive "black"
-	precise true
-
+	
+	pour false
 	@_ => @@
 }
 
@@ -68,6 +68,7 @@ element Water {
 	colour "lightblue"
 	emissive "blue"
 	opacity 0.5
+	pour false
 }
 
 element Slime {

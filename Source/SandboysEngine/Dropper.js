@@ -8,6 +8,8 @@ let DROPPER_SHADOW = true
 let MAX_DROPPER = 2
 let MAX_SHADOW = 21
 
+let DROPPER_POUR = "default"
+
 {
 
 	//===========//
@@ -69,7 +71,7 @@ let MAX_SHADOW = 21
 			const z = Math.round(position.z)
 			
 			dropAtom(x, y, z, 0, true, 0)
-			if (!UI.selectedElement.precise) {
+			if ((DROPPER_POUR == "default" && UI.selectedElement.pour) || DROPPER_POUR == "pour") {
 				let id = 1
 				for (let i = -MAX_DROPPER; i <= MAX_DROPPER; i++) {
 					for (let j = -MAX_DROPPER; j <= MAX_DROPPER; j++) {
@@ -93,14 +95,14 @@ let MAX_SHADOW = 21
 		const previousDown = down
 		down = Mouse.down
 		
-		if (!UI.selectedElement.pour) {
+		if (!((DROPPER_POUR == "default" && UI.selectedElement.pour) || DROPPER_POUR == "pour")) {
 			if (!position) return
 			if (down && !previousDown) {
 				const x = Math.round(position.x)
 				const y = Math.round(position.y)
 				const z = Math.round(position.z)
 				dropAtom(x, y, z)
-				if (UI.selectedElement.precise) return
+				/*if (!UI.selectedElement.pour) return
 				let id = 1
 				for (let i = -MAX_DROPPER; i <= MAX_DROPPER; i++) {
 					for (let j = -MAX_DROPPER; j <= MAX_DROPPER; j++) {
@@ -108,7 +110,7 @@ let MAX_SHADOW = 21
 						dropAtom(x + i, y, z + j)
 						id++
 					}
-				}
+				}*/
 				/*if (Math.random() < SPREAD_CHANCE) dropAtom(x + 1, y, z)
 				if (Math.random() < SPREAD_CHANCE) dropAtom(x - 1, y, z)
 				if (Math.random() < SPREAD_CHANCE) dropAtom(x, y, z + 1)
@@ -176,7 +178,7 @@ let MAX_SHADOW = 21
 			const yNew = Math.round(position.y - yInc * i)
 			
 			if (Math.random() < 1) dropAtom(xNew, yNew, zNew)
-			if (UI.selectedElement.precise) continue
+			if (!((DROPPER_POUR == "default" && UI.selectedElement.pour) || DROPPER_POUR == "pour")) continue
 			for (let i = -MAX_DROPPER; i <= MAX_DROPPER; i++) {
 				for (let j = -MAX_DROPPER; j <= MAX_DROPPER; j++) {
 					if (i == 0 && j == 0) continue

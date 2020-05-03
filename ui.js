@@ -130,6 +130,10 @@ UIstarted = true
 				outline: 2px solid black;
 			}
 			
+			.box.dynamic.option.selected {
+				/*outline: 2px solid #FC0;*/
+			}
+			
 			.highlighted {
 				background-color: black !important;
 				color: white;
@@ -244,6 +248,12 @@ UIstarted = true
 							<input class="slider clickable" id="dropperSizeSlider" type="range" min="0" max="10">
 							<div class="inputLabel" id="dropperSizeSliderLabel"></div>
 						</div>
+					</section>
+					<section>
+						<div class="miniTitle">POUR</div>
+						<div id="defaultPourOption" class="pourOption dynamic option box clickable"><div class="label">Default</div></div>
+						<div id="pourPourOption" class="pourOption dynamic option box clickable"><div class="label">Pour</div></div>
+						<div id="singlePourOption" class="pourOption dynamic option box clickable"><div class="label">Single</div></div>
 					</section>
 				</div>
 				
@@ -404,6 +414,16 @@ UIstarted = true
 		}
 	})
 	
+	const updateDropperPour = () => {
+		$$(`.pourOption`).forEach(e => e.classList.remove("selected"))
+		$(`#${DROPPER_POUR}PourOption`).classList.add("selected")
+	}
+	updateDropperPour()
+	
+	$$(".pourOption").on.click(function(){
+		DROPPER_POUR = this.id.slice(0, -"PourOption".length)
+		updateDropperPour()
+	})
 	
 	$("#dropperSizeSlider").on.input(e => {
 		MAX_DROPPER = e.target.value.as(Number)
