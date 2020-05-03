@@ -176,6 +176,7 @@ UIstarted = true
 				<div class="heading box clickable" id="elementsHeading"><div class="label">Elements</div></div>
 				<div class="heading box clickable" id="sourceHeading"><div class="label">Source</div></div>
 				<div class="heading box clickable" id="controlsHeading"><div class="label">Controls</div></div>
+				<div class="heading box clickable" id="dropperHeading"><div class="label">Dropper</div></div>
 				<div class="heading box clickable" id="modeHeading"><div class="label">Mode</div></div>
 				<!--<div class="heading box clickable" id="configHeading"><div class="label">Config</div></div>
 				-->
@@ -204,6 +205,13 @@ UIstarted = true
 						<input class="minimised clickable" type="text" id="searchBar">
 						<div id="searchItems" class="elementList"></div>
 					</div>
+				</div>
+				
+				<div id="dropper" class="form minimised">
+					<section>
+						<div class="miniTitle">SIZE</div>
+						<input id="dropperSizeSlider" type="range" min="0" max="10">
+					</section>
 				</div>
 				
 				<div id="mode" class="form minimised">
@@ -342,7 +350,7 @@ UIstarted = true
 	
 	//========//
 	// Events //
-	//========//
+	//========//	
 	on.keydown(e => {
 		const searchWindow = $("#searchBar")
 		if (!searchWindow.classList.contains("minimised")) {
@@ -361,6 +369,12 @@ UIstarted = true
 				orbit.enableZoom = false
 			}
 		}
+	})
+	
+	
+	$("#dropperSizeSlider").on.input(e => {
+		MAX_DROPPER = e.target.value.as(Number)
+		DROPPER.refreshShadows()
 	})
 	
 	on.wheel(e => {
