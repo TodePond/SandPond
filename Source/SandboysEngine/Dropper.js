@@ -9,6 +9,7 @@ let MAX_DROPPER = 2
 let MAX_SHADOW = 21
 
 let DROPPER_POUR = "default"
+let DROPPER_HEIGHT = 5
 
 {
 
@@ -71,7 +72,7 @@ let DROPPER_POUR = "default"
 			const z = Math.round(position.z)
 			
 			dropAtom(x, y, z, 0, true, 0)
-			if ((DROPPER_POUR == "default" && UI.selectedElement.pour) || DROPPER_POUR == "pour") {
+			if (true || (DROPPER_POUR == "default" && UI.selectedElement.pour) || DROPPER_POUR == "pour") {
 				let id = 1
 				for (let i = -MAX_DROPPER; i <= MAX_DROPPER; i++) {
 					for (let j = -MAX_DROPPER; j <= MAX_DROPPER; j++) {
@@ -102,7 +103,7 @@ let DROPPER_POUR = "default"
 				const y = Math.round(position.y)
 				const z = Math.round(position.z)
 				dropAtom(x, y, z)
-				/*if (!UI.selectedElement.pour) return
+				//if (!UI.selectedElement.pour) return
 				let id = 1
 				for (let i = -MAX_DROPPER; i <= MAX_DROPPER; i++) {
 					for (let j = -MAX_DROPPER; j <= MAX_DROPPER; j++) {
@@ -110,7 +111,7 @@ let DROPPER_POUR = "default"
 						dropAtom(x + i, y, z + j)
 						id++
 					}
-				}*/
+				}
 				/*if (Math.random() < SPREAD_CHANCE) dropAtom(x + 1, y, z)
 				if (Math.random() < SPREAD_CHANCE) dropAtom(x - 1, y, z)
 				if (Math.random() < SPREAD_CHANCE) dropAtom(x, y, z + 1)
@@ -206,7 +207,7 @@ let DROPPER_POUR = "default"
 	//=========//
 	// This function is the messy result of adding one line of code every two weeks without much thought
 	let dropperShadowReady = [false].repeat(9)
-	const dropAtom = (x, y, z, yOffset = 0, justShow = false, shadowNumber = 0, yOverride = 5) => {
+	const dropAtom = (x, y, z, yOffset = 0, justShow = false, shadowNumber = 0, yOverride = Math.floor(DROPPER_HEIGHT)) => {
 		if (!UI) return
 		const atomType = UI.selectedElement
 		
@@ -222,7 +223,7 @@ let DROPPER_POUR = "default"
 		}
 		
 		if (dropLocation == "floor") {
-			dropStart = 0
+			dropStart = 0 
 		}
 		else {
 			dropStart = MAX_Y - yOverride

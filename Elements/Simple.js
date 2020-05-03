@@ -60,7 +60,6 @@ element Forkbomb any(xyz) {
 	colour "grey"
 	emissive "black"
 	
-	pour false
 	@_ => @@
 }
 
@@ -68,7 +67,6 @@ element Water {
 	colour "lightblue"
 	emissive "blue"
 	opacity 0.5
-	pour false
 }
 
 element Slime {
@@ -96,7 +94,6 @@ element Fire {
 	emissive "red"
 	
 	opacity 0.3
-	floor true
 	
 	maybe(0.5) @_ => _@
 	

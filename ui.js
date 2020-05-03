@@ -130,6 +130,10 @@ UIstarted = true
 				outline: 2px solid black;
 			}
 			
+			.box.option.selectedYellow {
+				outline: 2px solid #FC0;
+			}
+			
 			.box.dynamic.option.selected {
 				/*outline: 2px solid #FC0;*/
 			}
@@ -247,6 +251,13 @@ UIstarted = true
 						<div class="sliderContainer">
 							<input class="slider clickable" id="dropperSizeSlider" type="range" min="0" max="10">
 							<div class="inputLabel" id="dropperSizeSliderLabel"></div>
+						</div>
+					</section>
+					<section>
+						<div class="miniTitle">HEIGHT</div>
+						<div class="sliderContainer">
+							<input class="slider clickable" id="dropperHeightSlider" type="range" min="0" max="10">
+							<div class="inputLabel" id="dropperHeightSliderLabel"></div>
 						</div>
 					</section>
 					<section>
@@ -393,7 +404,7 @@ UIstarted = true
 	
 	//========//
 	// Events //
-	//========//	
+	//========//
 	on.keydown(e => {
 		const searchWindow = $("#searchBar")
 		if (!searchWindow.classList.contains("minimised")) {
@@ -411,12 +422,20 @@ UIstarted = true
 			else if (e.key == "Shift") {
 				orbit.enableZoom = false
 			}
+			else if (e.key == "Alt") {
+				orbit.enableZoom = false
+				e.preventDefault()
+			}
 		}
 	})
 	
 	const updateDropperPour = () => {
-		$$(`.pourOption`).forEach(e => e.classList.remove("selected"))
+		$$(`.pourOption`).forEach(e => {
+			e.classList.remove("selected")
+			e.classList.remove("selectedYellow")
+		})
 		$(`#${DROPPER_POUR}PourOption`).classList.add("selected")
+		if (DROPPER_POUR == "default") $(`#${UI.selectedElement.pour? "pour" : "single"}PourOption`).classList.add("selectedYellow")
 	}
 	updateDropperPour()
 	
@@ -431,30 +450,54 @@ UIstarted = true
 		updateDropperSlider()
 	})
 	
+	$("#dropperHeightSlider").on.input(e => {
+		DROPPER_HEIGHT = MAX_Y - e.target.value.as(Number)
+		updateDropperHeightSlider()
+	})
+	
 	const updateDropperSlider = () => {
 		$("#dropperSizeSlider").value = MAX_DROPPER
 		$("#dropperSizeSliderLabel").textContent = MAX_DROPPER
 	}
 	
+	const updateDropperHeightSlider = () => {
+		$("#dropperHeightSlider").max = MAX_Y - 1
+		$("#dropperHeightSlider").value = MAX_Y - DROPPER_HEIGHT
+		$("#dropperHeightSliderLabel").textContent = MAX_Y - DROPPER_HEIGHT
+	}
+	
 	updateDropperSlider()
+	updateDropperHeightSlider()
 	
 	on.wheel(e => {
-		if (e.deltaY < 0) {
-			MAX_DROPPER++
-			if (MAX_DROPPER > 10) MAX_DROPPER = 10
+		if (Keyboard.Alt) {
+			if (e.deltaY > 0) {
+				DROPPER_HEIGHT++
+			}
+			else if (e.deltaY < 0) {
+				DROPPER_HEIGHT--
+				
+			}
+			if (DROPPER_HEIGHT > MAX_Y) DROPPER_HEIGHT = MAX_Y
+			if (DROPPER_HEIGHT < 1) DROPPER_HEIGHT = 1
+			updateDropperHeightSlider()
 		}
-		else if (e.deltaY > 0) {
-			MAX_DROPPER--
-			if (MAX_DROPPER < 0) MAX_DROPPER = 0
-			DROPPER.refreshShadows()
+		if (Keyboard.Shift) {
+			if (e.deltaY < 0) {
+				MAX_DROPPER++
+				if (MAX_DROPPER > 10) MAX_DROPPER = 10
+			}
+			else if (e.deltaY > 0) {
+				MAX_DROPPER--
+				if (MAX_DROPPER < 0) MAX_DROPPER = 0
+				DROPPER.refreshShadows()
+			}
+			updateDropperSlider()
 		}
-		updateDropperSlider()
 	})
 	
 	on.keyup(e => {
-		if (e.key == "Shift") {
-			orbit.enableZoom = true
-		}
+		if (!Keyboard.Alt && !Keyboard.Shift) orbit.enableZoom = true
 	})
 	
 	UI.clicking = false

@@ -79,6 +79,8 @@ if (TINY_MODE) {
 
 const CAMERA_SPEED = 2
 
+let tweakDropperHeight = false
+
 //=============//
 // Stage Setup //
 //=============//
@@ -193,7 +195,7 @@ else if (PURE_RANDOM_MODE) {
 			stepCount--
 		}
 		for (let i = 0; i < spaceCount; i++) {
-			const space = spaces[i]
+			const space = spacesShuffled[i]
 			const atom = space.atom
 			const element = space.element
 			if (element === Empty) continue

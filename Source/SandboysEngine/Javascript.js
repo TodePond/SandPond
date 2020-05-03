@@ -18,24 +18,20 @@ const JAVASCRIPT = {}
 				const sites = origin.sites
 				const spaceBelow = sites[17]
 				const elementBelow = spaceBelow.element
-				if (elementBelow == Empty || elementBelow == Water) {
+				if (elementBelow == Empty) {
 					const atomBelow = spaceBelow.atom
-					if (elementBelow == Empty || atomBelow.track == currentTrack) {
-						SPACE.setAtom(origin, atomBelow, elementBelow)
-						SPACE.setAtom(spaceBelow, self, Sand)
-						atomBelow.track = !currentTrack
-						return
-					}
+					SPACE.setAtom(origin, atomBelow, elementBelow)
+					SPACE.setAtom(spaceBelow, self, Sand)
+					atomBelow.track = !currentTrack
+					return
 				}
 				const rando = Math.trunc(Math.random() * 4)
 				const slideSite = sites[symms[rando]]
 				const slideAtom = slideSite.atom
 				const slideElement = slideAtom.element
-				if (slideElement !== Empty && slideAtom.track !== currentTrack) return
 				if (slideElement == Empty || slideElement == Water) {
 					SPACE.setAtom(origin, slideAtom, slideElement)
 					SPACE.setAtom(slideSite, self, Sand)
-					slideAtom.track = !currentTrack
 				}
 			}
 			
