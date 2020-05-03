@@ -166,6 +166,36 @@ UIstarted = true
 				font-size: 15px;
 			}
 			
+			.slider {
+				-webkit-appearance: none;
+				background: white;
+				width: 200px;
+				margin: 0px;
+			}
+			
+			.slider::-webkit-slider-thumb {
+				-webkit-appearance: none;
+				width: 16px;
+				height: 24px;
+				background: #FC0;
+			}
+			
+			/*.slider:hover {
+				outline: 2px solid white;
+			}*/
+			
+			.inputLabel {
+				display: inline-block;
+				font-family: UbuntuMono;
+				font-size: 18px;
+				margin: 0px 10px;
+			}
+			
+			.sliderContainer {
+				display: flex;
+				align-items: center;
+			}
+			
 		</style>
 	`
 	
@@ -210,7 +240,10 @@ UIstarted = true
 				<div id="dropper" class="form minimised">
 					<section>
 						<div class="miniTitle">SIZE</div>
-						<input id="dropperSizeSlider" type="range" min="0" max="10">
+						<div class="sliderContainer">
+							<input class="slider clickable" id="dropperSizeSlider" type="range" min="0" max="10">
+							<div class="inputLabel" id="dropperSizeSliderLabel"></div>
+						</div>
 					</section>
 				</div>
 				
@@ -375,7 +408,15 @@ UIstarted = true
 	$("#dropperSizeSlider").on.input(e => {
 		MAX_DROPPER = e.target.value.as(Number)
 		DROPPER.refreshShadows()
+		updateDropperSlider()
 	})
+	
+	const updateDropperSlider = () => {
+		$("#dropperSizeSlider").value = MAX_DROPPER
+		$("#dropperSizeSliderLabel").textContent = MAX_DROPPER
+	}
+	
+	updateDropperSlider()
 	
 	on.wheel(e => {
 		if (e.deltaY < 0) {
@@ -387,6 +428,7 @@ UIstarted = true
 			if (MAX_DROPPER < 0) MAX_DROPPER = 0
 			DROPPER.refreshShadows()
 		}
+		updateDropperSlider()
 	})
 	
 	on.keyup(e => {
