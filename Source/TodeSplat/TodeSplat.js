@@ -8,16 +8,14 @@
 		elements: {},
 		data: {},
 		args: {},
-		categories: [],
 		instructions: [],
 		symbols: {_: undefined},
-		properties: {},
+		properties: {categories: []},
 	})
 	
 	const absorbScope = (receiver, target) => {
 		receiver.elements.o= target.elements
 		receiver.data.o= target.data
-		receiver.categories.push(...target.categories)
 		receiver.instructions.push(...target.instructions)
 		for (const symbolName in target.symbols) {
 			if (receiver.symbols[symbolName] == undefined) {
@@ -715,7 +713,9 @@
 		result = {code, success} = EAT.javascript(code)
 		if (!success) return EAT.fail(code)
 		
-		if (propertyName == "category") scope.categories.push(result.value)
+		if (propertyName == "category") {
+			scope.properties.categories.push(result.value)
+		}
 		else scope.properties[name] = result.value
 		
 		return result

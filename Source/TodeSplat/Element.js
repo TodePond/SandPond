@@ -22,7 +22,6 @@ const ELEMENT = {}
 		const behave = behaveMaker()
 		const constructorCode = JAVASCRIPT.makeConstructor(name, data, args)
 		const constructor = JS(constructorCode)(...data, ...args)
-		
 		const shaderColours = makeShaderColours(colour, emissive, opacity)
 		const elementInfo = {
 			

@@ -527,7 +527,8 @@ UIstarted = true
 			const id = elementButton.id
 			const name = id.slice(0, id.length - "Button".length)
 			const element = TodeSplat.global.elements[name]
-			const index = name.as(LowerCase).indexOf(query)
+			let index = name.as(LowerCase).indexOf(query)
+			if (query == "") index = 0
 			
 			elementButton.classList.add("minimised")
 			
@@ -535,7 +536,7 @@ UIstarted = true
 				if (categories.length == 0/* && $("#searchHeading").classList.contains("selected")*/) {
 					elementButton.classList.remove("minimised")
 				}
-				else if (categories.some(category => category == element.categories.includes(category))) {
+				else if (categories.some(category => element.categories.includes(category))) {
 					elementButton.classList.remove("minimised")
 				}
 			}
