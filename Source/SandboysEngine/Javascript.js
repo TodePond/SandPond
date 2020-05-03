@@ -79,8 +79,8 @@ const JAVASCRIPT = {}
 			const behave = (self, origin) => {
 				const sites = origin.sites
 				const spaceBelow = sites[17]
-				if (spaceBelow.atom.element == Empty) {
-					SPACE.setAtom(origin, spaceBelow.atom, Empty)
+				if (spaceBelow.atom.element == Empty || spaceBelow.atom.element == Water) {
+					SPACE.setAtom(origin, spaceBelow.atom, spaceBelow.element)
 					SPACE.setAtom(spaceBelow, self, Wall)
 					return
 				}
