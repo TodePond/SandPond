@@ -210,7 +210,8 @@ UIstarted = true
 					<section>
 						<div class="miniTitle">SIZE</div>
 						<div id="tinyOption" class="sizeOption option box clickable"><div class="label">Tiny</div></div>
-						<div id="smallOption" class="sizeOption option box clickable"><div class="label">Normal</div></div>
+						<div id="smallOption" class="sizeOption option box clickable"><div class="label">Small</div></div>
+						<div id="mediumOption" class="sizeOption option box clickable"><div class="label">Medium</div></div>
 						<div id="bigOption" class="sizeOption option box clickable"><div class="label">Big</div></div>
 						<div id="massiveOption" class="sizeOption option box clickable"><div class="label">Massive</div></div>
 					</section>

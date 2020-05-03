@@ -12,6 +12,7 @@ const TINY_MODE = urlParams.has("tiny")
 const LONG_MODE = urlParams.has("long")
 const PURE_RANDOM_MODE = urlParams.has("pure")
 const SHUFFLE_MODE = urlParams.has("shuffle")
+const MEDIUM_MODE = urlParams.has("medium")
 
 const RANDOM = SHUFFLE_MODE? "shuffle" : (PURE_RANDOM_MODE? "pure" : "track")
 
@@ -39,9 +40,17 @@ if (LONG_MODE) {
 	MAX_Y = Math.floor(MAX_Y * 0.75)
 }
 
+if (MEDIUM_MODE) {
+	MAX_X = 40
+	MAX_Y = 35
+	MAX_Z = 40
+}
+
 let SIZE = SMALL_MODE? "small" : "big"
 if (TINY_MODE) SIZE = "tiny"
 else if (MASSIVE_MODE) SIZE = "massive"
+else if (MEDIUM_MODE) SIZE = "medium"
+
 
 const SHAPE = LONG_MODE? "long" : "cube"
 
