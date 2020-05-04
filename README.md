@@ -23,5 +23,5 @@ Or try out the [live demo](http://www.sandpond.land).
 1. Write some TodeSplat using the `TodeSplat` function.
 2. Add your TodeSplat function or file to `index.html` in the same place as the other elements.
 
-To learn more, check out the [TodeSplat Documentation](https://github.com/l2wilson94/Sandboys/wiki/TodeSplat-Documentation).<br>
-Or check out the examples in the [Elements](https://github.com/l2wilson94/Sandboys/tree/master/Elements) folder.
+To learn more, check out the [TodeSplat Documentation](https://github.com/l2wilson94/SandPond/wiki/TodeSplat-Documentation).<br>
+Or check out the examples in the [Elements](https://github.com/l2wilson94/SandPond/tree/master/Elements) folder.
