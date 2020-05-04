@@ -5,6 +5,7 @@ It's inspired by the [T2Tile project](https://t2tile.org/) and [SPLAT](https://g
 
 For more info, check out my [videos](https://www.youtube.com/playlist?list=PL9uRa69RF-7wastqKWXT4d9F84BAzfVd4).<br>
 I post daily updates on my [Instagram](https://www.instagram.com/todepond/).
+You can try out experimental changes on the [dev version](https://dev.sandpond.cool).
 
 ## Rules
 Atoms follow simple rules, like this one:
