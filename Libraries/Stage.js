@@ -63,7 +63,6 @@
 			this.camera = makeCamera()
 			this.raycaster = new THREE.Raycaster()
 			
-			this.vrEnabled = false
 			this.dummyCamera = makeDummyCamera()
 			
 			this.cursor = {
@@ -100,7 +99,6 @@
 		}
 		
 		resize() {
-			if (this.renderer.vr.isPresenting()) return
 			if (this.canvas.width == this.canvas.clientWidth && this.canvas.height == this.canvas.clientHeight) return
 			this.renderer.setSize(this.canvas.clientWidth / 1, this.canvas.clientHeight / 1, false)
 			this.camera.aspect = this.canvas.clientWidth / this.canvas.clientHeight
