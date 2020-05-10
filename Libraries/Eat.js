@@ -1,4 +1,6 @@
 
+// A MORE UP-TO-DATE VERSION OF THIS FILE IS FOUND IN THE DreamTode PROJECT
+
 //
 // Every result has three properties...
 //

@@ -115,7 +115,7 @@ scene.add(sun)
 const floor = D2_MODE? make2DFloor(FLOOR_TYPE, WORLD_WIDTH * ATOM_SIZE, WORLD_HEIGHT * ATOM_SIZE) : makeFloor(FLOOR_TYPE, WORLD_WIDTH * ATOM_SIZE, WORLD_DEPTH * ATOM_SIZE)
 scene.add(floor)
 
-let orbit = new THREE.OrbitControls(camera)
+let orbit = new THREE.OrbitControls(camera, canvas)
 orbit.mouseButtons.LEFT = undefined
 orbit.mouseButtons.MIDDLE = THREE.MOUSE.DOLLY
 orbit.mouseButtons.RIGHT = THREE.MOUSE.ROTATE
