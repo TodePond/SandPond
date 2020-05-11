@@ -297,7 +297,7 @@ UIstarted = true
 					<section>
 						<div class="miniTitle">SHADOW</div>
 						<div id="shadowOption" class="shadowTypeOption option box clickable"><div class="label">Shadow</div></div>
-						<div id="noshadowOption" class="shadowTypeOption option box clickable"><div class="label">No Shadow</div></div>
+						<div id="noshadowOption" class="shadowTypeOption option box clickable"><div class="label" style="font-size: 13px">No Shadow</div></div>
 					</section>
 					<section>
 						<div class="miniTitle">FLOOR</div>
@@ -507,18 +507,6 @@ UIstarted = true
 		if (!Keyboard.Alt && !Keyboard.Shift) orbit.enableZoom = true
 	})
 	
-	on.mousedown(e => {
-		if (e.which == 1) {
-			orbit.enabled = false
-		}
-	})
-	
-	on.mouseup(e => {
-		if (e.which == 1) {
-			orbit.enabled = true
-		}
-	})
-	
 	UI.clicking = false
 	$$(".clickable").on.mousedown(() => {
 		UI.clicking = true
@@ -578,8 +566,8 @@ UIstarted = true
 		params += UI.selectedShadow + "&"
 		if (UI.selectedDimensions == "d1") params += "1d&"
 		else if (UI.selectedDimensions == "d2") params += "2d&"
-		if (UI.selectedReality == "nonvr") params += "nonvr&"
-		else if (UI.selectedReality == "vr") params += "vr&"
+		//if (UI.selectedReality == "nonvr") params += "nonvr&"
+		//else if (UI.selectedReality == "vr") params += "vr&"
 		params += UI.floorTypeOption
 		const baseUrl = `${window.location.protocol}//${window.location.host}${window.location.pathname}`
 		window.location = `${baseUrl}?${params}`
