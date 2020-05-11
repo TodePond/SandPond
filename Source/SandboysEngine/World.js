@@ -30,7 +30,6 @@ const ATOM_SCALE = 1.0
 		const geometry = GEOMETRY_TEMPLATE
 		const material = MATERIAL
 		const mesh = new THREE.InstancedMesh(geometry, material, count)
-		mesh.frustumCulled = false
 		
 		const visibleInstances = new Uint8Array(count)
 		const visibleAttribute = new THREE.InstancedBufferAttribute(visibleInstances, 1)
@@ -356,7 +355,6 @@ const ATOM_SCALE = 1.0
 	// Geometry //
 	//==========//
 	const makeGeometry = (template) => new THREE.InstancedBufferGeometry().copy(template)
-	const makeMesh = (geometry, material) => new THREE.Mesh(geometry, material)
 	const addMatrixAttributes = (geometry, attributes) => {
 		for (let i = 0; i < 4; i++) {
 			const attribute = attributes[i]

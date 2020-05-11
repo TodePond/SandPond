@@ -2,9 +2,14 @@ const print = console.log.bind(console)
 const dir = console.dir.bind(console)
 
 {
-	const D_SYMBOL = Symbol("d")
-	const DIR_SYMBOL = Symbol("dir")
+	let i = 0
+	function print9(message) {
+		if (i >= 9) return
+		print(message)
+		i++
+	}
 	
+	const D_SYMBOL = Symbol("d")
 	Reflect.defineProperty(Object.prototype, "d", {
 		set(v) { this[D_SYMBOL] = v },
 		get() {
@@ -14,6 +19,7 @@ const dir = console.dir.bind(console)
 		},
 	})
 	
+	const DIR_SYMBOL = Symbol("dir")
 	Reflect.defineProperty(Object.prototype, "dir", {
 		set(v) { this[DIR_SYMBOL] = v },
 		get() {
