@@ -81,6 +81,8 @@ const CAMERA_SPEED = 2
 
 let tweakDropperHeight = false
 
+//window.history.replaceState({}, "", window.location.pathname)
+
 //=============//
 // Stage Setup //
 //=============//
@@ -117,12 +119,16 @@ scene.add(floor)
 
 let orbit = new THREE.OrbitControls(camera, document.body)
 orbit.mouseButtons.LEFT = undefined
-orbit.mouseButtons.MIDDLE = THREE.MOUSE.DOLLY
+orbit.mouseButtons.MIDDLE = THREE.MOUSE.PAN
 orbit.mouseButtons.RIGHT = THREE.MOUSE.ROTATE
+orbit.touches.ONE = undefined
+orbit.touches.TWO = THREE.TOUCH.ROTATE
 orbit.enableKeys = false
 orbit.enableDamping = true
+orbit.panSpeed = 1.4
 orbit.target.set(0, MAX_Y/2 * ATOM_SIZE, 0)
 on.process(orbit.o.update)
+
 
 stage.start()
 
