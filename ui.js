@@ -300,7 +300,7 @@ UIstarted = true
 					</section>
 					<section>
 						<div class="miniTitle">RANDOMNESS</div>
-						<div id="trackOption" class="randomOption option box clickable"><div class="label">Tracking</div></div>
+						<div id="trackOption" class="randomOption option box clickable"><div class="label">Tagging</div></div>
 						<div id="pureOption" class="randomOption option box clickable"><div class="label">Shuffled</div></div>
 						<div id="shuffleOption" class="randomOption option box clickable"><div class="label">Shuffling</div></div>
 					</section>
