@@ -31,6 +31,11 @@ const ATOM_SCALE = 1.0
 		const material = MATERIAL
 		const mesh = new THREE.InstancedMesh(geometry, material, count)
 		
+		if (SHADOW_MODE) {
+			mesh.castShadow = true
+			mesh.receiveShadow = true
+		}
+		
 		const visibleInstances = new Uint8Array(count)
 		const visibleAttribute = new THREE.InstancedBufferAttribute(visibleInstances, 1)
 		visibleAttribute.usage = THREE.DynamicDrawUsage
@@ -54,6 +59,7 @@ const ATOM_SCALE = 1.0
 		initPosition(mesh, grid, area)
 		initVisible(visibleInstances, visibleAttribute, count)
 		initOpacity(opacityInstances, opacityAttribute, count)
+		//mesh.position.set(mesh.position.x - 0.75, mesh.position.y, mesh.position.z)
 		scene.add(mesh)
 		
 		world.o={
@@ -62,6 +68,7 @@ const ATOM_SCALE = 1.0
 			opacityInstances, opacityAttribute,
 			colourInstances, colourAttribute,
 			emissiveInstances, emissiveAttribute,
+			mesh,
 		}
 		
 		for (const space of world.spaces) {
@@ -109,13 +116,13 @@ const ATOM_SCALE = 1.0
 	//const GEOMETRY_TEMPLATE = new THREE.SphereBufferGeometry(1 * ATOM_SIZE * ATOM_SCALE)
 	const MATERIAL = new THREE.MeshLambertMaterial({
 		transparent: true,
-		opacity: 0.5,
+		opacity: 0,
 		flatShading: true,
 		//premultipliedAlpha: true,
 		//depthTest: false,
 		//depthFunc: THREE.NotEqualDepth,
 		//depthWrite: false,
-		side: THREE.DoubleSide,
+		//side: THREE.DoubleSide,
 		onBeforeCompile: (shader) => {
 		
 			shader.vertexShader = `
@@ -165,8 +172,13 @@ const ATOM_SCALE = 1.0
 					#include <defaultnormal_vertex>
 				
 					vec3 transformed;
-					if (aVisible <= 0.0) transformed = vec3(10, 10, 10);
-					else transformed = position;
+					if (aVisible <= 0.0) {
+						//transformed = position;
+						transformed = vec3(0.0, 0.0, 0.0);
+					}
+					else {
+						transformed = position;
+					}
 					
 					#include <morphtarget_vertex>
 					#include <skinning_vertex>
@@ -272,8 +284,6 @@ const ATOM_SCALE = 1.0
 		}
 	}
 	
-	
-	
 	const makeSpacesGrid = (world, area) => {
 		const grid = []
 		const spaces = []
@@ -376,34 +386,36 @@ const ATOM_SCALE = 1.0
 	
 	//==========//
 	// Position //
-	//==========//	
+	//==========//
+	const dummy = new THREE.Object3D()
+	getMatrix = (x, y, z) => {
+		dummy.position.set(x * ATOM_SIZE, y * ATOM_SIZE, z * ATOM_SIZE)
+		dummy.updateMatrix()
+		return dummy.matrix.clone()
+	}
+	
 	const initPosition = (mesh, grid, area) => {
 		for (const y of area.yStart.to(area.yEnd)) {
 			for (const x of area.xStart.to(area.xEnd)) {
 				for (const z of area.zStart.to(area.zEnd)) {
 					const space = grid[y][x][z]
 					const matrix = getMatrix(x, y, z)
+					space.matrix = matrix
 					mesh.setMatrixAt(space.id, matrix)
 				}
 			}
 		}
 	}
 	
-	const setInstancePosition = (matrixInstances, matrixAttributes, id, x, y, z) => {
-		const matrixWorld = getMatrixWorld(x, y, z)
-		for (let a = 0; a < 4; a++) {
-			for (let m = 0; m < 4; m++) {
-				matrixInstances[a][id*4 + m] = matrixWorld[a*4 + m]
-			}
-			matrixAttributes[a].needsUpdate = true
-		}
+	const hidePosition = getMatrix(0, -2, -2)
+	WORLD.hideSpace = (world, space) => {
+		world.mesh.setMatrixAt(space.id, hidePosition)
+		world.mesh.instanceMatrix.needsUpdate = true
 	}
 	
-	const dummy = new THREE.Object3D()
-	const getMatrix = (x, y, z) => {
-		dummy.position.set(x * ATOM_SIZE, y * ATOM_SIZE, z * ATOM_SIZE)
-		dummy.updateMatrix()
-		return dummy.matrix
+	WORLD.showSpace = (world, space) => {
+		world.mesh.setMatrixAt(space.id, space.matrix)
+		world.mesh.instanceMatrix.needsUpdate = true
 	}
 	
 	//============//
@@ -411,7 +423,7 @@ const ATOM_SCALE = 1.0
 	//============//
 	const initVisible = (visibleInstances, visibleAttribute, count) => {
 		for (let id = 0; id < count; id++) {
-			setInstanceVisible(visibleInstances, visibleAttribute, id, false)
+			setInstanceVisible(visibleInstances, visibleAttribute, id, true)
 		}
 	}
 	

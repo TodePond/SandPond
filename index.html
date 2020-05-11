@@ -79,6 +79,12 @@
 	<script src="Source/TodeSplat/TodeSplat.js"></script>
 	
 	<!-- Sandboys Engine -->
+	<script>
+		{
+			const urlParams = new URLSearchParams(window.location.search)
+			SHADOW_MODE = urlParams.has("shadow")
+		}
+	</script>
 	<script src="Source/SandboysEngine/World.js"></script>
 	<script src="Source/SandboysEngine/Space.js"></script>
 	<script src="Source/SandboysEngine/Site.js"></script>

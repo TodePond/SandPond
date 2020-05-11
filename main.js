@@ -86,7 +86,7 @@ let tweakDropperHeight = false
 //=============//
 // Stage Setup //
 //=============//
-const stage = new Stage(document.body, {start: false})
+const stage = new Stage(document.body, {start: false, shadow: SHADOW_MODE})
 const {canvas, renderer, scene, camera, raycaster, cursor, dummyCamera} = stage
 if (VR_MODE) {
 	alert("Sorry VR mode is broken at the moment.")
@@ -106,7 +106,6 @@ if (VR_MODE) {
 //camera.position.set(0, 1.6, 0)
 camera.position.set(CAMERA_START_X, CAMERA_START_Y, CAMERA_START_Z)
 camera.lookAt(0, MAX_Y/2 * ATOM_SIZE, 0)
-dummyCamera.lookAt(0, 0, 0)
 
 const background = makeBackground()
 scene.background = background

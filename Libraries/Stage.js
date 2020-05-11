@@ -8,13 +8,17 @@
 	//===========//
 	// Functions //
 	//===========//
-	const makeRenderer = (canvas, alpha = false) => {
+	const makeRenderer = (canvas, alpha = false, shadow = false) => {
 		const renderer = new THREE.WebGLRenderer({
 			canvas,
 			antialias: true,
 			powerPreference: "high-performance",
 			alpha,
 		})
+		if (shadow) {
+			renderer.shadowMap.enabled = true
+			renderer.shadowMap.type = THREE.PCFSoftShadowMap
+		}
 		renderer.autoClear = false
 		return renderer
 	}
@@ -38,32 +42,21 @@
 		return camera
 	}
 	
-	const makeDummyCamera = o=> {
-		const camera = new THREE.PerspectiveCamera()
-		//camera.fov = 30
-		camera.position.set(0, 1.6, 0)
-		camera.lookAt(0, 0, 0)
-		//camera.far = 99999999
-		return camera
-	}
-	
 	//=======//
 	// Class //
 	//=======//
 	Stage = class Stage {
 		
-		constructor(element, {start = true, alpha = false} = {}) {
+		constructor(element, {start = true, alpha = false, shadow = true} = {}) {
 		
 			const self = this		
 			this.canvas = makeCanvas()
 			element.appendChild(this.canvas)
 			
-			this.renderer = makeRenderer(this.canvas, alpha)
+			this.renderer = makeRenderer(this.canvas, alpha, shadow)
 			this.scene = new THREE.Scene()
 			this.camera = makeCamera()
 			this.raycaster = new THREE.Raycaster()
-			
-			this.dummyCamera = makeDummyCamera()
 			
 			this.cursor = {
 				get position3D() { return self.getCursorPosition3D(mesh => !mesh.unclickable) },

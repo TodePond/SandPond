@@ -1399,7 +1399,6 @@
 TodeSplat `
 	element Empty {
 		visible false
-		hidden true
 	}
 	element Void {
 		hidden true

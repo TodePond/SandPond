@@ -461,7 +461,7 @@ UIstarted = true
 	}
 	
 	const updateDropperHeightSlider = () => {
-		$("#dropperHeightSlider").max = MAX_Y - 1
+		$("#dropperHeightSlider").max = MAX_Y - 0
 		$("#dropperHeightSlider").value = MAX_Y - DROPPER_HEIGHT
 		$("#dropperHeightSliderLabel").textContent = MAX_Y - DROPPER_HEIGHT
 	}
@@ -479,7 +479,7 @@ UIstarted = true
 				
 			}
 			if (DROPPER_HEIGHT > MAX_Y) DROPPER_HEIGHT = MAX_Y
-			if (DROPPER_HEIGHT < 1) DROPPER_HEIGHT = 1
+			if (DROPPER_HEIGHT < 0) DROPPER_HEIGHT = 0
 			updateDropperHeightSlider()
 		}
 		if (Keyboard.Shift) {
