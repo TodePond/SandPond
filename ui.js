@@ -507,8 +507,22 @@ UIstarted = true
 		if (!Keyboard.Alt && !Keyboard.Shift) orbit.enableZoom = true
 	})
 	
+	on.mousedown(e => {
+		if (e.which == 1) {
+			orbit.enabled = false
+		}
+	})
+	
+	on.mouseup(e => {
+		if (e.which == 1) {
+			orbit.enabled = true
+		}
+	})
+	
 	UI.clicking = false
-	$$(".clickable").on.mousedown(() => UI.clicking = true)
+	$$(".clickable").on.mousedown(() => {
+		UI.clicking = true
+	})
 	on.mouseup(() => UI.clicking = false)
 	
 	$("#stepControl").on.click(() => {

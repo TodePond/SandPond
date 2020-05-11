@@ -753,7 +753,8 @@ THREE.OrbitControls = function ( object, domElement ) {
 		if ( scope.enabled === false ) return;
 
 		// Prevent the browser from scrolling.
-		event.preventDefault();
+		// MOD: commented out by Luke on 11/05/20 cos it was interfering with my menu UI
+		//event.preventDefault();
 
 		// Manually set the focus since calling preventDefault above
 		// prevents the browser from setting it automatically.
