@@ -125,10 +125,9 @@ orbit.touches.ONE = undefined
 orbit.touches.TWO = THREE.TOUCH.ROTATE
 orbit.enableKeys = false
 orbit.enableDamping = true
-orbit.panSpeed = 1.4
+orbit.panSpeed = 1.8
 orbit.target.set(0, MAX_Y/2 * ATOM_SIZE, 0)
 on.process(orbit.o.update)
-
 
 stage.start()
 
