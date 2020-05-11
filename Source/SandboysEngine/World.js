@@ -2,8 +2,6 @@
 // World //
 //=======//
 const WORLD = {}
-const ATOM_SIZE = 0.01
-const ATOM_SCALE = 1.0
 
 {
 	
