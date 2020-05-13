@@ -26,6 +26,10 @@ UIstarted = true
 	const UI_STYLE = HTML `
 		<style>
 			
+			body {
+				touch-action: none;
+			}
+			
 			#ui {
 				position: absolute;
 				top: 0px;
