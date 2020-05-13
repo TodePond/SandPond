@@ -82,14 +82,26 @@ $("#loading").innerHTML = ""
 //=======//
 // Stuff //
 //=======//
+let listenToMouse = 1
+on.touchstart(() => listenToMouse = -1)
+on.touchend(() => listenToMouse = -1)
+on.touchcancel(() => listenToMouse = -1)
+on.mousedown(() => {
+	if (listenToMouse == -1) listenToMouse = 0
+	else if (listenToMouse == 0) listenToMouse = 1
+})
 on.process(() => {
 	const touchPosition3D = stage.getTouchPosition3D(0, (mesh) => mesh == floor)
-	if (touchPosition3D != undefined) DROPPER.tryDrop(touchPosition3D)
-	else {
+	if (touchPosition3D != undefined) {
+		DROPPER.tryDrop(touchPosition3D)
+	}
+	else if (listenToMouse >= 1) {
 		const cursorPosition3D = stage.getCursorPosition3D((mesh) => mesh == floor)
 		DROPPER.tryDrop(cursorPosition3D)
 	}
-	
+	else {
+		DROPPER.tryDrop(undefined)
+	}
 })
 
 let paused = false

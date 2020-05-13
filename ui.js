@@ -117,6 +117,8 @@ UIstarted = true
 			.form {
 				margin: 10px;
 				cursor: default;
+				overflow: visible;
+				white-space: nowrap;
 			}
 			
 			.form > section {
