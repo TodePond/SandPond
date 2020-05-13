@@ -40,6 +40,7 @@ UIstarted = true
 				font-size: 0px;
 				height: 35px;
 				position: relative;
+				white-space: nowrap;
 			}
 			
 			.box {
@@ -217,12 +218,11 @@ UIstarted = true
 		
 			<div id="menu" class="menu">
 				<div class="heading box clickable" id="elementsHeading"><div class="label">Elements</div></div>
-				<div class="heading box clickable" id="sourceHeading"><div class="label">Source</div></div>
-				<div class="heading box clickable" id="controlsHeading"><div class="label">Controls</div></div>
 				<div class="heading box clickable" id="dropperHeading"><div class="label">Dropper</div></div>
 				<div class="heading box clickable" id="modeHeading"><div class="label">Mode</div></div>
-				<!--<div class="heading box clickable" id="configHeading"><div class="label">Config</div></div>
-				-->
+				<div class="heading box clickable" id="controlsHeading"><div class="label">Controls</div></div>
+				<div class="heading box clickable" id="sourceHeading"><div class="label">Source</div></div>
+				<!--<div class="heading box clickable" id="configHeading"><div class="label">Config</div></div>-->
 			</div>
 			
 			<div class="windowContainer">
