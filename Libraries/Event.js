@@ -19,6 +19,14 @@ if (this.Element) {
 		},
 	})
 
+	Reflect.defineProperty(NodeList.prototype, "onPassive", {
+		get() {
+			return new Proxy(this, {
+				get: (nodelist, eventName, callback) => (callback) => nodelist.forEach(element => element.addEventListener(eventName, callback, {passive: true})),
+			})
+		},
+	})
+
 	Reflect.defineProperty(window, "on", {
 		get() {
 			return new Proxy(this, {

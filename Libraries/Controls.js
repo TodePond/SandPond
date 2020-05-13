@@ -28,6 +28,35 @@ const Mouse = {
 	y: undefined,
 }
 
+const Touches = []
+
+on.touchstart(e => {
+	for (const touch of e.changedTouches) {
+		const touchData = {
+			x: touch.clientX,
+			y: touch.clientY,
+		}
+		Touches[touch.identifier] = touchData
+	}
+})
+
+window.on.touchmove(e => {
+	for (const touch of e.changedTouches) {
+		const touchData = {
+			x: touch.clientX,
+			y: touch.clientY,
+		}
+		Touches[touch.identifier] = touchData
+	}
+})
+
+on.touchend(e => {
+	for (const touch of e.changedTouches) {
+		Touches[touch.identifier] = undefined
+	}
+	Touches.trim()
+})
+
 on.mousedown(event => {
 	if (event.buttons == 1) Mouse.down = true
 })

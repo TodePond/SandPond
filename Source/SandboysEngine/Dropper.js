@@ -49,7 +49,7 @@ let DROPPER_HEIGHT = 5
 	//========//
 	DROPPER.tryDrop = (position) => {
 	
-		if (!UIstarted && !Mouse.down) return
+		if (!UIstarted && !Mouse.down && Touches.length == 0) return
 		if (UI.clicking) return
 		
 		if (position == undefined) {
@@ -95,6 +95,9 @@ let DROPPER_HEIGHT = 5
 		
 		const previousDown = down
 		down = Mouse.down
+		if (Touches.length == 1) {
+			down = true
+		}
 		
 		if (!((DROPPER_POUR == "default" && UI.selectedElement.pour) || DROPPER_POUR == "pour")) {
 			if (!position) return
@@ -127,7 +130,7 @@ let DROPPER_HEIGHT = 5
 			return 
 		}
 		
-		if (!Mouse.down || !position) {
+		if (!down || !position) {
 			previousPosition = undefined
 			return
 		}

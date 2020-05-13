@@ -297,7 +297,7 @@ UIstarted = true
 					<section>
 						<div class="miniTitle">SHADOW</div>
 						<div id="shadowOption" class="shadowTypeOption option box clickable"><div class="label">Shadow</div></div>
-						<div id="noshadowOption" class="shadowTypeOption option box clickable"><div class="label" style="font-size: 13px">No Shadow</div></div>
+						<div id="noshadowOption" class="shadowTypeOption option box clickable"><div class="label" style="font-size: 15px">No Shadow</div></div>
 					</section>
 					<section>
 						<div class="miniTitle">FLOOR</div>
@@ -508,10 +508,11 @@ UIstarted = true
 	})
 	
 	UI.clicking = false
-	$$(".clickable").on.mousedown(() => {
-		UI.clicking = true
-	})
+	$$(".clickable").on.mousedown(() => UI.clicking = true)
+	//$$(".clickable").onPassive.touchstart(() => UI.clicking = true)
 	on.mouseup(() => UI.clicking = false)
+	//on.touchend(() => UI.clicking = false)
+	//on.touchcancel(() => UI.clicking = false)
 	
 	$("#stepControl").on.click(() => {
 		stepCount++

@@ -36,7 +36,7 @@ orbit.mouseButtons.LEFT = undefined
 orbit.mouseButtons.MIDDLE = THREE.MOUSE.PAN
 orbit.mouseButtons.RIGHT = THREE.MOUSE.ROTATE
 orbit.touches.ONE = undefined
-orbit.touches.TWO = THREE.TOUCH.ROTATE
+orbit.touches.TWO = THREE.TOUCH.DOLLY_ROTATE
 orbit.enableKeys = false
 orbit.enableDamping = true
 orbit.screenSpacePanning = D2_MODE
@@ -83,8 +83,13 @@ $("#loading").innerHTML = ""
 // Stuff //
 //=======//
 on.process(() => {
-	const cursorPosition3D = stage.getCursorPosition3D((mesh) => mesh == floor)
-	DROPPER.tryDrop(cursorPosition3D)
+	const touchPosition3D = stage.getTouchPosition3D(0, (mesh) => mesh == floor)
+	if (touchPosition3D != undefined) DROPPER.tryDrop(touchPosition3D)
+	else {
+		const cursorPosition3D = stage.getCursorPosition3D((mesh) => mesh == floor)
+		DROPPER.tryDrop(cursorPosition3D)
+	}
+	
 })
 
 let paused = false

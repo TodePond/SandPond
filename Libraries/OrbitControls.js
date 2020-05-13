@@ -937,7 +937,8 @@ THREE.OrbitControls = function ( object, domElement ) {
 
 		if ( scope.enabled === false ) return;
 
-		event.preventDefault(); // prevent scrolling
+		// MODDED: comment out preventDefault to stop error
+		//event.preventDefault(); // prevent scrolling
 
 		switch ( event.touches.length ) {
 
@@ -1023,8 +1024,10 @@ THREE.OrbitControls = function ( object, domElement ) {
 
 		if ( scope.enabled === false ) return;
 
-		event.preventDefault(); // prevent scrolling
-		event.stopPropagation();
+		// MODDED: commented out preventDefault to stop error
+		//event.preventDefault(); // prevent scrolling
+		// MODDED: commentes out to allow for dropping with touch
+		//event.stopPropagation();
 
 		switch ( state ) {
 

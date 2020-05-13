@@ -106,5 +106,25 @@
 			const intersect = intersects[0]
 			return intersect.point
 		}
+		
+		getTouchPosition2D(id = 0) {
+			const touch = Touches[id]
+			if (touch === undefined) return undefined
+			return {
+				x: touch.x / this.canvas.clientWidth * 2 - 1,
+				y: touch.y / this.canvas.clientHeight * -2 + 1,
+			}
+		}
+		
+		getTouchPosition3D(id = 0, filter = undefined, objects = this.scene.children) {
+			const position2D = this.getTouchPosition2D(id)
+			if (position2D === undefined) return undefined
+			this.raycaster.setFromCamera(position2D, this.camera)
+			const sample = filter === undefined? objects : objects.filter(filter)
+			const intersects = this.raycaster.intersectObjects(sample)
+			if (intersects.length == 0) return
+			const intersect = intersects[0]
+			return intersect.point
+		}
 	}
 }
