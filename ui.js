@@ -15,6 +15,7 @@ UIstarted = true
 	UI.selectedShape = SHAPE
 	UI.selectedRandom = RANDOM
 	UI.selectedShadow = SHADOW_MODE? "shadow" : "noshadow"
+	UI.selectedDof = DOF_MODE? "dof" : "nodof"
 	UI.selectedDimensions = D1_MODE? "d1" : (D2_MODE? "d2" : "d3")
 	UI.selectedReality = VR_MODE? "vr" : "nonvr"
 	UI.selectedSource = "todeSplat"
@@ -306,6 +307,11 @@ UIstarted = true
 						<div id="noshadowOption" class="shadowTypeOption option box clickable"><div class="label" style="font-size: 15px">No Shadow</div></div>
 					</section>
 					<section>
+						<div class="miniTitle">DEPTH OF FIELD</div>
+						<div id="dofOption" class="dofTypeOption option box clickable"><div class="label">DOF</div></div>
+						<div id="nodofOption" class="dofTypeOption option box clickable"><div class="label" style="font-size: 15px">No DOF</div></div>
+					</section>
+					<section>
 						<div class="miniTitle">FLOOR</div>
 						<div id="floorOption" class="floorTypeOption option box clickable"><div class="label">Floor</div></div>
 						<div id="nofloorOption" class="floorTypeOption option box clickable"><div class="label">No Floor</div></div>
@@ -403,6 +409,7 @@ UIstarted = true
 	$(`#${UI.selectedShape}Option`).classList.add("selected")
 	$(`#${UI.selectedRandom}Option`).classList.add("selected")
 	$(`#${UI.selectedShadow}Option`).classList.add("selected")
+	$(`#${UI.selectedDof}Option`).classList.add("selected")
 	
 	if (UI.selectedDimensions == "d1") $("#d1Option").classList.add("selected")
 	else if (UI.selectedDimensions == "d2") $("#d2Option").classList.add("selected")
@@ -571,6 +578,7 @@ UIstarted = true
 		params += UI.selectedShape + "&"
 		params += UI.selectedRandom + "&"
 		params += UI.selectedShadow + "&"
+		params += UI.selectedDof + "&"
 		if (UI.selectedDimensions == "d1") params += "1d&"
 		else if (UI.selectedDimensions == "d2") params += "2d&"
 		//if (UI.selectedReality == "nonvr") params += "nonvr&"
@@ -610,6 +618,14 @@ UIstarted = true
 		const id = this.id
 		const shadowName = id.slice(0, id.length - "Option".length)
 		UI.selectedShadow = shadowName
+	})
+	
+	$$(".dofTypeOption").on.click(function() {
+		for (const dofTypeOption of $$(".dofTypeOption")) dofTypeOption.classList.remove("selected")
+		this.classList.add("selected")
+		const id = this.id
+		const dofTypeOption = id.slice(0, id.length - "Option".length)
+		UI.selectedDof = dofTypeOption
 	})
 	
 	$$(".dimensionOption").on.click(function() {

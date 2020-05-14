@@ -47,7 +47,7 @@
 	//=======//
 	Stage = class Stage {
 		
-		constructor(element, {start = true, alpha = false, shadow = true} = {}) {
+		constructor(element, {start = true, alpha = false, shadow = false, postProcess = false} = {}) {
 		
 			const self = this		
 			this.canvas = makeCanvas()
@@ -68,6 +68,16 @@
 				}
 			}
 			
+			if (postProcess === true) {
+				this.composer = new THREE.EffectComposer(this.renderer)
+				const renderPass = new THREE.RenderPass(this.scene, this.camera)
+				this.composer.addPass(renderPass)
+				this.draw = () => this.composer.render()
+			}
+			else {
+				this.draw = () => this.renderer.render(this.scene, this.camera)
+			}
+			
 			this.previousTimeStamp = 0
 			if (start) this.start()
 		}
@@ -82,7 +92,7 @@
 			
 			this.process(tickTime)
 			this.resize()
-			this.renderer.render(this.scene, this.camera)
+			this.draw()
 			
 			this.previousTimeStamp = timeStamp
 		}
@@ -96,6 +106,7 @@
 			this.renderer.setSize(this.canvas.clientWidth / 1, this.canvas.clientHeight / 1, false)
 			this.camera.aspect = this.canvas.clientWidth / this.canvas.clientHeight
 			this.camera.updateProjectionMatrix()
+			if (this.composer) this.composer.setSize(this.canvas.clientWidth, this.canvas.clientHeight)
 		}
 		
 		getCursorPosition3D(filter = undefined, objects = this.scene.children) {

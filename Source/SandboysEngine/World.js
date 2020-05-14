@@ -114,8 +114,8 @@ const WORLD = {}
 	//const GEOMETRY_TEMPLATE = new THREE.SphereBufferGeometry(1 * ATOM_SIZE * ATOM_SCALE)
 	const MATERIAL = new THREE.MeshLambertMaterial({
 		transparent: true,
-		opacity: 0,
-		flatShading: true,
+		opacity: 1,
+		//flatShading: true,
 		//premultipliedAlpha: true,
 		//depthTest: false,
 		//depthFunc: THREE.NotEqualDepth,

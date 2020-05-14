@@ -3,6 +3,7 @@
 //===========//
 const urlParams = new URLSearchParams(window.location.search)
 
+const DOF_MODE = urlParams.has("dof")
 const SHADOW_MODE = urlParams.has("shadow")
 const SMALL_MODE = urlParams.has("small") || !urlParams.has("big")
 const MASSIVE_MODE = urlParams.has("massive")

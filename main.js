@@ -1,7 +1,7 @@
 //=============//
 // Stage Setup //
 //=============//
-const stage = new Stage(document.body, {start: false, shadow: SHADOW_MODE})
+const stage = new Stage(document.body, {start: false, shadow: SHADOW_MODE, postProcess: DOF_MODE})
 const {canvas, renderer, scene, camera, raycaster, cursor, dummyCamera} = stage
 if (VR_MODE) {
 	alert("Sorry VR mode is broken at the moment.")
@@ -23,13 +23,24 @@ camera.position.set(CAMERA_START_X, CAMERA_START_Y, CAMERA_START_Z)
 camera.lookAt(0, MAX_Y/2 * ATOM_SIZE, 0)
 
 const background = makeBackground()
-scene.background = background
+//scene.background = background
 
 const sun = makeSun(D2_MODE)
 scene.add(sun)
 
 const floor = D2_MODE? make2DFloor(FLOOR_TYPE, WORLD_WIDTH * ATOM_SIZE, WORLD_HEIGHT * ATOM_SIZE) : makeFloor(FLOOR_TYPE, WORLD_WIDTH * ATOM_SIZE, WORLD_DEPTH * ATOM_SIZE)
 scene.add(floor)
+
+createScreen()
+
+if (DOF_MODE) {
+	const bokehPass = new THREE.BokehPass(scene, camera, {
+		maxblur: 1.0,
+		focus: 1.1,
+		aperture: 0.05,
+	})
+	stage.composer.addPass(bokehPass)
+}
 
 let orbit = new THREE.OrbitControls(camera, document.body)
 orbit.mouseButtons.LEFT = undefined
@@ -42,7 +53,13 @@ orbit.enableDamping = true
 orbit.screenSpacePanning = D2_MODE
 orbit.panSpeed = 1.8
 orbit.target.set(0, MAX_Y/2 * ATOM_SIZE, 0)
-on.process(orbit.o.update)
+on.process(() => {
+	orbit.update()
+	//screen.position.set(-camera.position.x, 0, -camera.position.z)
+	//screen.lookAt(camera)
+	//screen.rotateY(Math.PI/2)
+	//screen.rotateX(Math.PI/2)
+})
 
 stage.start()
 
