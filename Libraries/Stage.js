@@ -118,6 +118,15 @@
 			return intersect.point
 		}
 		
+		getCursorIntersect(filter = undefined, objects = this.scene.children) {
+			this.raycaster.setFromCamera(this.cursor.position2D, this.camera)
+			const sample = filter === undefined? objects : objects.filter(filter)
+			const intersects = this.raycaster.intersectObjects(sample)
+			if (intersects.length == 0) return
+			const intersect = intersects[0]
+			return intersect
+		}
+		
 		getTouchPosition2D(id = 0) {
 			const touch = Touches[id]
 			if (touch === undefined) return undefined

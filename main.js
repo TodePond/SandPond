@@ -33,11 +33,12 @@ scene.add(floor)
 
 createScreen()
 
+let bokehPass = undefined
 if (DOF_MODE) {
-	const bokehPass = new THREE.BokehPass(scene, camera, {
+	bokehPass = new THREE.BokehPass(scene, camera, {
 		maxblur: 1.0,
 		focus: 1.1,
-		aperture: 0.05,
+		aperture: 0.03,
 	})
 	stage.composer.addPass(bokehPass)
 }
@@ -113,8 +114,13 @@ on.process(() => {
 		DROPPER.tryDrop(touchPosition3D)
 	}
 	else if (listenToMouse >= 1) {
-		const cursorPosition3D = stage.getCursorPosition3D((mesh) => mesh == floor)
+		const cursorIntersection = stage.getCursorIntersect((mesh) => mesh == floor)
+		const cursorPosition3D = cursorIntersection? cursorIntersection.point : undefined
 		DROPPER.tryDrop(cursorPosition3D)
+		if (DOF_MODE === true && cursorPosition3D !== undefined) {
+			const dist = cursorIntersection.distance
+			bokehPass.uniforms.focus.value = dist
+		}
 	}
 	else {
 		DROPPER.tryDrop(undefined)
