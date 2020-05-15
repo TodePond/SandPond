@@ -137,7 +137,7 @@
 		}
 		
 		// NO BASE INDENT
-		if (indentBase == undefined) throw new Error(`[TodeSplat] The base indent level should have been discovered by now - something has gone wrong`)
+		if (indentBase == undefined) throw new Error(`[SpaceTode] The base indent level should have been discovered by now - something has gone wrong`)
 		
 		// GET INDENT UNIT
 		else if (indentUnit == undefined) {
@@ -161,7 +161,7 @@
 	EAT.unindent = (source) => {
 	
 		indentDepth--
-		if (indentDepth < 0) throw new Error(`[TodeSplat] Can't reduce indent level below zero. This shouldn't happen.`)
+		if (indentDepth < 0) throw new Error(`[SpaceTode] Can't reduce indent level below zero. This shouldn't happen.`)
 		
 		let result = undefined
 		let success = undefined
@@ -173,8 +173,8 @@
 		
 		//result = {code, snippet} = EAT.maybe(EAT.margin)(code)
 		
-		if (indentBase == undefined) throw new Error(`[TodeSplat] The base indent level should have been discovered by now - something has gone wrong`)
-		if (indentUnit == undefined) throw new Error(`[TodeSplat] The indent unit should have been discovered by now - something has gone wrong`)
+		if (indentBase == undefined) throw new Error(`[SpaceTode] The base indent level should have been discovered by now - something has gone wrong`)
+		if (indentUnit == undefined) throw new Error(`[SpaceTode] The indent unit should have been discovered by now - something has gone wrong`)
 		
 		// CHECK INDENT
 		const expectedMargin = getMargin(indentDepth)
@@ -275,9 +275,9 @@
 	}
 	
 	//===========//
-	// TodeSplat //
+	// SpaceTode //
 	//===========//
-	function TodeSplat([source]) {
+	function SpaceTode([source]) {
 	
 		resetIndentInfo()
 	
@@ -288,23 +288,23 @@
 		
 		result = {code} = EAT.stripComments(code)
 		
-		const scope = makeScope(TodeSplat.global)
+		const scope = makeScope(SpaceTode.global)
 		scope.global = true
 		result = {success, code} = EAT.todeSplatMultiInner(code, scope)
 		
 		/*for (const name in scope.elements) {
 			const element = scope.elements[name]
-			if (window[name] != undefined) console.warn(`[TodeSplat] Overriding existing value with new element: '${name}'`)
+			if (window[name] != undefined) console.warn(`[SpaceTode] Overriding existing value with new element: '${name}'`)
 			window[name] = element
 		}*/
 		
-		absorbScope(TodeSplat.global, scope)
+		absorbScope(SpaceTode.global, scope)
 		
 		return scope
 		
 	}
 	
-	TodeSplat.global = makeScope()
+	SpaceTode.global = makeScope()
 	
 	EAT.todeSplatBlock = (source, scope) => {
 		let result = undefined
@@ -502,7 +502,7 @@
 					stringEnder = "'"
 				}
 				else if (char == "`") {
-					throw new Error(`[TodeSplat] Template strings are not supported, sorry...`)
+					throw new Error(`[SpaceTode] Template strings are not supported, sorry...`)
 				}
 				else {
 					codeStripped += char
@@ -538,7 +538,7 @@
 				state = "string"
 			}
 			else {
-				throw new Error (`[TodeSplat] Undeclared state while stripping comments: '${state}'`)
+				throw new Error (`[SpaceTode] Undeclared state while stripping comments: '${state}'`)
 			}
 		}
 	
@@ -558,19 +558,19 @@
 		let code = source
 		
 		result = {code, success} = EAT.string("element")(code)
-		if (!success) throw new Error(`[TodeSplat] Expected 'element' keyword at start of element but got '${code[0]}'`)
+		if (!success) throw new Error(`[SpaceTode] Expected 'element' keyword at start of element but got '${code[0]}'`)
 		
 		result = {code, success} = EAT.gap(code)
-		if (!success) throw new Error(`[TodeSplat] Expected gap after 'element' keyword but got '${code[0]}'`)
+		if (!success) throw new Error(`[SpaceTode] Expected gap after 'element' keyword but got '${code[0]}'`)
 		
 		result = {code, success, snippet} = EAT.name(code)
-		if (!success) throw new Error(`[TodeSplat] Expected element name but got '${code[0]}'`)
+		if (!success) throw new Error(`[SpaceTode] Expected element name but got '${code[0]}'`)
 		scope.name = snippet
 		
 		//scope.instructions.push({type: INSTRUCTION.TYPE.BLOCK_START})
 		
 		result = {code, success} = EAT.block(EAT.todeSplat)(code, scope)
-		if (!success) throw new Error(`[TodeSplat] Expected element block but got something else`)
+		if (!success) throw new Error(`[SpaceTode] Expected element block but got something else`)
 		
 		//scope.instructions.push({type: INSTRUCTION.TYPE.BLOCK_END})
 		
@@ -581,7 +581,7 @@
 		parentScope.elements[scope.name] = element
 		
 		if (parentScope.global == true) {
-			if (window[scope.name] != undefined) console.warn(`[TodeSplat] Overriding existing value with new element: '${scope.name}'`)
+			if (window[scope.name] != undefined) console.warn(`[SpaceTode] Overriding existing value with new element: '${scope.name}'`)
 			window[scope.name] = element
 		}
 		
@@ -1029,7 +1029,7 @@
 					stringEnder = "'"
 				}
 				else if (char == "`") {
-					throw new Error(`[TodeSplat] Template strings are not supported, sorry...`)
+					throw new Error(`[SpaceTode] Template strings are not supported, sorry...`)
 				}
 				innerCode += char
 			}
@@ -1118,8 +1118,8 @@
 			}
 		}
 		
-		if (arrowX == undefined) throw new Error(`[TodeSplat] Couldn't find arrow's x position.\n\nNOTE: I am trying to interpret a line of code as a diagram, but it is possible that you intended to write something else. The line in question is:\n\n${diagram[0]}\n`)
-		if (arrowY == undefined) throw new Error(`[TodeSplat] Couldn't find arrow's y position. This shouldn't happen.`)
+		if (arrowX == undefined) throw new Error(`[SpaceTode] Couldn't find arrow's x position.\n\nNOTE: I am trying to interpret a line of code as a diagram, but it is possible that you intended to write something else. The line in question is:\n\n${diagram[0]}\n`)
+		if (arrowY == undefined) throw new Error(`[SpaceTode] Couldn't find arrow's y position. This shouldn't happen.`)
 		
 		// split into lhs and rhs
 		let lhs = diagram.map(line => line.slice(0, arrowX))
@@ -1130,7 +1130,7 @@
 		for (let i = 0; i < mid.length; i++) {
 			if (i == arrowY) continue
 			const line = mid[i]
-			if (!line.is(WhiteSpace)) throw new Error(`[TodeSplat] You can't have any symbols crossing over with a diagram's arrow.`)
+			if (!line.is(WhiteSpace)) throw new Error(`[SpaceTode] You can't have any symbols crossing over with a diagram's arrow.`)
 		}
 		
 		// find the shortest margins of the diagram
@@ -1151,11 +1151,11 @@
 		
 			const lhsLine = lhsTrimmed[i]
 			const rhsLine = rhsTrimmed[i]
-			if (lhsLine.length != rhsLine.length) throw new Error(`[TodeSplat] Right-hand-side silhouette did not match left-hand-side silhouette.`)
+			if (lhsLine.length != rhsLine.length) throw new Error(`[SpaceTode] Right-hand-side silhouette did not match left-hand-side silhouette.`)
 		
 			for (let j = 0; j < lhsTrimmed.length; j++) {
-				if (lhsTrimmed[i][j] == " " && rhsTrimmed[i][j] != " ") throw new Error(`[TodeSplat] Right-hand-side silhouette did not match left-hand-side silhouette.`)
-				if (rhsTrimmed[i][j] == " " && lhsTrimmed[i][j] != " ") throw new Error(`[TodeSplat] Right-hand-side silhouette did not match left-hand-side silhouette.`)
+				if (lhsTrimmed[i][j] == " " && rhsTrimmed[i][j] != " ") throw new Error(`[SpaceTode] Right-hand-side silhouette did not match left-hand-side silhouette.`)
+				if (rhsTrimmed[i][j] == " " && lhsTrimmed[i][j] != " ") throw new Error(`[SpaceTode] Right-hand-side silhouette did not match left-hand-side silhouette.`)
 			}
 		}
 		
@@ -1173,15 +1173,15 @@
 				const char = line[j]
 				const symbol = getSymbol(char, scope)
 				if (symbol && symbol.has("origin")) {
-					if (originX != undefined) throw new Error(`[TodeSplat] You can't have more than one origin in the left-hand-side of a diagram.`)
+					if (originX != undefined) throw new Error(`[SpaceTode] You can't have more than one origin in the left-hand-side of a diagram.`)
 					originX = j
 					originY = i
 				}
 			}
 		}
 		
-		if (originX == undefined) throw new Error(`[TodeSplat] Couldn't find origin in left-hand-side of diagram.`)
-		if (originY == undefined) throw new Error(`[TodeSplat] Couldn't find origin's y position. This shouldn't happen.`)
+		if (originX == undefined) throw new Error(`[SpaceTode] Couldn't find origin in left-hand-side of diagram.`)
+		if (originY == undefined) throw new Error(`[SpaceTode] Couldn't find origin's y position. This shouldn't happen.`)
 		
 		// get positions of lhs symbols
 		const spaces = []
@@ -1200,15 +1200,15 @@
 				const input = getSymbol(lhsChar, scope)
 				const output = getSymbol(rhsChar, scope)
 				
-				if (input == undefined) throw new Error(`[TodeSplat] Unrecognised symbol: ${lhsChar}`)
-				if (output == undefined) throw new Error(`[TodeSplat] Unrecognised symbol: ${rhsChar}`)
+				if (input == undefined) throw new Error(`[SpaceTode] Unrecognised symbol: ${lhsChar}`)
+				if (output == undefined) throw new Error(`[SpaceTode] Unrecognised symbol: ${rhsChar}`)
 				
 				if (input.origin == undefined && input.given == undefined) {
-					throw new Error(`[TodeSplat] Symbol '${lhsChar}' used on left-hand-side but doesn't have any left-hand-side parts, eg: given`)
+					throw new Error(`[SpaceTode] Symbol '${lhsChar}' used on left-hand-side but doesn't have any left-hand-side parts, eg: given`)
 				}
 				
 				if (output.change == undefined && output.keep == undefined) {
-					throw new Error(`[TodeSplat] Symbol '${rhsChar}' used on right-hand-side but doesn't have any right-hand-side parts, eg: change`)
+					throw new Error(`[SpaceTode] Symbol '${rhsChar}' used on right-hand-side but doesn't have any right-hand-side parts, eg: change`)
 				}
 				
 				const space = {x, y, input, output}
@@ -1240,7 +1240,7 @@
 		else notes.firstLine = false
 		
 		// reject tabs
-		if (line.includes("	")) throw new Error("[TodeSplat] You can't use tabs inside a diagram.")
+		if (line.includes("	")) throw new Error("[SpaceTode] You can't use tabs inside a diagram.")
 		
 		// find arrow
 		if (line.includes("=>")) {
@@ -1396,7 +1396,7 @@
 	
 }
 
-TodeSplat `
+SpaceTode `
 	element Empty {
 		visible false
 	}

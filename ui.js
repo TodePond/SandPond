@@ -232,7 +232,7 @@ UIstarted = true
 			
 				<div id="source" class="minimised">
 					<div class="menu">
-						<div class="heading box clickable sourceType selected" id="todeSplatSource"><div class="label">TodeSplat</div></div>
+						<div class="heading box clickable sourceType selected" id="todeSplatSource"><div class="label">SpaceTode</div></div>
 						<div class="heading box clickable sourceType" id="javaScriptSource"><div class="label">JavaScript</div></div>
 					</div>
 					<pre id="sourceBox"></pre>
@@ -360,7 +360,7 @@ UIstarted = true
 	document.head.appendChild(UI_STYLE)
 	document.body.appendChild(UI_ELEMENT)
 	
-	for (const element of TodeSplat.global.elements) {
+	for (const element of SpaceTode.global.elements) {
 		if (element.hidden) continue
 		
 		const searchItemButton = makeElementButton(element)
@@ -549,7 +549,7 @@ UIstarted = true
 		for (const elementButton of $$("#searchItems > .elementButton")) {
 			const id = elementButton.id
 			const name = id.slice(0, id.length - "Button".length)
-			const element = TodeSplat.global.elements[name]
+			const element = SpaceTode.global.elements[name]
 			let index = name.as(LowerCase).indexOf(query)
 			if (query == "") index = 0
 			
@@ -659,7 +659,7 @@ UIstarted = true
 		const idEnd = "Button"
 		
 		const name = newId.slice(0, newId.length - idEnd.length)
-		const newElement = TodeSplat.global.elements[name]
+		const newElement = SpaceTode.global.elements[name]
 		const oldElement = UI.selectedElement
 		
 		const oldId = oldElement.name + idEnd
@@ -685,7 +685,7 @@ UIstarted = true
 		const newId = newButton.id
 		const idEnd = "Button"
 		const name = newId.slice(0, newId.length - idEnd.length)
-		const newElement = TodeSplat.global.elements[name]
+		const newElement = SpaceTode.global.elements[name]
 		
 		const oldElement = UI.highlightedElement
 		if (oldElement) {
