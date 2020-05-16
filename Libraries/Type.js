@@ -25,7 +25,8 @@ Reflect.defineProperty(Object.prototype, "and", {
 			convert: (v) => v.as(type1).as(type2),
 			depth: Math.max(getTypeDepth(type1), getTypeDepth(type2)) + 1,
 		})
-	}
+	},
+	writable: true,
 })
 
 Reflect.defineProperty(Object.prototype, "or", {
@@ -54,6 +55,30 @@ class Type {
 		this.convert = convert
 		this.depth = depth
 	}
+}
+
+{
+
+	Array.check = (v) => v instanceof Array
+	
+	ofSymbol = Symbol("of")
+	Array[ofSymbol] = new Map()
+	Array.of = (type) => {
+		const entry = Array[ofSymbol].get(type)
+		if (entry !== undefined) return entry
+		const arrayType = new Type ({
+			name: `${type.name}[]`,
+			check: (v) => {
+				if (!v.is(Array)) return false
+				if (v.some(e => !e.is(type))) return false
+				return true
+			},
+		})
+		Array[ofSymbol].set(type, arrayType)
+		return arrayType
+	}
+	
+	Array.of(String)
 }
 
 const Any = new Type({

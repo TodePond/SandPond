@@ -1282,7 +1282,7 @@
 		}
 		
 		if (type == EAT.BLOCK_SINGLE) {
-			result = {code, snippet, success} = EAT.many(EAT.regex(/[^}](?!\n)/))(code)
+			result = {code, snippet, success} = EAT.many(EAT.regex(/[^}](?!\n)/))(code) //????
 			if (!success) return EAT.fail(code)
 			const func = new Function(head + snippet + tail)
 			const value = lazy? func : func()
