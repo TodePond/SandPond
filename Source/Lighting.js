@@ -11,6 +11,7 @@ function makeSun(is2D = false) {
 		sun.shadow.mapSize.height = 1024
 		sun.shadow.camera.near = 450
 		sun.shadow.camera.far = 475
+		sun.shadow.bias = -0.0004
 	}
 	
 	//const helper = new THREE.CameraHelper(sun.shadow.camera)
