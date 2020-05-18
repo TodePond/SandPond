@@ -350,7 +350,7 @@ UIstarted = true
 	
 	const updateSourceUI = () => {
 		if (!UI.selectedElement) return
-		const source = UI.selectedSource == "todeSplat"? UI.selectedElement.source : UI.selectedElement.behave
+		const source = UI.selectedSource == "todeSplat"? UI.selectedElement.source : UI.selectedElement.behaveCode
 		$("#sourceBox").textContent = source
 	}
 	

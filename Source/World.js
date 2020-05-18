@@ -3,6 +3,11 @@
 //=======//
 const WORLD = {}
 
+SpaceTode `
+	element Empty visible false
+	element Void hidden true
+`
+
 {
 	
 	// World Job Description

@@ -142,9 +142,10 @@ if (SHUFFLE_MODE) {
 		for (let i = 0; i < spaceCount; i++) {
 			const id = spaceIds[i]
 			const space = spaces[id]
+			const element = space.element
+			if (element === Empty) continue
 			const atom = space.atom
-			const element = atom.element
-			if (element != Empty) element.behave(atom, space)
+			element.behave(atom, space)
 		}
 	})
 }
@@ -156,9 +157,9 @@ else if (PURE_RANDOM_MODE) {
 		}
 		for (let i = 0; i < spaceCount; i++) {
 			const space = spacesShuffled[i]
-			const atom = space.atom
 			const element = space.element
 			if (element === Empty) continue
+			const atom = space.atom
 			element.behave(atom, space)
 		}
 		
@@ -183,29 +184,6 @@ else {
 			element.behave(atom, space)
 		}
 		currentTrack = !currentTrack
-		
-		/*if (currentTrack === true) {
-			for (const space of spaces) {
-				const atom = space.atom
-				const element = atom.element
-				if (atom.element === Empty) continue
-				if (atom.track === true) continue
-				atom.track = true
-				element.behave(atom, space)
-			}
-			currentTrack = false
-		}
-		else {
-			for (const space of spaces) {
-				const atom = space.atom
-				const element = atom.element
-				if (atom.element === Empty) continue
-				if (atom.track === false) continue
-				atom.track = false
-				element.behave(atom, space)
-			}
-			currentTrack = true
-		}*/
 	})
 }
 

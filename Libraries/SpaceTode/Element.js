@@ -18,7 +18,8 @@ const ELEMENT = {}
 	} = {}) => {
 	
 	
-		const behaveMaker = JAVASCRIPT.makeBehave(instructions, name)
+		const behaveCode = JAVASCRIPT.makeBehaveCode(instructions, name)
+		const behaveMaker = new Function(behaveCode)
 		const behave = behaveMaker()
 		const constructorCode = JAVASCRIPT.makeConstructor(name, data, args)
 		const constructor = JS(constructorCode)(...data, ...args)
@@ -32,7 +33,7 @@ const ELEMENT = {}
 			precise, floor, hidden, pour,
 			
 			// Debug
-			source, constructorCode, behaveCode: behaveMaker.toString(), instructions,
+			source, constructorCode, behaveCode, instructions,
 			
 			// Behaviour
 			behave, ...otherProperties

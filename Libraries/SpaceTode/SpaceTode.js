@@ -239,7 +239,7 @@
 		result = {code, success} = EAT.string("}")(code)
 		if (!success) return EAT.fail(code)
 		
-		return {...resultProperties, ...result}
+		return {...resultProperties, success: true, code: result.code}
 	}
 	
 	EAT.blockSingle = (inner) => (source, ...args) => {
@@ -445,6 +445,10 @@
 		
 		// symbol part
 		result = {success} = EAT.symbolPart(code, scope)
+		if (success) return result
+		
+		// behave
+		result = {success} = EAT.behave(code, scope)
 		if (success) return result
 		
 		// 'colour', 'emissive', 'category', etc
@@ -665,6 +669,22 @@
 		
 		if (!success) return nojsResult
 		else return result
+	}
+	
+	EAT.behave = (source, scope) => {
+		let result = undefined
+		let success = undefined
+		let snippet = undefined
+		let code = source
+		
+		result = {code, success} = EAT.string("behave")(code)
+		if (!success) return EAT.fail(code)
+		
+		result = {code} = EAT.gap(code)
+		result = {code, success, snippet} = EAT.javascript(code, undefined, undefined, undefined, undefined, true)
+		if (!success) return EAT.fail(code)
+		scope.instructions.push({type: INSTRUCTION.TYPE.BEHAVE, value: result.funcCode})
+		return result
 	}
 	
 	//=============//
@@ -1282,10 +1302,12 @@
 		if (type == EAT.BLOCK_SINGLE) {
 			result = {code, snippet, success} = EAT.many(EAT.regex(/[^}](?!\n)/))(code) //????
 			if (!success) return EAT.fail(code)
-			const func = new Function(head + snippet + tail)
+			const funcCode = head + snippet + tail
+			const func = new Function(funcCode)
 			const value = lazy? func : func()
 			result.value = value
-			return result
+			const niceFuncCode = `(() => {`+ funcCode + `})()`
+			return {...result, snippet: funcCode, funcCode: niceFuncCode}
 		}
 		
 		if (type == EAT.BLOCK_MULTI) {
@@ -1295,10 +1317,12 @@
 			)(code)
 			let endResult = {code, success} = EAT.unindent(code)
 			if (!success) return endResult
-			const func = new Function(head + snippet + tail)
+			const funcCode = head + snippet + tail
+			const func = new Function(funcCode)
 			const value = lazy? func : func()
 			result.value = value
-			return {...result, code}
+			const niceFuncCode = `(() => {`+ funcCode + `\n})()`
+			return {...result, snippet: funcCode, funcCode: niceFuncCode, code}
 		}
 		
 		return result
@@ -1312,9 +1336,12 @@
 		
 		result = {code, snippet, success} = EAT.line(code)
 		if (!success) return EAT.fail(code)
-		const func = new Function(head + "return " + innerHead + snippet + innerTail + tail)
+		const funcCode = head + "return " + innerHead + snippet + innerTail + tail
+		const func = new Function(funcCode)
 		const value = lazy? func : func()
 		result.value = value
+		const niceFuncCode = head + innerHead + snippet + innerTail + tail
+		result.funcCode = niceFuncCode
 		return result
 	}
 	
@@ -1347,9 +1374,12 @@
 		result = {code, success, snippet} = EAT.line(code)
 		if (!success) return EAT.fail(code)
 		js += snippet
-		const func = new Function(head + "return " + innerHead + js + innerTail + tail)
+		const funcCode = head + "return " + innerHead + js + innerTail + tail
+		const func = new Function(funcCode)
 		const value = lazy? func : func()
 		result.value = value
+		const niceFuncCode = head + innerHead + js + innerTail + tail
+		result.funcCode = niceFuncCode
 		
 		return result
 	}
@@ -1379,26 +1409,30 @@
 		let code = source
 		
 		result = {code, success} = EAT.newline(code)
+		
+		const emptyResult = EAT.list (
+			EAT.maybe(EAT.gap),
+			EAT.newline,
+			
+		)(code)
+		
+		if (emptyResult.success) return {...emptyResult, code: "\n" + emptyResult.code}
+		
 		result = {code, success} = EAT.maybe(EAT.margin)(code)
+		const actualMargin = result.snippet
 		if (!success) return EAT.fail(code)
 		
 		const margin = getMargin(indentDepth)
-		if (result.snippet.slice(0, margin.length) != margin) return EAT.fail(code)
+		if (actualMargin.slice(0, margin.length) != margin) return EAT.fail(code)
+		
+		const marginDifference = actualMargin.length - margin.length
+		const niceMargin = actualMargin.slice(0, marginDifference+1)
 		
 		result = {snippet} = EAT.line(code)
-		result.snippet = "\n" + snippet
+		result.snippet = "\n" + niceMargin + snippet
 		
 		return result
 
 	}
 	
 }
-
-SpaceTode `
-	element Empty {
-		visible false
-	}
-	element Void {
-		hidden true
-	}
-`

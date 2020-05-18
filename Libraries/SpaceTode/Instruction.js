@@ -1,22 +1,7 @@
 //=============//
 // Instruction //
 //=============//
-const INSTRUCTION = {}
 const POV = {}
-
-INSTRUCTION.TYPE = {
-	//BLOCK_START: Symbol("BlockStart"),
-	BLOCK_END: Symbol("EndBlock"),
-	DIAGRAM: Symbol("Diagram"),
-	ANY: Symbol("AnyBlock"),
-	FOR: Symbol("ForBlock"),
-	MAYBE: Symbol("MaybeBlock"),
-	ACTION: Symbol("ActionBlock"),
-	MIMIC: Symbol("Mimic"),
-	POV: Symbol("PointOfView"),
-	NAKED: Symbol("NakedBlock"),
-}
-
 POV.TYPE = {
 	FRONT: Symbol("Front"),
 	BACK: Symbol("Back"),
@@ -25,4 +10,40 @@ POV.TYPE = {
 	BOTTOM: Symbol("Bottom"),
 	TOP: Symbol("Top"),
 }
+
+const INSTRUCTION = {}
+{
+	INSTRUCTION.make = (name, generate = () => "") => ({name, generate})
+	INSTRUCTION.TYPE = {
+		BLOCK_END: INSTRUCTION.make("EndBlock"),
+		DIAGRAM: INSTRUCTION.make("Diagram", (template, diagram) => {
+		
+			for (const spot of diagram) {
+				
+				if (spot.input.given != undefined) {}
+				
+				template.script.given.push(spot.input.given)
+				template.script.change.push(spot.output.change)
+				template.script.keep.push(spot.output.keep)
+				
+			}
+		}),
+		
+		NAKED: INSTRUCTION.make("NakedBlock"),
+		ANY: INSTRUCTION.make("AnyBlock"),
+		FOR: INSTRUCTION.make("ForBlock"),
+		MAYBE: INSTRUCTION.make("MaybeBlock"),
+		ACTION: INSTRUCTION.make("ActionBlock"),
+		MIMIC: INSTRUCTION.make("Mimic"),
+		POV: INSTRUCTION.make("PointOfView"),
+		BEHAVE: INSTRUCTION.make("Behave", (template, behave) => {
+			const id = template.script.behave.push(behave) - 1
+			template.main.push(`behave${id}(self, origin)`)
+		}),
+	}
+	
+	
+
+}
+
 
