@@ -49,6 +49,7 @@ function createScreen() {
 		mesh0.position.y + ((WORLD_HEIGHT-1) * ATOM_SIZE) / 2,
 		mesh0.position.z - ((WORLD_DEPTH) * ATOM_SIZE) / 2,
 	)
+	if (D2_MODE) mesh0.position.z -= ATOM_SIZE
 	scene.add(mesh0)
 	
 	const mesh1 = new THREE.Mesh(geo, mat)

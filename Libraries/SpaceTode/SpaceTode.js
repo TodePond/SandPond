@@ -588,18 +588,6 @@
 		return {success: true, snippet, code: result.code}
 	}
 	
-	EAT.fullName = EAT.list (
-		EAT.name,
-		EAT.maybe (
-			EAT.many (
-				EAT.list (
-					EAT.string("."),
-					EAT.name
-				)
-			),
-		),
-	)
-	
 	//========//
 	// Symbol //
 	//========//
@@ -1160,7 +1148,6 @@
 		}
 		
 		// find origin
-		// TODO: allow for custom origin symbols
 		let originX = undefined
 		let originY = undefined
 		if (lhs.length == 1 && lhs[0].trim().length == 1) {
@@ -1183,7 +1170,7 @@
 		if (originX == undefined) throw new Error(`[SpaceTode] Couldn't find origin in left-hand-side of diagram.`)
 		if (originY == undefined) throw new Error(`[SpaceTode] Couldn't find origin's y position. This shouldn't happen.`)
 		
-		// get positions of lhs symbols
+		// get positions of symbols
 		const spaces = []
 		for (let i = 0; i < lhs.length; i++) {
 			const lhsLine = lhs[i]
