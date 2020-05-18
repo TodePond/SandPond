@@ -12,7 +12,12 @@ const JAVASCRIPT = {}
 	// Public //
 	//========//
 	JAVASCRIPT.makeBehave = (instructions, name) => {
-		if (name == "Sand") return () => {
+	
+		if (location.href.slice(0, "file:///D:/D".length) == "file:///D:/D") { //lol environment control
+			print("yo")
+		}
+	
+		else if (name == "Sand") return () => {
 			
 			const behave = (self, origin) => {
 				const sites = origin.sites

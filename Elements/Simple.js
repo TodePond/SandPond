@@ -13,20 +13,13 @@ given # (atom) => atom
 
 keep .
 
-element Sand any(xz) {
+element Sand  {
 	colour "#FC0"
 	emissive "#ffa34d"
 	category "Sandbox"
 	
-	{
-		@ => @
-	}
-	
 	@ => _
 	_    @
-	
-	@_ => _.
-	#_    .@
 	
 }
 
