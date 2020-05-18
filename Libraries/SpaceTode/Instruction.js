@@ -14,6 +14,7 @@ INSTRUCTION.TYPE = {
 	ACTION: Symbol("ActionBlock"),
 	MIMIC: Symbol("Mimic"),
 	POV: Symbol("PointOfView"),
+	NAKED: Symbol("NakedBlock"),
 }
 
 POV.TYPE = {

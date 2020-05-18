@@ -18,6 +18,10 @@ element Sand any(xz) {
 	emissive "#ffa34d"
 	category "Sandbox"
 	
+	{
+		@ => @
+	}
+	
 	@ => _
 	_    @
 	

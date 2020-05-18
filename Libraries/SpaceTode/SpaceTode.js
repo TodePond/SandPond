@@ -190,7 +190,7 @@
 	EAT.BLOCK_SINGLE = Symbol("BlockSingle")
 	EAT.BLOCK_MULTI = Symbol("BlockMulti")
 	
-	EAT.block = (inner) => (source, ...args) => {
+	EAT.block = (inner, noInline = false) => (source, ...args) => {
 		
 		let result = undefined
 		let success = undefined
@@ -200,6 +200,7 @@
 		result = {code} = EAT.gap(code)
 		result = {success} = EAT.string("{")(code)
 		if (success) return EAT.blockBrace(inner)(code, ...args)
+		else if (noInline) return EAT.fail(code)
 		else return EAT.blockInline(inner)(code, ...args)
 		
 	}
@@ -449,6 +450,16 @@
 		// 'colour', 'emissive', 'category', etc
 		result = {success} = EAT.property(code, scope)
 		if (success) return result
+		
+		// naked block
+		const blockScope = makeScope(scope)
+		result = {code, success} = EAT.block(EAT.todeSplat, true)(code, blockScope)
+		if (success) {
+			scope.instructions.push({type: INSTRUCTION.TYPE.NAKED})
+			scope.instructions.push(...blockScope.instructions)
+			scope.instructions.push({type: INSTRUCTION.TYPE.BLOCK_END})
+			return {...result, blockScope}
+		}
 		
 		// IF ALL ELSE FAILS
 		// rule diagram!
