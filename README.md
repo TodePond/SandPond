@@ -5,7 +5,7 @@ It is heavily inspired by Dave Ackley's [T2Tile Project](https://t2tile.org/).
 
 For more info, check out my [videos](https://www.youtube.com/playlist?list=PL9uRa69RF-7wastqKWXT4d9F84BAzfVd4).<br>
 I post a new update every day on my [Instagram](https://www.instagram.com/todepond/) and [Twitter](https://twitter.com/todepond).<br>
-By the way, you can try out experimental changes on the [dev version](https://dev.sandpond.cool).
+By the way, you can try out experimental changes at [dev.sandpond.cool](https://dev.sandpond.cool).
 
 ## Rules
 Atoms follow simple rules, like this one:
@@ -22,8 +22,8 @@ Try it out at [www.sandpond.cool](http://www.sandpond.cool).<br>
 Or [download](https://github.com/l2wilson94/SandPond/archive/master.zip) it and open `index.html` in a browser.<br>
 
 ## Make your own element
-1. Write some TodeSplat using the `TodeSplat` function.
+1. Write some TodeSplat using the `TodeSplat` function.<br>
 Let me know if you want any help! :)
 
-To learn more, check out the [TodeSplat Documentation](https://github.com/l2wilson94/SandPond/wiki/TodeSplat-Documentation).<br>
+To learn more, check out the [TodeSplat Documentation](https://github.com/l2wilson94/SandPond/wiki/TodeSplat-Documentation) on the [wiki](https://github.com/l2wilson94/SandPond/wiki/).<br>
 Or check out the examples in the [Elements](https://github.com/l2wilson94/SandPond/tree/master/Elements) folder.
