@@ -35,22 +35,20 @@ INSTRUCTION.make = (name, generate = () => "") => ({name, generate})
 		for (const spot of diagram) {
 			const {given} = spot.input
 			const {change, keep} = spot.output
-			if (given && !head.given.includes(given)) {
-				head.given.push(given[0])
-			}
-			if (change && !head.change.includes(change)) {
-				head.change.push(change[0])
-			}
-			if (keep && !head.keep.push(keep)) {
-				head.keep.push(keep[0])
-			}
+			addFuncsToStore(head.given, given)
+			addFuncsToStore(head.change, change)
+			addFuncsToStore(head.keep, keep)
 		}
 	})
 	
-	const isSymbolPartNew = (symbol, type, template) => {
-		const part = symbol[type]
-		if (part === undefined) return false
-		return template.head[type].includes(part)
+	const addFuncsToStore = (store, funcs = []) => {
+		const ids = []
+		for (const func of funcs) {
+			if (store.includes(func)) return
+			const id = store.push(func) - 1
+			ids.push(id)
+		}
+		return ids
 	}
 	
 }

@@ -4,6 +4,7 @@ SpaceTode`
 
 origin @
 given @ (self, atom) => self === atom
+given @ (element) => element !== Void
 change @ (self) => self
 
 change _ () => new Empty()

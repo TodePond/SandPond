@@ -85,13 +85,19 @@ const JAVASCRIPT = {}
 	// Private //
 	//=========//
 	const makeTemplate = () => ({
+	
+		// Head is simple - just a list of global functions we need
 		head: {
 			given: [],
 			change: [],
 			keep: [],
 			behave: [],
 		},
-		main: [],
+		
+		// Main is an array of stuff that happens
+		main: [
+			
+		],
 	})
 	
 	const buildTemplate = (template) => {
