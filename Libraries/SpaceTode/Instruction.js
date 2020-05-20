@@ -31,17 +31,29 @@ INSTRUCTION.make = (name, generate = () => "") => ({name, generate})
 	})
 	
 	INSTRUCTION.TYPE.DIAGRAM = INSTRUCTION.make("Diagram", (template, diagram) => {
+	
+		// HEAD
 		const head = template.head
 		for (const spot of diagram) {
 			const {given} = spot.input
 			const {change, keep} = spot.output
-			addFuncsToStore(head.given, given)
-			addFuncsToStore(head.change, change)
-			addFuncsToStore(head.keep, keep)
+			addFuncsToHead(head.given, given)
+			addFuncsToHead(head.change, change)
+			addFuncsToHead(head.keep, keep)
 		}
+		
+		// MAIN
+		for (const spot of diagram) {
+			const {given} = spot.input
+			const {change, keep} = spot.output
+			
+		}
+		
 	})
 	
-	const addFuncsToStore = (store, funcs = []) => {
+	const makeChunk = (imports) => {}
+	
+	const addFuncsToHead = (store, funcs = []) => {
 		const ids = []
 		for (const func of funcs) {
 			if (store.includes(func)) return

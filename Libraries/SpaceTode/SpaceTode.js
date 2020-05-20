@@ -14,9 +14,16 @@
 	})
 	
 	const absorbScope = (receiver, target) => {
-		receiver.elements.o= target.elements
+		receiver.args.o= target.args
 		receiver.data.o= target.data
+		receiver.elements.o= target.elements
+		receiver.global = target.global
 		receiver.instructions.push(...target.instructions)
+		
+		const {categories, ...otherProperties} = target.properties
+		receiver.instructions.push(...categories)
+		receiver.properties.o= otherProperties
+		
 		for (const symbolName in target.symbols) {
 			if (receiver.symbols[symbolName] == undefined) {
 				receiver.symbols[symbolName] = {}
@@ -284,21 +291,15 @@
 	
 		let result = undefined
 		let success = undefined
-		let snippet = undefined
 		let code = source
 		
 		result = {code} = EAT.stripComments(code)
 		
+		// When SpaceTode is written at the top level, it is in its own scope.
+		// It is then copied to the global scope.
 		const scope = makeScope(SpaceTode.global)
 		scope.global = true
 		result = {success, code} = EAT.todeSplatMultiInner(code, scope)
-		
-		/*for (const name in scope.elements) {
-			const element = scope.elements[name]
-			if (window[name] != undefined) console.warn(`[SpaceTode] Overriding existing value with new element: '${name}'`)
-			window[name] = element
-		}*/
-		
 		absorbScope(SpaceTode.global, scope)
 		
 		return scope
@@ -478,6 +479,7 @@
 	//=========//
 	// Comment //
 	//=========//
+	// Has issues with Regex literals
 	EAT.stripComments = (source) => {
 		let result = undefined
 		let success = undefined

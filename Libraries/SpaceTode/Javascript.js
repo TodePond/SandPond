@@ -16,28 +16,12 @@ const JAVASCRIPT = {}
 	}
 	
 	show = (element) => {
-		
 		print(element.name)
-		
-		for (const instruction of element.instructions) {
-		
-			print(instruction)
-			//print(instruction.type.toDescription())
-			
-			if (instruction.type == INSTRUCTION.TYPE.DIAGRAM) {
-				for (const space of instruction.value) {
-					const sn = EVENTWINDOW.getSiteNumber(space.x, space.y, 0)
-					//print(space)
-				}
-			}
-			
-			if (instruction.type == INSTRUCTION.TYPE.MIMIC) {
-				//print(instruction.value)
-			}
-		}
+		for (const instruction of element.instructions) print(instruction)
 	}
 	
-	JAVASCRIPT.makeConstructor = (name, data, args) => {
+	// messy as hell
+	JAVASCRIPT.makeConstructorCode = (name, data, args) => {
 	
 		let closureArgNames = ``
 		let constructorArgNames = ``
@@ -46,7 +30,7 @@ const JAVASCRIPT = {}
 		for (const argName in data) {
 			if (closureArgNames.length == 0) {
 				closureArgNames += `${argName}Default`
-				propertyNames += `${argName}: ${argName}Default`
+				propertyNames += `,\n ${argName}: ${argName}Default`
 			}
 			else {
 				closureArgNames += `, ${argName}Default`
@@ -66,7 +50,7 @@ const JAVASCRIPT = {}
 				propertyNames += `, ${argName}: ${argName}`
 			}
 			else {
-				constructorArgNames += `, ${argName} = ${argName}Default`
+				constructorArgNames += `${argName} = ${argName}Default`
 				propertyNames += `, ${argName}: ${argName}`
 			}
 		}
@@ -74,7 +58,7 @@ const JAVASCRIPT = {}
 		return (`(${closureArgNames}) => {\n` +
 		`\n`+
 		`const element = function ${name}(${constructorArgNames}) {\n`+
-		`	const atom = {element, visible: element.visible, colour: element.shaderColour, emissive: element.shaderEmissive, opacity: element.shaderOpacity, ${propertyNames}}\n`+
+		`	const atom = {element, visible: element.visible, colour: element.shaderColour, emissive: element.shaderEmissive, opacity: element.shaderOpacity${propertyNames}}\n`+
 		`	return atom\n`+
 		`}\n`+
 		`	return element\n`+
@@ -86,7 +70,7 @@ const JAVASCRIPT = {}
 	//=========//
 	const makeTemplate = () => ({
 	
-		// Head is simple - just a list of global functions we need
+		// Head contains stores of global functions that we need
 		head: {
 			given: [],
 			change: [],
@@ -94,7 +78,9 @@ const JAVASCRIPT = {}
 			behave: [],
 		},
 		
-		// Main is an array of stuff that happens
+		// Main is an array of stuff that happens in order
+		// Strings just get naively added to the code
+		// Chunk objects specify more fancy stuff
 		main: [
 			
 		],
@@ -104,22 +90,22 @@ const JAVASCRIPT = {}
 		
 		const lines = []
 		
-		for (const scriptTypeName in template.head) {
-			const scriptType = template.head[scriptTypeName]
-			for (let i = 0; i < scriptType.length; i++) {
-				const script = scriptType[i]
+		// HEAD
+		for (const storeName in template.head) {
+			const store = template.head[storeName]
+			for (let i = 0; i < store.length; i++) {
+				const script = store[i]
 				if (script.split("\n").length > 1) lines.push(``)
-				lines.push(`const ${scriptTypeName}${i} = ${script}`)
+				lines.push(`const ${storeName}${i} = ${script}`)
 				if (script.split("\n").length > 1) lines.push(``)
 			}
 		}
 		
+		// MAIN
 		lines.push(`const behave = (self, origin) => {`)
-		
-		for (const part of template.main) {
-			if (part.is(String)) lines.push(`	` + part)
+		for (const chunk of template.main) {
+			if (chunk.is(String)) lines.push(`	` + chunk)
 		}
-		
 		lines.push(`}`)
 		lines.push(``)
 		lines.push(`return behave`)
@@ -141,7 +127,7 @@ const JAVASCRIPT = {}
 		}
 	
 		const code = buildTemplate(template)
-		if (name == "Sand") print(code)
+		//if (name == "Sand") print(code)
 		return code
 	}
 	

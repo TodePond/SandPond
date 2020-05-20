@@ -11,26 +11,30 @@ const ELEMENT = {}
 	//========//
 	// Public //
 	//========//
-	ELEMENT.make = ({name, instructions = [], data = {}, args = {}, categories = []}, {
+	ELEMENT.make = ({name, instructions = [], data = {}, args = {}, categories = [], elements = []}, {
 		colour = "grey", emissive = colour, opacity = 1.0, visible = true, source = "",
-		precise = false, floor = false, hidden = false, pour = true,
+		hidden = false, pour = true,
 		...otherProperties
 	} = {}) => {
-	
 	
 		const behaveCode = JAVASCRIPT.makeBehaveCode(instructions, name)
 		const behaveMaker = new Function(behaveCode)
 		const behave = behaveMaker()
-		const constructorCode = JAVASCRIPT.makeConstructor(name, data, args)
-		const constructor = JS(constructorCode)(...data, ...args)
+		//print(otherScopeProperties)
+		const constructorCode = JAVASCRIPT.makeConstructorCode(name, data, args)
+		const element = JS(constructorCode)(...data, ...args)
+		
 		const shaderColours = makeShaderColours(colour, emissive, opacity)
-		const elementInfo = {
+		element.o={
+			
+			// Scope
+			elements, data, args,
 			
 			// Appearance
 			name, colour, emissive, opacity, categories, ...shaderColours, visible,
 			
 			// Dropper
-			precise, floor, hidden, pour,
+			hidden, pour,
 			
 			// Debug
 			source, constructorCode, behaveCode, instructions,
@@ -40,18 +44,12 @@ const ELEMENT = {}
 			
 		}
 		
-		const element = constructor
-		element.o= elementInfo
-		
-		for (const childName in element.elements) {
-			const child = element.elements[childName]
+		for (const child of element.elements) {
 			element[child.name] = child
 		}
 		
 		return element
-		
 	}
-	
 	
 	//=========//
 	// Private //

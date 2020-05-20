@@ -14,7 +14,6 @@ given # (atom) => atom
 
 keep .
 
-
 element Sand  {
 	colour "#FC0"
 	emissive "#ffa34d"
@@ -470,6 +469,5 @@ element Res any(xyz) {
 		return behave
 	}
 }
-
 
 `
