@@ -85,7 +85,7 @@ const JAVASCRIPT = {}
 	// Private //
 	//=========//
 	const makeTemplate = () => ({
-		script: {
+		head: {
 			given: [],
 			change: [],
 			keep: [],
@@ -98,12 +98,13 @@ const JAVASCRIPT = {}
 		
 		const lines = []
 		
-		for (const scriptTypeName in template.script) {
-			const scriptType = template.script[scriptTypeName]
+		for (const scriptTypeName in template.head) {
+			const scriptType = template.head[scriptTypeName]
 			for (let i = 0; i < scriptType.length; i++) {
 				const script = scriptType[i]
+				if (script.split("\n").length > 1) lines.push(``)
 				lines.push(`const ${scriptTypeName}${i} = ${script}`)
-				lines.push(``)
+				if (script.split("\n").length > 1) lines.push(``)
 			}
 		}
 		
@@ -133,7 +134,9 @@ const JAVASCRIPT = {}
 			type.generate(template, value)
 		}
 	
-		return buildTemplate(template)
+		const code = buildTemplate(template)
+		if (name == "Sand") print(code)
+		return code
 	}
 	
 	const indentInnerCode = (code) => {

@@ -3,11 +3,11 @@ SpaceTode`
 
 
 origin @
-given @ (self, atom) => self == atom
+given @ (self, atom) => self === atom
 change @ (self) => self
 
-change _ () => undefined
-given _ (space) => space
+change _ () => new Empty()
+given _ (element) => element === Empty
 
 given # (atom) => atom
 
@@ -19,8 +19,10 @@ element Sand  {
 	emissive "#ffa34d"
 	category "Sandbox"
 	
-	behave {
+	@ => _
+	_    @
 	
+	behave {
 		const behave = (self, origin) => {
 			const sites = origin.sites
 			const spaceBelow = sites[17]
@@ -32,6 +34,7 @@ element Sand  {
 				atomBelow.track = !currentTrack
 				return
 			}
+			
 			const rando = Math.trunc(Math.random() * 4)
 			const slideSite = sites[symms[rando]]
 			const slideAtom = slideSite.atom
@@ -50,7 +53,6 @@ element Sand  {
 		]
 		
 		return behave
-
 	}
 	
 }

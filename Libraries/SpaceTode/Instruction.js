@@ -12,38 +12,47 @@ POV.TYPE = {
 }
 
 const INSTRUCTION = {}
+INSTRUCTION.TYPE = {}
+INSTRUCTION.make = (name, generate = () => "") => ({name, generate})
+
 {
-	INSTRUCTION.make = (name, generate = () => "") => ({name, generate})
-	INSTRUCTION.TYPE = {
-		BLOCK_END: INSTRUCTION.make("EndBlock"),
-		DIAGRAM: INSTRUCTION.make("Diagram", (template, diagram) => {
-		
-			for (const spot of diagram) {
-				
-				if (spot.input.given != undefined) {}
-				
-				template.script.given.push(spot.input.given)
-				template.script.change.push(spot.output.change)
-				template.script.keep.push(spot.output.keep)
-				
+	INSTRUCTION.TYPE.BLOCK_END = INSTRUCTION.make("EndBlock")		
+	INSTRUCTION.TYPE.NAKED = INSTRUCTION.make("NakedBlock")
+	INSTRUCTION.TYPE.ANY = INSTRUCTION.make("AnyBlock")
+	INSTRUCTION.TYPE.FOR = INSTRUCTION.make("ForBlock")
+	INSTRUCTION.TYPE.MAYBE = INSTRUCTION.make("MaybeBlock")
+	INSTRUCTION.TYPE.ACTION = INSTRUCTION.make("ActionBlock")
+	INSTRUCTION.TYPE.MIMIC = INSTRUCTION.make("Mimic")
+	INSTRUCTION.TYPE.POV = INSTRUCTION.make("PointOfView")
+
+	INSTRUCTION.TYPE.BEHAVE = INSTRUCTION.make("Behave", (template, behave) => {
+		const id = template.head.behave.push(behave) - 1
+		template.main.push(`behave${id}(self, origin)`)
+	})
+	
+	INSTRUCTION.TYPE.DIAGRAM = INSTRUCTION.make("Diagram", (template, diagram) => {
+		const head = template.head
+		for (const spot of diagram) {
+			const {given} = spot.input
+			const {change, keep} = spot.output
+			if (given && !head.given.includes(given)) {
+				head.given.push(given[0])
 			}
-		}),
-		
-		NAKED: INSTRUCTION.make("NakedBlock"),
-		ANY: INSTRUCTION.make("AnyBlock"),
-		FOR: INSTRUCTION.make("ForBlock"),
-		MAYBE: INSTRUCTION.make("MaybeBlock"),
-		ACTION: INSTRUCTION.make("ActionBlock"),
-		MIMIC: INSTRUCTION.make("Mimic"),
-		POV: INSTRUCTION.make("PointOfView"),
-		BEHAVE: INSTRUCTION.make("Behave", (template, behave) => {
-			const id = template.script.behave.push(behave) - 1
-			template.main.push(`behave${id}(self, origin)`)
-		}),
+			if (change && !head.change.includes(change)) {
+				head.change.push(change[0])
+			}
+			if (keep && !head.keep.push(keep)) {
+				head.keep.push(keep[0])
+			}
+		}
+	})
+	
+	const isSymbolPartNew = (symbol, type, template) => {
+		const part = symbol[type]
+		if (part === undefined) return false
+		return template.head[type].includes(part)
 	}
 	
-	
-
 }
 
 
