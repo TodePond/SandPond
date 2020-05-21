@@ -36,9 +36,9 @@ createScreen()
 let bokehPass = undefined
 if (DOF_MODE) {
 	bokehPass = new THREE.BokehPass(scene, camera, {
-		maxblur: 1.0,
-		focus: 1.1,
-		aperture: 0.03,
+		//maxblur: 2,
+		//focus: 1.1,
+		//aperture: 0.02,
 	})
 	stage.composer.addPass(bokehPass)
 }
@@ -108,6 +108,7 @@ on.mousedown(() => {
 	if (listenToMouse == -1) listenToMouse = 0
 	else if (listenToMouse == 0) listenToMouse = 1
 })
+const middleOfWorld = new THREE.Vector3(0, 0, 0)
 on.process(() => {
 	const touchPosition3D = stage.getTouchPosition3D(0, (mesh) => mesh == floor)
 	if (touchPosition3D != undefined) {
@@ -120,6 +121,10 @@ on.process(() => {
 		if (DOF_MODE === true && cursorPosition3D !== undefined) {
 			const dist = cursorIntersection.distance
 			bokehPass.uniforms.focus.value = dist
+			const cameraDist = camera.position.distanceTo(middleOfWorld)
+			bokehPass.uniforms.aperture.value = 1 / cameraDist * 0.03
+			//bokehPass.uniforms.aperture.value = 1 / dist * 0.025
+			//bokehPass.uniforms.maxblur.value = 5
 		}
 	}
 	else {
