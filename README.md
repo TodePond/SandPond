@@ -1,5 +1,5 @@
 # SandPond
-SandPond is an engine for atoms that follow simple rules.<br>
+SandPond is an engine for atoms that follow spatial rules.<br>
 Try it out at [www.sandpond.cool](http://www.sandpond.cool).<br>
 It is heavily inspired by Dave Ackley's [T2Tile Project](https://t2tile.org/).
 
