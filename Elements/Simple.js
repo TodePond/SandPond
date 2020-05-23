@@ -22,6 +22,9 @@ element Sand  {
 	@ => _
 	_    @
 	
+	@     _
+	#_ => .@
+	
 	behave {
 		const behave = (self, origin) => {
 			const sites = origin.sites

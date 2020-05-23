@@ -1172,7 +1172,7 @@
 		
 			const lhsLine = lhsTrimmed[i]
 			const rhsLine = rhsTrimmed[i]
-			if (lhsLine.length != rhsLine.length) throw new Error(`[SpaceTode] Right-hand-side silhouette did not match left-hand-side silhouette.`)
+			if (lhsLine.length != rhsLine.length) throw new Error(`[SpaceTode] Right-hand-side silhouette did not match left-hand-side silhouette.\n\nNOTE: I am trying to interpret a line of code as a diagram, but it is possible that you intended to write something else. The line in question is:\n\n${diagram[0]}\n`)
 		
 			for (let j = 0; j < lhsTrimmed.length; j++) {
 				if (lhsTrimmed[i][j] == " " && rhsTrimmed[i][j] != " ") throw new Error(`[SpaceTode] Right-hand-side silhouette did not match left-hand-side silhouette.`)

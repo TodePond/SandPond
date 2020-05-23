@@ -78,6 +78,9 @@ const JAVASCRIPT = {}
 			behave: [],
 		},
 		
+		// Buffer contains global variables that we will store stuff in
+		buffer: [],
+		
 		// Main is an array of stuff that happens in order
 		// Strings just get naively added to the code
 		// Chunk objects specify more fancy stuff
@@ -91,6 +94,9 @@ const JAVASCRIPT = {}
 		const lines = []
 		
 		// HEAD
+		lines.push("//======//")
+		lines.push("// HEAD //")
+		lines.push("//======//")
 		for (const storeName in template.head) {
 			const store = template.head[storeName]
 			for (let i = 0; i < store.length; i++) {
@@ -101,7 +107,19 @@ const JAVASCRIPT = {}
 			}
 		}
 		
+		// BUFFER
+		lines.push("//========//")
+		lines.push("// BUFFER //")
+		lines.push("//========//")
+		for (const buff of template.buffer) {
+			lines.push(`let ${buff}`)
+		}
+		lines.push("\n")
+		
 		// MAIN
+		lines.push("//======//")
+		lines.push("// MAIN //")
+		lines.push("//======//")
 		lines.push(`const behave = (self, origin) => {`)
 		for (const chunk of template.main) {
 			if (chunk.is(String)) lines.push(`	` + chunk)
@@ -125,6 +143,8 @@ const JAVASCRIPT = {}
 			const value = instruction.value
 			type.generate(template, value)
 		}
+		
+		if (name == "Sand") print(template)
 	
 		const code = buildTemplate(template)
 		//if (name == "Sand") print(code)
@@ -140,27 +160,7 @@ const JAVASCRIPT = {}
 	
 	const ALPHABET = "abcdefghijklmnopqrstuvwxyz"
 	
-	const getParams = (func) => {
-		const code = func.as(String)
-		const params = []
-		let buffer = ""
-		for (let i = 0; i < code.length; i++) {
-			const char = code[i]
-			if ((char == "(" || char == "{" || char == " " || char == "	") && buffer == "") continue
-			
-			if (char.match(/[a-zA-Z0-9]/)) buffer += char
-			else if (char == " " || char == "," || char == "	" || char == "}" || char == ")") {
-				if (buffer != "") {
-					params.push(buffer)
-					buffer = ""
-				}
-			}
-			else throw new Error(`[TodeSplat] Unexpected character in named parameters: '${char}'`)
-			
-			if (char == "}" || char == ")") break
-		}
-		return params
-	}
+	
 	
 }
 
