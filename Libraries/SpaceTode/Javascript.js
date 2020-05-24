@@ -114,7 +114,7 @@ const JAVASCRIPT = {}
 		for (const buff of template.buffer) {
 			lines.push(`let ${buff}`)
 		}
-		lines.push("\n")
+		lines.push("")
 		
 		// MAIN
 		lines.push("//======//")

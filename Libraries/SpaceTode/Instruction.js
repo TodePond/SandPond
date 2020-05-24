@@ -39,13 +39,14 @@ INSTRUCTION.make = (name, generate = () => "") => ({name, generate})
 			addFuncsToHead(head, "given", given)
 			addFuncsToHead(head, "change", change)
 			addFuncsToHead(head, "keep", keep)
-			if (given !== undefined) for (const i in given) addNameToBuffer(buffer, `given${i}Result`, x, y)
 			addFuncsToBuffer(buffer, given, x, y)
 			addFuncsToBuffer(buffer, change, x, y)
 			addFuncsToBuffer(buffer, keep, x, y)
+			if (given !== undefined) for (const i in given) addNameToBuffer(buffer, `given${i}Result`, x, y)
+			if (change !== undefined) for (const i in change) addNameToBuffer(buffer, `change${i}Result`, x, y)
 		}
-		
 	})
+	
 	const addFuncsToHead = (head, name, funcs) => {
 		if (funcs === undefined) return
 		const store = head[name]
@@ -57,7 +58,7 @@ INSTRUCTION.make = (name, generate = () => "") => ({name, generate})
 	}
 	
 	const addNameToBuffer = (buffer, name, x, y) => {
-		const xy = `${x}${y}`
+		const xy = x == undefined? "" : `${x}${y}`
 		const _xy = xy.replace("-", "_")
 		const bufferName = name + _xy
 		if (buffer.includes(bufferName)) return
@@ -69,8 +70,41 @@ INSTRUCTION.make = (name, generate = () => "") => ({name, generate})
 		for (const func of funcs) {
 			if (func === undefined) continue
 			const params = getParams(func)
-			for (const param of params) addNameToBuffer(buffer, param, x, y)
+			for (const param of params) {
+				addArgToBuffer(buffer, param, x, y)
+			}
 		}
+	}
+	
+	const addArgToBuffer = (buffer, arg, x, y) => {
+		const needs = GIVEN_ARGS[arg] || GLOBAL_ARG_NEEDS[arg] || SITE_ARG_NEEDS[arg]
+		if (needs === undefined) throw new Error(`[SpaceTode] Unrecognised argument: '${arg}'`)
+		for (const need of needs) {
+			addArgToBuffer(buffer, need, x, y)
+		}
+		
+		const isGiven = GIVEN_ARGS[arg] !== undefined
+		if (isGiven) return 
+		
+		const isLocal = SITE_ARG_NEEDS[arg] !== undefined
+		if (isLocal) return addNameToBuffer(buffer, arg, x, y)
+		
+		addNameToBuffer(buffer, arg)
+	}
+	
+	const SITE_ARG_NEEDS = {
+		space: ["sites"],
+		atom: ["sites", "space"],
+		element: ["sites", "space"],
+	}
+	
+	const GLOBAL_ARG_NEEDS = {
+		sites: ["origin"],
+	}
+	
+	const GIVEN_ARGS = {
+		self: [],
+		origin: [],
 	}
 	
 	const getParams = (func) => {

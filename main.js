@@ -150,7 +150,7 @@ if (SHUFFLE_MODE) {
 			const element = space.element
 			if (element === Empty) continue
 			const atom = space.atom
-			element.behave(atom, space)
+			element.behave(atom, space, element)
 		}
 	})
 }
@@ -165,7 +165,7 @@ else if (PURE_RANDOM_MODE) {
 			const element = space.element
 			if (element === Empty) continue
 			const atom = space.atom
-			element.behave(atom, space)
+			element.behave(atom, space, element)
 		}
 		
 	})
@@ -186,7 +186,7 @@ else {
 			if (element === Empty) continue
 			if (atom.track === currentTrack) continue
 			atom.track = currentTrack
-			element.behave(atom, space)
+			element.behave(atom, space, element)
 		}
 		currentTrack = !currentTrack
 	})
