@@ -78,8 +78,8 @@ const JAVASCRIPT = {}
 			behave: [],
 		},
 		
-		// Buffer contains global variables that we will store stuff in
-		buffer: [],
+		// Cache stores global variables that we might use more than once
+		cache: [],
 		
 		// Main is an array of stuff that happens in order
 		// Strings just get naively added to the code
@@ -94,11 +94,11 @@ const JAVASCRIPT = {}
 		const lines = []
 		
 		// BUFFER
-		lines.push("//========//")
-		lines.push("// BUFFER //")
-		lines.push("//========//")
-		for (const buff of template.buffer) {
-			lines.push(`let ${buff}`)
+		lines.push("//=======//")
+		lines.push("// CACHE //")
+		lines.push("//=======//")
+		for (const name of template.cache) {
+			lines.push(`let ${name}`)
 		}
 		lines.push("")
 		

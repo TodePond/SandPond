@@ -660,6 +660,9 @@
 		
 		if (scope.symbols[symbolName] == undefined) {
 			scope.symbols[symbolName] = {}
+			for (const symbolPartName of SYMBOL_PART_NAMES) {
+				scope.symbols[symbolName][symbolPartName] = []
+			}
 		}
 		const symbol = scope.symbols[symbolName]
 		
@@ -1192,7 +1195,7 @@
 			for (let j = 0; j < line.length; j++) {
 				const char = line[j]
 				const symbol = getSymbol(char, scope)
-				if (symbol && symbol.has("origin")) {
+				if (symbol && symbol.origin.length > 0) {
 					if (originX != undefined) throw new Error(`[SpaceTode] You can't have more than one origin in the left-hand-side of a diagram.`)
 					originX = j
 					originY = i
@@ -1223,12 +1226,12 @@
 				if (input == undefined) throw new Error(`[SpaceTode] Unrecognised symbol: ${lhsChar}`)
 				if (output == undefined) throw new Error(`[SpaceTode] Unrecognised symbol: ${rhsChar}`)
 				
-				if (input.origin == undefined && input.given == undefined) {
-					throw new Error(`[SpaceTode] Symbol '${lhsChar}' used on left-hand-side but doesn't have any left-hand-side parts, eg: given`)
+				if (input.origin.length == 0 && input.given.length == 0 ) {
+					throw new Error(`[SpaceTode] Symbol '${lhsChar}' used on left-hand-side of diagram but doesn't have any left-hand-side parts, eg: given`)
 				}
 				
-				if (output.change == undefined && output.keep == undefined) {
-					throw new Error(`[SpaceTode] Symbol '${rhsChar}' used on right-hand-side but doesn't have any right-hand-side parts, eg: change`)
+				if (output.change.length == 0  && output.keep.length == 0 ) {
+					throw new Error(`[SpaceTode] Symbol '${rhsChar}' used on right-hand-side of diagram but doesn't have any right-hand-side parts, eg: change`)
 				}
 				
 				const space = {x, y, input, output}

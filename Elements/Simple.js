@@ -10,7 +10,7 @@ change @ (self) => self
 change _ () => new Empty()
 given _ (element) => element === Empty
 
-given # (atom) => atom
+given # (element) => element !== Empty && element !== Void
 
 keep .
 
