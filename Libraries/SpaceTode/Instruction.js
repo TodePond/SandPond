@@ -38,9 +38,9 @@ INSTRUCTION.make = (name, generate = () => "") => ({name, generate})
 			const {given} = spot.input
 			const {change, keep} = spot.output
 			
-			addFuncsToHead(head, "given", given)
-			addFuncsToHead(head, "change", change)
-			addFuncsToHead(head, "keep", keep)
+			const givenIds = addFuncsToHead(head, "given", given)
+			const changeIds = addFuncsToHead(head, "change", change)
+			const keepIds = addFuncsToHead(head, "keep", keep)
 			
 			const givenNeeds = getNeedsFromFuncs(given, x, y)
 			const changeNeeds = getNeedsFromFuncs(change, x, y)
@@ -50,8 +50,7 @@ INSTRUCTION.make = (name, generate = () => "") => ({name, generate})
 			addNamesToCache(cache, changeNeeds)
 			addNamesToCache(cache, keepNeeds)
 			
-			if (given.length > 0) for (const i in given) addNameToCache(cache, getLocalName(`given${i}Result`, x, y))
-			//if (change.length > 0) for (const i in change) addNameToCache(cache, getLocalName(`change${i}Result`, x, y))
+			for (const id of givenIds) addNameToCache(cache, getLocalName(`given${id}Result`, x, y))
 			
 			//addNeedsToChunk
 		}
@@ -73,11 +72,18 @@ INSTRUCTION.make = (name, generate = () => "") => ({name, generate})
 	//======//
 	const addFuncsToHead = (head, name, funcs) => {
 		const store = head[name]
+		const ids = []
 		for (const func of funcs) {
 			if (func === undefined) continue
-			if (store.includes(func)) continue
-			store.push(func)
+			const index = store.indexOf(func)
+			if (index !== -1) {
+				ids.push(index)
+				continue
+			}
+			const id = store.push(func) - 1
+			ids.push(id)
 		}
+		return ids
 	}
 	
 	//=======//
