@@ -36,17 +36,22 @@ INSTRUCTION.make = (name, generate = () => "") => ({name, generate})
 			const {x, y} = spot
 			const {given} = spot.input
 			const {change, keep} = spot.output
+			
 			addFuncsToHead(head, "given", given)
 			addFuncsToHead(head, "change", change)
 			addFuncsToHead(head, "keep", keep)
+			
 			addFuncsToBuffer(buffer, given, x, y)
 			addFuncsToBuffer(buffer, change, x, y)
 			addFuncsToBuffer(buffer, keep, x, y)
-			if (given !== undefined) for (const i in given) addNameToBuffer(buffer, `given${i}Result`, x, y)
-			if (change !== undefined) for (const i in change) addNameToBuffer(buffer, `change${i}Result`, x, y)
+			if (given !== undefined) for (const i in given) addNameToBuffer(buffer, getLocalName(`given${i}Result`, x, y))
+			if (change !== undefined) for (const i in change) addNameToBuffer(buffer, getLocalName(`change${i}Result`, x, y))
 		}
 	})
 	
+	//======//
+	// Head //
+	//======//
 	const addFuncsToHead = (head, name, funcs) => {
 		if (funcs === undefined) return
 		const store = head[name]
@@ -57,12 +62,12 @@ INSTRUCTION.make = (name, generate = () => "") => ({name, generate})
 		}
 	}
 	
-	const addNameToBuffer = (buffer, name, x, y) => {
-		const xy = x == undefined? "" : `${x}${y}`
-		const _xy = xy.replace("-", "_")
-		const bufferName = name + _xy
-		if (buffer.includes(bufferName)) return
-		buffer.push(bufferName)
+	//========//
+	// Buffer //
+	//========//
+	const addNameToBuffer = (buffer, name) => {
+		if (buffer.includes(name)) return
+		buffer.push(name)
 	}
 	
 	const addFuncsToBuffer = (buffer, funcs, x, y) => {
@@ -77,34 +82,67 @@ INSTRUCTION.make = (name, generate = () => "") => ({name, generate})
 	}
 	
 	const addArgToBuffer = (buffer, arg, x, y) => {
-		const needs = GIVEN_ARGS[arg] || GLOBAL_ARG_NEEDS[arg] || SITE_ARG_NEEDS[arg]
+	
+		const symbolArg = symbolArgs[arg]
+	
+		const needs = symbolArg.needs
 		if (needs === undefined) throw new Error(`[SpaceTode] Unrecognised argument: '${arg}'`)
-		for (const need of needs) {
-			addArgToBuffer(buffer, need, x, y)
-		}
+		for (const need of needs) addArgToBuffer(buffer, need, x, y)
 		
-		const isGiven = GIVEN_ARGS[arg] !== undefined
-		if (isGiven) return 
-		
-		const isLocal = SITE_ARG_NEEDS[arg] !== undefined
-		if (isLocal) return addNameToBuffer(buffer, arg, x, y)
-		
-		addNameToBuffer(buffer, arg)
+		const type = symbolArg.type
+		if (type == SYMBOL_ARG_TYPE.GIVEN) return
+		if (type == SYMBOL_ARG_TYPE.GLOBAL) return addNameToBuffer(buffer, arg)
+		if (type == SYMBOL_ARG_TYPE.LOCAL) return addNameToBuffer(buffer, getLocalName(arg.d, x, y))
 	}
 	
-	const SITE_ARG_NEEDS = {
-		space: ["sites"],
-		atom: ["sites", "space"],
-		element: ["sites", "space"],
+	//=============//
+	// Symbol Args //
+	//=============//
+	const symbolArgs = {}
+	const defineSymbolArg = (name, type, needs = [], code = () => "") => {
+		const symbolArg = {name, type, needs, code}
+		symbolArgs[name] = symbolArg
+		return symbolArg
 	}
 	
-	const GLOBAL_ARG_NEEDS = {
-		sites: ["origin"],
+	SYMBOL_ARG_TYPE = {
+		GIVEN: Symbol("Given"),
+		GLOBAL: Symbol("Global"),
+		LOCAL: Symbol("Local"),
 	}
 	
-	const GIVEN_ARGS = {
-		self: [],
-		origin: [],
+	defineSymbolArg("self", SYMBOL_ARG_TYPE.GIVEN)
+	defineSymbolArg("origin", SYMBOL_ARG_TYPE.GIVEN)
+	defineSymbolArg("sites", SYMBOL_ARG_TYPE.GLOBAL, ["origin"], (x, y) => {
+		return `const sites = origin.sites`
+	})
+	
+	defineSymbolArg("space", SYMBOL_ARG_TYPE.LOCAL, ["sites"], (x, y) => {
+		const spaceName = getLocalName("space", x, y)
+		const siteNumber = EVENTWINDOW.getSiteNumber(x, y, 0)
+		return `const ${spaceName} = sites[${siteNumber}]`
+	})
+	
+	defineSymbolArg("atom", SYMBOL_ARG_TYPE.LOCAL, ["space"], (x, y) => {
+		const atomName = getLocalName("atom", x, y)
+		const spaceName = getLocalName("space", x, y)
+		return `const ${atomName} = ${spaceName}.atom`
+	})
+	
+	defineSymbolArg("element", SYMBOL_ARG_TYPE.LOCAL, ["space"], (x, y) => {
+		const elementName = getLocalName("element", x, y)
+		const spaceName = getLocalName("space", x, y)
+		return `const ${elementName} = ${spaceName}.element`
+	})
+	
+	//=========//
+	// Usefuls //
+	//=========//
+	const getLocalName = (name, x, y) => {
+		if (x === undefined) throw new Error(`[SpaceTode] Missing argument 'x' in 'getLocalName' function`)
+		if (y === undefined) throw new Error(`[SpaceTode] Missing argument 'y' in 'getLocalName' function`)
+		const xy = `${x}${y}`
+		return name + xy.replace("-", "_")
 	}
 	
 	const getParams = (func) => {

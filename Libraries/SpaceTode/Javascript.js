@@ -93,6 +93,15 @@ const JAVASCRIPT = {}
 		
 		const lines = []
 		
+		// BUFFER
+		lines.push("//========//")
+		lines.push("// BUFFER //")
+		lines.push("//========//")
+		for (const buff of template.buffer) {
+			lines.push(`let ${buff}`)
+		}
+		lines.push("")
+		
 		// HEAD
 		lines.push("//======//")
 		lines.push("// HEAD //")
@@ -106,15 +115,6 @@ const JAVASCRIPT = {}
 				if (script.split("\n").length > 1) lines.push(``)
 			}
 		}
-		
-		// BUFFER
-		lines.push("//========//")
-		lines.push("// BUFFER //")
-		lines.push("//========//")
-		for (const buff of template.buffer) {
-			lines.push(`let ${buff}`)
-		}
-		lines.push("")
 		
 		// MAIN
 		lines.push("//======//")
