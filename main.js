@@ -118,19 +118,42 @@ on.process(() => {
 		const cursorIntersection = stage.getCursorIntersect((mesh) => mesh == floor)
 		const cursorPosition3D = cursorIntersection? cursorIntersection.point : undefined
 		DROPPER.tryDrop(cursorPosition3D)
-		if (DOF_MODE === true && cursorPosition3D !== undefined) {
-			const dist = cursorIntersection.distance
-			bokehPass.uniforms.focus.value = dist
+		if (DOF_MODE === true) {
+		
 			const cameraDist = camera.position.distanceTo(middleOfWorld)
-			bokehPass.uniforms.aperture.value = 1 / cameraDist * 0.03
-			//bokehPass.uniforms.aperture.value = 1 / dist * 0.025
-			//bokehPass.uniforms.maxblur.value = 5
+			//bokehPass.uniforms.aperture.value = (1 / cameraDist * 0.05)
+			
+			if (cursorPosition3D !== undefined) {
+			
+				const x = Math.round(cursorPosition3D.x)
+				const y = Math.round(cursorPosition3D.y)
+				const z = Math.round(cursorPosition3D.z)
+				
+				let space = WORLD.selectSpace(world, x, y, z)
+				let i = 0
+				while (space.element !== Empty && space.element !== Void) {
+					space = WORLD.selectSpace(world, x, (y + i), z)
+					i++
+				}
+				const focusPoint = new THREE.Vector3(x * ATOM_SIZE, (y + i) * ATOM_SIZE, z * ATOM_SIZE)
+				
+				const dist = cursorIntersection.distance
+				//const dist = cursorIntersection.distance + (cursorIntersection.distance - camera.position.distanceTo(focusPoint))
+				bokehPass.uniforms.focus.value = dist
+				
+				//bokehPass.uniforms.aperture.value = 1 / dist * 0.025
+				//bokehPass.uniforms.maxblur.value = 5
+			}
 		}
 	}
 	else {
 		DROPPER.tryDrop(undefined)
 	}
 })
+
+function getHeightAtPosition(position) {
+	print(position)
+}
 
 let paused = false
 let stepCount = 0
@@ -206,3 +229,4 @@ function measureConcentrationForever(filter = (atom => atom.element != Empty)) {
 	print(measureConcentration(filter))
 	setTimeout(() => measureConcentrationForever(filter), 1000)
 }
+

@@ -64,7 +64,7 @@
 	}
 	
 	const getMargin = (depth) => {
-		const margin = indentBase + [indentUnit].repeat(depth).join("")
+		const margin = indentBase + [indentUnit].repeated(depth).join("")
 		return margin
 	}
 	
@@ -1124,7 +1124,7 @@
 		for (const i in diagram) {
 			const line = diagram[i]
 			if (line.length < maxLength) {
-				diagram[i] = line + [" "].repeat(maxLength - line.length).join("")
+				diagram[i] = line + [" "].repeated(maxLength - line.length).join("")
 			}
 		}
 		

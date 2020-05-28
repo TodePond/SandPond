@@ -20,8 +20,8 @@ THREE.BokehPass = function ( scene, camera, params ) {
 	var height = params.height || window.innerHeight || 1;
 
 	this.renderTargetDepth = new THREE.WebGLRenderTarget( width, height, {
-		minFilter: THREE.NearestFilter,
-		magFilter: THREE.NearestFilter,
+		/*minFilter: THREE.LinearMipmapLinearFilter,
+		magFilter: THREE.LinearFilter,*/
 		stencilBuffer: false
 	} );
 

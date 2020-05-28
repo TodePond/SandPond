@@ -32,7 +32,8 @@ INSTRUCTION.make = (name, generate = () => "") => ({name, generate})
 	
 	INSTRUCTION.TYPE.DIAGRAM = INSTRUCTION.make("Diagram", (template, diagram) => {
 		const {head, cache, main} = template
-		const chunk = makeDiagramChunk()		
+		const chunk = makeDiagramChunk()
+		
 		for (const spot of diagram) {
 			const {x, y} = spot
 			const {given} = spot.input
@@ -52,7 +53,7 @@ INSTRUCTION.make = (name, generate = () => "") => ({name, generate})
 			
 			for (const id of givenIds) addNameToCache(cache, getLocalName(`given${id}Result`, x, y))
 			
-			//addNeedsToChunk
+			//addNeedsToChunk(chunk, givenNeeds)
 		}
 	})
 	

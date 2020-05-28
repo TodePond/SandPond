@@ -7,6 +7,12 @@ Reflect.defineProperty(Array.prototype, "last", {
 	},
 })
 
+Reflect.defineProperty(Array.prototype, "first", {
+	get() {
+		return this[0]
+	},
+})
+
 Reflect.defineProperty(Array.prototype, "reversed", {
 	get() {
 		const reversed = []
@@ -20,12 +26,6 @@ Reflect.defineProperty(Array.prototype, "reversed", {
 Reflect.defineProperty(Array.prototype, "shuffled", {
 	get() {
 		return [...this].sort(() => Math.random() - 0.5)
-	},
-})
-
-Reflect.defineProperty(Array.prototype, "first", {
-	get() {
-		return this[0]
 	},
 })
 
@@ -60,7 +60,7 @@ Reflect.defineProperty(Array.prototype, "trim", {
 	}
 })
 
-Reflect.defineProperty(Array.prototype, "repeat", {
+Reflect.defineProperty(Array.prototype, "repeated", {
 	value(n) {
 		const array = []
 		for (let i = 0; i < n; i++) {
@@ -117,9 +117,9 @@ Reflect.defineProperty(Set.prototype, "length", {
 	},
 })
 
-/*=====//
-// Set //
-//=====*/
+/*========//
+// String //
+//========*/
 Reflect.defineProperty(String.prototype, "map", {
 	value(...args) {
 		const array = this.split("")

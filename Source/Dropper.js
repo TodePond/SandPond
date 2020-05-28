@@ -209,29 +209,11 @@ let DROPPER_HEIGHT = 5
 	// Private //
 	//=========//
 	// This function is the messy result of adding one line of code every two weeks without much thought
-	let dropperShadowReady = [false].repeat(9)
+	let dropperShadowReady = [false].repeated(9)
 	const dropAtom = (x, y, z, yOffset = 0, justShow = false, shadowNumber = 0, yOverride = Math.floor(DROPPER_HEIGHT)) => {
 		if (!UI) return
 		const atomType = UI.selectedElement
-		
-		let dropLocation = undefined
-		let dropStart = undefined
-		
-		if (DROPPER_LOCATION == "default") {
-			if (atomType.floor) dropLocation = "floor"
-			else dropLocation = "air"
-		} 
-		else {
-			dropLocation = DROPPER_LOCATION
-		}
-		
-		if (dropLocation == "floor") {
-			dropStart = 0 
-		}
-		else {
-			dropStart = MAX_Y - yOverride
-		}
-		
+		const dropStart = MAX_Y - yOverride
 		let alteredY = dropStart + yOffset
 		let alteredZ = z
 		if (D2_MODE) alteredY = y

@@ -284,10 +284,10 @@ SYMMETRY.TYPE = {
 	const xy2 = ["x, -y, z", "x, -y, z", "-x, y, z", "-x, -y, z", "y, x, z", "y, -x, z", "-y, x, z", "-y, -x, z"]
 	
 	REFLECTIONS_FOR = {
-		[""]: [["x, y, z"]].repeat(48),
-		["x"]: [...[["x, y, z", "-x, y, z"]].repeat(4), ...[["-x, y, z", "x, y, z"]].repeat(4)].repeat(6),
-		["y"]: [...[["x, y, z", "-x, y, z"]].repeat(2), ...[["-x, y, z", "x, y, z"]].repeat(2)].repeat(12),
-		["z"]: [["x, y, z", "x, y, -z"], ["x, y, -z", "x, y, z"]].repeat(24),
+		[""]: [["x, y, z"]].repeated(48),
+		["x"]: [...[["x, y, z", "-x, y, z"]].repeated(4), ...[["-x, y, z", "x, y, z"]].repeated(4)].repeated(6),
+		["y"]: [...[["x, y, z", "-x, y, z"]].repeated(2), ...[["-x, y, z", "x, y, z"]].repeated(2)].repeated(12),
+		["z"]: [["x, y, z", "x, y, -z"], ["x, y, -z", "x, y, z"]].repeated(24),
 		["xz"]: [
 			xz1, xz2, xz1, xz2, xz3, xz4, xz3, xz4,
 			xz1, xz2, xz1, xz2, xz3, xz4, xz3, xz4,

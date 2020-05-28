@@ -1,5 +1,6 @@
 
-// A MORE UP-TO-DATE VERSION OF THIS FILE IS FOUND IN THE DreamTode PROJECT
+// This is an older version of the Eat library.
+// I kept it because SpaceTode still uses it.
 
 //
 // Every result has three properties...
