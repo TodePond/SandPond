@@ -66,37 +66,8 @@ INSTRUCTION.make = (name, generate = () => "") => ({name, generate})
 				side: "output",
 			})
 			
-			/*
-			const givenParamNames = given.map(g => getParamNames(g))
-			const changeParamNames = change.map(c => getParamNames(c))
-			const keepParamNames = keep.map(k => getParamNames(k))
-			
-			const givenNeedNames = givenParamNames.map(p => getNeedNames(p, x, y)).flat()
-			const changeNeedNames = changeParamNames.map(p => getNeedNames(p, x, y)).flat()
-			const keepNeedNames = keepParamNames.map(p => getNeedNames(p, x, y)).flat()
-			cache.pushUnique(...givenNeedNames)
-			cache.pushUnique(...changeNeedNames)
-			cache.pushUnique(...keepNeedNames)
-			
-			const givenIds = given.map(g => head.given.pushUnique(g))
-			const changeIds = change.map(c => head.change.pushUnique(c))
-			const keepIds = keep.map(k => head.keep.pushUnique(k))
-			
-			const givenArgNames = givenParamNames.map(p => getArgNames(p, x, y))
-			const changeArgNames = changeParamNames.map(p => getArgNames(p, x, y))
-			const keepArgNames = keepParamNames.map(p => getArgNames(p, x, y))
-			
-			const givenResultNames = givenIds.map(id => getLocalName(`given${id}Result`, x, y))
-			const changeResultNames = changeIds.map(id => getLocalName(`change${id}Result`, x, y))
-			cache.pushUnique(...givenResultNames)
-			cache.pushUnique(...changeResultNames)
-			*/
-			//for (const i in givenNeeds) chunk.inputNeeds[givenNeeds[i]] = givenNamedParams[i]
-			/*chunk.inputNeeds.pushUnique(...givenNeeds)
-			chunk.inputNeeds.pushUnique(...givenResults)
-			chunk.outputNeeds.pushUnique(...changeNeeds)
-			chunk.outputNeeds.pushUnique(...keepNeeds)*/
 		}
+		
 		template.main.push(chunk)
 	})
 	
