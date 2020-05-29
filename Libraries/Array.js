@@ -23,6 +23,10 @@ Reflect.defineProperty(Array.prototype, "reversed", {
 	},
 })
 
+Reflect.defineProperty(Array.prototype, "uniques", {
+	get() { return [...new Set(this)] },
+})
+
 Reflect.defineProperty(Array.prototype, "shuffled", {
 	get() {
 		return [...this].sort(() => Math.random() - 0.5)
@@ -33,6 +37,19 @@ Reflect.defineProperty(Array.prototype, "pull", {
 	value(value) {
 		const index = this.indexOf(value)
 		if (index > -1) this.splice(index, 1)
+	},
+})
+
+// Returns the id of the value in the array
+Reflect.defineProperty(Array.prototype, "pushUnique", {
+	value(...args) {
+		if (args.length == 0) return undefined
+		if (args.length == 1) { 
+			const value = args[0]
+			if (this.includes(value)) return undefined
+			return this.push(value) - 1
+		}
+		return args.map(arg => this.pushUnique(arg))
 	},
 })
 

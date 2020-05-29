@@ -27,12 +27,12 @@ INSTRUCTION.make = (name, generate = () => "") => ({name, generate})
 
 	INSTRUCTION.TYPE.BEHAVE = INSTRUCTION.make("Behave", (template, behave) => {
 		const id = template.head.behave.push(behave) - 1
-		template.main.push(`behave${id}(self, origin)`)
+		template.main.push(`behave${id}(origin, selfElement, self)`)
 	})
 	
 	INSTRUCTION.TYPE.DIAGRAM = INSTRUCTION.make("Diagram", (template, diagram) => {
 		const {head, cache, main} = template
-		const chunk = makeDiagramChunk()
+		const chunk = makeEmptyChunk()
 		
 		for (const spot of diagram) {
 			const {x, y} = spot
@@ -47,20 +47,21 @@ INSTRUCTION.make = (name, generate = () => "") => ({name, generate})
 			const changeNeeds = getNeedsFromFuncs(change, x, y)
 			const keepNeeds = getNeedsFromFuncs(keep, x, y)
 			
-			addNamesToCache(cache, givenNeeds)
-			addNamesToCache(cache, changeNeeds)
-			addNamesToCache(cache, keepNeeds)
+			cache.pushUnique(...givenNeeds)
+			cache.pushUnique(...changeNeeds)
+			cache.pushUnique(...keepNeeds)
+			for (const id of givenIds) cache.pushUnique(getLocalName(`given${id}Result`, x, y))
 			
-			for (const id of givenIds) addNameToCache(cache, getLocalName(`given${id}Result`, x, y))
-			
-			//addNeedsToChunk(chunk, givenNeeds)
+			chunk.inputNeeds.pushUnique(...givenNeeds)
+			chunk.outputNeeds.pushUnique(...changeNeeds)
+			chunk.outputNeeds.pushUnique(...keepNeeds)
 		}
 	})
 	
 	//=======//
 	// Chunk //
 	//=======//
-	const makeDiagramChunk = () => ({
+	const makeEmptyChunk = () => ({
 		type: INSTRUCTION.TYPE.DIAGRAM,
 		inputNeeds: [],
 		outputNeeds: [],
@@ -76,12 +77,7 @@ INSTRUCTION.make = (name, generate = () => "") => ({name, generate})
 		const ids = []
 		for (const func of funcs) {
 			if (func === undefined) continue
-			const index = store.indexOf(func)
-			if (index !== -1) {
-				ids.push(index)
-				continue
-			}
-			const id = store.push(func) - 1
+			const id = store.pushUnique(func)
 			ids.push(id)
 		}
 		return ids
@@ -92,13 +88,8 @@ INSTRUCTION.make = (name, generate = () => "") => ({name, generate})
 	//=======//
 	const addNamesToCache = (cache, names) => {
 		for (const name of names) {
-			addNameToCache(cache, name)
+			cache.pushUnique(name)
 		}
-	}
-	
-	const addNameToCache = (cache, name) => {
-		if (cache.includes(name)) return
-		cache.push(name)
 	}
 	
 	//=======//
@@ -110,24 +101,25 @@ INSTRUCTION.make = (name, generate = () => "") => ({name, generate})
 			if (func === undefined) continue
 			const params = getParams(func)
 			for (const param of params) {
-				needs.push(...getNeedsFromParam(param, x, y))
+				needs.pushUnique(...getNeedsFromParam(param, x, y))
 			}
 		}
-		return [...new Set(needs)]
+		return needs
 	}
 	
 	const getNeedsFromParam = (param, x, y) => {
 		const needs = []
-		const symbolParam = symbolParams[param]
+		const symbolParam = namedParams[param]
 		
 		if (symbolParam.needs === undefined) throw new Error(`[SpaceTode] Unrecognised parameter: '${param}'`)
-		for (const need of symbolParam.needs) needs.push(...getNeedsFromParam(need, x, y))
+		for (const need of symbolParam.needs) needs.pushUnique(...getNeedsFromParam(need, x, y))
 		
 		const type = symbolParam.type
-		if (type === SYMBOL_PARAM_TYPE.GLOBAL) needs.push(param)
-		else if (type === SYMBOL_PARAM_TYPE.LOCAL) needs.push(getLocalName(param, x, y))
-		else if (type === SYMBOL_PARAM_TYPE.GIVEN) {}
-		return [...new Set(needs)]
+		if (type === NAMED_PARAM_TYPE.GLOBAL) needs.pushUnique(param)
+		else if (type === NAMED_PARAM_TYPE.LOCAL) needs.pushUnique(getLocalName(param, x, y))
+		else if (type === NAMED_PARAM_TYPE.ARG) {}
+		else throw new Error(`[SpaceTode] Unrecognised named param type: ${type.description}`)
+		return needs
 	}
 	
 	const getParams = (func) => {
@@ -152,20 +144,20 @@ INSTRUCTION.make = (name, generate = () => "") => ({name, generate})
 		return params
 	}
 	
-	//===============//
-	// Symbol Params //
-	//===============//
-	const SYMBOL_PARAM_TYPE = {
-		GIVEN: Symbol("Given"),
+	//==============//
+	// Named Params //
+	//==============//
+	const NAMED_PARAM_TYPE = {
+		ARG: Symbol("Arg"),
 		GLOBAL: Symbol("Global"),
 		LOCAL: Symbol("Local"),
 	}
 	
-	const symbolParams = {}
-	const defineSymbolParam = (name, type, needs = [], code = () => "") => {
-		const symbolParam = {name, type, needs, code}
-		symbolParams[name] = symbolParam
-		return symbolParam
+	const namedParams = {}
+	const defineNamedParam = (name, type, needs = [], code = () => "") => {
+		const namedParam = {name, type, needs, code}
+		namedParams[name] = namedParam
+		return namedParam
 	}
 	
 	const getLocalName = (name, x, y) => {
@@ -175,25 +167,25 @@ INSTRUCTION.make = (name, generate = () => "") => ({name, generate})
 		return name + xy.replace("-", "_")
 	}
 	
-	defineSymbolParam("self", SYMBOL_PARAM_TYPE.GIVEN)
-	defineSymbolParam("origin", SYMBOL_PARAM_TYPE.GIVEN)
-	defineSymbolParam("sites", SYMBOL_PARAM_TYPE.GLOBAL, ["origin"], (x, y) => {
+	defineNamedParam("self", NAMED_PARAM_TYPE.ARG)
+	defineNamedParam("origin", NAMED_PARAM_TYPE.ARG)
+	defineNamedParam("sites", NAMED_PARAM_TYPE.GLOBAL, ["origin"], (x, y) => {
 		return `sites = origin.sites`
 	})
 	
-	defineSymbolParam("space", SYMBOL_PARAM_TYPE.LOCAL, ["sites"], (x, y) => {
+	defineNamedParam("space", NAMED_PARAM_TYPE.LOCAL, ["sites"], (x, y) => {
 		const spaceName = getLocalName("space", x, y)
 		const siteNumber = EVENTWINDOW.getSiteNumber(x, y, 0)
 		return `${spaceName} = sites[${siteNumber}]`
 	})
 	
-	defineSymbolParam("atom", SYMBOL_PARAM_TYPE.LOCAL, ["space"], (x, y) => {
+	defineNamedParam("atom", NAMED_PARAM_TYPE.LOCAL, ["space"], (x, y) => {
 		const atomName = getLocalName("atom", x, y)
 		const spaceName = getLocalName("space", x, y)
 		return `${atomName} = ${spaceName}.atom`
 	})
 	
-	defineSymbolParam("element", SYMBOL_PARAM_TYPE.LOCAL, ["space"], (x, y) => {
+	defineNamedParam("element", NAMED_PARAM_TYPE.LOCAL, ["space"], (x, y) => {
 		const elementName = getLocalName("element", x, y)
 		const spaceName = getLocalName("space", x, y)
 		return `${elementName} = ${spaceName}.element`

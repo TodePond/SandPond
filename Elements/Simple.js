@@ -3,8 +3,6 @@ SpaceTode`
 
 
 origin @
-//given @ (self, atom) => self === atom
-//given @ (element) => element !== Void
 change @ (self) => self
 
 change _ () => new Empty()
@@ -26,7 +24,7 @@ element Sand  {
 	#_ => .@
 	
 	behave {
-		const behave = (self, origin) => {
+		const behave = (origin, element, self = origin.atom) => {
 			const sites = origin.sites
 			const spaceBelow = sites[17]
 			const elementBelow = spaceBelow.element
@@ -65,7 +63,7 @@ element Forkbomb {
 	emissive "black"
 	category "T2Tile"
 	behave {
-		const behave = (self, origin) => {
+		const behave = (origin, element, self = origin.atom) => {
 			const rando = Math.floor(Math.random() * 6)
 			const symm = symms[rando]
 			const sites = origin.sites
@@ -95,7 +93,7 @@ element Water {
 	category "Sandbox"
 	behave {
 		
-		const behave = (self, origin) => {
+		const behave = (origin, element, self = origin.atom) => {
 			const sites = origin.sites
 			const spaceBelow = sites[17]
 			const elementBelow = spaceBelow.atom.element
@@ -144,7 +142,7 @@ element Slime {
 	opacity 0.65
 	category "Sandbox"
 	behave {
-		const behave = (self, origin) => {
+		const behave = (origin, element, self = origin.atom) => {
 			const sites = origin.sites
 			const spaceBelow = sites[17]
 			if (spaceBelow.atom.element == Void) return
@@ -180,7 +178,7 @@ element Steam {
 	category "Sandbox"
 	opacity 0.3
 	behave {
-		const behave = (self, origin) => {
+		const behave = (origin, element, self = origin.atom) => {
 			const sites = origin.sites
 			const spaceAbove = sites[7]
 			if (spaceAbove.atom.element == Empty) {
@@ -217,7 +215,7 @@ element Lava {
 	category "Sandbox"
 	behave {
 		
-		const behave = (self, origin) => {
+		const behave = (origin, element, self = origin.atom) => {
 			const sites = origin.sites
 			const siteAbove = sites[siteNumAbove]
 			if (siteAbove.element == Empty) {
@@ -272,7 +270,7 @@ element Fire {
 	opacity 0.35
 	category "Sandbox"
 	behave {
-		const behave = (self, origin) => {
+		const behave = (origin, element, self = origin.atom) => {
 			const sites = origin.sites
 			const spaceAbove = sites[7]
 			const elementAbove = spaceAbove.atom.element
@@ -299,7 +297,7 @@ element StickyStone {
 	category "Sandbox"
 	behave {
 		
-		const behave = (self, origin) => {
+		const behave = (origin, element, self = origin.atom) => {
 			const sites = origin.sites
 			const spaceBelow = sites[17]
 			const elementBelow = spaceBelow.element
@@ -383,7 +381,7 @@ element Stone {
 	category "Sandbox"
 	behave {
 		
-		const behave = (self, origin) => {
+		const behave = (origin, element, self = origin.atom) => {
 			const sites = origin.sites
 			const spaceBelow = sites[17]
 			const elementBelow = spaceBelow.element
@@ -412,7 +410,7 @@ element DReg {
 	category "T2Tile"
 	opacity 0.1
 	behave {
-		const behave = (self, origin) => {
+		const behave = (origin, selfElement, self = origin.atom) => {
 			const rando = Math.trunc(Math.random() * 6)
 			const site = origin.sites[symms[rando]]
 			const element = site.element
@@ -450,7 +448,7 @@ element Res any(xyz) {
 	opacity 0.1
 	category "T2Tile"
 	behave {
-		const behave = (self, origin) => {
+		const behave = (origin, element, self = origin.atom) => {
 			const rando = Math.trunc(Math.random() * 6)
 			const site = origin.sites[symms[rando]]
 			const atom = site.atom
@@ -470,6 +468,14 @@ element Res any(xyz) {
 		]
 		
 		return behave
+	}
+}
+
+element Clay {
+	colour "brown"
+	category "Sandbox"
+	behave {
+		
 	}
 }
 

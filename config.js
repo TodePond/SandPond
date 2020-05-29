@@ -15,6 +15,7 @@ const LONG_MODE = urlParams.has("long")
 const PURE_RANDOM_MODE = urlParams.has("pure")
 const SHUFFLE_MODE = urlParams.has("shuffle")
 const MEDIUM_MODE = urlParams.has("medium")
+const RIDICULOUS_MODE = urlParams.has("ridiculous")
 
 const RANDOM = SHUFFLE_MODE? "shuffle" : (PURE_RANDOM_MODE? "pure" : "track")
 
@@ -33,6 +34,12 @@ if (TINY_MODE) {
 if (MASSIVE_MODE) {
 	MAX_X = Math.floor(MAX_X * 2.5)
 	MAX_Z = Math.floor(MAX_Z * 2.5)
+	MAX_Y = Math.floor(MAX_Y * 1.5)
+}
+
+if (RIDICULOUS_MODE) {
+	MAX_X = Math.floor(MAX_X * 3.0)
+	MAX_Z = Math.floor(MAX_Z * 3.0)
 	MAX_Y = Math.floor(MAX_Y * 1.5)
 }
 

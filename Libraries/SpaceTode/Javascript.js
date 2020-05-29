@@ -68,7 +68,7 @@ const JAVASCRIPT = {}
 	//=========//
 	// Private //
 	//=========//
-	const makeTemplate = () => ({
+	const makeEmptyTemplate = () => ({
 	
 		// Head contains stores of global functions that we need
 		head: {
@@ -120,7 +120,7 @@ const JAVASCRIPT = {}
 		lines.push("//======//")
 		lines.push("// MAIN //")
 		lines.push("//======//")
-		lines.push(`const behave = (self, origin) => {`)
+		lines.push(`const behave = (origin, selfElement, self) => {`)
 		for (const chunk of template.main) {
 			if (chunk.is(String)) lines.push(`	` + chunk)
 		}
@@ -135,7 +135,7 @@ const JAVASCRIPT = {}
 	
 	const makeBehaveCode = (instructions, name) => {
 	
-		let template = makeTemplate()
+		let template = makeEmptyTemplate()
 	
 		for (let i = 0; i < instructions.length; i++) {
 			const instruction = instructions[i]
