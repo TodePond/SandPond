@@ -7,6 +7,7 @@ change @ (self) => self
 
 change _ () => new Empty()
 given _ (element) => element === Empty
+given _ (space, self) => space
 
 given # (element, atom) => element !== Empty && element !== Void
 

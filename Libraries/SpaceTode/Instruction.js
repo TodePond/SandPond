@@ -31,154 +31,125 @@ INSTRUCTION.make = (name, generate = () => "") => ({name, generate})
 	})
 	
 	INSTRUCTION.TYPE.DIAGRAM = INSTRUCTION.make("Diagram", (template, diagram) => {
-		const {head, cache, main} = template
 		const chunk = makeEmptyChunk()
-		
 		for (const spot of diagram) {
-			const {x, y} = spot
 			const {given} = spot.input
 			const {change, keep} = spot.output
+			
+			const givenInfo = processFunc(given, spot, template)
+			/*
+			const givenParamNames = given.map(g => getParamNames(g))
+			const changeParamNames = change.map(c => getParamNames(c))
+			const keepParamNames = keep.map(k => getParamNames(k))
+			
+			const givenNeedNames = givenParamNames.map(p => getNeedNames(p, x, y)).flat()
+			const changeNeedNames = changeParamNames.map(p => getNeedNames(p, x, y)).flat()
+			const keepNeedNames = keepParamNames.map(p => getNeedNames(p, x, y)).flat()
+			cache.pushUnique(...givenNeedNames)
+			cache.pushUnique(...changeNeedNames)
+			cache.pushUnique(...keepNeedNames)
 			
 			const givenIds = given.map(g => head.given.pushUnique(g))
 			const changeIds = change.map(c => head.change.pushUnique(c))
 			const keepIds = keep.map(k => head.keep.pushUnique(k))
 			
-			const givenParams = given.map(g => getParams(g))
-			const changeParams = change.map(c => getParams(c))
-			const keepParams = keep.map(k => getParams(k))
-		
-			const givenArgs = givenParams.map(p => getArgsFromParams(p, x, y))
-			const changeArgs = changeParams.map(p => getArgsFromParams(p, x, y))
-			const keepArgs = keepParams.map(p => getArgsFromParams(p, x, y))
-		
-			const givenNeeds = givenParams.map(p => getNeedsFromParams(p, x, y)).flat()
-			const changeNeeds = givenParams.map(p => getNeedsFromParams(p, x, y)).flat()
-			const keepNeeds = givenParams.map(p => getNeedsFromParams(p, x, y)).flat()
-			const givenResults = givenIds.map(id => getLocalName(`given${id}Result`, x, y))
+			const givenArgNames = givenParamNames.map(p => getArgNames(p, x, y))
+			const changeArgNames = changeParamNames.map(p => getArgNames(p, x, y))
+			const keepArgNames = keepParamNames.map(p => getArgNames(p, x, y))
 			
-			cache.pushUnique(...givenNeeds)
-			cache.pushUnique(...changeNeeds)
-			cache.pushUnique(...keepNeeds)
-			cache.pushUnique(...givenResults)
-			
-			chunk.inputNeeds.pushUnique(...givenNeeds)
+			const givenResultNames = givenIds.map(id => getLocalName(`given${id}Result`, x, y))
+			const changeResultNames = changeIds.map(id => getLocalName(`change${id}Result`, x, y))
+			cache.pushUnique(...givenResultNames)
+			cache.pushUnique(...changeResultNames)
+			*/
+			//for (const i in givenNeeds) chunk.inputNeeds[givenNeeds[i]] = givenNamedParams[i]
+			/*chunk.inputNeeds.pushUnique(...givenNeeds)
 			chunk.inputNeeds.pushUnique(...givenResults)
 			chunk.outputNeeds.pushUnique(...changeNeeds)
-			chunk.outputNeeds.pushUnique(...keepNeeds)
-			
-			//chunk.inputCode = makeGivenResultsCode(x, y, givenIds, givenArgs)
-			//chunk.conditionCode = makeConditionCode(x, y, givenIds)
+			chunk.outputNeeds.pushUnique(...keepNeeds)*/
 		}
-		
-		main.push(chunk)
-		
+		template.main.push(chunk)
 	})
+	
+	//======//
+	// Func //
+	//======//
+	const processFunc = (funcs, spot, template) => {
+		const {x, y} = spot
+		const {head, cache, main} = template
+		/*const paramNames = funcs.map(f => getParamNames(f)).d
+		const params = paramNames.map(p => getParams(p))
+		const needs = paramNames.map(p => getNeeds(p))
+		const needNames = needs.map(n => getArgNames(n, x, y))
+		const argNames = paramNames.map(p => getArgNames(p, x, y))*/
+	}
 	
 	//=======//
 	// Chunk //
 	//=======//
 	const makeEmptyChunk = () => ({
 		type: INSTRUCTION.TYPE.DIAGRAM,
-		inputNeeds: [],
-		outputNeeds: [],
-		//inputCode: undefined,
-		//conditions: undefined,
-		//outputCode: undefined,
+		inputNeeds: {},
+		outputNeeds: {},
 	})
-	
-	/*const makeGivenResultsCode = (x, y, givenIds, givenArgs) => {
-		if (givenIds.length !== givenArgs.length) throw new Error(`[SpaceTode] Givens: ID array did not have the same length as Args array`)
-		const lines = []
-		for (let i = 0; i < givenIds.length; i++) {
-			const id = givenIds[i]
-			const args = givenArgs[i].join(", ")
-			const name = getLocalName(`given${id}Result`, x, y)
-			const line = `if (${name} === undefined) ${name} = given${id}(${args})`
-			lines.push(line)
-		}
-		lines.push("")
-		const code = lines.join("\n")
-		return code
-	}*/
 	
 	//=======//
 	// Needs //
 	//=======//
-	const getNeedsFromFuncs = (funcs, x, y) => {
+	const getNeeds = (names) => {
 		const needs = []
-		for (const func of funcs) {
-			if (func === undefined) continue
-			const params = getParams(func)
-			for (const param of params) {
-				needs.pushUnique(...getNeedsFromParam(param, x, y))
-			}
-		}
+		for (const name of names) needs.pushUnique(...getNeedsFromName(name))
 		return needs
 	}
 	
-	const getNeedsFromParams = (params, x, y) => params.map(param => getNeedsFromParam(param, x, y)).flat()
-	const getArgsFromParams = (params, x, y) => params.map(param => getArgFromParam(param, x, y)).flat()
-	
-	const getNeedsFromParam = (param, x, y) => {
-		const namedParam = namedParams[param]
-		if (namedParam.needs === undefined) throw new Error(`[SpaceTode] Unrecognised parameter: '${param}'`)
-		
+	const getNeedsFromName = (name) => {
 		const needs = []
-		for (const need of namedParam.needs) needs.pushUnique(...getNeedsFromParam(need, x, y))
-		
-		const type = namedParam.type
-		if (type === NAMED_PARAM_TYPE.ARG) return needs
-		const need = getArgFromParam(param, x, y)
-		needs.pushUnique(need)
+		const param = getParam(name)
+		const otherNeeds = getNeeds(param.needNames)
+		needs.pushUnique(...otherNeeds)
+		if (param.type !== PARAM_TYPE.ARG) needs.pushUnique(param)
 		return needs
 	}
 	
-	const getArgFromParam = (param, x, y) => {
-		const namedParam = namedParams[param]
-		if (namedParam.needs === undefined) throw new Error(`[SpaceTode] Unrecognised parameter: '${param}'`)
-		
-		const type = namedParam.type
-		if (type === NAMED_PARAM_TYPE.ARG) return param
-		if (type === NAMED_PARAM_TYPE.GLOBAL) return param
-		if (type === NAMED_PARAM_TYPE.LOCAL) return getLocalName(param, x, y)
+	//====================//
+	// Params - Functions //
+	//====================//
+	const getArgNames = (paramNames, x, y) => paramNames.map(p => getArgName(p, x, y))
+	const getArgName = (paramName, x, y) => {
+		const param = getParam(paramName)
+		const type = param.type
+		if (type === PARAM_TYPE.ARG) return paramName
+		if (type === PARAM_TYPE.GLOBAL) return paramName
+		if (type === PARAM_TYPE.LOCAL) return getLocalName(paramName, x, y)
 		throw new Error(`[SpaceTode] Unrecognised named param type: ${type.description}`)
 	}
 	
-	const getParams = (func) => {
+	const getParams = (paramNames) => paramNames.map(p => getParam(p))
+	const getParam = (paramName) => {
+		const param = params[paramName]
+		if (param === undefined) throw new Error(`[SpaceTode] Unrecognised parameter: '${paramName}'`)
+		return param
+	}
+	
+	const getParamNames = (func) => {
 		if (func === undefined) return []
 		const code = func.as(String)
-		const params = []
+		const paramNames = []
 		let buffer = ""
 		for (let i = 0; i < code.length; i++) {
 			const char = code[i]
 			if ((char == "(" || char == " " || char == "	") && buffer == "") continue
-			
 			if (char.match(/[a-zA-Z0-9$_]/)) buffer += char
 			else if (char == " " || char == "," || char == "	" || char == ")") {
 				if (buffer != "") {
-					params.push(buffer)
+					paramNames.push(buffer)
 					buffer = ""
 				}
 			}
 			else throw new Error(`[SpaceTode] Unexpected character in named parameters: '${char}'\n\nPlease don't do anything fancy with your parameters in symbol functions :)\nGOOD: (element, space) => { ... }\nBAD: (element = Empty, {atom}) => { ... }\n\nPlease feel free to contact @todepond if you want to ask for help or complain about this :D\n`)
-			
-			if (char == "}" || char == ")") break
+			if (char == ")") break
 		}
-		return params
-	}
-	
-	//==============//
-	// Named Params //
-	//==============//
-	const NAMED_PARAM_TYPE = {
-		ARG: Symbol("Arg"),
-		GLOBAL: Symbol("Global"),
-		LOCAL: Symbol("Local"),
-	}
-	
-	const makeNamedParam = (name, type, needs = [], code = () => "") => {
-		const namedParam = {name, type, needs, code}
-		return namedParam
+		return paramNames
 	}
 	
 	const getLocalName = (name, x, y) => {
@@ -188,29 +159,45 @@ INSTRUCTION.make = (name, generate = () => "") => ({name, generate})
 		return name + xy.replace("-", "_")
 	}
 	
-	const namedParams = {}
-	namedParams.self = makeNamedParam("self", NAMED_PARAM_TYPE.ARG)
-	namedParams.origin = makeNamedParam("origin", NAMED_PARAM_TYPE.ARG)
-	namedParams.sites = makeNamedParam("sites", NAMED_PARAM_TYPE.GLOBAL, ["origin"], (x, y) => {
+	//===========================//
+	// Named Params - Definition //
+	//===========================//
+	const makeParam = (name, type, needNames = [], code = () => "") => ({name, type, needNames, code})
+	const PARAM_TYPE = {
+		ARG: Symbol("Arg"),
+		GLOBAL: Symbol("Global"),
+		LOCAL: Symbol("Local"),
+	}
+	
+	const params = {}
+	params.self = makeParam("self", PARAM_TYPE.ARG)
+	params.origin = makeParam("origin", PARAM_TYPE.ARG)
+	params.sites = makeParam("sites", PARAM_TYPE.GLOBAL, ["origin"], (x, y) => {
 		return `sites = origin.sites`
 	})
 	
-	namedParams.space = makeNamedParam("space", NAMED_PARAM_TYPE.LOCAL, ["sites"], (x, y) => {
+	params.space = makeParam("space", PARAM_TYPE.LOCAL, ["sites"], (x, y) => {
 		const spaceName = getLocalName("space", x, y)
 		const siteNumber = EVENTWINDOW.getSiteNumber(x, y, 0)
 		return `${spaceName} = sites[${siteNumber}]`
 	})
 	
-	namedParams.atom = makeNamedParam("atom", NAMED_PARAM_TYPE.LOCAL, ["space"], (x, y) => {
+	params.atom = makeParam("atom", PARAM_TYPE.LOCAL, ["space"], (x, y) => {
 		const atomName = getLocalName("atom", x, y)
 		const spaceName = getLocalName("space", x, y)
 		return `${atomName} = ${spaceName}.atom`
 	})
 	
-	namedParams.element = makeNamedParam("element", NAMED_PARAM_TYPE.LOCAL, ["space"], (x, y) => {
+	params.element = makeParam("element", PARAM_TYPE.LOCAL, ["space"], (x, y) => {
 		const elementName = getLocalName("element", x, y)
 		const spaceName = getLocalName("space", x, y)
 		return `${elementName} = ${spaceName}.element`
+	})
+	
+	const givenResultNamedParam = makeParam("givenResult", PARAM_TYPE.LOCAL, [], (x, y, id, args) => {
+		const givenResultName = getLocalName(`given${id}Result`, x, y)
+		const argsInner = args.join(", ")
+		return `${givenResultName} = given${id}(${argsInner})`
 	})
 	
 }
