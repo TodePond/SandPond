@@ -660,18 +660,16 @@
 		
 		if (scope.symbols[symbolName] == undefined) {
 			scope.symbols[symbolName] = {}
-			for (const symbolPartName of SYMBOL_PART_NAMES) {
+			/*for (const symbolPartName of SYMBOL_PART_NAMES) {
 				scope.symbols[symbolName][symbolPartName] = []
-			}
+			}*/
 		}
 		const symbol = scope.symbols[symbolName]
 		
-		if (symbol[symbolPartName] == undefined) {
-			symbol[symbolPartName] = []
+		if (symbol.has(symbolPartName)) {
+			throw new Error(`[SpaceTode] You can't define more than one '${symbolPartName}' on the '${symbolName}' symbol.`)
 		}
-		const symbolPart = symbol[symbolPartName]
-		symbolPart.push(javascript)
-		
+		symbol[symbolPartName] = javascript		
 		if (!success) return nojsResult
 		else return result
 	}
@@ -1195,7 +1193,7 @@
 			for (let j = 0; j < line.length; j++) {
 				const char = line[j]
 				const symbol = getSymbol(char, scope)
-				if (symbol && symbol.origin.length > 0) {
+				if (symbol && symbol.has("origin")) {
 					if (originX != undefined) throw new Error(`[SpaceTode] You can't have more than one origin in the left-hand-side of a diagram.`)
 					originX = j
 					originY = i
@@ -1226,11 +1224,11 @@
 				if (input == undefined) throw new Error(`[SpaceTode] Unrecognised symbol: ${lhsChar}`)
 				if (output == undefined) throw new Error(`[SpaceTode] Unrecognised symbol: ${rhsChar}`)
 				
-				if (input.origin.length == 0 && input.given.length == 0 ) {
+				if (!input.has("origin") && !input.has("given")) {
 					throw new Error(`[SpaceTode] Symbol '${lhsChar}' used on left-hand-side of diagram but doesn't have any left-hand-side parts, eg: given`)
 				}
 				
-				if (output.change.length == 0  && output.keep.length == 0 ) {
+				if (!output.has("change") && !output.has("keep")) {
 					throw new Error(`[SpaceTode] Symbol '${rhsChar}' used on right-hand-side of diagram but doesn't have any right-hand-side parts, eg: change`)
 				}
 				

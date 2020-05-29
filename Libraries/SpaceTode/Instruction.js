@@ -36,7 +36,36 @@ INSTRUCTION.make = (name, generate = () => "") => ({name, generate})
 			const {given} = spot.input
 			const {change, keep} = spot.output
 			
-			const givenInfo = processFunc(given, spot, template)
+			processFunc ({
+				name: "given",
+				func: given,
+				spot,
+				template,
+				chunk,
+				side: "input",
+				resultEnabled: true,
+				resultCacheEnabled: true,
+			})
+			
+			processFunc ({
+				name: "change",
+				func: change,
+				spot,
+				template,
+				chunk,
+				side: "output",
+				resultEnabled: true,
+			})
+			
+			processFunc ({
+				name: "keep",
+				func: keep,
+				spot,
+				template,
+				chunk,
+				side: "output",
+			})
+			
 			/*
 			const givenParamNames = given.map(g => getParamNames(g))
 			const changeParamNames = change.map(c => getParamNames(c))
@@ -74,14 +103,30 @@ INSTRUCTION.make = (name, generate = () => "") => ({name, generate})
 	//======//
 	// Func //
 	//======//
-	const processFunc = (funcs, spot, template) => {
+	const processFunc = ({name, func, spot, template, chunk, side, resultEnabled=false, resultCacheEnabled=false}) => {
+		if (func === undefined) return
 		const {x, y} = spot
 		const {head, cache, main} = template
-		/*const paramNames = funcs.map(f => getParamNames(f)).d
-		const params = paramNames.map(p => getParams(p))
-		const needs = paramNames.map(p => getNeeds(p))
-		const needNames = needs.map(n => getArgNames(n, x, y))
-		const argNames = paramNames.map(p => getArgNames(p, x, y))*/
+		
+		// Head
+		const id = head[name].pushUnique(func)
+		
+		// Cache
+		const paramNames = getParamNames(func)
+		const params = paramNames.map(paramName => getParam(paramName))
+		const argNames = params.map(param => getName(param, x, y))
+		const needs = []
+		for (const param of params) needs.pushUnique(...getNeeds(param))
+		const needNames = needs.map(need => getName(need, x, y))
+		cache.pushUnique(...needNames)
+		
+		// Result
+		const resultName = `${name}${id}Result`
+		if (resultEnabled && resultCacheEnabled) cache.pushUnique(resultName)
+		if (resultEnabled) needNames.pushUnique(resultName)
+		
+		// Chunk
+		chunk[side].needs.pushUnique(...needs)
 	}
 	
 	//=======//
@@ -89,24 +134,17 @@ INSTRUCTION.make = (name, generate = () => "") => ({name, generate})
 	//=======//
 	const makeEmptyChunk = () => ({
 		type: INSTRUCTION.TYPE.DIAGRAM,
-		inputNeeds: {},
-		outputNeeds: {},
+		input: {needs: []},
+		output: {needs: []},
 	})
 	
 	//=======//
 	// Needs //
-	//=======//
-	const getNeeds = (names) => {
+	//=======//	
+	const getNeeds = (param) => {
 		const needs = []
-		for (const name of names) needs.pushUnique(...getNeedsFromName(name))
-		return needs
-	}
-	
-	const getNeedsFromName = (name) => {
-		const needs = []
-		const param = getParam(name)
-		const otherNeeds = getNeeds(param.needNames)
-		needs.pushUnique(...otherNeeds)
+		const otherNeeds = param.needNames.map(needName => getParam(needName))
+		for (const otherNeed of otherNeeds) needs.pushUnique(...getNeeds(otherNeed))
 		if (param.type !== PARAM_TYPE.ARG) needs.pushUnique(param)
 		return needs
 	}
@@ -114,21 +152,18 @@ INSTRUCTION.make = (name, generate = () => "") => ({name, generate})
 	//====================//
 	// Params - Functions //
 	//====================//
-	const getArgNames = (paramNames, x, y) => paramNames.map(p => getArgName(p, x, y))
-	const getArgName = (paramName, x, y) => {
-		const param = getParam(paramName)
-		const type = param.type
-		if (type === PARAM_TYPE.ARG) return paramName
-		if (type === PARAM_TYPE.GLOBAL) return paramName
-		if (type === PARAM_TYPE.LOCAL) return getLocalName(paramName, x, y)
-		throw new Error(`[SpaceTode] Unrecognised named param type: ${type.description}`)
+	const getParam = (name) => {
+		const param = params[name]
+		if (param === undefined) throw new Error(`[SpaceTode] Unrecognised parameter: '${name}'`)
+		return param
 	}
 	
-	const getParams = (paramNames) => paramNames.map(p => getParam(p))
-	const getParam = (paramName) => {
-		const param = params[paramName]
-		if (param === undefined) throw new Error(`[SpaceTode] Unrecognised parameter: '${paramName}'`)
-		return param
+	const getName = (param, x, y) => {
+		const type = param.type
+		if (type === PARAM_TYPE.ARG) return param.name
+		if (type === PARAM_TYPE.GLOBAL) return param.name
+		if (type === PARAM_TYPE.LOCAL) return getLocalName(param.name, x, y)
+		throw new Error(`[SpaceTode] Unrecognised named param type: ${type.description}`)
 	}
 	
 	const getParamNames = (func) => {
@@ -153,8 +188,6 @@ INSTRUCTION.make = (name, generate = () => "") => ({name, generate})
 	}
 	
 	const getLocalName = (name, x, y) => {
-		if (x === undefined) throw new Error(`[SpaceTode] Missing argument 'x' in 'getLocalName' function`)
-		if (y === undefined) throw new Error(`[SpaceTode] Missing argument 'y' in 'getLocalName' function`)
 		const xy = `${x}${y}`
 		return name + xy.replace("-", "_")
 	}
