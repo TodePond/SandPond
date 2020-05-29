@@ -39,23 +39,39 @@ INSTRUCTION.make = (name, generate = () => "") => ({name, generate})
 			const {given} = spot.input
 			const {change, keep} = spot.output
 			
-			const givenIds = addFuncsToHead(head, "given", given)
-			const changeIds = addFuncsToHead(head, "change", change)
-			const keepIds = addFuncsToHead(head, "keep", keep)
+			const givenIds = given.map(g => head.given.pushUnique(g))
+			const changeIds = change.map(c => head.change.pushUnique(c))
+			const keepIds = keep.map(k => head.keep.pushUnique(k))
 			
-			const givenNeeds = getNeedsFromFuncs(given, x, y)
-			const changeNeeds = getNeedsFromFuncs(change, x, y)
-			const keepNeeds = getNeedsFromFuncs(keep, x, y)
+			const givenParams = given.map(g => getParams(g))
+			const changeParams = change.map(c => getParams(c))
+			const keepParams = keep.map(k => getParams(k))
+		
+			const givenArgs = givenParams.map(p => getArgsFromParams(p, x, y))
+			const changeArgs = changeParams.map(p => getArgsFromParams(p, x, y))
+			const keepArgs = keepParams.map(p => getArgsFromParams(p, x, y))
+		
+			const givenNeeds = givenParams.map(p => getNeedsFromParams(p, x, y)).flat()
+			const changeNeeds = givenParams.map(p => getNeedsFromParams(p, x, y)).flat()
+			const keepNeeds = givenParams.map(p => getNeedsFromParams(p, x, y)).flat()
+			const givenResults = givenIds.map(id => getLocalName(`given${id}Result`, x, y))
 			
 			cache.pushUnique(...givenNeeds)
 			cache.pushUnique(...changeNeeds)
 			cache.pushUnique(...keepNeeds)
-			for (const id of givenIds) cache.pushUnique(getLocalName(`given${id}Result`, x, y))
+			cache.pushUnique(...givenResults)
 			
 			chunk.inputNeeds.pushUnique(...givenNeeds)
+			chunk.inputNeeds.pushUnique(...givenResults)
 			chunk.outputNeeds.pushUnique(...changeNeeds)
 			chunk.outputNeeds.pushUnique(...keepNeeds)
+			
+			//chunk.inputCode = makeGivenResultsCode(x, y, givenIds, givenArgs)
+			//chunk.conditionCode = makeConditionCode(x, y, givenIds)
 		}
+		
+		main.push(chunk)
+		
 	})
 	
 	//=======//
@@ -65,32 +81,25 @@ INSTRUCTION.make = (name, generate = () => "") => ({name, generate})
 		type: INSTRUCTION.TYPE.DIAGRAM,
 		inputNeeds: [],
 		outputNeeds: [],
-		inputCode: undefined,
-		outputCode: undefined,
+		//inputCode: undefined,
+		//conditions: undefined,
+		//outputCode: undefined,
 	})
 	
-	//======//
-	// Head //
-	//======//
-	const addFuncsToHead = (head, name, funcs) => {
-		const store = head[name]
-		const ids = []
-		for (const func of funcs) {
-			if (func === undefined) continue
-			const id = store.pushUnique(func)
-			ids.push(id)
+	/*const makeGivenResultsCode = (x, y, givenIds, givenArgs) => {
+		if (givenIds.length !== givenArgs.length) throw new Error(`[SpaceTode] Givens: ID array did not have the same length as Args array`)
+		const lines = []
+		for (let i = 0; i < givenIds.length; i++) {
+			const id = givenIds[i]
+			const args = givenArgs[i].join(", ")
+			const name = getLocalName(`given${id}Result`, x, y)
+			const line = `if (${name} === undefined) ${name} = given${id}(${args})`
+			lines.push(line)
 		}
-		return ids
-	}
-	
-	//=======//
-	// Cache //
-	//=======//
-	const addNamesToCache = (cache, names) => {
-		for (const name of names) {
-			cache.pushUnique(name)
-		}
-	}
+		lines.push("")
+		const code = lines.join("\n")
+		return code
+	}*/
 	
 	//=======//
 	// Needs //
@@ -107,22 +116,36 @@ INSTRUCTION.make = (name, generate = () => "") => ({name, generate})
 		return needs
 	}
 	
+	const getNeedsFromParams = (params, x, y) => params.map(param => getNeedsFromParam(param, x, y)).flat()
+	const getArgsFromParams = (params, x, y) => params.map(param => getArgFromParam(param, x, y)).flat()
+	
 	const getNeedsFromParam = (param, x, y) => {
+		const namedParam = namedParams[param]
+		if (namedParam.needs === undefined) throw new Error(`[SpaceTode] Unrecognised parameter: '${param}'`)
+		
 		const needs = []
-		const symbolParam = namedParams[param]
+		for (const need of namedParam.needs) needs.pushUnique(...getNeedsFromParam(need, x, y))
 		
-		if (symbolParam.needs === undefined) throw new Error(`[SpaceTode] Unrecognised parameter: '${param}'`)
-		for (const need of symbolParam.needs) needs.pushUnique(...getNeedsFromParam(need, x, y))
-		
-		const type = symbolParam.type
-		if (type === NAMED_PARAM_TYPE.GLOBAL) needs.pushUnique(param)
-		else if (type === NAMED_PARAM_TYPE.LOCAL) needs.pushUnique(getLocalName(param, x, y))
-		else if (type === NAMED_PARAM_TYPE.ARG) {}
-		else throw new Error(`[SpaceTode] Unrecognised named param type: ${type.description}`)
+		const type = namedParam.type
+		if (type === NAMED_PARAM_TYPE.ARG) return needs
+		const need = getArgFromParam(param, x, y)
+		needs.pushUnique(need)
 		return needs
 	}
 	
+	const getArgFromParam = (param, x, y) => {
+		const namedParam = namedParams[param]
+		if (namedParam.needs === undefined) throw new Error(`[SpaceTode] Unrecognised parameter: '${param}'`)
+		
+		const type = namedParam.type
+		if (type === NAMED_PARAM_TYPE.ARG) return param
+		if (type === NAMED_PARAM_TYPE.GLOBAL) return param
+		if (type === NAMED_PARAM_TYPE.LOCAL) return getLocalName(param, x, y)
+		throw new Error(`[SpaceTode] Unrecognised named param type: ${type.description}`)
+	}
+	
 	const getParams = (func) => {
+		if (func === undefined) return []
 		const code = func.as(String)
 		const params = []
 		let buffer = ""
@@ -153,10 +176,8 @@ INSTRUCTION.make = (name, generate = () => "") => ({name, generate})
 		LOCAL: Symbol("Local"),
 	}
 	
-	const namedParams = {}
-	const defineNamedParam = (name, type, needs = [], code = () => "") => {
+	const makeNamedParam = (name, type, needs = [], code = () => "") => {
 		const namedParam = {name, type, needs, code}
-		namedParams[name] = namedParam
 		return namedParam
 	}
 	
@@ -167,25 +188,26 @@ INSTRUCTION.make = (name, generate = () => "") => ({name, generate})
 		return name + xy.replace("-", "_")
 	}
 	
-	defineNamedParam("self", NAMED_PARAM_TYPE.ARG)
-	defineNamedParam("origin", NAMED_PARAM_TYPE.ARG)
-	defineNamedParam("sites", NAMED_PARAM_TYPE.GLOBAL, ["origin"], (x, y) => {
+	const namedParams = {}
+	namedParams.self = makeNamedParam("self", NAMED_PARAM_TYPE.ARG)
+	namedParams.origin = makeNamedParam("origin", NAMED_PARAM_TYPE.ARG)
+	namedParams.sites = makeNamedParam("sites", NAMED_PARAM_TYPE.GLOBAL, ["origin"], (x, y) => {
 		return `sites = origin.sites`
 	})
 	
-	defineNamedParam("space", NAMED_PARAM_TYPE.LOCAL, ["sites"], (x, y) => {
+	namedParams.space = makeNamedParam("space", NAMED_PARAM_TYPE.LOCAL, ["sites"], (x, y) => {
 		const spaceName = getLocalName("space", x, y)
 		const siteNumber = EVENTWINDOW.getSiteNumber(x, y, 0)
 		return `${spaceName} = sites[${siteNumber}]`
 	})
 	
-	defineNamedParam("atom", NAMED_PARAM_TYPE.LOCAL, ["space"], (x, y) => {
+	namedParams.atom = makeNamedParam("atom", NAMED_PARAM_TYPE.LOCAL, ["space"], (x, y) => {
 		const atomName = getLocalName("atom", x, y)
 		const spaceName = getLocalName("space", x, y)
 		return `${atomName} = ${spaceName}.atom`
 	})
 	
-	defineNamedParam("element", NAMED_PARAM_TYPE.LOCAL, ["space"], (x, y) => {
+	namedParams.element = makeNamedParam("element", NAMED_PARAM_TYPE.LOCAL, ["space"], (x, y) => {
 		const elementName = getLocalName("element", x, y)
 		const spaceName = getLocalName("space", x, y)
 		return `${elementName} = ${spaceName}.element`

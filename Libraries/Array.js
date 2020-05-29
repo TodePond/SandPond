@@ -46,7 +46,8 @@ Reflect.defineProperty(Array.prototype, "pushUnique", {
 		if (args.length == 0) return undefined
 		if (args.length == 1) { 
 			const value = args[0]
-			if (this.includes(value)) return undefined
+			const id = this.indexOf(value)
+			if (id !== -1) return id
 			return this.push(value) - 1
 		}
 		return args.map(arg => this.pushUnique(arg))

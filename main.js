@@ -36,9 +36,9 @@ createScreen()
 let bokehPass = undefined
 if (DOF_MODE) {
 	bokehPass = new THREE.BokehPass(scene, camera, {
-		//maxblur: 2,
+		maxblur: 0.008,
 		//focus: 1.1,
-		//aperture: 0.02,
+		aperture: 0.018,
 	})
 	stage.composer.addPass(bokehPass)
 }

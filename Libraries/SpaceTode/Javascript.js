@@ -110,6 +110,7 @@ const JAVASCRIPT = {}
 			const store = template.head[storeName]
 			for (let i = 0; i < store.length; i++) {
 				const script = store[i]
+				if (script === undefined) continue
 				if (script.split("\n").length > 1) lines.push(``)
 				lines.push(`const ${storeName}${i} = ${script}`)
 				if (script.split("\n").length > 1) lines.push(``)
