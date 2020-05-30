@@ -95,7 +95,6 @@ INSTRUCTION.make = (name, generate = () => "") => ({name, generate})
 		const params = paramNames.map(paramName => getParam(paramName))
 		const argNames = params.map(param => getName(param, x, y))
 		
-		// Cache
 		const needs = []
 		for (const param of params) needs.pushUnique(...getNeeds(param))
 		
@@ -109,11 +108,16 @@ INSTRUCTION.make = (name, generate = () => "") => ({name, generate})
 			needs.pushUnique(...resultOtherNeeds, resultIdParam)
 		}
 		
-		const needNames = needs.map(need => getName(need, x, y))
+		// Chunk Needs
+		//const needNames = needs.map(need => getName(need, x, y))
+		const needsMap = {}
+		for (const need of needs) {
+			const needName = getName(need, x, y)
+			needsMap[needName] = need
+		}
+		const needNames = Object.keys(needsMap)
 		cache.pushUnique(...needNames)
 		
-		// Chunk
-		chunk[side].needs.pushUnique(...needs)
 	}
 	
 	//=======//
@@ -121,8 +125,8 @@ INSTRUCTION.make = (name, generate = () => "") => ({name, generate})
 	//=======//
 	const makeEmptyChunk = () => ({
 		type: INSTRUCTION.TYPE.DIAGRAM,
-		input: {needs: [], needers: []},
-		output: {needs: [], needers: []},
+		input: {needs: {}},
+		output: {needs: {}},
 	})
 	
 	//=======//

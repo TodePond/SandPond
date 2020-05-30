@@ -123,9 +123,12 @@ const JAVASCRIPT = {}
 		lines.push("//======//")
 		lines.push(`const behave = (origin, selfElement, self) => {`)
 		for (const chunk of template.main) {
-			if (chunk.is(String)) lines.push(`	` + chunk)
-			else {
-				print(chunk)
+			if (chunk.is(String)) {
+				lines.push(`	` + chunk)
+				continue
+			}
+			for (const needName in chunk.input.needs) {
+				//needName.d
 			}
 		}
 		lines.push(`}`)
