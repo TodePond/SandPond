@@ -285,7 +285,23 @@ element Fire {
 				SPACE.setAtom(origin, new Empty(), Empty)
 			}
 			if (elementAbove != Fire) SPACE.setAtom(origin, new Empty(), Empty)
+			else {
+				const rando = Math.floor(Math.random() * 4)
+				const slideSiteNum = symms[rando]
+				const site = sites[slideSiteNum]
+				if (site.element === Empty) {
+					SPACE.setAtom(site, self, Fire)
+					SPACE.setAtom(origin, new Empty(), Empty)
+				}
+			}
 		}
+		
+		const symms = [
+			EVENTWINDOW.getSiteNumber(1, 0, 0),
+			EVENTWINDOW.getSiteNumber(-1, 0, 0),
+			EVENTWINDOW.getSiteNumber(0, 0, 1),
+			EVENTWINDOW.getSiteNumber(0, 0, -1),
+		]
 		
 		return behave
 		
@@ -296,28 +312,59 @@ element Fire {
 element StickyStone {
 	prop state "solid"
 	category "Sandbox"
+	data stuck false
+	data stuckTime 0
 	behave {
 		
+		const FALL_TIME = 300
+		
 		const behave = (origin, element, self = origin.atom) => {
+			//if (self.stuckStrength > 0) self.stuckStrenth = 0
 			const sites = origin.sites
 			const spaceBelow = sites[17]
 			const elementBelow = spaceBelow.element
-			const selfStuck = self.stuck
 			for (let i = 0; i < 6; i++) {
 				const site = sites[symms[i]]
-				if (site.element == StickyStone) {
-					if (selfStuck === true) site.atom.stuck = true
-					if (site.atom.stuck === true) self.stuck = true
+				const siteElement = site.element
+				/*if (siteElement === Water) {
+					SPACE.setAtom(site, new Empty(), Empty)
+					SPACE.setAtom(origin, new Sludge(), Sludge)
+					return
+				}
+				if (siteElement === Fire || siteElement == Lava) {
+					SPACE.setAtom(site, new Empty(), Empty)
+					const stone = new StickyStone()
+					SPACE.setAtom(origin, stone, StickyStone)
+					stone.stuck = true
+					return
+				}*/
+				if (siteElement === element || siteElement == Clay) {
+					if (self.stuck) {
+						site.atom.stuck = true
+						if (site.atom.stuckTime < self.stuckTime) site.atom.stuckTime = self.stuckTime
+					}
+					else if (site.atom.stuck) {
+						self.stuck = true
+						if (self.stuckTime < site.atom.stuckTime) self.stuckTime = site.atom.stuckTime
+					}
 				}
 				
 				const site2 = sites[symms2[i]]
-				if (site2.element == StickyStone) {
-					if (selfStuck === true) site2.atom.stuck = true
-					if (site2.atom.stuck === true) {
-						if (site.element === Empty) {
-							const stone = new StickyStone()
-							stone.stuck = true
-							SPACE.setAtom(site, stone, StickyStone)
+				const site2Element = site2.element
+				if (site2Element == element || site2Element == Clay) {
+					if (self.stuck) {
+						site2.atom.stuck = true
+						if (site2.atom.stuckTime < self.stuckTime) site2.atom.stuckTime = self.stuckTime
+					}
+					else if (site2.atom.stuck) {
+						self.stuck = true
+						if (self.stuckTime < site2.atom.stuckTime) self.stuckTime = site2.atom.stuckTime
+					}
+					
+					if (site2.atom.stuck === true && performance.now() - site2.atom.stuckTime < FALL_TIME) {
+						if (siteElement === Empty) {
+							const stone = new element()
+							SPACE.setAtom(site, stone, element)
 						}
 						self.stuck = true
 					}
@@ -326,20 +373,30 @@ element StickyStone {
 			
 			for (let i = 0; i < symms3.length; i++) {
 				const site = sites[symms3[i]]
-				if (site.element == StickyStone) {
-					if (selfStuck === true) site.atom.stuck = true
-					if (site.atom.stuck === true) self.stuck = true
+				const siteElement = site.element
+				if (siteElement == element || siteElement == Clay) {
+					if (self.stuck) {
+						site.atom.stuck = true
+						if (site.atom.stuckTime < self.stuckTime) site.atom.stuckTime = self.stuckTime
+					}
+					else if (site.atom.stuck) {
+						self.stuck = true
+						if (self.stuckTime < site.atom.stuckTime) self.stuckTime = site.atom.stuckTime
+					}
 				}
 			}
 			
-			if (self.stuck) return
-			
-			if (elementBelow == Empty || elementBelow == Water || elementBelow == Steam) {
+			const couldFall = elementBelow === Empty || elementBelow === Water || elementBelow === Steam || elementBelow == Sludge
+			if (elementBelow !== element && elementBelow !== Clay && !couldFall) {
+				self.stuck = true
+				self.stuckTime = performance.now()
+			}
+			const recentStuck = (performance.now() - self.stuckTime) < FALL_TIME
+			if (!(self.stuck && recentStuck) && couldFall) {
 				SPACE.setAtom(origin, spaceBelow.atom, spaceBelow.element)
 				SPACE.setAtom(spaceBelow, self, self.element)
 				return
 			}
-			self.stuck = true
 		}
 		
 		const symms = [
@@ -477,7 +534,6 @@ element Res any(xyz) {
 element Clay {
 	colour "brown"
 	category "Sandbox"
-	default true
 	data stuck false
 	data stuckTime 0
 	behave {
@@ -552,8 +608,8 @@ element Clay {
 				}
 			}
 			
-			const couldFall = elementBelow === Empty ||elementBelow === Water || elementBelow === Steam 
-			if (elementBelow !== element && !couldFall) {
+			const couldFall = elementBelow === Empty || elementBelow === Water || elementBelow === Steam || elementBelow == Sludge
+			if (elementBelow !== element && elementBelow !== StickyStone && !couldFall) {
 				self.stuck = true
 				self.stuckTime = performance.now()
 			}
