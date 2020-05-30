@@ -88,6 +88,16 @@ Reflect.defineProperty(Array.prototype, "repeated", {
 	}
 })
 
+Reflect.defineProperty(Array.prototype, "without", {
+	value(value) {
+		const array = []
+		for (const v of this) {
+			if (v !== value) array.push(v)
+		}
+		return array
+	},
+})
+
 Number.prototype.to = function(target) {
 	const number = this.valueOf()
 	const array = []

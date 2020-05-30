@@ -36,7 +36,7 @@ createScreen()
 let bokehPass = undefined
 if (DOF_MODE) {
 	bokehPass = new THREE.BokehPass(scene, camera, {
-		maxblur: 0.008,
+		maxblur: 0.009,
 		//focus: 1.1,
 		aperture: 0.018,
 	})

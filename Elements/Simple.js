@@ -5,11 +5,11 @@ SpaceTode`
 origin @
 change @ (self) => self
 
-change _ (sites) => new Empty()
+change _ () => new Empty()
 given _ (element) => element === Empty
-//given _ (space, self) => space
+//given _ (space) => space
 
-given # (element, atom, self) => element !== Empty && element !== Void
+given # (element) => element !== Empty && element !== Void
 
 keep .
 

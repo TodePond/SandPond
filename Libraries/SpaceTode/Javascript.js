@@ -124,6 +124,9 @@ const JAVASCRIPT = {}
 		lines.push(`const behave = (origin, selfElement, self) => {`)
 		for (const chunk of template.main) {
 			if (chunk.is(String)) lines.push(`	` + chunk)
+			else {
+				print(chunk)
+			}
 		}
 		lines.push(`}`)
 		lines.push(``)
