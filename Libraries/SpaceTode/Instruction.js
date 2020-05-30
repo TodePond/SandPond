@@ -224,7 +224,6 @@ INSTRUCTION.make = (name, generate = () => "") => ({name, generate})
 		return `check${id}(${argsInner})`
 	})
 	
-	
 	hiddenParams.changeResult = makeParam("changeResult", PARAM_TYPE.LOCAL, ["space"], (x, y, id, args) => {
 		const spaceName = getLocalName("space", x, y)
 		const argsInner = args.join(", ")

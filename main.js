@@ -38,7 +38,7 @@ if (DOF_MODE) {
 	bokehPass = new THREE.BokehPass(scene, camera, {
 		maxblur: 0.009,
 		//focus: 1.1,
-		aperture: 0.018,
+		aperture: 0.02,
 	})
 	stage.composer.addPass(bokehPass)
 }
