@@ -17,7 +17,8 @@ element _Sand {
 	colour "#FC0"
 	emissive "#ffa34d"
 	category "Testing"
-	//default true
+	default true
+	
 	@ => _
 	_    @
 	

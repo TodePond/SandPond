@@ -193,7 +193,7 @@ const JAVASCRIPT = {}
 			type.generate(template, value)
 		}
 		
-		if (name == "Sand") print(template)
+		if (name == "_Sand") print(template)
 	
 		const code = buildTemplate(template)
 		//if (name == "Sand") print(code)
