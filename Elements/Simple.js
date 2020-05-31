@@ -11,18 +11,24 @@ given _ (element) => element === Empty
 
 given # (element) => element !== Empty && element !== Void
 
-keep .
+keep . (atom) => print(atom)
 
-element Sand  {
+element _Sand {
 	colour "#FC0"
 	emissive "#ffa34d"
-	category "Sandbox"
-	
+	category "Testing"
+	//default true
 	@ => _
 	_    @
 	
 	@     _
 	#_ => .@
+}
+
+element Sand  {
+	colour "#FC0"
+	emissive "#ffa34d"
+	category "Sandbox"
 	
 	behave {
 		const behave = (origin, element, self = origin.atom) => {

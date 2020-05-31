@@ -65,9 +65,9 @@ const JAVASCRIPT = {}
 		`}`)
 	}
 	
-	//=========//
-	// Private //
-	//=========//
+	//==========//
+	// Template //
+	//==========//
 	const makeEmptyTemplate = () => ({
 	
 		// Head contains stores of global functions that we need
@@ -116,6 +116,7 @@ const JAVASCRIPT = {}
 				if (script.split("\n").length > 1) lines.push(``)
 			}
 		}
+		lines.push("")
 		
 		// MAIN
 		lines.push("//======//")
@@ -123,12 +124,16 @@ const JAVASCRIPT = {}
 		lines.push("//======//")
 		lines.push(`const behave = (origin, selfElement, self) => {`)
 		for (const chunk of template.main) {
+			lines.push("")
 			if (chunk.is(String)) {
 				lines.push(`	` + chunk)
 				continue
 			}
-			for (const needName in chunk.input.needs) {
-				//needName.d
+			for (const needer of chunk.input.needers) {
+				print(needer)
+				const code = needer.need.generate(needer.x, needer.y, needer.id, needer.argNames)
+				const line = `	${needer.name} = ${code}`
+				lines.push(line)
 			}
 		}
 		lines.push(`}`)
@@ -137,9 +142,46 @@ const JAVASCRIPT = {}
 		
 		const code = lines.join("\n")
 		return code
-		
 	}
 	
+	//================================//
+	// Local Name Parsing (pointless) //
+	//================================//
+	const getLocalNamePosition = (name, need) => {
+		const head = need.name
+		const tail = name.slice(head.length)
+		const {x, y} = eatTailPosition(tail)
+		return {x, y}
+	}
+	
+	const eatTailPosition = (source) => {
+		let x = undefined
+		let y = undefined
+		let result = undefined
+		result = {source, number: x} = eatTailNumber(source)
+		result = {source, number: y} = eatTailNumber(source)
+		return {x, y}
+	}
+	
+	const eatTailNumber = (source) => {
+		if (source === "") return {source: ""}
+		let i = 0
+		let sign = 1
+		if (source[0] == "_") {
+			sign = -1
+			i++
+		}
+		const digit = source[i].as(Number)
+		i++
+		
+		const number = digit.as(Number) * sign
+		source = source.slice(i)
+		return {source, number}
+	}
+	
+	//========//
+	// behave //
+	//========//
 	const makeBehaveCode = (instructions, name) => {
 	
 		let template = makeEmptyTemplate()

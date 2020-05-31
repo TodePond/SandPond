@@ -73,6 +73,7 @@ INSTRUCTION.make = (name, generate = () => "") => ({name, generate})
 				template,
 				chunk,
 				side: "output",
+				resultEnabled: true,
 			})
 		}
 		
@@ -85,16 +86,16 @@ INSTRUCTION.make = (name, generate = () => "") => ({name, generate})
 	const processFunc = ({name, func, spot, template, chunk, side, resultEnabled=false}) => {
 		if (func === undefined) return
 		const {x, y} = spot
-		const {head, cache, main} = template
+		const {head, cache} = template
 		
 		// Head
 		const id = head[name].pushUnique(func)
 		
-		// Args
+		// Params
 		const paramNames = getParamNames(func)
 		const params = paramNames.map(paramName => getParam(paramName))
-		const argNames = params.map(param => getName(param, x, y))
 		
+		// Needs
 		const needs = []
 		for (const param of params) needs.pushUnique(...getNeeds(param))
 		
@@ -108,14 +109,22 @@ INSTRUCTION.make = (name, generate = () => "") => ({name, generate})
 			needs.pushUnique(...resultOtherNeeds, resultIdParam)
 		}
 		
-		// Chunk Needs
-		//const needNames = needs.map(need => getName(need, x, y))
-		const needsMap = {}
+		// Needers
+		const argNames = params.map(param => getName(param, x, y))
+		const needers = needs.map(need => makeNeeder({need, x, y, id, argNames}))
+		/*const needsMap = {}
 		for (const need of needs) {
 			const needName = getName(need, x, y)
 			needsMap[needName] = need
 		}
-		const needNames = Object.keys(needsMap)
+		const needNames = Object.keys(needsMap)*/
+		//chunk[side].needs.o= needsMap
+		for (const needer of needers) {
+			chunk[side].needers[needer.name] = needer
+		}
+		
+		// Cache
+		const needNames = needs.map(need => getName(need, x, y))
 		cache.pushUnique(...needNames)
 		
 	}
@@ -125,8 +134,8 @@ INSTRUCTION.make = (name, generate = () => "") => ({name, generate})
 	//=======//
 	const makeEmptyChunk = () => ({
 		type: INSTRUCTION.TYPE.DIAGRAM,
-		input: {needs: {}},
-		output: {needs: {}},
+		input: {needers: {}},
+		output: {needers: {}},
 	})
 	
 	//=======//
@@ -138,6 +147,11 @@ INSTRUCTION.make = (name, generate = () => "") => ({name, generate})
 		for (const otherNeed of otherNeeds) needs.pushUnique(...getNeeds(otherNeed))
 		if (param.type !== PARAM_TYPE.ARG) needs.pushUnique(param)
 		return needs
+	}
+	
+	const makeNeeder = ({need, x, y, id, argNames}) => {
+		const name = getName(need, x, y)
+		return {need, name, x, y, id, argNames}
 	}
 	
 	//====================//
@@ -188,7 +202,7 @@ INSTRUCTION.make = (name, generate = () => "") => ({name, generate})
 	//===========================//
 	// Named Params - Definition //
 	//===========================//
-	const makeParam = (name, type, needNames = [], code = () => "") => ({name, type, needNames, code})
+	const makeParam = (name, type, needNames = [], generate = () => "") => ({name, type, needNames, generate})
 	const PARAM_TYPE = {
 		ARG: Symbol("Arg"),
 		GLOBAL: Symbol("Global"),
@@ -198,7 +212,7 @@ INSTRUCTION.make = (name, generate = () => "") => ({name, generate})
 	const params = {}
 	params.self = makeParam("self", PARAM_TYPE.ARG)
 	params.origin = makeParam("origin", PARAM_TYPE.ARG)
-	params.sites = makeParam("sites", PARAM_TYPE.GLOBAL, ["origin"], (x, y) => {
+	params.sites = makeParam("sites", PARAM_TYPE.GLOBAL, ["origin"], () => {
 		return `origin.sites`
 	})
 	
@@ -223,6 +237,11 @@ INSTRUCTION.make = (name, generate = () => "") => ({name, generate})
 		return `given${id}(${argsInner})`
 	})
 	
+	hiddenParams.keepResult = makeParam("keepResult", PARAM_TYPE.LOCAL, [], (x, y, id, args) => {
+		const argsInner = args.join(", ")
+		return `keep${id}(${argsInner})`
+	})
+	
 	hiddenParams.checkResult = makeParam("checkResult", PARAM_TYPE.GLOBAL, [], (x, y, id, args) => {
 		const argsInner = args.join(", ")
 		return `check${id}(${argsInner})`
@@ -231,7 +250,7 @@ INSTRUCTION.make = (name, generate = () => "") => ({name, generate})
 	hiddenParams.changeResult = makeParam("changeResult", PARAM_TYPE.LOCAL, ["space"], (x, y, id, args) => {
 		const spaceName = getLocalName("space", x, y)
 		const argsInner = args.join(", ")
-		const line = []
+		const lines = []
 		lines.push(`change${id}(${argsInner})`)
 		lines.push(`SPACE.setAtom(${spaceName}, ${changeResultName})`)
 		return lines.join("\n")
@@ -242,7 +261,7 @@ INSTRUCTION.make = (name, generate = () => "") => ({name, generate})
 		if (param.name.slice(-"Result".length) !== "Result") throw new Error(`[SpaceTode] Can't make a result param from '${param.name}' because it doesn't end in 'Result'`)
 		const name = param.name.slice(0, -"Result".length) + id + "Result"
 		if (idParams.has(name)) return idParams[name]
-		const idParam = makeParam(name, param.type, param.needs, param.code)
+		const idParam = makeParam(name, param.type, param.needs, param.generate)
 		idParams[name] = idParam
 		return idParam
 	}
