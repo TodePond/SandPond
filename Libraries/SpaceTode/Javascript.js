@@ -130,7 +130,7 @@ const JAVASCRIPT = {}
 				continue
 			}
 			for (const needer of chunk.input.needers) {
-				print(needer)
+				//print(needer)
 				const code = needer.need.generate(needer.x, needer.y, needer.id, needer.argNames)
 				const line = `	${needer.name} = ${code}`
 				lines.push(line)

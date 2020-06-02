@@ -162,6 +162,7 @@ let shuffleCounter = 0
 let currentTrack = true
 	
 if (SHUFFLE_MODE) {
+	let time = 0
 	on.process(() => {
 		if (paused) {
 			if (stepCount <= 0) return
@@ -172,11 +173,13 @@ if (SHUFFLE_MODE) {
 			const space = spaces[id]
 			const element = space.element
 			if (element === Empty) continue
-			element.behave(space, element)
+			element.behave(space, element, time)
 		}
+		time++
 	})
 }
 else if (PURE_RANDOM_MODE) {
+	let time = 0
 	on.process(() => {
 		if (paused) {
 			if (stepCount <= 0) return
@@ -186,14 +189,14 @@ else if (PURE_RANDOM_MODE) {
 			const space = spacesShuffled[i]
 			const element = space.element
 			if (element === Empty) continue
-			element.behave(space, element)
+			element.behave(space, element, time)
 		}
-		
+		time++		
 	})
 }
 else {
 
-
+	let time = 0
 	on.process(() => {
 		if (paused === true) {
 			if (stepCount <= 0) return
@@ -207,9 +210,10 @@ else {
 			const atom = space.atom
 			if (atom.track === currentTrack) continue
 			atom.track = currentTrack
-			element.behave(space, element, atom)
+			element.behave(space, element, time, atom)
 		}
 		currentTrack = !currentTrack
+		time++
 	})
 }
 
