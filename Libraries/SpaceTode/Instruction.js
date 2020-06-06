@@ -95,6 +95,7 @@ INSTRUCTION.make = (name, generate = () => "") => ({name, generate})
 		const needers = needs.map(need => makeNeeder({need, x, y, id, argNames}))
 		for (const needer of needers) {
 			chunk[side].needers[needer.name] = needer
+			if (needer.need.isCondition) chunk.condition.pushUnique(needer.n)
 		}
 		
 		const neederGets = needers.filter(needer => needer.need.generateGet)
@@ -109,6 +110,7 @@ INSTRUCTION.make = (name, generate = () => "") => ({name, generate})
 	const makeEmptyChunk = () => ({
 		type: INSTRUCTION.TYPE.DIAGRAM,
 		input: {needers: {}},
+		condition: [],
 		output: {needers: {}},
 	})
 	
