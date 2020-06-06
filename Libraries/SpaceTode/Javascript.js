@@ -130,10 +130,15 @@ const JAVASCRIPT = {}
 				continue
 			}
 			for (const needer of chunk.input.needers) {
-				const getCode = needer.need.generateGet(needer.x, needer.y, needer.id, needer.argNames)
-				if (getCode !== undefined) lines.push(`	${needer.name} = ${getCode}`)
-				const extraCode = needer.need.generateExtra(needer.x, needer.y, needer.id, needer.argNames)
-				if (extraCode !== undefined) lines.push(`	${extraCode}`)
+				const need = needer.need
+				if (need.generateGet) {
+					const getCode = need.generateGet(needer.x, needer.y, needer.id, needer.argNames)
+					lines.push(`	${needer.name} = ${getCode}`)
+				}
+				if (need.generateExtra) {
+					const extraCode = need.generateExtra(needer.x, needer.y, needer.id, needer.argNames)
+					lines.push(`	${extraCode}`)
+				}
 				
 			}
 		}

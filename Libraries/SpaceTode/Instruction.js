@@ -97,8 +97,9 @@ INSTRUCTION.make = (name, generate = () => "") => ({name, generate})
 			chunk[side].needers[needer.name] = needer
 		}
 		
-		const neederNames = needers.map(needer => needer.name)
-		cache.pushUnique(...neederNames)
+		const neederGets = needers.filter(needer => needer.need.generateGet)
+		const neederGetNames = neederGets.map(neederGet => neederGet.name)
+		cache.pushUnique(...neederGetNames)
 		
 	}
 	
@@ -184,8 +185,8 @@ INSTRUCTION.make = (name, generate = () => "") => ({name, generate})
 		name,
 		type,
 		needNames = [],
-		generateGet = () => {},
-		generateExtra = () => {},
+		generateGet,
+		generateExtra,
 		isCondition = false
 	}) => ({
 		name,
