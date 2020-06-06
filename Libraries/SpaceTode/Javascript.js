@@ -130,10 +130,11 @@ const JAVASCRIPT = {}
 				continue
 			}
 			for (const needer of chunk.input.needers) {
-				//print(needer)
-				const code = needer.need.generate(needer.x, needer.y, needer.id, needer.argNames)
-				const line = `	${needer.name} = ${code}`
-				lines.push(line)
+				const getCode = needer.need.generateGet(needer.x, needer.y, needer.id, needer.argNames)
+				if (getCode !== undefined) lines.push(`	${needer.name} = ${getCode}`)
+				const extraCode = needer.need.generateExtra(needer.x, needer.y, needer.id, needer.argNames)
+				if (extraCode !== undefined) lines.push(`	${extraCode}`)
+				
 			}
 		}
 		lines.push(`}`)
@@ -196,7 +197,7 @@ const JAVASCRIPT = {}
 		if (name == "_Sand") print(template)
 	
 		const code = buildTemplate(template)
-		//if (name == "Sand") print(code)
+		if (name == "_Sand") print(code)
 		return code
 	}
 	

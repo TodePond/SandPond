@@ -20,13 +20,13 @@ given _ (element) => element === Empty
 
 given # (element) => element !== Empty && element !== Void
 
-keep . (atom) => print(atom)
+keep . () => print("keepin'")
 
 element _Sand {
 	colour "#FC0"
 	emissive "#ffa34d"
 	category "Testing"
-	
+	default true
 	@ => _
 	_    @
 	

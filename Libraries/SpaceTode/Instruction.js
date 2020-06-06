@@ -43,7 +43,6 @@ INSTRUCTION.make = (name, generate = () => "") => ({name, generate})
 				template,
 				chunk,
 				side: "input",
-				resultEnabled: true,
 			})
 			
 			processFunc ({
@@ -53,7 +52,6 @@ INSTRUCTION.make = (name, generate = () => "") => ({name, generate})
 				template,
 				chunk,
 				side: "input",
-				resultEnabled: true,
 			})
 			
 			processFunc ({
@@ -63,7 +61,6 @@ INSTRUCTION.make = (name, generate = () => "") => ({name, generate})
 				template,
 				chunk,
 				side: "output",
-				resultEnabled: true,
 			})
 			
 			processFunc ({
@@ -73,7 +70,6 @@ INSTRUCTION.make = (name, generate = () => "") => ({name, generate})
 				template,
 				chunk,
 				side: "output",
-				resultEnabled: true,
 			})
 		}
 		
@@ -83,42 +79,26 @@ INSTRUCTION.make = (name, generate = () => "") => ({name, generate})
 	//======//
 	// Func //
 	//======//
-	const processFunc = ({name, func, spot, template, chunk, side, resultEnabled=false}) => {
+	const processFunc = ({name, func, spot, template, chunk, side}) => {
 		if (func === undefined) return
 		const {x, y} = spot
 		const {head, cache} = template
 		
-		// Head
 		const id = head[name].pushUnique(func)
-		
-		// Params
+		const result = getResult(name)
 		const paramNames = getParamNames(func)
 		const params = paramNames.map(paramName => getParam(paramName))
-		
-		// Needs
-		const needs = []
-		for (const param of params) needs.pushUnique(...getNeeds(param))
-		
-		// Result
-		if (resultEnabled) {
-			const resultParamName = `${name}Result`
-			const result = getParam(resultParamName, true)
-			const resultNeeds = getNeeds(result)
-			const resultOtherNeeds = resultNeeds.without(result)
-			const resultIdParam = makeIdParam(result, id)
-			needs.pushUnique(...resultOtherNeeds, resultIdParam)
-		}
-		
-		// Needers
 		const argNames = params.map(param => getName(param, x, y))
+		
+		const idResult = makeIdResult(result, id, paramNames)
+		const needs = getNeeds(idResult)
 		const needers = needs.map(need => makeNeeder({need, x, y, id, argNames}))
 		for (const needer of needers) {
 			chunk[side].needers[needer.name] = needer
 		}
 		
-		// Cache
-		const needNames = needs.map(need => getName(need, x, y))
-		cache.pushUnique(...needNames)
+		const neederNames = needers.map(needer => needer.name)
+		cache.pushUnique(...neederNames)
 		
 	}
 	
@@ -150,11 +130,16 @@ INSTRUCTION.make = (name, generate = () => "") => ({name, generate})
 	//====================//
 	// Params - Functions //
 	//====================//
-	const getParam = (name, hidden=false) => {
-		let param = params[name]
-		if (param === undefined && hidden) param = hiddenParams[name]
+	const getParam = (name) => {
+		const param = PARAM[name]
 		if (param === undefined) throw new Error(`[SpaceTode] Unrecognised parameter: '${name}'`)
 		return param
+	}
+	
+	const getResult = (name) => {
+		const result = RESULT[name]
+		if (result === undefined) throw new Error(`[SpaceTode] No result found for param: '${name}'`)
+		return result
 	}
 	
 	const getName = (param, x, y) => {
@@ -195,48 +180,63 @@ INSTRUCTION.make = (name, generate = () => "") => ({name, generate})
 	//======================//
 	// Params - Definitions //
 	//======================//
-	const makeParam = ({name, type, needs = [], generate = () => ""}) => ({name, type, needNames: needs, generate})
+	const makeParam = ({
+		name,
+		type,
+		needNames = [],
+		generateGet = () => {},
+		generateExtra = () => {},
+		isCondition = false
+	}) => ({
+		name,
+		type,
+		needNames,
+		generateGet,
+		generateExtra,
+		isCondition,
+	})
+	
 	const PARAM_TYPE = {
 		ARG: Symbol("Arg"),
 		GLOBAL: Symbol("Global"),
 		LOCAL: Symbol("Local"),
 	}
 	
-	const params = {}
-	params.self = makeParam({name: "self", type: PARAM_TYPE.ARG})
-	params.origin = makeParam({name: "origin", type: PARAM_TYPE.ARG})
-	params.sites = makeParam({
+	const PARAM = {}
+	PARAM.self = makeParam({name: "self", type: PARAM_TYPE.ARG})
+	PARAM.origin = makeParam({name: "origin", type: PARAM_TYPE.ARG})
+	PARAM.sites = makeParam({
 		name: "sites",
 		type: PARAM_TYPE.GLOBAL, 
-		needs: ["origin"],
-		generate: () => `origin.sites`,
+		needNames: ["origin"],
+		generateGet: () => `origin.sites`,
 	})
 	
-	params.space = makeParam({
+	PARAM.space = makeParam({
 		name: "space",
 		type: PARAM_TYPE.LOCAL,
-		needs: ["sites"],
-		generate: (x, y) => {
+		needNames: ["sites"],
+		generateGet: (x, y) => {
 			const siteNumber = EVENTWINDOW.getSiteNumber(x, y, 0)
 			return `sites[${siteNumber}]`
 		},
 	})
 	
-	params.atom = makeParam({
+	PARAM.atom = makeParam({
 		name: "atom",
 		type: PARAM_TYPE.LOCAL,
-		needs: ["space"],
-		generate: (x, y) => {
+		needNames: ["space"],
+		generateGet: (x, y) => {
 			const spaceName = getLocalName("space", x, y)
 			return `${spaceName}.atom`
 		},
 	})
 	
-	params.element = makeParam({
+	PARAM.element = makeParam({
 		name: "element",
 		type: PARAM_TYPE.LOCAL,
-		needs: ["space"],
-		generate: (x, y) => {
+		needNames: ["space"],
+		generateGet: (x, y) => {
 			const spaceName = getLocalName("space", x, y)
 			return `${spaceName}.element`
 		},
@@ -245,61 +245,66 @@ INSTRUCTION.make = (name, generate = () => "") => ({name, generate})
 	//===============//
 	// Result Params //
 	//===============//
-	const hiddenParams = {}
-	hiddenParams.givenResult = makeParam({
-		name: "givenResult",
+	const RESULT = {}
+	RESULT.given = makeParam({
+		name: "given",
 		type: PARAM_TYPE.LOCAL,
-		generate: (x, y, id, args) => {
+		generateGet: (x, y, id, args) => {
 			const argsInner = args.join(", ")
 			return `given${id}(${argsInner})`
 		},
+		isCondition: true,
 	})
 	
-	hiddenParams.keepResult = makeParam({
-		name: "keepResult",
+	RESULT.keep = makeParam({
+		name: "keep",
 		type: PARAM_TYPE.LOCAL,
 		needs: [],
-		generate: (x, y, id, args) => {
+		generateExtra: (x, y, id, args) => {
 			const argsInner = args.join(", ")
 			return `keep${id}(${argsInner})`
 		},
 	})
 	
-	hiddenParams.checkResult = makeParam({
-		name: "checkResult",
+	RESULT.check = makeParam({
+		name: "check",
 		type: PARAM_TYPE.GLOBAL,
-		needs: [],
-		generate: (x, y, id, args) => {
+		needNames: [],
+		generateGet: (x, y, id, args) => {
 			const argsInner = args.join(", ")
 			return `check${id}(${argsInner})`
 		},
 	})
 	
-	hiddenParams.changeResult = makeParam({
-		name: "changeResult",
+	RESULT.change = makeParam({
+		name: "change",
 		type: PARAM_TYPE.LOCAL,
-		needs: ["space"],
-		generate: (x, y, id, args) => {
-			const spaceName = getLocalName("space", x, y)
+		needNames: ["space"],
+		generateGet: (x, y, id, args) => {
 			const argsInner = args.join(", ")
-			const lines = []
-			lines.push(`change${id}(${argsInner})`)
-			lines.push(`SPACE.setAtom(${spaceName}, ${changeResultName})`)
-			return lines.join("\n")
+			return `change${id}(${argsInner})`
 		},
+		generateExtra: (x, y, id, args, resultName) => {
+			const spaceName = getLocalName("space", x, y)
+			return `SPACE.setAtom(${spaceName}, ${resultName})`
+		}
 	})
 	
-	//===========//
-	// ID Params //
-	//===========//
-	const idParams = {}
-	const makeIdParam = (param, id) => {
-		if (param.name.slice(-"Result".length) !== "Result") throw new Error(`[SpaceTode] Can't make a result param from '${param.name}' because it doesn't end in 'Result'`)
-		const name = param.name.slice(0, -"Result".length) + id + "Result"
-		if (idParams.has(name)) return idParams[name]
-		const idParam = makeParam({name, type: param.type, needs: param.needs, generate: param.generate})
-		idParams[name] = idParam
-		return idParam
+	//============//
+	// ID Results //
+	//============//
+	const idResultsCache = {}
+	const makeIdResult = (result, id, paramNames) => {
+		const name = `${result.name}${id}Result`
+		if (idResultsCache.has(name)) return idResultsCache[name]
+		
+		const needNames = [...result.needNames]
+		needNames.pushUnique(...paramNames)
+		
+		const options = {...result, name, needNames}
+		const idResult = makeParam(options)
+		idResultsCache[name] = idResult
+		return idResult
 	}
 	
 }
