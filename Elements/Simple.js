@@ -16,21 +16,22 @@ change @ (self) => self
 
 change _ () => new Empty()
 given _ (element) => element === Empty
-//given _ (space) => space
 
 given # (element) => element !== Empty && element !== Void
 
-keep . () => print("keepin'")
+given .
+keep .
 
 element _Sand {
 	colour "#FC0"
 	emissive "#ffa34d"
 	category "Testing"
+	//default true
 	@ => _
 	_    @
 	
 	@     _
-	#_ => .@
+	._ => .@
 }
 
 element Sand  {
@@ -40,7 +41,7 @@ element Sand  {
 	prop state STATE.SOLID
 	
 	behave {
-		const behave = (origin, element, time, self = origin.atom) => {
+		const behave = (origin, selfElement, time, self = origin.atom) => {
 			const sites = origin.sites
 			const spaceBelow = sites[17]
 			const elementBelow = spaceBelow.element

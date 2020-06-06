@@ -92,10 +92,11 @@ INSTRUCTION.make = (name, generate = () => "") => ({name, generate})
 		
 		const idResult = makeIdResult(result, id, paramNames)
 		const needs = getNeeds(idResult)
-		const needers = needs.map(need => makeNeeder({need, x, y, id, argNames}))
+		const idResultName = getName(idResult, x, y)
+		const needers = needs.map(need => makeNeeder({need, x, y, id, argNames, idResultName}))
 		for (const needer of needers) {
 			chunk[side].needers[needer.name] = needer
-			if (needer.need.isCondition) chunk.condition.pushUnique(needer.n)
+			if (needer.need.isCondition) chunk.conditions.pushUnique(getName(needer.need, x, y))
 		}
 		
 		const neederGets = needers.filter(needer => needer.need.generateGet)
@@ -110,7 +111,7 @@ INSTRUCTION.make = (name, generate = () => "") => ({name, generate})
 	const makeEmptyChunk = () => ({
 		type: INSTRUCTION.TYPE.DIAGRAM,
 		input: {needers: {}},
-		condition: [],
+		conditions: [],
 		output: {needers: {}},
 	})
 	
@@ -125,9 +126,9 @@ INSTRUCTION.make = (name, generate = () => "") => ({name, generate})
 		return needs
 	}
 	
-	const makeNeeder = ({need, x, y, id, argNames}) => {
+	const makeNeeder = ({need, x, y, id, argNames, idResultName}) => {
 		const name = getName(need, x, y)
-		return {need, name, x, y, id, argNames}
+		return {need, name, x, y, id, argNames, idResultName}
 	}
 	
 	//====================//
@@ -207,6 +208,8 @@ INSTRUCTION.make = (name, generate = () => "") => ({name, generate})
 	
 	const PARAM = {}
 	PARAM.self = makeParam({name: "self", type: PARAM_TYPE.ARG})
+	PARAM.selfElement = makeParam({name: "selfElement", type: PARAM_TYPE.ARG})
+	PARAM.time = makeParam({name: "time", type: PARAM_TYPE.ARG})
 	PARAM.origin = makeParam({name: "origin", type: PARAM_TYPE.ARG})
 	PARAM.sites = makeParam({
 		name: "sites",
@@ -287,9 +290,9 @@ INSTRUCTION.make = (name, generate = () => "") => ({name, generate})
 			const argsInner = args.join(", ")
 			return `change${id}(${argsInner})`
 		},
-		generateExtra: (x, y, id, args, resultName) => {
+		generateExtra: (x, y, id, args, idResultName) => {
 			const spaceName = getLocalName("space", x, y)
-			return `SPACE.setAtom(${spaceName}, ${resultName})`
+			return `SPACE.setAtom(${spaceName}, ${idResultName})`
 		}
 	})
 	

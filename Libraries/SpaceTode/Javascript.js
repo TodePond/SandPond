@@ -122,25 +122,31 @@ const JAVASCRIPT = {}
 		lines.push("//======//")
 		lines.push("// MAIN //")
 		lines.push("//======//")
-		lines.push(`const behave = (origin, selfElement, self) => {`)
+		lines.push(`const behave = (origin, selfElement, time, self = selfElement.atom) => {`)
+		lines.push(`	let resolved = false`)
 		for (const chunk of template.main) {
 			lines.push("")
 			if (chunk.is(String)) {
 				lines.push(`	` + chunk)
 				continue
 			}
+			
+			lines.push(`	if (resolved === false) {`)
 			for (const needer of chunk.input.needers) {
-				const need = needer.need
-				if (need.generateGet) {
-					const getCode = need.generateGet(needer.x, needer.y, needer.id, needer.argNames)
-					lines.push(`	${needer.name} = ${getCode}`)
-				}
-				if (need.generateExtra) {
-					const extraCode = need.generateExtra(needer.x, needer.y, needer.id, needer.argNames)
-					lines.push(`	${extraCode}`)
-				}
-				
+				lines.push(...makeNeederLines(needer, `		`))
 			}
+			
+			const conditionInnerCode = chunk.conditions.join(" && ")
+			if (chunk.conditions.length === 0) lines.push(`		{`)
+			else lines.push(`		if (${conditionInnerCode}) {`)
+			
+			for (const needer of chunk.output.needers) {
+				lines.push(...makeNeederLines(needer, `			`))
+			}
+			
+			lines.push(`			resolved = true`)
+			lines.push(`		}`)
+			lines.push(`	}`)
 		}
 		lines.push(`}`)
 		lines.push(``)
@@ -148,6 +154,20 @@ const JAVASCRIPT = {}
 		
 		const code = lines.join("\n")
 		return code
+	}
+	
+	const makeNeederLines = (needer, indent) => {
+		const lines = []
+		const need = needer.need
+		if (need.generateGet) {
+			const getCode = need.generateGet(needer.x, needer.y, needer.id, needer.argNames, needer.idResultName)
+			lines.push(`${indent}${needer.name} = ${getCode}`)
+		}
+		if (need.generateExtra) {
+			const extraCode = need.generateExtra(needer.x, needer.y, needer.id, needer.argNames, needer.idResultName)
+			lines.push(`${indent}${extraCode}`)
+		}
+		return lines
 	}
 	
 	//================================//

@@ -174,10 +174,17 @@ UIstarted = true
 			#sourceBox {
 				font-family: UbuntuMono;
 				font-size: 18px;
-				overflow: auto;
+				overflow: scroll;
 				max-height: calc(100vh - 102px);
 				margin: 16px;
+				scrollbar-width: none;
+				-ms-overflow-style: none;
 			}
+			
+			#sourceBox::-webkit-scrollbar {
+				display: none;
+			}
+			
 			
 			.sourceType > .label {
 				font-size: 15px;
@@ -490,13 +497,17 @@ UIstarted = true
 	updateDropperHeightSlider()
 	
 	on.wheel(e => {
+		if (!$("#source").classList.contains("minimised")) {
+			orbit.enableZoom = false
+			return
+		}
+		
 		if (Keyboard.Alt) {
 			if (e.deltaY > 0) {
 				DROPPER_HEIGHT++
 			}
 			else if (e.deltaY < 0) {
 				DROPPER_HEIGHT--
-				
 			}
 			if (DROPPER_HEIGHT > MAX_Y) DROPPER_HEIGHT = MAX_Y
 			if (DROPPER_HEIGHT < 0) DROPPER_HEIGHT = 0
@@ -741,7 +752,10 @@ UIstarted = true
 			const name = id.slice(0, id.length - "Heading".length)
 			const window = windowContainer.$("#" + name)
 			if (window) window.classList.add("minimised")
-			if (oldHeading.id == "sourceHeading") orbit.enableZoom = true
+			if (oldHeading.id == "sourceHeading") {
+				orbit.enableZoom = true
+				//orbit.mouseButtons.MIDDLE = THREE.MOUSE.PAN
+			}
 		}
 		
 		if (newHeading) {
@@ -749,7 +763,10 @@ UIstarted = true
 			const name = id.slice(0, id.length - "Heading".length)
 			const window = windowContainer.$("#" + name)
 			if (window) window.classList.remove("minimised")
-			if (newHeading.id == "sourceHeading") orbit.enableZoom = false
+			if (newHeading.id == "sourceHeading") {
+				orbit.enableZoom = false
+				//orbit.mouseButtons.MIDDLE = undefined
+			}
 		}
 		
 	})
