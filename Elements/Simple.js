@@ -468,6 +468,7 @@ element Clay {
 		const FALL_TIME = 15
 		
 		const behave = (origin, element, time, self = origin.atom) => {
+			//print9(time)
 			/*let timeDiff = Math.round((time - self.stuckTime) * 255 / FALL_TIME)
 			if (timeDiff > 255) timeDiff = 255
 			self.colour.r = timeDiff
@@ -491,7 +492,7 @@ element Clay {
 					if (siteElement === Fire || siteElement == Lava) {
 						SPACE.setAtom(site, new Empty(), Empty)
 						const stone = new Stone()
-						stony.sticky = true
+						stone.sticky = true
 						SPACE.setAtom(origin, stone, Stone)
 						stone.stuck = true
 						return

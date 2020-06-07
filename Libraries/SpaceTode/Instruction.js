@@ -27,7 +27,7 @@ INSTRUCTION.make = (name, generate = () => "") => ({name, generate})
 
 	INSTRUCTION.TYPE.BEHAVE = INSTRUCTION.make("Behave", (template, behave) => {
 		const id = template.head.behave.push(behave) - 1
-		template.main.push(`behave${id}(origin, selfElement, self)`)
+		template.main.push(`behave${id}(origin, selfElement, time, self)`)
 	})
 	
 	INSTRUCTION.TYPE.DIAGRAM = INSTRUCTION.make("Diagram", (template, diagram) => {
