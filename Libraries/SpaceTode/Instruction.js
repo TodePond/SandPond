@@ -73,6 +73,16 @@ INSTRUCTION.make = (name, generate = () => "") => ({name, generate})
 			})
 		}
 		
+		// OPTIMISATION - remove redundant needers from output - because they are already in input
+		// should probably do this on the fly instead of retroactively doing it
+		// but this is sort of a patch that gets done afterwards
+		// makes it very easy to change its behaviour in the future
+		// if it was more embedded, it would be harder to adjust
+		for (const neederName in chunk.output.needers) {
+			const needer = chunk.output.needers[neederName]
+			if (chunk.input.needers.has(neederName)) delete chunk.output.needers[neederName]
+		}
+		
 		template.main.push(chunk)
 	})
 	
@@ -95,8 +105,8 @@ INSTRUCTION.make = (name, generate = () => "") => ({name, generate})
 		const idResultName = getName(idResult, x, y)
 		const needers = needs.map(need => makeNeeder({need, x, y, id, argNames, idResultName}))
 		for (const needer of needers) {
+			if (needer.need.isCondition) chunk.conditions.pushUnique(needer.name)
 			chunk[side].needers[needer.name] = needer
-			if (needer.need.isCondition) chunk.conditions.pushUnique(getName(needer.need, x, y))
 		}
 		
 		const neederGets = needers.filter(needer => needer.need.generateGet)
@@ -223,6 +233,7 @@ INSTRUCTION.make = (name, generate = () => "") => ({name, generate})
 		type: PARAM_TYPE.LOCAL,
 		needNames: ["sites"],
 		generateGet: (x, y) => {
+			if (x === 0 && y === 0) return "origin"
 			const siteNumber = EVENTWINDOW.getSiteNumber(x, y, 0)
 			return `sites[${siteNumber}]`
 		},

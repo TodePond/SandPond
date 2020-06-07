@@ -124,6 +124,7 @@ const JAVASCRIPT = {}
 		lines.push("//======//")
 		lines.push(`const behave = (origin, selfElement, time, self = selfElement.atom) => {`)
 		lines.push(`	let resolved = false`)
+		const alreadyGots = []
 		for (const chunk of template.main) {
 			lines.push("")
 			if (chunk.is(String)) {
@@ -133,7 +134,7 @@ const JAVASCRIPT = {}
 			
 			lines.push(`	if (resolved === false) {`)
 			for (const needer of chunk.input.needers) {
-				lines.push(...makeNeederLines(needer, `		`))
+				lines.push(...makeNeederLines(needer, `		`, alreadyGots, true))
 			}
 			
 			const conditionInnerCode = chunk.conditions.join(" && ")
@@ -141,7 +142,7 @@ const JAVASCRIPT = {}
 			else lines.push(`		if (${conditionInnerCode}) {`)
 			
 			for (const needer of chunk.output.needers) {
-				lines.push(...makeNeederLines(needer, `			`))
+				lines.push(...makeNeederLines(needer, `			`, alreadyGots, false))
 			}
 			
 			lines.push(`			resolved = true`)
@@ -156,12 +157,16 @@ const JAVASCRIPT = {}
 		return code
 	}
 	
-	const makeNeederLines = (needer, indent) => {
+	const makeNeederLines = (needer, indent, alreadyGots, cache = true) => {
 		const lines = []
 		const need = needer.need
-		if (need.generateGet) {
+		// alreadyGots is for some naive optimisation - removing redundant stuff
+		// but I'm holding fire on it for the moment, until some other stuff is sorted out
+		// so that I know what I'm dealing with
+		if (need.generateGet/* && !alreadyGots.includes(needer.name)*/) {
 			const getCode = need.generateGet(needer.x, needer.y, needer.id, needer.argNames, needer.idResultName)
 			lines.push(`${indent}${needer.name} = ${getCode}`)
+			if (cache) alreadyGots.push(needer.name)
 		}
 		if (need.generateExtra) {
 			const extraCode = need.generateExtra(needer.x, needer.y, needer.id, needer.argNames, needer.idResultName)
@@ -218,6 +223,14 @@ const JAVASCRIPT = {}
 			const value = instruction.value
 			type.generate(template, value)
 		}
+		
+		// OPTIMISATION - remove redundant needers from chunks - because they are in previous chunks
+		// note - just because a needer is in a previous chunk, it doesnt mean it will be processed
+		// eg: if it was part of the output (which maybe didn't happen)
+		// eg: if this chunk is an action, and the previous chunk was a rule that didn't get done
+		// eg: it was optimised away, eg: from a 'maybe' keyword?
+		// TODO
+		// WOAH WOAH wait, check notes before doing this. need to change the core structure of generated js first
 		
 		if (name == "_Sand") print(template)
 	
