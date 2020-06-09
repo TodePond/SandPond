@@ -1,28 +1,29 @@
-# Sandboys
-Sandboys are little atoms that follow simple rules.<br>
-Try it out [here](http://www.sandboys.land).<br>
-It's inspired by the [T2Tile project](https://t2tile.org/) and [SPLAT](https://github.com/DaveAckley/SPLAT).
+# SandPond
+SandPond is an engine for atoms that follow spatial rules.<br>
+Try it out at [www.sandpond.cool](http://www.sandpond.cool).<br>
+It is heavily inspired by Dave Ackley's [T2Tile Project](https://t2tile.org/).
 
-I post daily updates on my [Instagram](https://www.instagram.com/todepond/).
+For more info, check out my [videos](https://www.youtube.com/playlist?list=PL9uRa69RF-7wastqKWXT4d9F84BAzfVd4).<br>
+I post a new update every day on my [Instagram](https://www.instagram.com/todepond/) and [Twitter](https://twitter.com/todepond).<br>
+By the way, you can try out experimental changes at [dev.sandpond.cool](https://dev.sandpond.cool).
 
 ## Rules
-Sandboys follow simple rules, like this one:
+Atoms follow simple rules, like this one:
 ```
 @ => _
 _    @
 ```
-It makes an atom fall down if there's an empty space below it.<br>
+The `@` represents the atom.<br>
+The `_` represents an empty space.<br>
+So... the rule makes the atom fall down if there's an empty space below it.<br>
 
 ## Getting Started
-Just [download](https://github.com/l2wilson94/Sandboys/archive/master.zip) it and open `index.html` in a browser.<br>
-Or try out the [live demo](http://www.sandboys.land).
+Try it out at [www.sandpond.cool](http://www.sandpond.cool).<br>
+Or [download](https://github.com/l2wilson94/SandPond/archive/master.zip) it and open `index.html` in a browser.<br>
 
 ## Make your own element
-1. Write some TodeSplat using the `TodeSplat` function.
-2. Add your TodeSplat function or file to `index.html` in the same place as the other elements.
+1. Write some TodeSplat using the `TodeSplat` function.<br>
+Let me know if you want any help! :)
 
-To learn more, check out the [TodeSplat Documentation](https://github.com/l2wilson94/Sandboys/wiki/TodeSplat-Documentation).<br>
-Or check out the examples in the [Elements](https://github.com/l2wilson94/Sandboys/tree/master/Elements) folder.
-
-## To-do
-Check out my [to-do list](https://github.com/l2wilson94/Sandboys/wiki/Todo-List) to see what I'm working on.
+To learn more, check out the [TodeSplat Documentation](https://github.com/l2wilson94/SandPond/wiki/TodeSplat-Documentation) on the [wiki](https://github.com/l2wilson94/SandPond/wiki/).<br>
+Or check out the examples in the [Elements](https://github.com/l2wilson94/SandPond/tree/master/Elements) folder.
