@@ -112,7 +112,6 @@ INSTRUCTION.make = (name, generate = () => "") => ({name, generate})
 		const neederGets = needers.filter(needer => needer.need.generateGet)
 		const neederGetNames = neederGets.map(neederGet => neederGet.name)
 		cache.pushUnique(...neederGetNames)
-		
 	}
 	
 	//=======//

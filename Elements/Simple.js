@@ -26,12 +26,27 @@ element _Sand {
 	colour "#FC0"
 	emissive "#ffa34d"
 	category "Testing"
-	//default true
 	@ => _
 	_    @
 	
 	@     _
 	 _ =>  @
+}
+
+element _Forkbomb {
+	colour "grey"
+	emissive "black"
+	category "Testing"
+	//default true
+	change F () => new _Forkbomb()
+	@_ => .F
+	//_@ => F.
+	
+	@ => .
+	_    F
+	
+	//_    F
+	//@ => .
 }
 
 element Sand  {

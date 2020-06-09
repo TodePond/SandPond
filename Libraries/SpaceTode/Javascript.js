@@ -165,28 +165,37 @@ const JAVASCRIPT = {}
 			lines.push(`	if (${name}(origin, selfElement, time, self)) return`)
 		}*/
 		const alreadyGots = []
+		const startLines = []
+		const endLines = []
+		let margin = `	`
 		for (const chunk of template.main) {
-			lines.push("")
+			startLines.push(``)
 			if (chunk.is(String)) {
-				lines.push(`	` + chunk)
+				startLines.push(`${margin}` + chunk)
 				continue
 			}
 			
 			for (const needer of chunk.input.needers) {
-				lines.push(...makeNeederLines(needer, `	`, alreadyGots, true))
+				startLines.push(...makeNeederLines(needer, `${margin}`, alreadyGots, true))
 			}
 			
 			const conditionInnerCode = chunk.conditions.join(" && ")
-			if (chunk.conditions.length === 0) lines.push(`	{`)
-			else lines.push(`	if (${conditionInnerCode}) {`)
+			if (chunk.conditions.length === 0) startLines.push(`	{`)
+			else startLines.push(`${margin}if (!(${conditionInnerCode})) {`)
 			
+			const diagramEndLines = []
+			diagramEndLines.push(`${margin}	return`)
+			diagramEndLines.push(`${margin}}`)
 			for (const needer of chunk.output.needers) {
-				lines.push(...makeNeederLines(needer, `		`, alreadyGots, false))
+				diagramEndLines.push(...makeNeederLines(needer, `${margin}`, alreadyGots, false))
 			}
 			
-			lines.push(`		return`)
-			lines.push(`	}`)
+			endLines.push(...diagramEndLines.reversed)
+			margin += `	`
 		}
+		
+		lines.push(...startLines)
+		lines.push(...endLines.reversed)
 		
 		
 		lines.push(`}`)
