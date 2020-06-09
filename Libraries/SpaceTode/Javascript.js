@@ -232,10 +232,10 @@ const JAVASCRIPT = {}
 		// TODO
 		// WOAH WOAH wait, check notes before doing this. need to change the core structure of generated js first
 		
-		if (name == "_Sand") print(template)
+		//if (name == "_Sand") print(template)
 	
 		const code = buildTemplate(template)
-		if (name == "_Sand") print(code)
+		//if (name == "_Sand") print(code)
 		return code
 	}
 	

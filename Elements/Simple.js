@@ -455,6 +455,56 @@ element Laser {
 	}
 }
 
+element Plank {
+	
+	colour "#753d0c"
+	emissive "#753d0c"
+	//default true
+	category "Sandbox"
+	data bday undefined
+	
+	behave {
+		
+		let currentBday = performance.now()
+		
+		on.mousedown(e => {
+			if (e.buttons !== 1) return
+			if (UI.selectedElement === Plank) {
+				currentBday = performance.now()
+			}
+		})
+		
+		const behave = (origin, selfElement, time, self = origin.atom) => {
+			if (self.bday === undefined) self.bday = currentBday
+			if (Mouse.down && self.bday === currentBday) return
+			const sites = origin.sites
+			const space0_1 = sites[17]
+			const element0_1 = space0_1.element
+			if (element0_1 === Empty) {
+				for (const siteNum of siteNums) {
+					const spaceAbove = sites[siteNum.d9]
+					const elementAbove = spaceAbove.element
+					if (elementAbove !== selfElement) continue
+					const atomAbove = spaceAbove.atom
+					if (atomAbove.bday === self.bday) return
+				}
+				SPACE.setAtom(space0_1, self, selfElement)
+				SPACE.setAtom(origin, new Empty(), Empty)
+			}
+		}
+		
+		const siteNums = [
+			EVENTWINDOW.getSiteNumber(0, 1, 0),
+			EVENTWINDOW.getSiteNumber(1, 1, 0),
+			EVENTWINDOW.getSiteNumber(-1, 1, 0),
+			EVENTWINDOW.getSiteNumber(0, 1, 1),
+			EVENTWINDOW.getSiteNumber(0, 1, -1),
+		].d
+		
+		return behave
+	}
+}
+
 element Clay {
 	colour "brown"
 	category "Sandbox"
