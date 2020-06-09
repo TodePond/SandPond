@@ -156,3 +156,15 @@ Reflect.defineProperty(String.prototype, "map", {
 		return mappedString
 	},
 })
+
+/*========//
+// Object //
+//========*/
+// Breaks too much stuff
+/*Reflect.defineProperty(Object.prototype, "map", {
+	value(...args) {
+		const array = Object.values(this)
+		const mappedArray = array.map(...args)
+		return mappedArray
+	},
+})*/

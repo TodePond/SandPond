@@ -94,13 +94,13 @@ const JAVASCRIPT = {}
 		const lines = []
 		
 		// BUFFER
-		lines.push("//=======//")
+		/*lines.push("//=======//")
 		lines.push("// CACHE //")
 		lines.push("//=======//")
 		for (const name of template.cache) {
 			lines.push(`let ${name}`)
 		}
-		lines.push("")
+		lines.push("")*/
 		
 		// HEAD
 		lines.push("//======//")
@@ -118,12 +118,52 @@ const JAVASCRIPT = {}
 		}
 		lines.push("")
 		
+		// DIAGRAMS
+		/*lines.push("//==========//")
+		lines.push("// DIAGRAMS //")
+		lines.push("//==========//")
+		const alreadyGots = []
+		for (const i in template.main) {
+			const chunk = template.main[i]
+			if (chunk.is(String)) continue
+			
+			const name = `diagram${i}`
+			lines.push(`const ${name} = (origin, selfElement, time, self) => {`)
+			
+			for (const needer of chunk.input.needers) {
+				lines.push(...makeNeederLines(needer, `	`, alreadyGots, true))
+			}
+			
+			const conditionInnerCode = chunk.conditions.join(" && ")
+			if (chunk.conditions.length === 0) lines.push(`	{`)
+			else lines.push(`	if (${conditionInnerCode}) {`)
+			
+			for (const needer of chunk.output.needers) {
+				lines.push(...makeNeederLines(needer, `		`, alreadyGots, false))
+			}
+			
+			lines.push(`		return true`)
+			lines.push(`	}`)
+			lines.push(`	return false`)
+			lines.push(`}`)
+			lines.push(``)
+			const diagramCode = lines.join("\n")
+		}*/
+		
 		// MAIN
 		lines.push("//======//")
 		lines.push("// MAIN //")
 		lines.push("//======//")
 		lines.push(`const behave = (origin, selfElement, time, self = selfElement.atom) => {`)
-		lines.push(`	let resolved = false`)
+		/*for (const i in template.main) {
+			const chunk = template.main[i]
+			if (chunk.is(String)) {
+				lines.push(`	` + chunk)
+				continue
+			}
+			const name = `diagram${i}`
+			lines.push(`	if (${name}(origin, selfElement, time, self)) return`)
+		}*/
 		const alreadyGots = []
 		for (const chunk of template.main) {
 			lines.push("")
@@ -132,23 +172,23 @@ const JAVASCRIPT = {}
 				continue
 			}
 			
-			lines.push(`	if (resolved === false) {`)
 			for (const needer of chunk.input.needers) {
-				lines.push(...makeNeederLines(needer, `		`, alreadyGots, true))
+				lines.push(...makeNeederLines(needer, `	`, alreadyGots, true))
 			}
 			
 			const conditionInnerCode = chunk.conditions.join(" && ")
-			if (chunk.conditions.length === 0) lines.push(`		{`)
-			else lines.push(`		if (${conditionInnerCode}) {`)
+			if (chunk.conditions.length === 0) lines.push(`	{`)
+			else lines.push(`	if (${conditionInnerCode}) {`)
 			
 			for (const needer of chunk.output.needers) {
-				lines.push(...makeNeederLines(needer, `			`, alreadyGots, false))
+				lines.push(...makeNeederLines(needer, `		`, alreadyGots, false))
 			}
 			
-			lines.push(`			resolved = true`)
-			lines.push(`		}`)
+			lines.push(`		return`)
 			lines.push(`	}`)
 		}
+		
+		
 		lines.push(`}`)
 		lines.push(``)
 		lines.push(`return behave`)
@@ -160,12 +200,10 @@ const JAVASCRIPT = {}
 	const makeNeederLines = (needer, indent, alreadyGots, cache = true) => {
 		const lines = []
 		const need = needer.need
-		// alreadyGots is for some naive optimisation - removing redundant stuff
-		// but I'm holding fire on it for the moment, until some other stuff is sorted out
-		// so that I know what I'm dealing with
-		if (need.generateGet/* && !alreadyGots.includes(needer.name)*/) {
+		// OPTIMISATION - alreadyGots stops redundantly getting needs that I already got
+		if (need.generateGet && !alreadyGots.includes(needer.name)) {
 			const getCode = need.generateGet(needer.x, needer.y, needer.id, needer.argNames, needer.idResultName)
-			lines.push(`${indent}${needer.name} = ${getCode}`)
+			lines.push(`${indent}const ${needer.name} = ${getCode}`)
 			if (cache) alreadyGots.push(needer.name)
 		}
 		if (need.generateExtra) {
@@ -235,7 +273,7 @@ const JAVASCRIPT = {}
 		//if (name == "_Sand") print(template)
 	
 		const code = buildTemplate(template)
-		//if (name == "_Sand") print(code)
+		if (name == "_Sand") print(code)
 		return code
 	}
 	

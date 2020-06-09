@@ -31,7 +31,7 @@ element _Sand {
 	_    @
 	
 	@     _
-	._ => .@
+	 _ =>  @
 }
 
 element Sand  {
@@ -499,7 +499,7 @@ element Plank {
 			EVENTWINDOW.getSiteNumber(-1, 1, 0),
 			EVENTWINDOW.getSiteNumber(0, 1, 1),
 			EVENTWINDOW.getSiteNumber(0, 1, -1),
-		].d
+		]
 		
 		return behave
 	}
