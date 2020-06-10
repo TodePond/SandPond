@@ -2,14 +2,15 @@
 // Instruction //
 //=============//
 const POV = {}
-POV.TYPE = {
-	FRONT: Symbol("Front"),
-	BACK: Symbol("Back"),
-	RIGHT: Symbol("Right"),
-	LEFT: Symbol("Left"),
-	BOTTOM: Symbol("Bottom"),
-	TOP: Symbol("Top"),
-}
+POV.TYPE = {}
+POV.make = (name, mod) => ({name, mod})
+POV.TYPE.FRONT = POV.make("Front", (x, y, z) => [x, y, z])
+POV.TYPE.BACK = POV.make("Back", (x, y, z) => [-x, y, -z])
+POV.TYPE.RIGHT = POV.make("Right", (x, y, z) => [-z, y, -x])
+POV.TYPE.LEFT = POV.make("Left", (x, y, z) => [z, y, x])
+POV.TYPE.BOTTOM = POV.make("Bottom", (x, y, z) => [x, z, y])
+POV.TYPE.TOP = POV.make("Top", (x, y, z) => [x, z, -y])
+
 
 const INSTRUCTION = {}
 INSTRUCTION.TYPE = {}
@@ -29,20 +30,34 @@ INSTRUCTION.make = (name, generate = () => { throw new Error(`[SpaceTode] The ${
 		template.main.push(`behave${id}(origin, selfElement, time, self)`)
 	})
 	
-	INSTRUCTION.TYPE.NAKED = INSTRUCTION.make("NakedBlock", (template, value, instructions) => {
+	INSTRUCTION.TYPE.POV = INSTRUCTION.make("PointOfView", (template, pov, instructions, mods = []) => {
+		const povMods = [...mods, pov.mod]
 		for (let i = 0; i < instructions.length; i++) {
 			const instruction = instructions[i]
 			const type = instruction.type
 			if (type === INSTRUCTION.TYPE.BLOCK_END) return i + 1
 			const value = instruction.value
 			const tail = instructions.slice(i+1)
-			type.generate(template, value, tail)
+			type.generate(template, value, tail, povMods)
 		}
 	})
 	
-	INSTRUCTION.TYPE.DIAGRAM = INSTRUCTION.make("Diagram", (template, diagram) => {
+	INSTRUCTION.TYPE.NAKED = INSTRUCTION.make("NakedBlock", (template, v, instructions, mods = []) => {
+		for (let i = 0; i < instructions.length; i++) {
+			const instruction = instructions[i]
+			const type = instruction.type
+			if (type === INSTRUCTION.TYPE.BLOCK_END) return i + 1
+			const value = instruction.value
+			const tail = instructions.slice(i+1)
+			const jumps = type.generate(template, value, tail, mods)
+			if (jumps !== undefined) i += jumps
+		}
+	})
+	
+	INSTRUCTION.TYPE.DIAGRAM = INSTRUCTION.make("Diagram", (template, diagram, instructions, mods = []) => {
+		const moddedDiagram = modDiagram(diagram, mods)
 		const chunk = makeEmptyChunk()
-		for (const spot of diagram) {
+		for (const spot of moddedDiagram) {
 			const {given, check} = spot.input
 			const {change, keep} = spot.output
 			
@@ -95,6 +110,19 @@ INSTRUCTION.make = (name, generate = () => { throw new Error(`[SpaceTode] The ${
 		
 		template.main.push(chunk)
 	})
+	
+	const modDiagram = (diagram, mods) => {
+		const moddedDiagram = []
+		for (const spot of diagram) {
+			let {x, y, z} = spot
+			for (const mod of mods) {
+				[x, y, z] = mod(spot.x, spot.y, spot.z)
+			}
+			const moddedSpot = {...spot, x, y, z}
+			moddedDiagram.push(moddedSpot)
+		}
+		return moddedDiagram
+	}
 	
 	//======//
 	// Func //
@@ -197,7 +225,7 @@ INSTRUCTION.make = (name, generate = () => { throw new Error(`[SpaceTode] The ${
 	
 	const getLocalName = (name, x, y, z) => {
 		const xyz = `${x}${y}${z}`
-		return name + xyz.replace("-", "_")
+		return name + xyz.replace(/-/g, "_")
 	}
 	
 	//======================//
@@ -242,7 +270,7 @@ INSTRUCTION.make = (name, generate = () => { throw new Error(`[SpaceTode] The ${
 		type: PARAM_TYPE.LOCAL,
 		needNames: ["sites"],
 		generateGet: (x, y, z) => {
-			if (x === 0 && y === 0) return "origin"
+			if (x === 0 && y === 0 && z === 0) return "origin"
 			const siteNumber = EVENTWINDOW.getSiteNumber(x, y, z)
 			return `sites[${siteNumber}]`
 		},

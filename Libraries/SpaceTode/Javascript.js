@@ -239,7 +239,7 @@ const JAVASCRIPT = {}
 			const value = instruction.value
 			const tail = fullInstructions.slice(i+1)
 			const jumps = type.generate(template, value, tail)
-			if (jumps.is(Number)) i += jumps
+			if (jumps !== undefined) i += jumps
 		}
 		
 		// OPTIMISATION - remove redundant needers from chunks - because they are in previous chunks
@@ -253,7 +253,7 @@ const JAVASCRIPT = {}
 		//if (name == "_Sand") print(template)
 	
 		const code = buildTemplate(template)
-		if (name == "_Sand") print(code)
+		if (name == "_Forkbomb") print(code)
 		return code
 	}
 	

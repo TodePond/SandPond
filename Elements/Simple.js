@@ -28,11 +28,13 @@ element _Sand {
 	category "Testing"
 	//default true
 	
-	@ => _
-	_    @
-	
-	@     _
-	 _ =>  @
+	pov(top) {
+		@ => _
+		_    @
+		
+		@     _
+		 _ =>  @
+	}
 }
 
 element _Forkbomb {
@@ -42,13 +44,21 @@ element _Forkbomb {
 	//default true
 	change F () => new _Forkbomb()
 	@_ => .F
-	//_@ => F.
+	_@ => F.
+	
+	pov(top) {
+		@ => .
+		_    F
+		
+		_    F
+		@ => .
+	}
 	
 	@ => .
 	_    F
 	
-	//_    F
-	//@ => .
+	_    F
+	@ => .
 }
 
 element Sand  {
