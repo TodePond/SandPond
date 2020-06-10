@@ -5,19 +5,18 @@ const POV = {}
 POV.TYPE = {
 	FRONT: Symbol("Front"),
 	BACK: Symbol("Back"),
-	RIGHT: Symbol("Side"),
-	LEFT: Symbol("Right"),
+	RIGHT: Symbol("Right"),
+	LEFT: Symbol("Left"),
 	BOTTOM: Symbol("Bottom"),
 	TOP: Symbol("Top"),
 }
 
 const INSTRUCTION = {}
 INSTRUCTION.TYPE = {}
-INSTRUCTION.make = (name, generate = () => "") => ({name, generate})
+INSTRUCTION.make = (name, generate = () => { throw new Error(`[SpaceTode] The ${name} instruction is not supported yet`) }) => ({name, generate})
 
 {
-	INSTRUCTION.TYPE.BLOCK_END = INSTRUCTION.make("EndBlock")		
-	INSTRUCTION.TYPE.NAKED = INSTRUCTION.make("NakedBlock")
+	INSTRUCTION.TYPE.BLOCK_END = INSTRUCTION.make("EndBlock")
 	INSTRUCTION.TYPE.ANY = INSTRUCTION.make("AnyBlock")
 	INSTRUCTION.TYPE.FOR = INSTRUCTION.make("ForBlock")
 	INSTRUCTION.TYPE.MAYBE = INSTRUCTION.make("MaybeBlock")
@@ -28,6 +27,17 @@ INSTRUCTION.make = (name, generate = () => "") => ({name, generate})
 	INSTRUCTION.TYPE.BEHAVE = INSTRUCTION.make("Behave", (template, behave) => {
 		const id = template.head.behave.push(behave) - 1
 		template.main.push(`behave${id}(origin, selfElement, time, self)`)
+	})
+	
+	INSTRUCTION.TYPE.NAKED = INSTRUCTION.make("NakedBlock", (template, value, instructions) => {
+		for (let i = 0; i < instructions.length; i++) {
+			const instruction = instructions[i]
+			const type = instruction.type
+			if (type === INSTRUCTION.TYPE.BLOCK_END) return i + 1
+			const value = instruction.value
+			const tail = instructions.slice(i+1)
+			type.generate(template, value, tail)
+		}
 	})
 	
 	INSTRUCTION.TYPE.DIAGRAM = INSTRUCTION.make("Diagram", (template, diagram) => {
@@ -91,19 +101,19 @@ INSTRUCTION.make = (name, generate = () => "") => ({name, generate})
 	//======//
 	const processFunc = ({name, func, spot, template, chunk, side}) => {
 		if (func === undefined) return
-		const {x, y} = spot
+		const {x, y, z} = spot
 		const {head, cache} = template
 		
 		const id = head[name].pushUnique(func)
 		const result = getResult(name)
 		const paramNames = getParamNames(func)
 		const params = paramNames.map(paramName => getParam(paramName))
-		const argNames = params.map(param => getName(param, x, y))
+		const argNames = params.map(param => getName(param, x, y, z))
 		
 		const idResult = makeIdResult(result, id, paramNames)
 		const needs = getNeeds(idResult)
-		const idResultName = getName(idResult, x, y)
-		const needers = needs.map(need => makeNeeder({need, x, y, id, argNames, idResultName}))
+		const idResultName = getName(idResult, x, y, z)
+		const needers = needs.map(need => makeNeeder({need, x, y, z, id, argNames, idResultName}))
 		for (const needer of needers) {
 			if (needer.need.isCondition) chunk.conditions.pushUnique(needer.name)
 			chunk[side].needers[needer.name] = needer
@@ -135,9 +145,9 @@ INSTRUCTION.make = (name, generate = () => "") => ({name, generate})
 		return needs
 	}
 	
-	const makeNeeder = ({need, x, y, id, argNames, idResultName}) => {
-		const name = getName(need, x, y)
-		return {need, name, x, y, id, argNames, idResultName}
+	const makeNeeder = ({need, x, y, z, id, argNames, idResultName}) => {
+		const name = getName(need, x, y, z)
+		return {need, name, x, y, z, id, argNames, idResultName}
 	}
 	
 	//====================//
@@ -155,12 +165,12 @@ INSTRUCTION.make = (name, generate = () => "") => ({name, generate})
 		return result
 	}
 	
-	const getName = (param, x, y) => {
+	const getName = (param, x, y, z) => {
 		const type = param.type
 		let name = param.name
 		if (type === PARAM_TYPE.ARG) return name
 		if (type === PARAM_TYPE.GLOBAL) return name
-		if (type === PARAM_TYPE.LOCAL) return getLocalName(name, x, y)
+		if (type === PARAM_TYPE.LOCAL) return getLocalName(name, x, y, z)
 		throw new Error(`[SpaceTode] Unrecognised named param type: ${type}`)
 	}
 	
@@ -185,9 +195,9 @@ INSTRUCTION.make = (name, generate = () => "") => ({name, generate})
 		return paramNames
 	}
 	
-	const getLocalName = (name, x, y) => {
-		const xy = `${x}${y}`
-		return name + xy.replace("-", "_")
+	const getLocalName = (name, x, y, z) => {
+		const xyz = `${x}${y}${z}`
+		return name + xyz.replace("-", "_")
 	}
 	
 	//======================//
@@ -231,9 +241,9 @@ INSTRUCTION.make = (name, generate = () => "") => ({name, generate})
 		name: "space",
 		type: PARAM_TYPE.LOCAL,
 		needNames: ["sites"],
-		generateGet: (x, y) => {
+		generateGet: (x, y, z) => {
 			if (x === 0 && y === 0) return "origin"
-			const siteNumber = EVENTWINDOW.getSiteNumber(x, y, 0)
+			const siteNumber = EVENTWINDOW.getSiteNumber(x, y, z)
 			return `sites[${siteNumber}]`
 		},
 	})
@@ -242,8 +252,8 @@ INSTRUCTION.make = (name, generate = () => "") => ({name, generate})
 		name: "atom",
 		type: PARAM_TYPE.LOCAL,
 		needNames: ["space"],
-		generateGet: (x, y) => {
-			const spaceName = getLocalName("space", x, y)
+		generateGet: (x, y, z) => {
+			const spaceName = getLocalName("space", x, y, z)
 			return `${spaceName}.atom`
 		},
 	})
@@ -252,8 +262,8 @@ INSTRUCTION.make = (name, generate = () => "") => ({name, generate})
 		name: "element",
 		type: PARAM_TYPE.LOCAL,
 		needNames: ["space"],
-		generateGet: (x, y) => {
-			const spaceName = getLocalName("space", x, y)
+		generateGet: (x, y, z) => {
+			const spaceName = getLocalName("space", x, y, z)
 			return `${spaceName}.element`
 		},
 	})
@@ -265,7 +275,7 @@ INSTRUCTION.make = (name, generate = () => "") => ({name, generate})
 	RESULT.given = makeParam({
 		name: "given",
 		type: PARAM_TYPE.LOCAL,
-		generateGet: (x, y, id, args) => {
+		generateGet: (x, y, z, id, args) => {
 			const argsInner = args.join(", ")
 			return `given${id}(${argsInner})`
 		},
@@ -276,7 +286,7 @@ INSTRUCTION.make = (name, generate = () => "") => ({name, generate})
 		name: "keep",
 		type: PARAM_TYPE.LOCAL,
 		needs: [],
-		generateExtra: (x, y, id, args) => {
+		generateExtra: (x, y, z, id, args) => {
 			const argsInner = args.join(", ")
 			return `keep${id}(${argsInner})`
 		},
@@ -286,7 +296,7 @@ INSTRUCTION.make = (name, generate = () => "") => ({name, generate})
 		name: "check",
 		type: PARAM_TYPE.GLOBAL,
 		needNames: [],
-		generateGet: (x, y, id, args) => {
+		generateGet: (x, y, z, id, args) => {
 			const argsInner = args.join(", ")
 			return `check${id}(${argsInner})`
 		},
@@ -296,12 +306,12 @@ INSTRUCTION.make = (name, generate = () => "") => ({name, generate})
 		name: "change",
 		type: PARAM_TYPE.LOCAL,
 		needNames: ["space"],
-		generateGet: (x, y, id, args) => {
+		generateGet: (x, y, z, id, args) => {
 			const argsInner = args.join(", ")
 			return `change${id}(${argsInner})`
 		},
-		generateExtra: (x, y, id, args, idResultName) => {
-			const spaceName = getLocalName("space", x, y)
+		generateExtra: (x, y, z, id, args, idResultName) => {
+			const spaceName = getLocalName("space", x, y, z)
 			return `SPACE.setAtom(${spaceName}, ${idResultName})`
 		}
 	})

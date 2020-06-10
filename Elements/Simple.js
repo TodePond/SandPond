@@ -26,6 +26,8 @@ element _Sand {
 	colour "#FC0"
 	emissive "#ffa34d"
 	category "Testing"
+	//default true
+	
 	@ => _
 	_    @
 	
@@ -412,7 +414,7 @@ element DReg {
 	}
 }
 
-element Res any(xyz) {
+element Res /*any(xyz)*/ {
 	opacity 0.1
 	category "T2Tile"
 	prop state STATE.EFFECT

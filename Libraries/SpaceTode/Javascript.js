@@ -17,7 +17,7 @@ const JAVASCRIPT = {}
 	
 	show = (element) => {
 		print(element.name)
-		for (const instruction of element.instructions) print(instruction)
+		for (const instruction of element.instructions) print(instruction.type, instruction.value)
 	}
 	
 	// messy as hell
@@ -211,64 +211,35 @@ const JAVASCRIPT = {}
 		const need = needer.need
 		// OPTIMISATION - alreadyGots stops redundantly getting needs that I already got
 		if (need.generateGet && !alreadyGots.includes(needer.name)) {
-			const getCode = need.generateGet(needer.x, needer.y, needer.id, needer.argNames, needer.idResultName)
+			const getCode = need.generateGet(needer.x, needer.y, needer.z, needer.id, needer.argNames, needer.idResultName)
 			lines.push(`${indent}const ${needer.name} = ${getCode}`)
 			if (cache) alreadyGots.push(needer.name)
 		}
 		if (need.generateExtra) {
-			const extraCode = need.generateExtra(needer.x, needer.y, needer.id, needer.argNames, needer.idResultName)
+			const extraCode = need.generateExtra(needer.x, needer.y, needer.z, needer.id, needer.argNames, needer.idResultName)
 			lines.push(`${indent}${extraCode}`)
 		}
 		return lines
 	}
 	
-	//================================//
-	// Local Name Parsing (pointless) //
-	//================================//
-	const getLocalNamePosition = (name, need) => {
-		const head = need.name
-		const tail = name.slice(head.length)
-		const {x, y} = eatTailPosition(tail)
-		return {x, y}
-	}
-	
-	const eatTailPosition = (source) => {
-		let x = undefined
-		let y = undefined
-		let result = undefined
-		result = {source, number: x} = eatTailNumber(source)
-		result = {source, number: y} = eatTailNumber(source)
-		return {x, y}
-	}
-	
-	const eatTailNumber = (source) => {
-		if (source === "") return {source: ""}
-		let i = 0
-		let sign = 1
-		if (source[0] == "_") {
-			sign = -1
-			i++
-		}
-		const digit = source[i].as(Number)
-		i++
-		
-		const number = digit.as(Number) * sign
-		source = source.slice(i)
-		return {source, number}
-	}
-	
 	//========//
-	// behave //
+	// Behave //
 	//========//
 	const makeBehaveCode = (instructions, name) => {
 	
 		let template = makeEmptyTemplate()
+		
+		const blockStart = {type: INSTRUCTION.TYPE.NAKED, value: undefined}
+		const blockEnd = {type: INSTRUCTION.TYPE.BLOCK_END, value: undefined}
+		const fullInstructions = [blockStart, ...instructions, blockEnd]
 	
-		for (let i = 0; i < instructions.length; i++) {
-			const instruction = instructions[i]
+		for (let i = 0; i < fullInstructions.length; i++) {
+			const instruction = fullInstructions[i]
 			const type = instruction.type
 			const value = instruction.value
-			type.generate(template, value)
+			const tail = fullInstructions.slice(i+1)
+			const jumps = type.generate(template, value, tail)
+			if (jumps.is(Number)) i += jumps
 		}
 		
 		// OPTIMISATION - remove redundant needers from chunks - because they are in previous chunks

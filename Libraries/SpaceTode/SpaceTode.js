@@ -1232,7 +1232,7 @@
 					throw new Error(`[SpaceTode] Symbol '${rhsChar}' used on right-hand-side of diagram but doesn't have any right-hand-side parts, eg: change`)
 				}
 				
-				const space = {x, y, input, output}
+				const space = {x, y, z:0, input, output}
 				spaces.push(space)
 			}
 		}
