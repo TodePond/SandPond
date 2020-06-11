@@ -133,6 +133,8 @@ const JAVASCRIPT = {}
 		for (let i = 0; i < chunks.length; i++) {
 			const chunk = chunks[i]
 			startLines.push(``)
+			if (!chunk.isAction) startLines.push(`${margin}// Rule`)
+			else startLines.push(`${margin}// Action`)
 			if (chunk.is(String)) {
 				startLines.push(`${margin}` + chunk)
 				continue
@@ -147,17 +149,27 @@ const JAVASCRIPT = {}
 			else startLines.push(`${margin}if (!(${conditionInnerCode})) {`)
 			
 			const diagramEndLines = []
+			
 			diagramEndLines.push(`${margin}	return`)
 			diagramEndLines.push(`${margin}}`)
-			const afterActionAlreadyGots = [...alreadyGots]
+			const afterAlreadyGots = [...alreadyGots]
 			for (const needer of chunk.output.needers) {
-				diagramEndLines.push(...makeNeederLines(needer, `${margin}`, afterActionAlreadyGots, true))
+				diagramEndLines.push(...makeNeederLines(needer, `${margin}`, afterAlreadyGots, true))
 			}
 			
 			if (chunk.isAction) {
-				const [afterActionStartLines, afterActionEndLines] = makeChunksLines(chunks.slice(i+1), margin, afterActionAlreadyGots)
-				diagramEndLines.push(...afterActionStartLines)
-				diagramEndLines.push(...afterActionEndLines.reversed)
+				const [afterStartLines, afterEndLines] = makeChunksLines(chunks.slice(i+1), margin, afterAlreadyGots)
+				diagramEndLines.push(...afterStartLines)
+				diagramEndLines.push(...afterEndLines.reversed)
+			}
+			else {			
+				const tail = chunks.slice(i+1)
+				const tailActions = tail.filter(chunk => chunk.isAction)
+				if (tailActions[0] !== undefined) {
+					const [afterStartLines, afterEndLines] = makeChunksLines(tailActions, margin, afterAlreadyGots)
+					diagramEndLines.push(...afterStartLines)
+					diagramEndLines.push(...afterEndLines.reversed)
+				}
 			}
 			
 			endLines.push(...diagramEndLines.reversed)

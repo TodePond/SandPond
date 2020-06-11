@@ -44,22 +44,14 @@ element _Lava {
 	category "Testing"
 	//default true
 	
-	change F () => new Fire()
-	action {
-		_ => F
-		@    @
-	}
-	
+	change F () => new Fire()	
 	@ => _
 	_    @
 	
-	/*@     _
-	 _ =>  @*/
-	
-	/*action {
+	action {
 		_ => F
-		@    @
-	}*/
+		@    .
+	}
 }
 
 element _Forkbomb {
