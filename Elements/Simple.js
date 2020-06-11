@@ -28,13 +28,38 @@ element _Sand {
 	category "Testing"
 	//default true
 	
-	pov(top) {
-		@ => _
-		_    @
-		
+	@ => _
+	_    @
+	
+	pov(right) {
 		@     _
 		 _ =>  @
 	}
+}
+
+element _Lava {
+	opacity 0.5
+	colour "red"
+	emissive "darkred"
+	category "Testing"
+	//default true
+	
+	change F () => new Fire()
+	action {
+		_ => F
+		@    @
+	}
+	
+	@ => _
+	_    @
+	
+	/*@     _
+	 _ =>  @*/
+	
+	/*action {
+		_ => F
+		@    @
+	}*/
 }
 
 element _Forkbomb {
@@ -316,7 +341,7 @@ element Fire {
 		"lol",
 	][0]
 	emissive "red"
-	opacity 0.35
+	opacity 0.25
 	category "Sandbox"
 	prop state STATE.EFFECT
 	behave {

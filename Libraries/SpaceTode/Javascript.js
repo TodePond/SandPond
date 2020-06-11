@@ -93,15 +93,6 @@ const JAVASCRIPT = {}
 		
 		const lines = []
 		
-		// BUFFER
-		/*lines.push("//=======//")
-		lines.push("// CACHE //")
-		lines.push("//=======//")
-		for (const name of template.cache) {
-			lines.push(`let ${name}`)
-		}
-		lines.push("")*/
-		
 		// HEAD
 		lines.push("//======//")
 		lines.push("// HEAD //")
@@ -118,57 +109,29 @@ const JAVASCRIPT = {}
 		}
 		lines.push("")
 		
-		// DIAGRAMS
-		/*lines.push("//==========//")
-		lines.push("// DIAGRAMS //")
-		lines.push("//==========//")
-		const alreadyGots = []
-		for (const i in template.main) {
-			const chunk = template.main[i]
-			if (chunk.is(String)) continue
-			
-			const name = `diagram${i}`
-			lines.push(`const ${name} = (origin, selfElement, time, self) => {`)
-			
-			for (const needer of chunk.input.needers) {
-				lines.push(...makeNeederLines(needer, `	`, alreadyGots, true))
-			}
-			
-			const conditionInnerCode = chunk.conditions.join(" && ")
-			if (chunk.conditions.length === 0) lines.push(`	{`)
-			else lines.push(`	if (${conditionInnerCode}) {`)
-			
-			for (const needer of chunk.output.needers) {
-				lines.push(...makeNeederLines(needer, `		`, alreadyGots, false))
-			}
-			
-			lines.push(`		return true`)
-			lines.push(`	}`)
-			lines.push(`	return false`)
-			lines.push(`}`)
-			lines.push(``)
-			const diagramCode = lines.join("\n")
-		}*/
-		
 		// MAIN
 		lines.push("//======//")
 		lines.push("// MAIN //")
 		lines.push("//======//")
 		lines.push(`const behave = (origin, selfElement, time, self = selfElement.atom) => {`)
-		/*for (const i in template.main) {
-			const chunk = template.main[i]
-			if (chunk.is(String)) {
-				lines.push(`	` + chunk)
-				continue
-			}
-			const name = `diagram${i}`
-			lines.push(`	if (${name}(origin, selfElement, time, self)) return`)
-		}*/
-		const alreadyGots = []
+		const [startLines, endLines] = makeChunksLines(template.main, `	`, [])
+		
+		lines.push(...startLines)
+		lines.push(...endLines.reversed)
+		
+		lines.push(`}`)
+		lines.push(``)
+		lines.push(`return behave`)
+		
+		const code = lines.join("\n")
+		return code
+	}
+	
+	const makeChunksLines = (chunks, margin, alreadyGots) => {
 		const startLines = []
 		const endLines = []
-		let margin = `	`
-		for (const chunk of template.main) {
+		for (let i = 0; i < chunks.length; i++) {
+			const chunk = chunks[i]
 			startLines.push(``)
 			if (chunk.is(String)) {
 				startLines.push(`${margin}` + chunk)
@@ -186,24 +149,21 @@ const JAVASCRIPT = {}
 			const diagramEndLines = []
 			diagramEndLines.push(`${margin}	return`)
 			diagramEndLines.push(`${margin}}`)
+			const afterActionAlreadyGots = [...alreadyGots]
 			for (const needer of chunk.output.needers) {
-				diagramEndLines.push(...makeNeederLines(needer, `${margin}`, alreadyGots, false))
+				diagramEndLines.push(...makeNeederLines(needer, `${margin}`, afterActionAlreadyGots, true))
+			}
+			
+			if (chunk.isAction) {
+				const [afterActionStartLines, afterActionEndLines] = makeChunksLines(chunks.slice(i+1), margin, afterActionAlreadyGots)
+				diagramEndLines.push(...afterActionStartLines)
+				diagramEndLines.push(...afterActionEndLines.reversed)
 			}
 			
 			endLines.push(...diagramEndLines.reversed)
 			margin += `	`
 		}
-		
-		lines.push(...startLines)
-		lines.push(...endLines.reversed)
-		
-		
-		lines.push(`}`)
-		lines.push(``)
-		lines.push(`return behave`)
-		
-		const code = lines.join("\n")
-		return code
+		return [startLines, endLines]
 	}
 	
 	const makeNeederLines = (needer, indent, alreadyGots, cache = true) => {
@@ -242,18 +202,10 @@ const JAVASCRIPT = {}
 			if (jumps !== undefined) i += jumps
 		}
 		
-		// OPTIMISATION - remove redundant needers from chunks - because they are in previous chunks
-		// note - just because a needer is in a previous chunk, it doesnt mean it will be processed
-		// eg: if it was part of the output (which maybe didn't happen)
-		// eg: if this chunk is an action, and the previous chunk was a rule that didn't get done
-		// eg: it was optimised away, eg: from a 'maybe' keyword?
-		// TODO
-		// WOAH WOAH wait, check notes before doing this. need to change the core structure of generated js first
-		
 		//if (name == "_Sand") print(template)
 	
 		const code = buildTemplate(template)
-		if (name == "_Forkbomb") print(code)
+		if (name == "_Lava") print(code)
 		return code
 	}
 	

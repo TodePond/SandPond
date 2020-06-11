@@ -21,7 +21,6 @@ INSTRUCTION.make = (name, generate = () => { throw new Error(`[SpaceTode] The ${
 	INSTRUCTION.TYPE.ANY = INSTRUCTION.make("AnyBlock")
 	INSTRUCTION.TYPE.FOR = INSTRUCTION.make("ForBlock")
 	INSTRUCTION.TYPE.MAYBE = INSTRUCTION.make("MaybeBlock")
-	INSTRUCTION.TYPE.ACTION = INSTRUCTION.make("ActionBlock")
 	INSTRUCTION.TYPE.MIMIC = INSTRUCTION.make("Mimic")
 	INSTRUCTION.TYPE.POV = INSTRUCTION.make("PointOfView")
 
@@ -30,32 +29,44 @@ INSTRUCTION.make = (name, generate = () => { throw new Error(`[SpaceTode] The ${
 		template.main.push(`behave${id}(origin, selfElement, time, self)`)
 	})
 	
-	INSTRUCTION.TYPE.POV = INSTRUCTION.make("PointOfView", (template, pov, instructions, mods = []) => {
-		const povMods = [...mods, pov.mod]
+	INSTRUCTION.TYPE.ACTION = INSTRUCTION.make("ActionBlock", (template, v, instructions, spotMods = [], chunkMods = []) => {
+		const actionMods = [...chunkMods, (chunk) => chunk.isAction = true]
 		for (let i = 0; i < instructions.length; i++) {
 			const instruction = instructions[i]
 			const type = instruction.type
 			if (type === INSTRUCTION.TYPE.BLOCK_END) return i + 1
 			const value = instruction.value
 			const tail = instructions.slice(i+1)
-			type.generate(template, value, tail, povMods)
+			type.generate(template, value, tail, spotMods, actionMods)
 		}
 	})
 	
-	INSTRUCTION.TYPE.NAKED = INSTRUCTION.make("NakedBlock", (template, v, instructions, mods = []) => {
+	INSTRUCTION.TYPE.POV = INSTRUCTION.make("PointOfView", (template, pov, instructions, spotMods = [], chunkMods = []) => {
+		const povMods = [...spotMods, pov.mod]
 		for (let i = 0; i < instructions.length; i++) {
 			const instruction = instructions[i]
 			const type = instruction.type
 			if (type === INSTRUCTION.TYPE.BLOCK_END) return i + 1
 			const value = instruction.value
 			const tail = instructions.slice(i+1)
-			const jumps = type.generate(template, value, tail, mods)
+			type.generate(template, value, tail, povMods, chunkMods)
+		}
+	})
+	
+	INSTRUCTION.TYPE.NAKED = INSTRUCTION.make("NakedBlock", (template, v, instructions, spotMods = [], chunkMods = []) => {
+		for (let i = 0; i < instructions.length; i++) {
+			const instruction = instructions[i]
+			const type = instruction.type
+			if (type === INSTRUCTION.TYPE.BLOCK_END) return i + 1
+			const value = instruction.value
+			const tail = instructions.slice(i+1)
+			const jumps = type.generate(template, value, tail, spotMods, chunkMods)
 			if (jumps !== undefined) i += jumps
 		}
 	})
 	
-	INSTRUCTION.TYPE.DIAGRAM = INSTRUCTION.make("Diagram", (template, diagram, instructions, mods = []) => {
-		const moddedDiagram = modDiagram(diagram, mods)
+	INSTRUCTION.TYPE.DIAGRAM = INSTRUCTION.make("Diagram", (template, diagram, instructions, spotMods = [], chunkMods = []) => {
+		const moddedDiagram = modDiagram(diagram, spotMods)
 		const chunk = makeEmptyChunk()
 		for (const spot of moddedDiagram) {
 			const {given, check} = spot.input
@@ -108,20 +119,27 @@ INSTRUCTION.make = (name, generate = () => { throw new Error(`[SpaceTode] The ${
 			if (chunk.input.needers.has(neederName)) delete chunk.output.needers[neederName]
 		}
 		
+		modChunk(chunk, chunkMods)
 		template.main.push(chunk)
 	})
 	
-	const modDiagram = (diagram, mods) => {
+	const modDiagram = (diagram, spotMods) => {
 		const moddedDiagram = []
 		for (const spot of diagram) {
 			let {x, y, z} = spot
-			for (const mod of mods) {
+			for (const mod of spotMods) {
 				[x, y, z] = mod(spot.x, spot.y, spot.z)
 			}
 			const moddedSpot = {...spot, x, y, z}
 			moddedDiagram.push(moddedSpot)
 		}
 		return moddedDiagram
+	}
+	
+	const modChunk = (chunk, mods) => {
+		for (const mod of mods) {
+			mod(chunk)
+		}
 	}
 	
 	//======//
