@@ -18,7 +18,6 @@ INSTRUCTION.make = (name, generate = () => { throw new Error(`[SpaceTode] The ${
 
 {
 	INSTRUCTION.TYPE.BLOCK_END = INSTRUCTION.make("EndBlock")
-	INSTRUCTION.TYPE.ANY = INSTRUCTION.make("AnyBlock")
 	INSTRUCTION.TYPE.FOR = INSTRUCTION.make("ForBlock")
 	INSTRUCTION.TYPE.MAYBE = INSTRUCTION.make("MaybeBlock")
 	INSTRUCTION.TYPE.MIMIC = INSTRUCTION.make("Mimic")
@@ -27,6 +26,18 @@ INSTRUCTION.make = (name, generate = () => { throw new Error(`[SpaceTode] The ${
 	INSTRUCTION.TYPE.BEHAVE = INSTRUCTION.make("Behave", (template, behave) => {
 		const id = template.head.behave.push(behave) - 1
 		template.main.push(`behave${id}(origin, selfElement, time, self)`)
+	})
+	
+	// Placeholder - does nothing
+	INSTRUCTION.TYPE.ANY = INSTRUCTION.make("AnyBlock", (template, v, instructions, spotMods = [], chunkMods = []) => {
+		for (let i = 0; i < instructions.length; i++) {
+			const instruction = instructions[i]
+			const type = instruction.type
+			if (type === INSTRUCTION.TYPE.BLOCK_END) return i + 1
+			const value = instruction.value
+			const tail = instructions.slice(i+1)
+			type.generate(template, value, tail, spotMods, chunkMods)
+		}
 	})
 	
 	INSTRUCTION.TYPE.ACTION = INSTRUCTION.make("ActionBlock", (template, v, instructions, spotMods = [], chunkMods = []) => {

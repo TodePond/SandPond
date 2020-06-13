@@ -118,45 +118,6 @@ Number.prototype.to = function(target) {
 	return array
 }
 
-/*=====//
-// Set //
-//=====*/
-Reflect.defineProperty(Set.prototype, "first", {
-	get() {
-		return this.values().first
-	}
-})
-
-Reflect.defineProperty(Set.prototype, "last", {
-	get() {
-		return this.values().last
-	}
-})
-
-Reflect.defineProperty(Set.prototype, "reversed", {
-	get() {
-		return this.values().reversed
-	}
-})
-
-Reflect.defineProperty(Set.prototype, "length", {
-	get() {
-		return this.size
-	},
-})
-
-/*========//
-// String //
-//========*/
-Reflect.defineProperty(String.prototype, "map", {
-	value(...args) {
-		const array = this.split("")
-		const mappedArray = array.map(...args)
-		const mappedString = mappedArray.join("")
-		return mappedString
-	},
-})
-
 /*========//
 // Object //
 //========*/

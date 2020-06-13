@@ -9,3 +9,12 @@ Reflect.defineProperty(String.prototype, "map", {
 		return mappedString
 	},
 })
+
+Reflect.defineProperty(String.prototype, "filter", {
+	value(...args) {
+		const array = this.split("")
+		const filteredArray = array.filter(...args)
+		const filteredString = filteredArray.join("")
+		return filteredString
+	},
+})
