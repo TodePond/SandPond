@@ -68,7 +68,7 @@ const JAVASCRIPT = {}
 	//==========//
 	// Template //
 	//==========//
-	const makeEmptyTemplate = () => ({
+	JAVASCRIPT.makeEmptyTemplate = () => ({
 	
 		// Head contains stores of global functions that we need
 		head: {
@@ -133,8 +133,7 @@ const JAVASCRIPT = {}
 		for (let i = 0; i < chunks.length; i++) {
 			const chunk = chunks[i]
 			startLines.push(``)
-			if (!chunk.isAction) startLines.push(`${margin}// Rule`)
-			else startLines.push(`${margin}// Action`)
+			startLines.push(`${margin}// Diagram`)
 			if (chunk.is(String)) {
 				startLines.push(`${margin}` + chunk)
 				continue
@@ -157,20 +156,24 @@ const JAVASCRIPT = {}
 				diagramEndLines.push(...makeNeederLines(needer, `${margin}`, afterAlreadyGots, true))
 			}
 			
-			if (chunk.isAction) {
-				const [afterStartLines, afterEndLines] = makeChunksLines(chunks.slice(i+1), margin, afterAlreadyGots)
+			// Do other diagrams after this action
+			if (chunk.isInAction) {
+				const tail = chunks.slice(i+1).filter(c => c.actionId !== chunk.actionId)
+				const [afterStartLines, afterEndLines] = makeChunksLines(tail, margin, afterAlreadyGots)
 				diagramEndLines.push(...afterStartLines)
 				diagramEndLines.push(...afterEndLines.reversed)
 			}
-			else {			
+			
+			// Do actions after this non-action diagram
+			/*else {			
 				const tail = chunks.slice(i+1)
-				const tailActions = tail.filter(chunk => chunk.isAction)
+				const tailActions = tail.filter(chunk => chunk.isInAction)
 				if (tailActions[0] !== undefined) {
 					const [afterStartLines, afterEndLines] = makeChunksLines(tailActions, margin, afterAlreadyGots)
 					diagramEndLines.push(...afterStartLines)
 					diagramEndLines.push(...afterEndLines.reversed)
 				}
-			}
+			}*/
 			
 			endLines.push(...diagramEndLines.reversed)
 			margin += `	`
@@ -199,7 +202,7 @@ const JAVASCRIPT = {}
 	//========//
 	const makeBehaveCode = (instructions, name) => {
 	
-		let template = makeEmptyTemplate()
+		let template = JAVASCRIPT.makeEmptyTemplate()
 		
 		const blockStart = {type: INSTRUCTION.TYPE.NAKED, value: undefined}
 		const blockEnd = {type: INSTRUCTION.TYPE.BLOCK_END, value: undefined}

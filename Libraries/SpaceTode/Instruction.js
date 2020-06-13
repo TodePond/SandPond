@@ -30,7 +30,11 @@ INSTRUCTION.make = (name, generate = () => { throw new Error(`[SpaceTode] The ${
 	})
 	
 	INSTRUCTION.TYPE.ACTION = INSTRUCTION.make("ActionBlock", (template, v, instructions, spotMods = [], chunkMods = []) => {
-		const actionMods = [...chunkMods, (chunk) => chunk.isAction = true]
+		const actionId = Symbol("ActionId")
+		const actionMods = [...chunkMods, (chunk) => {
+			chunk.isInAction = true
+			chunk.actionId = actionId
+		}]
 		for (let i = 0; i < instructions.length; i++) {
 			const instruction = instructions[i]
 			const type = instruction.type

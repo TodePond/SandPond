@@ -44,14 +44,19 @@ element _Lava {
 	category "Testing"
 	//default true
 	
-	change F () => new Fire()	
-	@ => _
-	_    @
+	change F () => new Fire()
+	change S () => new Slime()
 	
 	action {
+		_ => S
+		@    .
+		
 		_ => F
 		@    .
 	}
+	
+	@ => _
+	_    @
 }
 
 element _Forkbomb {
