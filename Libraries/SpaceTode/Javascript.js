@@ -133,7 +133,7 @@ const JAVASCRIPT = {}
 		for (let i = 0; i < chunks.length; i++) {
 			const chunk = chunks[i]
 			startLines.push(``)
-			startLines.push(`${margin}// Diagram`)
+			//startLines.push(`${margin}// Diagram`)
 			if (chunk.is(String)) {
 				startLines.push(`${margin}` + chunk)
 				continue
@@ -186,12 +186,12 @@ const JAVASCRIPT = {}
 		const need = needer.need
 		// OPTIMISATION - alreadyGots stops redundantly getting needs that I already got
 		if (need.generateGet && !alreadyGots.includes(needer.name)) {
-			const getCode = need.generateGet(needer.x, needer.y, needer.z, needer.id, needer.argNames, needer.idResultName)
+			const getCode = need.generateGet(needer.x, needer.y, needer.z, needer.symmetry, needer.id, needer.argNames, needer.idResultName, needer.symmetry)
 			if (getCode !== undefined) lines.push(`${indent}const ${needer.name} = ${getCode}`)
 			if (cache) alreadyGots.push(needer.name)
 		}
 		if (need.generateExtra) {
-			const extraCode = need.generateExtra(needer.x, needer.y, needer.z, needer.id, needer.argNames, needer.idResultName)
+			const extraCode = need.generateExtra(needer.x, needer.y, needer.z, needer.symmetry, needer.id, needer.argNames, needer.idResultName)
 			if (extraCode !== undefined) lines.push(`${indent}${extraCode}`)
 		}
 		return lines

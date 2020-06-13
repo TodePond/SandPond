@@ -101,6 +101,7 @@ INSTRUCTION.make = (name, generate = () => { throw new Error(`[SpaceTode] The ${
 				template,
 				chunk,
 				side: "input",
+				symmetry,
 			})
 			
 			processFunc ({
@@ -110,6 +111,7 @@ INSTRUCTION.make = (name, generate = () => { throw new Error(`[SpaceTode] The ${
 				template,
 				chunk,
 				side: "input",
+				symmetry,
 			})
 			
 			processFunc ({
@@ -119,6 +121,7 @@ INSTRUCTION.make = (name, generate = () => { throw new Error(`[SpaceTode] The ${
 				template,
 				chunk,
 				side: "output",
+				symmetry,
 			})
 			
 			processFunc ({
@@ -128,6 +131,7 @@ INSTRUCTION.make = (name, generate = () => { throw new Error(`[SpaceTode] The ${
 				template,
 				chunk,
 				side: "output",
+				symmetry,
 			})
 		}
 		
@@ -164,8 +168,9 @@ INSTRUCTION.make = (name, generate = () => { throw new Error(`[SpaceTode] The ${
 	//======//
 	// Func //
 	//======//
-	const processFunc = ({name, func, spot, template, chunk, side}) => {
+	const processFunc = ({name, func, spot, template, chunk, side, symmetry}) => {
 		if (func === undefined) return
+		
 		const {x, y, z} = spot
 		const {head, cache} = template
 		
@@ -173,12 +178,12 @@ INSTRUCTION.make = (name, generate = () => { throw new Error(`[SpaceTode] The ${
 		const result = getResult(name)
 		const paramNames = getParamNames(func)
 		const params = paramNames.map(paramName => getParam(paramName))
-		const argNames = params.map(param => getName(param, x, y, z))
+		const argNames = params.map(param => getName(param, x, y, z, symmetry))
 		
 		const idResult = makeIdResult(result, id, paramNames)
 		const needs = getNeeds(idResult)
-		const idResultName = getName(idResult, x, y, z)
-		const needers = needs.map(need => makeNeeder({need, x, y, z, id, argNames, idResultName}))
+		const idResultName = getName(idResult, x, y, z, symmetry)
+		const needers = needs.map(need => makeNeeder({need, x, y, z, symmetry, id, argNames, idResultName}))
 		for (const needer of needers) {
 			if (needer.need.isCondition) chunk.conditions.pushUnique(needer.name)
 			chunk[side].needers[needer.name] = needer
@@ -206,13 +211,13 @@ INSTRUCTION.make = (name, generate = () => { throw new Error(`[SpaceTode] The ${
 		const needs = []
 		const otherNeeds = param.needNames.map(needName => getParam(needName))
 		for (const otherNeed of otherNeeds) needs.pushUnique(...getNeeds(otherNeed))
-		if (param.type !== PARAM_TYPE.ARG) needs.pushUnique(param)
+		if (param.type !== NEED_TYPE.ARG) needs.pushUnique(param)
 		return needs
 	}
 	
-	const makeNeeder = ({need, x, y, z, id, argNames, idResultName}) => {
-		const name = getName(need, x, y, z)
-		return {need, name, x, y, z, id, argNames, idResultName}
+	const makeNeeder = ({need, x, y, z, id, symmetry, argNames, idResultName}) => {
+		const name = getName(need, x, y, z, symmetry)
+		return {need, name, x, y, z, symmetry, id, argNames, idResultName}
 	}
 	
 	//====================//
@@ -230,12 +235,13 @@ INSTRUCTION.make = (name, generate = () => { throw new Error(`[SpaceTode] The ${
 		return result
 	}
 	
-	const getName = (param, x, y, z) => {
+	const getName = (param, x, y, z, symmetry) => {
 		const type = param.type
 		let name = param.name
-		if (type === PARAM_TYPE.ARG) return name
-		if (type === PARAM_TYPE.GLOBAL) return name
-		if (type === PARAM_TYPE.LOCAL) return getLocalName(name, x, y, z)
+		if (type === NEED_TYPE.ARG) return name
+		if (type === NEED_TYPE.GLOBAL) return name
+		if (type === NEED_TYPE.SYMMETRY) return getSymmetryName(name, symmetry)
+		if (type === NEED_TYPE.LOCAL) return getLocalName(name, x, y, z, symmetry)
 		throw new Error(`[SpaceTode] Unrecognised named param type: ${type}`)
 	}
 	
@@ -260,15 +266,21 @@ INSTRUCTION.make = (name, generate = () => { throw new Error(`[SpaceTode] The ${
 		return paramNames
 	}
 	
-	const getLocalName = (name, x, y, z) => {
-		const xyz = `${x}${y}${z}`
-		return name + xyz.replace(/-/g, "_")
+	const getSymmetryName = (name, symmetry) => {
+		const symmetryTail = symmetry !== undefined? "Symm" + symmetry.name : ""
+		return name + symmetryTail
+	}
+	
+	const getLocalName = (name, x, y, z, symmetry) => {
+		const xyzTail = `${x}${y}${z}`
+		const symmetryTail = symmetry !== undefined? "Symm" + symmetry.name : ""
+		return name + xyzTail.replace(/-/g, "_") + symmetryTail
 	}
 	
 	//======================//
 	// Params - Definitions //
 	//======================//
-	const makeParam = ({
+	const makeNeed = ({
 		name,
 		type,
 		needNames = [],
@@ -284,62 +296,78 @@ INSTRUCTION.make = (name, generate = () => { throw new Error(`[SpaceTode] The ${
 		isCondition,
 	})
 	
-	const PARAM_TYPE = {
+	const NEED_TYPE = {
 		ARG: Symbol("Arg"),
 		GLOBAL: Symbol("Global"),
+		SYMMETRY: Symbol("Symmetry"),
 		LOCAL: Symbol("Local"),
 	}
 	
 	const PARAM = {}
-	PARAM.self = makeParam({name: "self", type: PARAM_TYPE.ARG})
-	PARAM.selfElement = makeParam({name: "selfElement", type: PARAM_TYPE.ARG})
-	PARAM.time = makeParam({name: "time", type: PARAM_TYPE.ARG})
-	PARAM.origin = makeParam({name: "origin", type: PARAM_TYPE.ARG})
-	PARAM.sites = makeParam({
+	PARAM.self = makeNeed({name: "self", type: NEED_TYPE.ARG})
+	PARAM.selfElement = makeNeed({name: "selfElement", type: NEED_TYPE.ARG})
+	PARAM.time = makeNeed({name: "time", type: NEED_TYPE.ARG})
+	PARAM.origin = makeNeed({name: "origin", type: NEED_TYPE.ARG})
+	PARAM.sites = makeNeed({
 		name: "sites",
-		type: PARAM_TYPE.GLOBAL, 
+		type: NEED_TYPE.GLOBAL, 
 		needNames: ["origin"],
 		generateGet: () => `origin.sites`,
 	})
 	
-	PARAM.siteNumber = makeParam({
-		name: "siteNumber",
-		type: PARAM_TYPE.LOCAL,
+	PARAM.symmetryNumber = makeNeed({
+		name: "symmetryNumber",
+		type: NEED_TYPE.SYMMETRY,
 		needNames: [],
-		generateGet: (x, y, z) => {
+		generateGet: (x, y, z, symmetry) => {
+			if (symmetry === undefined) return undefined
+			return `"lol"`
+		}
+	})
+	
+	PARAM.siteNumber = makeNeed({
+		name: "siteNumber",
+		type: NEED_TYPE.LOCAL,
+		needNames: ["symmetryNumber"],
+		generateGet: (x, y, z, symmetry) => {
 			if (x === 0 && y === 0 && z === 0) return undefined
+			if (symmetry === undefined) return undefined
 			const siteNumber = EVENTWINDOW.getSiteNumber(x, y, z)
 			return `${siteNumber}`
 		},
 	})
 	
-	PARAM.space = makeParam({
+	PARAM.space = makeNeed({
 		name: "space",
-		type: PARAM_TYPE.LOCAL,
+		type: NEED_TYPE.LOCAL,
 		needNames: ["sites", "siteNumber"],
-		generateGet: (x, y, z) => {
+		generateGet: (x, y, z, symmetry) => {
 			if (x === 0 && y === 0 && z === 0) return "origin"
-			const siteNumberName = getLocalName("siteNumber", x, y, z)
+			if (symmetry === undefined) {
+				const siteNumber = EVENTWINDOW.getSiteNumber(x, y, z)
+				return `sites[${siteNumber}]`
+			}
+			const siteNumberName = getLocalName("siteNumber", x, y, z, symmetry)
 			return `sites[${siteNumberName}]`
 		},
 	})
 	
-	PARAM.atom = makeParam({
+	PARAM.atom = makeNeed({
 		name: "atom",
-		type: PARAM_TYPE.LOCAL,
+		type: NEED_TYPE.LOCAL,
 		needNames: ["space"],
-		generateGet: (x, y, z) => {
-			const spaceName = getLocalName("space", x, y, z)
+		generateGet: (x, y, z, symmetry) => {
+			const spaceName = getLocalName("space", x, y, z, symmetry)
 			return `${spaceName}.atom`
 		},
 	})
 	
-	PARAM.element = makeParam({
+	PARAM.element = makeNeed({
 		name: "element",
-		type: PARAM_TYPE.LOCAL,
+		type: NEED_TYPE.LOCAL,
 		needNames: ["space"],
-		generateGet: (x, y, z) => {
-			const spaceName = getLocalName("space", x, y, z)
+		generateGet: (x, y, z, symmetry) => {
+			const spaceName = getLocalName("space", x, y, z, symmetry)
 			return `${spaceName}.element`
 		},
 	})
@@ -348,46 +376,46 @@ INSTRUCTION.make = (name, generate = () => { throw new Error(`[SpaceTode] The ${
 	// Result Params //
 	//===============//
 	const RESULT = {}
-	RESULT.given = makeParam({
+	RESULT.given = makeNeed({
 		name: "given",
-		type: PARAM_TYPE.LOCAL,
-		generateGet: (x, y, z, id, args) => {
+		type: NEED_TYPE.LOCAL,
+		generateGet: (x, y, z, symmetry, id, args) => {
 			const argsInner = args.join(", ")
 			return `given${id}(${argsInner})`
 		},
 		isCondition: true,
 	})
 	
-	RESULT.keep = makeParam({
+	RESULT.keep = makeNeed({
 		name: "keep",
-		type: PARAM_TYPE.LOCAL,
+		type: NEED_TYPE.LOCAL,
 		needs: [],
-		generateExtra: (x, y, z, id, args) => {
+		generateExtra: (x, y, z, symmetry, id, args) => {
 			const argsInner = args.join(", ")
 			return `keep${id}(${argsInner})`
 		},
 	})
 	
-	RESULT.check = makeParam({
+	RESULT.check = makeNeed({
 		name: "check",
-		type: PARAM_TYPE.GLOBAL,
+		type: NEED_TYPE.GLOBAL,
 		needNames: [],
-		generateGet: (x, y, z, id, args) => {
+		generateGet: (x, y, z, symmetry, id, args) => {
 			const argsInner = args.join(", ")
 			return `check${id}(${argsInner})`
 		},
 	})
 	
-	RESULT.change = makeParam({
+	RESULT.change = makeNeed({
 		name: "change",
-		type: PARAM_TYPE.LOCAL,
+		type: NEED_TYPE.LOCAL,
 		needNames: ["space"],
-		generateGet: (x, y, z, id, args) => {
+		generateGet: (x, y, z, symmetry, id, args) => {
 			const argsInner = args.join(", ")
 			return `change${id}(${argsInner})`
 		},
-		generateExtra: (x, y, z, id, args, idResultName) => {
-			const spaceName = getLocalName("space", x, y, z)
+		generateExtra: (x, y, z, symmetry, id, args, idResultName) => {
+			const spaceName = getLocalName("space", x, y, z, symmetry)
 			return `SPACE.setAtom(${spaceName}, ${idResultName})`
 		}
 	})
@@ -404,10 +432,18 @@ INSTRUCTION.make = (name, generate = () => { throw new Error(`[SpaceTode] The ${
 		needNames.pushUnique(...paramNames)
 		
 		const options = {...result, name, needNames}
-		const idResult = makeParam(options)
+		const idResult = makeNeed(options)
 		idResultsCache[name] = idResult
 		return idResult
 	}
+	
+	//===============//
+	// Symmetry Need //
+	//===============//
+	/*const makeSymmetryNeed = (need, symmetry) => {
+		const name = `${need.name}Symmetry${symmetry.name}`.d
+		makeNeed()
+	}*/
 	
 }
 
