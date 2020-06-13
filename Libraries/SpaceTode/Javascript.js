@@ -165,7 +165,7 @@ const JAVASCRIPT = {}
 			}
 			
 			// Do actions after this non-action diagram
-			/*else {			
+			else {
 				const tail = chunks.slice(i+1)
 				const tailActions = tail.filter(chunk => chunk.isInAction)
 				if (tailActions[0] !== undefined) {
@@ -173,7 +173,7 @@ const JAVASCRIPT = {}
 					diagramEndLines.push(...afterStartLines)
 					diagramEndLines.push(...afterEndLines.reversed)
 				}
-			}*/
+			}
 			
 			endLines.push(...diagramEndLines.reversed)
 			margin += `	`
