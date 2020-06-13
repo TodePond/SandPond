@@ -31,7 +31,7 @@ element _Sand {
 	@ => _
 	_    @
 	
-	pov(right) {
+	any(xz.rotations) {
 		@     _
 		 _ =>  @
 	}
@@ -53,6 +53,11 @@ element _Lava {
 	@ => _
 	_    @
 	
+	any(xz.rotations) {
+		@     _
+		 _ =>  @
+	}
+	
 }
 
 element _Forkbomb {
@@ -61,22 +66,13 @@ element _Forkbomb {
 	category "Testing"
 	//default true
 	change F () => new _Forkbomb()
-	@_ => .F
-	_@ => F.
 	
-	pov(top) {
-		@ => .
-		_    F
-		
-		_    F
-		@ => .
+	any(xz) @_ => .F
+	
+	any(yz) {
+		_ => F
+		@    .
 	}
-	
-	@ => .
-	_    F
-	
-	_    F
-	@ => .
 }
 
 element Sand  {

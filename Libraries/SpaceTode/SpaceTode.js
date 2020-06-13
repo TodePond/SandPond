@@ -10,7 +10,8 @@
 		args: {},
 		instructions: [],
 		symbols: {_: undefined},
-		properties: {categories: []},
+		properties: {},
+		categories: [],
 	})
 	
 	const absorbScope = (receiver, target) => {
@@ -20,9 +21,8 @@
 		receiver.global = target.global
 		receiver.instructions.push(...target.instructions)
 		
-		const {categories, ...otherProperties} = target.properties
-		receiver.instructions.push(...categories)
-		receiver.properties.o= otherProperties
+		receiver.categories.push(...target.categories)
+		receiver.properties.o= target.properties
 		
 		for (const symbolName in target.symbols) {
 			if (receiver.symbols[symbolName] == undefined) {
@@ -736,7 +736,7 @@
 		if (!success) return EAT.fail(code)
 		
 		if (propertyName == "category") {
-			scope.properties.categories.push(result.value)
+			scope.categories.push(result.value)
 		}
 		else scope.properties[name] = result.value
 		

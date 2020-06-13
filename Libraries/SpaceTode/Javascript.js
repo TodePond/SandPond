@@ -81,6 +81,9 @@ const JAVASCRIPT = {}
 		// Cache stores global variables that we might use more than once
 		cache: [],
 		
+		// 
+		symmetry: [],
+		
 		// Main is an array of stuff that happens in order
 		// Strings just get naively added to the code
 		// Chunk objects specify more fancy stuff
@@ -184,14 +187,13 @@ const JAVASCRIPT = {}
 	const makeNeederLines = (needer, indent, alreadyGots, cache = true) => {
 		const lines = []
 		const need = needer.need
-		// OPTIMISATION - alreadyGots stops redundantly getting needs that I already got
 		if (need.generateGet && !alreadyGots.includes(needer.name)) {
-			const getCode = need.generateGet(needer.x, needer.y, needer.z, needer.symmetry, needer.id, needer.argNames, needer.idResultName, needer.symmetry)
+			const getCode = need.generateGet(needer.x, needer.y, needer.z, needer.symmetry, needer.symmetryId, needer.id, needer.argNames, needer.idResultName, needer.symmetry)
 			if (getCode !== undefined) lines.push(`${indent}const ${needer.name} = ${getCode}`)
 			if (cache) alreadyGots.push(needer.name)
 		}
 		if (need.generateExtra) {
-			const extraCode = need.generateExtra(needer.x, needer.y, needer.z, needer.symmetry, needer.id, needer.argNames, needer.idResultName)
+			const extraCode = need.generateExtra(needer.x, needer.y, needer.z, needer.symmetry, needer.symmetryId, needer.id, needer.argNames, needer.idResultName)
 			if (extraCode !== undefined) lines.push(`${indent}${extraCode}`)
 		}
 		return lines

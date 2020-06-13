@@ -31,21 +31,21 @@ INSTRUCTION.make = (name, generate = () => { throw new Error(`[SpaceTode] The ${
 		template.main.push(`behave${id}(origin, selfElement, time, self)`)
 	})
 	
-	// Placeholder - does nothing
-	INSTRUCTION.TYPE.ANY = INSTRUCTION.make("AnyBlock", (template, selfSymmetry, instructions, spotMods = [], chunkMods = [], symmetry) => {
-		const totalSymmetry = selfSymmetry//combineSymmetries(selfSymmetry, symmetry)
+	INSTRUCTION.TYPE.ANY = INSTRUCTION.make("AnyBlock", (template, selfSymmetry, instructions, spotMods = [], chunkMods = [], symmetry, symmetryId) => {
+		const totalSymmetry = selfSymmetry //combineSymmetries(selfSymmetry, symmetry) //TODO
+		const totalSymmetryId = template.symmetry.push(totalSymmetry) - 1
 		for (let i = 0; i < instructions.length; i++) {
 			const instruction = instructions[i]
 			const type = instruction.type
 			if (type === INSTRUCTION.TYPE.BLOCK_END) return i + 1
 			const value = instruction.value
 			const tail = instructions.slice(i+1)
-			const jumps = type.generate(template, value, tail, spotMods, chunkMods, totalSymmetry)
+			const jumps = type.generate(template, value, tail, spotMods, chunkMods, totalSymmetry, totalSymmetryId)
 			if (jumps !== undefined) i += jumps
 		}
 	})
 	
-	INSTRUCTION.TYPE.ACTION = INSTRUCTION.make("ActionBlock", (template, v, instructions, spotMods = [], chunkMods = [], symmetry) => {
+	INSTRUCTION.TYPE.ACTION = INSTRUCTION.make("ActionBlock", (template, v, instructions, spotMods = [], chunkMods = [], symmetry, symmetryId) => {
 		const actionId = Symbol("ActionId")
 		const actionMods = [...chunkMods, (chunk) => {
 			chunk.isInAction = true
@@ -57,12 +57,12 @@ INSTRUCTION.make = (name, generate = () => { throw new Error(`[SpaceTode] The ${
 			if (type === INSTRUCTION.TYPE.BLOCK_END) return i + 1
 			const value = instruction.value
 			const tail = instructions.slice(i+1)
-			const jumps = type.generate(template, value, tail, spotMods, actionMods, symmetry)
+			const jumps = type.generate(template, value, tail, spotMods, actionMods, symmetry, symmetryId)
 			if (jumps !== undefined) i += jumps
 		}
 	})
 	
-	INSTRUCTION.TYPE.POV = INSTRUCTION.make("PointOfView", (template, pov, instructions, spotMods = [], chunkMods = [], symmetry) => {
+	INSTRUCTION.TYPE.POV = INSTRUCTION.make("PointOfView", (template, pov, instructions, spotMods = [], chunkMods = [], symmetry, symmetryId) => {
 		const povMods = [...spotMods, pov.mod]
 		for (let i = 0; i < instructions.length; i++) {
 			const instruction = instructions[i]
@@ -70,27 +70,28 @@ INSTRUCTION.make = (name, generate = () => { throw new Error(`[SpaceTode] The ${
 			if (type === INSTRUCTION.TYPE.BLOCK_END) return i + 1
 			const value = instruction.value
 			const tail = instructions.slice(i+1)
-			const jumps = type.generate(template, value, tail, povMods, chunkMods, symmetry)
+			const jumps = type.generate(template, value, tail, povMods, chunkMods, symmetry, symmetryId)
 			if (jumps !== undefined) i += jumps
 		}
 	})
 	
-	INSTRUCTION.TYPE.NAKED = INSTRUCTION.make("NakedBlock", (template, v, instructions, spotMods = [], chunkMods = [], symmetry) => {
+	INSTRUCTION.TYPE.NAKED = INSTRUCTION.make("NakedBlock", (template, v, instructions, spotMods = [], chunkMods = [], symmetry, symmetryId) => {
 		for (let i = 0; i < instructions.length; i++) {
 			const instruction = instructions[i]
 			const type = instruction.type
 			if (type === INSTRUCTION.TYPE.BLOCK_END) return i + 1
 			const value = instruction.value
 			const tail = instructions.slice(i+1)
-			const jumps = type.generate(template, value, tail, spotMods, chunkMods, symmetry)
+			const jumps = type.generate(template, value, tail, spotMods, chunkMods, symmetry, symmetryId)
 			if (jumps !== undefined) i += jumps
 		}
 	})
 	
-	INSTRUCTION.TYPE.DIAGRAM = INSTRUCTION.make("Diagram", (template, diagram, instructions, spotMods = [], chunkMods = [], symmetry) => {
+	INSTRUCTION.TYPE.DIAGRAM = INSTRUCTION.make("Diagram", (template, diagram, instructions, spotMods = [], chunkMods = [], symmetry, symmetryId) => {
 		const moddedDiagram = modDiagram(diagram, spotMods)
 		const chunk = makeEmptyChunk()
 		for (const spot of moddedDiagram) {
+		
 			const {given, check} = spot.input
 			const {change, keep} = spot.output
 			
@@ -102,6 +103,7 @@ INSTRUCTION.make = (name, generate = () => { throw new Error(`[SpaceTode] The ${
 				chunk,
 				side: "input",
 				symmetry,
+				symmetryId,
 			})
 			
 			processFunc ({
@@ -112,6 +114,7 @@ INSTRUCTION.make = (name, generate = () => { throw new Error(`[SpaceTode] The ${
 				chunk,
 				side: "input",
 				symmetry,
+				symmetryId,
 			})
 			
 			processFunc ({
@@ -122,6 +125,7 @@ INSTRUCTION.make = (name, generate = () => { throw new Error(`[SpaceTode] The ${
 				chunk,
 				side: "output",
 				symmetry,
+				symmetryId,
 			})
 			
 			processFunc ({
@@ -132,6 +136,7 @@ INSTRUCTION.make = (name, generate = () => { throw new Error(`[SpaceTode] The ${
 				chunk,
 				side: "output",
 				symmetry,
+				symmetryId,
 			})
 		}
 		
@@ -168,7 +173,7 @@ INSTRUCTION.make = (name, generate = () => { throw new Error(`[SpaceTode] The ${
 	//======//
 	// Func //
 	//======//
-	const processFunc = ({name, func, spot, template, chunk, side, symmetry}) => {
+	const processFunc = ({name, func, spot, template, chunk, side, symmetry, symmetryId}) => {
 		if (func === undefined) return
 		
 		const {x, y, z} = spot
@@ -178,12 +183,12 @@ INSTRUCTION.make = (name, generate = () => { throw new Error(`[SpaceTode] The ${
 		const result = getResult(name)
 		const paramNames = getParamNames(func)
 		const params = paramNames.map(paramName => getParam(paramName))
-		const argNames = params.map(param => getName(param, x, y, z, symmetry))
+		const argNames = params.map(param => getName(param, x, y, z, symmetryId))
 		
 		const idResult = makeIdResult(result, id, paramNames)
 		const needs = getNeeds(idResult)
-		const idResultName = getName(idResult, x, y, z, symmetry)
-		const needers = needs.map(need => makeNeeder({need, x, y, z, symmetry, id, argNames, idResultName}))
+		const idResultName = getName(idResult, x, y, z, symmetryId)
+		const needers = needs.map(need => makeNeeder({need, x, y, z, symmetry, symmetryId, id, argNames, idResultName}))
 		for (const needer of needers) {
 			if (needer.need.isCondition) chunk.conditions.pushUnique(needer.name)
 			chunk[side].needers[needer.name] = needer
@@ -206,7 +211,7 @@ INSTRUCTION.make = (name, generate = () => { throw new Error(`[SpaceTode] The ${
 	
 	//=======//
 	// Needs //
-	//=======//	
+	//=======//
 	const getNeeds = (param) => {
 		const needs = []
 		const otherNeeds = param.needNames.map(needName => getParam(needName))
@@ -215,9 +220,9 @@ INSTRUCTION.make = (name, generate = () => { throw new Error(`[SpaceTode] The ${
 		return needs
 	}
 	
-	const makeNeeder = ({need, x, y, z, id, symmetry, argNames, idResultName}) => {
-		const name = getName(need, x, y, z, symmetry)
-		return {need, name, x, y, z, symmetry, id, argNames, idResultName}
+	const makeNeeder = ({need, x, y, z, id, symmetry, symmetryId, argNames, idResultName}) => {
+		const name = getName(need, x, y, z, symmetryId)
+		return {need, name, x, y, z, symmetry, symmetryId, id, argNames, idResultName}
 	}
 	
 	//====================//
@@ -235,13 +240,13 @@ INSTRUCTION.make = (name, generate = () => { throw new Error(`[SpaceTode] The ${
 		return result
 	}
 	
-	const getName = (param, x, y, z, symmetry) => {
+	const getName = (param, x, y, z, symmetryId) => {
 		const type = param.type
 		let name = param.name
 		if (type === NEED_TYPE.ARG) return name
 		if (type === NEED_TYPE.GLOBAL) return name
-		if (type === NEED_TYPE.SYMMETRY) return getSymmetryName(name, symmetry)
-		if (type === NEED_TYPE.LOCAL) return getLocalName(name, x, y, z, symmetry)
+		if (type === NEED_TYPE.SYMMETRY) return getSymmetryName(name, symmetryId)
+		if (type === NEED_TYPE.LOCAL) return getLocalName(name, x, y, z, symmetryId)
 		throw new Error(`[SpaceTode] Unrecognised named param type: ${type}`)
 	}
 	
@@ -266,14 +271,14 @@ INSTRUCTION.make = (name, generate = () => { throw new Error(`[SpaceTode] The ${
 		return paramNames
 	}
 	
-	const getSymmetryName = (name, symmetry) => {
-		const symmetryTail = symmetry !== undefined? "Symm" + symmetry.name : ""
+	const getSymmetryName = (name, symmetryId) => {
+		const symmetryTail = symmetryId !== undefined? "Symm" + symmetryId : ""
 		return name + symmetryTail
 	}
 	
-	const getLocalName = (name, x, y, z, symmetry) => {
+	const getLocalName = (name, x, y, z, symmetryId) => {
 		const xyzTail = `${x}${y}${z}`
-		const symmetryTail = symmetry !== undefined? "Symm" + symmetry.name : ""
+		const symmetryTail = symmetryId !== undefined? "Symm" + symmetryId : ""
 		return name + xyzTail.replace(/-/g, "_") + symmetryTail
 	}
 	
@@ -315,25 +320,38 @@ INSTRUCTION.make = (name, generate = () => { throw new Error(`[SpaceTode] The ${
 		generateGet: () => `origin.sites`,
 	})
 	
-	PARAM.symmetryNumber = makeNeed({
-		name: "symmetryNumber",
+	PARAM.transformationNumber = makeNeed({
+		name: "transformationNumber",
 		type: NEED_TYPE.SYMMETRY,
 		needNames: [],
 		generateGet: (x, y, z, symmetry) => {
 			if (symmetry === undefined) return undefined
-			return `"lol"`
+			return `Math.floor(Math.random() * ${symmetry.transformations.length})`
+		}
+	})
+	
+	PARAM.possibleSiteNumbers = makeNeed({
+		name: "possibleSiteNumbers",
+		type: NEED_TYPE.LOCAL,
+		needNames: [],
+		generateGet: (x, y, z, symmetry, symmetryId) => {
+			if (x === 0 && y === 0 && z === 0) return undefined
+			if (symmetry === undefined) return undefined
+			const siteNumbers = symmetry.transformations.map(t => EVENTWINDOW.getSiteNumber(...t(x, y, z)))
+			return `[${siteNumbers.join(", ")}]`
 		}
 	})
 	
 	PARAM.siteNumber = makeNeed({
 		name: "siteNumber",
 		type: NEED_TYPE.LOCAL,
-		needNames: ["symmetryNumber"],
-		generateGet: (x, y, z, symmetry) => {
+		needNames: ["transformationNumber", "possibleSiteNumbers"],
+		generateGet: (x, y, z, symmetry, symmetryId) => {
 			if (x === 0 && y === 0 && z === 0) return undefined
 			if (symmetry === undefined) return undefined
-			const siteNumber = EVENTWINDOW.getSiteNumber(x, y, z)
-			return `${siteNumber}`
+			const possibleSiteNumbersName = getLocalName("possibleSiteNumbers", x, y, z, symmetryId)
+			const transformationNumberName = getSymmetryName("transformationNumber", symmetryId)
+			return `${possibleSiteNumbersName}[${transformationNumberName}]`
 		},
 	})
 	
@@ -341,13 +359,13 @@ INSTRUCTION.make = (name, generate = () => { throw new Error(`[SpaceTode] The ${
 		name: "space",
 		type: NEED_TYPE.LOCAL,
 		needNames: ["sites", "siteNumber"],
-		generateGet: (x, y, z, symmetry) => {
+		generateGet: (x, y, z, symmetry, symmetryId) => {
 			if (x === 0 && y === 0 && z === 0) return "origin"
 			if (symmetry === undefined) {
 				const siteNumber = EVENTWINDOW.getSiteNumber(x, y, z)
 				return `sites[${siteNumber}]`
 			}
-			const siteNumberName = getLocalName("siteNumber", x, y, z, symmetry)
+			const siteNumberName = getLocalName("siteNumber", x, y, z, symmetryId)
 			return `sites[${siteNumberName}]`
 		},
 	})
@@ -356,8 +374,8 @@ INSTRUCTION.make = (name, generate = () => { throw new Error(`[SpaceTode] The ${
 		name: "atom",
 		type: NEED_TYPE.LOCAL,
 		needNames: ["space"],
-		generateGet: (x, y, z, symmetry) => {
-			const spaceName = getLocalName("space", x, y, z, symmetry)
+		generateGet: (x, y, z, symmetry, symmetryId) => {
+			const spaceName = getLocalName("space", x, y, z, symmetryId)
 			return `${spaceName}.atom`
 		},
 	})
@@ -366,8 +384,8 @@ INSTRUCTION.make = (name, generate = () => { throw new Error(`[SpaceTode] The ${
 		name: "element",
 		type: NEED_TYPE.LOCAL,
 		needNames: ["space"],
-		generateGet: (x, y, z, symmetry) => {
-			const spaceName = getLocalName("space", x, y, z, symmetry)
+		generateGet: (x, y, z, symmetry, symmetryId) => {
+			const spaceName = getLocalName("space", x, y, z, symmetryId)
 			return `${spaceName}.element`
 		},
 	})
@@ -379,7 +397,7 @@ INSTRUCTION.make = (name, generate = () => { throw new Error(`[SpaceTode] The ${
 	RESULT.given = makeNeed({
 		name: "given",
 		type: NEED_TYPE.LOCAL,
-		generateGet: (x, y, z, symmetry, id, args) => {
+		generateGet: (x, y, z, symmetry, symmetryId, id, args) => {
 			const argsInner = args.join(", ")
 			return `given${id}(${argsInner})`
 		},
@@ -390,7 +408,7 @@ INSTRUCTION.make = (name, generate = () => { throw new Error(`[SpaceTode] The ${
 		name: "keep",
 		type: NEED_TYPE.LOCAL,
 		needs: [],
-		generateExtra: (x, y, z, symmetry, id, args) => {
+		generateExtra: (x, y, z, symmetry, symmetryId, id, args) => {
 			const argsInner = args.join(", ")
 			return `keep${id}(${argsInner})`
 		},
@@ -400,7 +418,7 @@ INSTRUCTION.make = (name, generate = () => { throw new Error(`[SpaceTode] The ${
 		name: "check",
 		type: NEED_TYPE.GLOBAL,
 		needNames: [],
-		generateGet: (x, y, z, symmetry, id, args) => {
+		generateGet: (x, y, z, symmetry, symmetryId, id, args) => {
 			const argsInner = args.join(", ")
 			return `check${id}(${argsInner})`
 		},
@@ -410,12 +428,12 @@ INSTRUCTION.make = (name, generate = () => { throw new Error(`[SpaceTode] The ${
 		name: "change",
 		type: NEED_TYPE.LOCAL,
 		needNames: ["space"],
-		generateGet: (x, y, z, symmetry, id, args) => {
+		generateGet: (x, y, z, symmetry, symmetryId, id, args) => {
 			const argsInner = args.join(", ")
 			return `change${id}(${argsInner})`
 		},
-		generateExtra: (x, y, z, symmetry, id, args, idResultName) => {
-			const spaceName = getLocalName("space", x, y, z, symmetry)
+		generateExtra: (x, y, z, symmetry, symmetryId, id, args, idResultName) => {
+			const spaceName = getLocalName("space", x, y, z, symmetryId)
 			return `SPACE.setAtom(${spaceName}, ${idResultName})`
 		}
 	})

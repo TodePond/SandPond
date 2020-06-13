@@ -34,18 +34,58 @@ const SYMMETRY = {}
 	
 	SYMMETRY.make = (name, transformations) => ({name, transformations})
 	SYMMETRY.TYPE = {}
-	SYMMETRY.TYPE["X"] = SYMMETRY.make("X", [
+	SYMMETRY.TYPE.x = SYMMETRY.make("X", [
 		T("xyz"),
 		T("-xyz"),
 	])
 	
-	SYMMETRY.TYPE["Y"] = SYMMETRY.make("X", [
+	SYMMETRY.TYPE.y = SYMMETRY.make("X", [
 		T("xyz"),
 		T("x-yz"),
 	])
 	
-	SYMMETRY.TYPE["Z"] = SYMMETRY.make("X", [
+	SYMMETRY.TYPE.z = SYMMETRY.make("X", [
 		T("xyz"),
 		T("xy-z"),
+	])
+	
+	SYMMETRY.TYPE.xy = SYMMETRY.make("XY", [
+		T("xyz"),
+		T("-xyz"),
+		T("x-yz"),
+		T("-x-yz"),
+		T("yxz"),
+		T("-yxz"),
+		T("y-xz"),
+		T("-y-xz"),
+	])
+	
+	SYMMETRY.TYPE.xz = SYMMETRY.make("XZ", [
+		T("xyz"),
+		T("-xyz"),
+		T("xy-z"),
+		T("-xy-z"),
+		T("zyx"),
+		T("-zyx"),
+		T("zy-x"),
+		T("-zy-x"),
+	])
+	
+	SYMMETRY.TYPE.xz.rotations = SYMMETRY.make("XZ.ROTATIONS", [
+		T("xyz"),
+		T("-xy-z"),
+		T("zyx"),
+		T("-zy-x"),
+	])
+	
+	SYMMETRY.TYPE.yz = SYMMETRY.make("YZ", [
+		T("xyz"),
+		T("x-yz"),
+		T("xy-z"),
+		T("x-y-z"),
+		T("xzy"),
+		T("x-zy"),
+		T("xz-y"),
+		T("x-z-y"),
 	])
 }
