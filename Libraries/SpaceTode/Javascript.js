@@ -187,12 +187,12 @@ const JAVASCRIPT = {}
 		// OPTIMISATION - alreadyGots stops redundantly getting needs that I already got
 		if (need.generateGet && !alreadyGots.includes(needer.name)) {
 			const getCode = need.generateGet(needer.x, needer.y, needer.z, needer.id, needer.argNames, needer.idResultName)
-			lines.push(`${indent}const ${needer.name} = ${getCode}`)
+			if (getCode !== undefined) lines.push(`${indent}const ${needer.name} = ${getCode}`)
 			if (cache) alreadyGots.push(needer.name)
 		}
 		if (need.generateExtra) {
 			const extraCode = need.generateExtra(needer.x, needer.y, needer.z, needer.id, needer.argNames, needer.idResultName)
-			lines.push(`${indent}${extraCode}`)
+			if (extraCode !== undefined) lines.push(`${indent}${extraCode}`)
 		}
 		return lines
 	}
@@ -204,8 +204,8 @@ const JAVASCRIPT = {}
 	
 		let template = JAVASCRIPT.makeEmptyTemplate()
 		
-		const blockStart = {type: INSTRUCTION.TYPE.NAKED, value: undefined}
-		const blockEnd = {type: INSTRUCTION.TYPE.BLOCK_END, value: undefined}
+		const blockStart = {type: INSTRUCTION.TYPE.NAKED}
+		const blockEnd = {type: INSTRUCTION.TYPE.BLOCK_END}
 		const fullInstructions = [blockStart, ...instructions, blockEnd]
 	
 		for (let i = 0; i < fullInstructions.length; i++) {

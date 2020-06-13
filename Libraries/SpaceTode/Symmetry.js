@@ -4,6 +4,7 @@
 const SYMMETRY = {}
 
 {
+	
 	const transformationCache = {}
 	const getTransformation = (sig) => {
 		if (transformationCache.has(sig)) return transformationCache[sig]
@@ -47,5 +48,4 @@ const SYMMETRY = {}
 		T("xyz"),
 		T("xy-z"),
 	])
-	
 }
