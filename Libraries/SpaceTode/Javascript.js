@@ -116,7 +116,7 @@ const JAVASCRIPT = {}
 		lines.push("//======//")
 		lines.push("// MAIN //")
 		lines.push("//======//")
-		lines.push(`const behave = (origin, selfElement, time, self = selfElement.atom) => {`)
+		lines.push(`const behave = (origin, selfElement, time, self = origin.atom) => {`)
 		const [startLines, endLines] = makeChunksLines(template.main, `	`, [])
 		
 		lines.push(...startLines)
