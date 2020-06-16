@@ -22,7 +22,7 @@ given # (element) => element !== Empty && element !== Void
 given .
 keep .
 
-element _Sand {
+element _Sand any(xz.rotations) {
 	colour "#FC0"
 	emissive "#ffa34d"
 	category "Testing"
@@ -31,7 +31,7 @@ element _Sand {
 	@ => _
 	_    @
 	
-	any(xz.rotations) {
+	{
 		@     _
 		 _ =>  @
 	}
@@ -45,6 +45,7 @@ element _Lava {
 	//default true
 	
 	change F () => new Fire()
+	
 	action {
 		_ => F
 		@    .

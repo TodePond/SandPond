@@ -117,10 +117,7 @@ const JAVASCRIPT = {}
 		lines.push("// MAIN //")
 		lines.push("//======//")
 		lines.push(`const behave = (origin, selfElement, time, self = origin.atom) => {`)
-		const [startLines, endLines] = makeChunksLines(template.main, `	`, [])
-		
-		lines.push(...startLines)
-		lines.push(...endLines.reversed)
+		lines.push(...makeChunksLines(template.main, `	`, []))
 		
 		lines.push(`}`)
 		lines.push(``)
@@ -131,57 +128,62 @@ const JAVASCRIPT = {}
 	}
 	
 	const makeChunksLines = (chunks, margin, alreadyGots) => {
-		const startLines = []
-		const endLines = []
+		const lines = []
 		for (let i = 0; i < chunks.length; i++) {
 			const chunk = chunks[i]
-			startLines.push(``)
-			//startLines.push(`${margin}// Diagram`)
+			lines.push(``)
 			if (chunk.is(String)) {
-				startLines.push(`${margin}` + chunk)
+				lines.push(`${margin}` + chunk)
 				continue
 			}
 			
+			//=======//
+			// Input //
+			//=======//
 			for (const needer of chunk.input.needers) {
-				startLines.push(...makeNeederLines(needer, `${margin}`, alreadyGots, true))
+				lines.push(...makeNeederLines(needer, `${margin}`, alreadyGots, true))
 			}
 			
+			//===========//
+			// Condition //
+			//===========//
 			const conditionInnerCode = chunk.conditions.join(" && ")
-			if (chunk.conditions.length === 0) startLines.push(`	{`)
-			else startLines.push(`${margin}if (!(${conditionInnerCode})) {`)
+			if (chunk.conditions.length === 0) lines.push(`	{`)
+			else lines.push(`${margin}if (${conditionInnerCode}) {`)
 			
-			const diagramEndLines = []
-			
-			diagramEndLines.push(`${margin}	return`)
-			diagramEndLines.push(`${margin}}`)
-			const afterAlreadyGots = [...alreadyGots]
+			//========//
+			// Output //
+			//========//
+			const outputAlreadyGots = [...alreadyGots]
 			for (const needer of chunk.output.needers) {
-				diagramEndLines.push(...makeNeederLines(needer, `${margin}`, afterAlreadyGots, true))
+				lines.push(...makeNeederLines(needer, `${margin}	`, outputAlreadyGots, true))
 			}
 			
-			// Do other diagrams after this action
+			//=================//
+			// Remaining Rules //
+			//=================//
 			if (chunk.isInAction) {
 				const tail = chunks.slice(i+1).filter(c => c.actionId !== chunk.actionId)
-				const [afterStartLines, afterEndLines] = makeChunksLines(tail, margin, afterAlreadyGots)
-				diagramEndLines.push(...afterStartLines)
-				diagramEndLines.push(...afterEndLines.reversed)
+				const afterLines = makeChunksLines(tail, `${margin}	`, outputAlreadyGots)
+				lines.push(...afterLines)
 			}
 			
-			// Do actions after this non-action diagram
+			//===================//
+			// Remaining Actions //
+			//===================//
 			else {
 				const tail = chunks.slice(i+1)
 				const tailActions = tail.filter(chunk => chunk.isInAction)
 				if (tailActions[0] !== undefined) {
-					const [afterStartLines, afterEndLines] = makeChunksLines(tailActions, margin, afterAlreadyGots)
-					diagramEndLines.push(...afterStartLines)
-					diagramEndLines.push(...afterEndLines.reversed)
+					const afterLines = makeChunksLines(tailActions, `${margin}	`, outputAlreadyGots)
+					lines.push(...afterLines)
 				}
 			}
 			
-			endLines.push(...diagramEndLines.reversed)
-			margin += `	`
+			lines.push(`${margin}	return`)
+			lines.push(`${margin}}`)
 		}
-		return [startLines, endLines]
+		return lines
 	}
 	
 	const makeNeederLines = (needer, indent, alreadyGots, cache = true) => {
