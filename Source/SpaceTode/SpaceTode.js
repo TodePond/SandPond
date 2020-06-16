@@ -25,7 +25,8 @@
 		receiver.properties.o= target.properties
 		
 		for (const symbolName in target.symbols) {
-			if (receiver.symbols[symbolName] == undefined) {
+			if (target.symbols[symbolName] === undefined) continue
+			if (receiver.symbols[symbolName] === undefined) {
 				receiver.symbols[symbolName] = {}
 			}
 			receiver.symbols[symbolName].o= target.symbols[symbolName]
@@ -1011,7 +1012,7 @@
 		result = {code, success} = EAT.todeSplatBlock(code, scope)
 		if (!success) return EAT.fail(code)
 		
-		absorbScope(scope, result.blockScope)
+		absorbScope(scope, result.blockScope.d)
 		//scope.instructions.push(...result.blockScope.instructions)
 		scope.instructions.push({type: INSTRUCTION.TYPE.BLOCK_END})
 		

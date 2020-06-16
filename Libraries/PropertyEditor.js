@@ -38,7 +38,7 @@
 			})
 		},
 		has() {
-			return this[__SYMBOL] == undefined
+			return this[__SYMBOL] === undefined
 		}
 	})
 	
