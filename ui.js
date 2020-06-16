@@ -179,6 +179,7 @@ UIstarted = true
 				margin: 16px;
 				scrollbar-width: none;
 				-ms-overflow-style: none;
+				tab-size: 4;
 			}
 			
 			#sourceBox::-webkit-scrollbar {
@@ -528,6 +529,10 @@ UIstarted = true
 	})
 	
 	on.keyup(e => {
+		if (!$("#source").classList.contains("minimised")) {
+			orbit.enableZoom = false
+			return
+		}
 		if (!Keyboard.Alt && !Keyboard.Shift) orbit.enableZoom = true
 	})
 	

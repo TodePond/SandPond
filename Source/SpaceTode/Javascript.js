@@ -140,6 +140,7 @@ const JAVASCRIPT = {}
 			//=======//
 			// Input //
 			//=======//
+			lines.push(...chunk.debug.source.split("\n").map(s => `${margin}// ${s}`))
 			for (const needer of chunk.input.needers) {
 				lines.push(...makeNeederLines(needer, `${margin}`, alreadyGots, true))
 			}

@@ -90,6 +90,7 @@ INSTRUCTION.make = (name, generate = () => { throw new Error(`[SpaceTode] The ${
 	INSTRUCTION.TYPE.DIAGRAM = INSTRUCTION.make("Diagram", (template, diagram, instructions, spotMods = [], chunkMods = [], symmetry, symmetryId) => {
 		const moddedDiagram = modDiagram(diagram, spotMods)
 		const chunk = makeEmptyChunk()
+		chunk.debug = diagram.debug
 		for (const spot of moddedDiagram) {
 		
 			const {given, check} = spot.input
@@ -207,6 +208,7 @@ INSTRUCTION.make = (name, generate = () => { throw new Error(`[SpaceTode] The ${
 		input: {needers: {}},
 		conditions: [],
 		output: {needers: {}},
+		debug: {},
 	})
 	
 	//=======//

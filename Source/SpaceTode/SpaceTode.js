@@ -14,12 +14,12 @@
 		categories: [],
 	})
 	
-	const absorbScope = (receiver, target) => {
+	const absorbScope = (receiver, target, propsOnly = false) => {
 		receiver.args.o= target.args
 		receiver.data.o= target.data
 		receiver.elements.o= target.elements
 		receiver.global = target.global
-		receiver.instructions.push(...target.instructions)
+		if (!propsOnly) receiver.instructions.push(...target.instructions)
 		
 		receiver.categories.push(...target.categories)
 		receiver.properties.o= target.properties
@@ -872,7 +872,8 @@
 		result = {code, success} = EAT.todeSplatBlock(code, scope)
 		if (!success) return EAT.fail(code)
 		
-		scope.instructions.push(...result.blockScope.instructions)
+		absorbScope(scope, result.blockScope)
+		//scope.instructions.push(...result.blockScope.instructions)
 		scope.instructions.push({type: INSTRUCTION.TYPE.BLOCK_END})
 		
 		return result
@@ -909,7 +910,8 @@
 		result = {code, success} = EAT.todeSplatBlock(code, scope)
 		if (!success) return EAT.fail(code)
 		
-		scope.instructions.push(...result.blockScope.instructions)
+		absorbScope(scope, result.blockScope)
+		//scope.instructions.push(...result.blockScope.instructions)
 		scope.instructions.push({type: INSTRUCTION.TYPE.BLOCK_END})
 		
 		return result
@@ -946,8 +948,9 @@
 		result = {code, success} = EAT.todeSplatBlock(code, scope)
 		if (!success) return EAT.fail(code)
 		
-		scope.properties.o= result.blockScope.properties
-		scope.instructions.push(...result.blockScope.instructions)
+		absorbScope(scope, result.blockScope)
+		/*scope.properties.o= result.blockScope.properties
+		scope.instructions.push(...result.blockScope.instructions)*/
 		scope.instructions.push({type: INSTRUCTION.TYPE.BLOCK_END})
 		
 		return result
@@ -984,8 +987,9 @@
 		result = {code, success} = EAT.todeSplatBlock(code, scope)
 		if (!success) return EAT.fail(code)
 		
-		scope.properties.o= result.blockScope.properties
-		scope.instructions.push(...result.blockScope.instructions)
+		absorbScope(scope, result.blockScope)
+		/*scope.properties.o= result.blockScope.properties
+		scope.instructions.push(...result.blockScope.instructions)*/
 		scope.instructions.push({type: INSTRUCTION.TYPE.BLOCK_END})
 		
 		return result
@@ -1007,7 +1011,8 @@
 		result = {code, success} = EAT.todeSplatBlock(code, scope)
 		if (!success) return EAT.fail(code)
 		
-		scope.instructions.push(...result.blockScope.instructions)
+		absorbScope(scope, result.blockScope)
+		//scope.instructions.push(...result.blockScope.instructions)
 		scope.instructions.push({type: INSTRUCTION.TYPE.BLOCK_END})
 		
 		return result
@@ -1235,6 +1240,10 @@
 				const space = {x, y, z:0, input, output}
 				spaces.push(space)
 			}
+		}
+		
+		spaces.debug = {
+			source: diagram.join("\n"),
 		}
 		
 		const instruction = {type: INSTRUCTION.TYPE.DIAGRAM, value: spaces}
