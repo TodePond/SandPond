@@ -31,10 +31,8 @@ element _Sand any(xz.rotations) {
 	@ => _
 	_    @
 	
-	{
-		@     _
-		 _ =>  @
-	}
+	@     _
+	 _ =>  @
 }
 
 element _Lava {
