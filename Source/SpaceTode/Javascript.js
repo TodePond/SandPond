@@ -96,7 +96,7 @@ const JAVASCRIPT = {}
 		
 		const lines = []
 		
-		// HEAD
+		
 		lines.push("//=========//")
 		lines.push("// SYMBOLS //")
 		lines.push("//=========//")
@@ -111,23 +111,29 @@ const JAVASCRIPT = {}
 			}
 		}
 		lines.push("")
-		
-		// MAIN
 		lines.push("//========//")
 		lines.push("// BEHAVE //")
 		lines.push("//========//")
 		lines.push(`const behave = (origin, selfElement, time, self = origin.atom) => {`)
-		lines.push(...makeChunksLines(template.main, `	`, []))
-		
+		const constants = []
+		lines.push(...makeChunksLines(template.main, `	`, [], constants))
 		lines.push(`}`)
 		lines.push(``)
 		lines.push(`return behave`)
+		
+		const constantLines = []
+		constantLines.push(`//===========//`)
+		constantLines.push(`// CONSTANTS //`)
+		constantLines.push(`//===========//`)
+		constantLines.push(...constants)
+		constantLines.push(``)
+		lines.unshift(...constantLines)
 		
 		const code = lines.join("\n")
 		return code
 	}
 	
-	const makeChunksLines = (chunks, margin, alreadyGots) => {
+	const makeChunksLines = (chunks, margin, alreadyGots, constants) => {
 		const lines = []
 		for (let i = 0; i < chunks.length; i++) {
 			const chunk = chunks[i]
@@ -142,7 +148,7 @@ const JAVASCRIPT = {}
 			//=======//
 			lines.push(...chunk.debug.source.split("\n").map(s => `${margin}// ${s}`))
 			for (const needer of chunk.input.needers) {
-				lines.push(...makeNeederLines(needer, `${margin}`, alreadyGots, true))
+				lines.push(...makeNeederLines(needer, `${margin}`, alreadyGots, true, constants))
 			}
 			
 			//===========//
@@ -157,7 +163,7 @@ const JAVASCRIPT = {}
 			//========//
 			const outputAlreadyGots = [...alreadyGots]
 			for (const needer of chunk.output.needers) {
-				lines.push(...makeNeederLines(needer, `${margin}	`, outputAlreadyGots, true))
+				lines.push(...makeNeederLines(needer, `${margin}	`, outputAlreadyGots, true, constants))
 			}
 			
 			//=================//
@@ -165,7 +171,7 @@ const JAVASCRIPT = {}
 			//=================//
 			if (chunk.isInAction) {
 				const tail = chunks.slice(i+1).filter(c => c.actionId !== chunk.actionId)
-				const afterLines = makeChunksLines(tail, `${margin}	`, outputAlreadyGots)
+				const afterLines = makeChunksLines(tail, `${margin}	`, outputAlreadyGots, constants)
 				lines.push(...afterLines)
 			}
 			
@@ -176,7 +182,7 @@ const JAVASCRIPT = {}
 				const tail = chunks.slice(i+1)
 				const tailActions = tail.filter(chunk => chunk.isInAction)
 				if (tailActions[0] !== undefined) {
-					const afterLines = makeChunksLines(tailActions, `${margin}	`, outputAlreadyGots)
+					const afterLines = makeChunksLines(tailActions, `${margin}	`, outputAlreadyGots, constants)
 					lines.push(...afterLines)
 				}
 			}
@@ -187,7 +193,7 @@ const JAVASCRIPT = {}
 		return lines
 	}
 	
-	const makeNeederLines = (needer, indent, alreadyGots, cache = true) => {
+	const makeNeederLines = (needer, indent, alreadyGots, cache = true, constants) => {
 		const lines = []
 		const need = needer.need
 		if (need.generateGet && !alreadyGots.includes(needer.name)) {
@@ -195,8 +201,12 @@ const JAVASCRIPT = {}
 			if (getCode !== undefined) lines.push(`${indent}const ${needer.name} = ${getCode}`)
 			if (cache) alreadyGots.push(needer.name)
 		}
+		if (need.generateConstant) {
+			const constantCode = need.generateConstant(needer.x, needer.y, needer.z, needer.symmetry, needer.symmetryId, needer.id, needer.argNames, needer.idResultName, needer.symmetry)
+			if (constantCode !== undefined) constants.pushUnique(`const ${needer.name} = ${constantCode}`)
+		}
 		if (need.generateExtra) {
-			const extraCode = need.generateExtra(needer.x, needer.y, needer.z, needer.symmetry, needer.symmetryId, needer.id, needer.argNames, needer.idResultName)
+			const extraCode = need.generateExtra(needer.x, needer.y, needer.z, needer.symmetry, needer.symmetryId, needer.id, needer.argNames, needer.idResultName, needer.symmetry)
 			if (extraCode !== undefined) lines.push(`${indent}${extraCode}`)
 		}
 		return lines

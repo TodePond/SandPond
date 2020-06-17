@@ -1012,7 +1012,7 @@
 		result = {code, success} = EAT.todeSplatBlock(code, scope)
 		if (!success) return EAT.fail(code)
 		
-		absorbScope(scope, result.blockScope.d)
+		absorbScope(scope, result.blockScope)
 		//scope.instructions.push(...result.blockScope.instructions)
 		scope.instructions.push({type: INSTRUCTION.TYPE.BLOCK_END})
 		

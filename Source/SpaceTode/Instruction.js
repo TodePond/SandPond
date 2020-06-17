@@ -92,7 +92,7 @@ INSTRUCTION.make = (name, generate = () => { throw new Error(`[SpaceTode] The ${
 		const chunk = makeEmptyChunk()
 		chunk.debug = diagram.debug
 		for (const spot of moddedDiagram) {
-		
+			
 			const {given, check} = spot.input
 			const {change, keep} = spot.output
 			
@@ -293,6 +293,7 @@ INSTRUCTION.make = (name, generate = () => { throw new Error(`[SpaceTode] The ${
 		needNames = [],
 		generateGet,
 		generateExtra,
+		generateConstant,
 		isCondition = false
 	}) => ({
 		name,
@@ -300,6 +301,7 @@ INSTRUCTION.make = (name, generate = () => { throw new Error(`[SpaceTode] The ${
 		needNames,
 		generateGet,
 		generateExtra,
+		generateConstant,
 		isCondition,
 	})
 	
@@ -336,7 +338,7 @@ INSTRUCTION.make = (name, generate = () => { throw new Error(`[SpaceTode] The ${
 		name: "possibleSiteNumbers",
 		type: NEED_TYPE.LOCAL,
 		needNames: [],
-		generateGet: (x, y, z, symmetry, symmetryId) => {
+		generateConstant: (x, y, z, symmetry, symmetryId) => {
 			if (x === 0 && y === 0 && z === 0) return undefined
 			if (symmetry === undefined) return undefined
 			const siteNumbers = symmetry.transformations.map(t => EVENTWINDOW.getSiteNumber(...t(x, y, z)))

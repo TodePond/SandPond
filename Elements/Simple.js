@@ -22,6 +22,20 @@ given # (element) => element !== Empty && element !== Void
 given .
 keep .
 
+element _Sand {
+	colour "#FC0"
+	emissive "#ffa34d"
+	category "Testing"
+	//default true
+	
+	@ => _
+	_    @
+	
+	any(xz.rotations) {
+		@     _
+		 _ =>  @
+	}
+}
 
 element _Lava {
 	opacity 0.5
@@ -45,19 +59,6 @@ element _Lava {
 		 _ =>  @
 	}
 	
-}
-
-element _Sand any(xz.rotations) {
-	colour "#FC0"
-	emissive "#ffa34d"
-	category "Testing"
-	default true
-	
-	@ => _
-	_    @
-	
-	@     _
-	 _ =>  @
 }
 
 element _Forkbomb {
