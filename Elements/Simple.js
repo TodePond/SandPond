@@ -26,12 +26,11 @@ element _Sand {
 	colour "#FC0"
 	emissive "#ffa34d"
 	category "Testing"
-	//default true
 	
 	@ => _
 	_    @
 	
-	any(xz.rotations) {
+	any(xz) {
 		@     _
 		 _ =>  @
 	}
@@ -42,7 +41,6 @@ element _Lava {
 	colour "red"
 	emissive "darkred"
 	category "Testing"
-	//default true
 	
 	change F () => new Fire()
 	
@@ -65,7 +63,6 @@ element _Forkbomb {
 	colour "grey"
 	emissive "black"
 	category "Testing"
-	//default true
 	change F () => new _Forkbomb()
 	
 	any(xz) @_ => .F
@@ -76,7 +73,38 @@ element _Forkbomb {
 	}
 }
 
-element Sand  {
+element _Meteor {
+	colour "#781a00"
+	emissive "black"
+	category "Testing"
+	
+	change F () => new Fire()
+	action {
+		 _ => F
+		@    .
+	}
+	
+	given F (element) => element === Fire
+	 @  => _
+	F     @ 
+	
+	given E (element) => element === Explosion
+	 @  => _
+	E     .
+	
+	 @  => _
+	_     @
+	
+	given M (element, selfElement) => element === selfElement
+	 @ => .
+	M    .
+	
+	change E () => new Explosion(35)
+	
+	@ => E
+}
+
+element Sand {
 	colour "#FC0"
 	emissive "#ffa34d"
 	category "Sandbox"
@@ -693,8 +721,9 @@ element Clay {
 }
 
 element Explosion {
-	colour "orange"
-	opacity 0.5
+	colour "darkorange"
+	emissive "red"
+	opacity 0.3
 	category "Sandbox"
 	arg time 20
 	prop state STATE.EFFECT

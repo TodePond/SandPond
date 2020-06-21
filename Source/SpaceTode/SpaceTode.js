@@ -208,7 +208,7 @@
 		result = {code} = EAT.gap(code)
 		result = {success} = EAT.string("{")(code)
 		if (success) return EAT.blockBrace(inner)(code, ...args)
-		else if (noInline) return EAT.fail(code)
+		else if (noInline) return EAT.fail(source)
 		else return EAT.blockInline(inner)(code, ...args)
 		
 	}
@@ -394,7 +394,6 @@
 		let code = source
 		
 		result = {code, success} = EAT.todeSplatLine(code, scope)
-		
 		result = {code} = EAT.many (
 			EAT.list (
 				EAT.nonindent,
@@ -406,7 +405,6 @@
 	}
 	
 	EAT.todeSplatLine = (source, scope, ignoreDiagram=false) => {
-	
 		let result = undefined
 		let success = undefined
 		let snippet = undefined
@@ -656,8 +654,8 @@
 		
 		// TODO: throw warning if you add javascript to a symbol part that doesn't use it
 		// eg: origin, symbol
-		result = {code, success, snippet} = EAT.javascript(code)
-		const javascript = snippet
+		result = {code, success, snippet, funcCode} = EAT.javascript(code)
+		const javascript = funcCode
 		
 		if (scope.symbols[symbolName] == undefined) {
 			scope.symbols[symbolName] = {}
@@ -1177,13 +1175,13 @@
 		// check that the silhouettes of both sides are the same
 		for (let i = 0; i < diagram.length; i++) {
 		
-			const lhsLine = lhsTrimmed[i]
-			const rhsLine = rhsTrimmed[i]
+			const lhsLine = lhs[i]
+			const rhsLine = rhs[i]
 			if (lhsLine.length != rhsLine.length) throw new Error(`[SpaceTode] Right-hand-side silhouette did not match left-hand-side silhouette.\n\nNOTE: I am trying to interpret a line of code as a diagram, but it is possible that you intended to write something else. The line in question is:\n\n${diagram[0]}\n`)
 		
-			for (let j = 0; j < lhsTrimmed.length; j++) {
-				if (lhsTrimmed[i][j] == " " && rhsTrimmed[i][j] != " ") throw new Error(`[SpaceTode] Right-hand-side silhouette did not match left-hand-side silhouette.`)
-				if (rhsTrimmed[i][j] == " " && lhsTrimmed[i][j] != " ") throw new Error(`[SpaceTode] Right-hand-side silhouette did not match left-hand-side silhouette.`)
+			for (let j = 0; j < lhs.length; j++) {
+				if (lhs[i][j] == " " && rhs[i][j] != " ") throw new Error(`[SpaceTode] Right-hand-side silhouette did not match left-hand-side silhouette.`)
+				if (rhs[i][j] == " " && lhs[i][j] != " ") throw new Error(`[SpaceTode] Right-hand-side silhouette did not match left-hand-side silhouette.`)
 			}
 		}
 		
