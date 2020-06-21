@@ -88,4 +88,14 @@ const SYMMETRY = {}
 		T("xz-y"),
 		T("x-z-y"),
 	])
+	
+	SYMMETRY.TYPE.xyz = {}
+	SYMMETRY.TYPE.xyz.rotations = SYMMETRY.make("XYZ.ROTATIONS", [
+		T("xyz"),
+		T("-xy-z"),
+		T("zyx"),
+		T("-zy-x"),
+		T("yxz"),
+		T("-y-xz"),
+	])
 }

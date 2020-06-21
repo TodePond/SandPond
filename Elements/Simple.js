@@ -63,14 +63,15 @@ element _Forkbomb {
 	colour "grey"
 	emissive "black"
 	category "Testing"
-	change F () => new _Forkbomb()
+	keep F (space) => SPACE.setAtom(space, new _Forkbomb(), _Forkbomb)
 	
-	any(xz) @_ => .F
-	
-	any(yz) {
-		_ => F
-		@    .
-	}
+	any(xyz.rotations) @_ => .F
+}
+
+element _Res {
+	category "Testing"
+	default true
+	any(xyz.rotations) @_ => _@
 }
 
 element _Meteor {

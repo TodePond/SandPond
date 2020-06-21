@@ -21,7 +21,7 @@ const JAVASCRIPT = {}
 	}
 	
 	// messy as hell
-	JAVASCRIPT.makeConstructorCode = (name, data, args) => {
+	JAVASCRIPT.makeConstructorCode = (name, data, args, visible, shaderColour, shaderEmissive, shaderOpacity) => {
 	
 		let closureArgNames = ``
 		let constructorArgNames = ``
@@ -54,7 +54,26 @@ const JAVASCRIPT = {}
 				propertyNames += `, ${argName}: ${argName}`
 			}
 		}
-	
+		
+		const lines = []
+		lines.push(`(${closureArgNames}) => {`)
+		lines.push(`	`)
+		lines.push(`	const element = function ${name}(${constructorArgNames}) {`)
+		lines.push(`		const atom = {`)
+		lines.push(`			element,`)
+		lines.push(`			visible: ${visible},`)
+		lines.push(`			colour: {r: ${shaderColour.r}, g: ${shaderColour.g}, b: ${shaderColour.b}},`)
+		lines.push(`			emissive: {r: ${shaderEmissive.r}, g: ${shaderEmissive.g}, b: ${shaderEmissive.b}},`)
+		lines.push(`			opacity: ${shaderOpacity}`)
+		lines.push(`			${propertyNames}`)
+		lines.push(`		}`)
+		lines.push(`		return atom`)
+		lines.push(`	}`)
+		lines.push(`	return element`)
+		lines.push(`}`)
+		const code = lines.join("\n")
+		
+		return code
 		return (`(${closureArgNames}) => {\n` +
 		`\n`+
 		`const element = function ${name}(${constructorArgNames}) {\n`+

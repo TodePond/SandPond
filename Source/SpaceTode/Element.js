@@ -21,10 +21,10 @@ const ELEMENT = {}
 		const behaveMaker = new Function(behaveCode)
 		const behave = behaveMaker()
 		//print(otherScopeProperties)
-		const constructorCode = JAVASCRIPT.makeConstructorCode(name, data, args)
+		const shaderColours = makeShaderColours(colour, emissive, opacity)
+		const constructorCode = JAVASCRIPT.makeConstructorCode(name, data, args, visible, ...shaderColours)
 		const element = JS(constructorCode)(...data, ...args)
 		
-		const shaderColours = makeShaderColours(colour, emissive, opacity)
 		element.o={
 			
 			// Scope
