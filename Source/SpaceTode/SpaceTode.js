@@ -428,6 +428,32 @@
 		result = {success} = EAT.mimic(code, scope)
 		if (success) return result
 		
+		// behave
+		result = {success} = EAT.behave(code, scope)
+		if (success) return result
+		
+		// 'colour', 'emissive', 'category', etc
+		result = {success} = EAT.property(code, scope)
+		if (success) return result
+		
+		// symbol part
+		result = {success} = EAT.symbolPart(code, scope)
+		if (success) return result
+		
+		// DIAGRAM SHENANIGENS BELOW
+		if (ignoreDiagram) {
+			const testResult = EAT.or(
+				EAT.string("maybe"),
+				EAT.string("action"),
+				EAT.string("any"),
+				EAT.string("for"),
+				EAT.string("pov"),
+				EAT.string("{"),
+			)(code)
+			if (testResult.success) return testResult
+			else return EAT.fail(code)
+		}
+		
 		result = {success} = EAT.random(code, scope)
 		if (success) return result
 		
@@ -441,18 +467,6 @@
 		if (success) return result
 		
 		result = {success} = EAT.pov(code, scope)
-		if (success) return result
-		
-		// symbol part
-		result = {success} = EAT.symbolPart(code, scope)
-		if (success) return result
-		
-		// behave
-		result = {success} = EAT.behave(code, scope)
-		if (success) return result
-		
-		// 'colour', 'emissive', 'category', etc
-		result = {success} = EAT.property(code, scope)
 		if (success) return result
 		
 		// naked block
@@ -584,9 +598,9 @@
 		scope.name = snippet
 		
 		//scope.instructions.push({type: INSTRUCTION.TYPE.BLOCK_START})
-		
+		const preBlockCode = code
 		result = {code, success} = EAT.block(EAT.todeSplat)(code, scope)
-		if (!success) throw new Error(`[SpaceTode] Expected element block but got something else`)
+		if (!success) throw new Error(`[SpaceTode] Expected element block but got something else:\n\n${code.split("\n").slice(0, 10).join("\n")}\n...\n`)
 		
 		//scope.instructions.push({type: INSTRUCTION.TYPE.BLOCK_END})
 		
@@ -1205,7 +1219,7 @@
 			}
 		}
 		
-		if (originX == undefined) throw new Error(`[SpaceTode] Couldn't find origin in left-hand-side of diagram.`)
+		if (originX == undefined) throw new Error(`[SpaceTode] Couldn't find origin in left-hand-side of diagram.\n\n${diagram.join("\n")}\n`)
 		if (originY == undefined) throw new Error(`[SpaceTode] Couldn't find origin's y position. This shouldn't happen.`)
 		
 		// get positions of symbols
@@ -1263,13 +1277,16 @@
 		// reject if it's another todesplat line
 		if (!notes.firstLine) {
 			const dummyScope = makeScope()
-			result = {success} = EAT.todeSplatLine(code, dummyScope, true)
-			if (success) return EAT.fail(code)
+			try {
+				result = {success} = EAT.todeSplatLine(code, dummyScope, true)
+				if (success) return EAT.fail(code)
+			}
+			catch {return EAT.fail(code)}
 		}
 		else notes.firstLine = false
 		
 		// reject tabs
-		if (line.includes("	")) throw new Error("[SpaceTode] You can't use tabs inside a diagram.")
+		if (line.includes("	")) throw new Error(`[SpaceTode] You can't use tabs inside a diagram.\n\n${line}\n`)
 		
 		// find arrow
 		if (line.includes("=>")) {

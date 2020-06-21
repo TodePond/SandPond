@@ -104,6 +104,34 @@ element _Meteor {
 	@ => E
 }
 
+element _Rabbit {
+	colour "white"
+	emissive "grey"
+	//default true
+	pour false
+	
+	given p (element) => element === Empty || element === _Rabbit.Part
+	change P () => new _Rabbit.Part()
+	
+	action @p => .P
+	action p@ => P.
+	action {
+		p@ => P.
+	}
+	
+	@ => _
+	_    @
+	
+	element Part {
+		data timer 1
+		keep t (self) => self.timer--
+		action @ => t
+		
+		given T (self) => self.timer < 0
+		T => _
+	}
+}
+
 element Sand {
 	colour "#FC0"
 	emissive "#ffa34d"
