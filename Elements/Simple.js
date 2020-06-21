@@ -107,22 +107,36 @@ element _Meteor {
 element _Rabbit {
 	colour "white"
 	emissive "grey"
-	//default true
+	category "Testing"
 	pour false
+	arg timer 50
 	
 	given p (element) => element === Empty || element === _Rabbit.Part
 	change P () => new _Rabbit.Part()
-	
 	action @p => .P
 	action p@ => P.
 	action {
-		p@ => P.
+		p     P
+		 @ =>  .
+	}
+	action {
+		 p     P
+		@  => .
 	}
 	
 	@ => _
 	_    @
 	
+	given r (element) => element === _Rabbit || element === _Rabbit.Part
+	change R () => new _Rabbit()
+	any(xz.rotations) {
+		@_r => .R.
+		@p => _@
+	}
+	
 	element Part {
+		colour "white"
+		emissive "grey"
 		data timer 1
 		keep t (self) => self.timer--
 		action @ => t
