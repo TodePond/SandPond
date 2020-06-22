@@ -70,7 +70,7 @@ element _Forkbomb {
 
 element _Res {
 	category "Testing"
-	default true
+	//default true
 	any(xyz.rotations) @_ => _@
 }
 
