@@ -36,6 +36,19 @@ element _Sand {
 	}
 }
 
+element _Water {
+	colour "lightblue"
+	emissive "blue"
+	opacity 0.35
+	category "Testing"
+	
+	@ => _
+	_    @
+	
+	any(xz) @_ => _@
+	
+}
+
 element _Lava {
 	opacity 0.5
 	colour "red"
