@@ -19,6 +19,8 @@ given _ (element) => element === Empty
 
 given # (element) => element !== Empty && element !== Void
 
+given x (element) => element === Void
+
 given .
 keep .
 
@@ -49,7 +51,7 @@ element _Water {
 	
 }
 
-element _Lava {
+element _Lava any(xz.rotations) {
 	opacity 0.5
 	colour "red"
 	emissive "darkred"
@@ -62,12 +64,17 @@ element _Lava {
 		@    .
 	}
 	
+	@ => .
+	x    .
+	
 	@ => _
 	_    @
 	
-	any(xz.rotations) {
+	maybe(1/10) {
 		@     _
 		 _ =>  @
+		 
+		@_ => _@
 	}
 	
 }

@@ -18,7 +18,6 @@ INSTRUCTION.make = (name, generate = () => { throw new Error(`[SpaceTode] The ${
 
 {
 	INSTRUCTION.TYPE.FOR = INSTRUCTION.make("ForBlock")
-	INSTRUCTION.TYPE.MAYBE = INSTRUCTION.make("MaybeBlock")
 	INSTRUCTION.TYPE.MIMIC = INSTRUCTION.make("Mimic")
 	INSTRUCTION.TYPE.POV = INSTRUCTION.make("PointOfView")
 
@@ -41,6 +40,24 @@ INSTRUCTION.make = (name, generate = () => { throw new Error(`[SpaceTode] The ${
 			const value = instruction.value
 			const tail = instructions.slice(i+1)
 			const jumps = type.generate(template, value, tail, spotMods, chunkMods, totalSymmetry, totalSymmetryId)
+			if (jumps !== undefined) i += jumps
+		}
+	})
+	
+	INSTRUCTION.TYPE.MAYBE = INSTRUCTION.make("MaybeBlock", (template, chance, instructions, spotMods = [], chunkMods = [], symmetry, symmetryId) => {
+		const maybeId = Symbol("MaybeId")
+		const maybeMods = [...chunkMods, (chunk) => {
+			chunk.maybeChance = chance
+			if (chunk.maybes === undefined) chunk.maybes = []
+			chunk.maybes.push({id: maybeId, chance})
+		}]
+		for (let i = 0; i < instructions.length; i++) {
+			const instruction = instructions[i]
+			const type = instruction.type
+			if (type === INSTRUCTION.TYPE.BLOCK_END) return i + 1
+			const value = instruction.value
+			const tail = instructions.slice(i+1)
+			const jumps = type.generate(template, value, tail, spotMods, maybeMods, symmetry, symmetryId)
 			if (jumps !== undefined) i += jumps
 		}
 	})

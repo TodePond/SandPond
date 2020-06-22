@@ -154,12 +154,32 @@ const JAVASCRIPT = {}
 	
 	const makeChunksLines = (chunks, margin, alreadyGots, constants) => {
 		const lines = []
+		
+		const maybeBlocks = []
+		
 		for (let i = 0; i < chunks.length; i++) {
 			const chunk = chunks[i]
 			lines.push(``)
 			if (chunk.is(String)) {
 				lines.push(`${margin}` + chunk)
 				continue
+			}
+			
+			//=======//
+			// Maybe // TODO: fix this. it messes things up if it's not the last thing. should copy its own alreadygots, or something
+			//=======//
+			let maybes = chunk.maybes
+			if (maybes === undefined) maybes = []
+			if (maybes.length > maybeBlocks.length) {
+				const maybe = maybes.last
+				maybeBlocks.push(maybe)
+				lines.push(`${margin}if (Math.random() < ${maybe.chance}) {`)
+				margin += `	`
+			}
+			else if (maybes.length < maybeBlocks.length) {
+				maybeBlocks.pop()
+				margin = margin.slice(0, -1)
+				lines.push(`${margin}}`)
 			}
 			
 			//=======//
@@ -209,6 +229,16 @@ const JAVASCRIPT = {}
 			lines.push(`${margin}	return`)
 			lines.push(`${margin}}`)
 		}
+			
+		//============//
+		// Tidy Maybe //
+		//============//
+		while (maybeBlocks.length > 0) {
+			maybeBlocks.pop()
+			margin = margin.slice(0, -1)
+			lines.push(`${margin}}`)
+		}
+		
 		return lines
 	}
 	
@@ -254,7 +284,7 @@ const JAVASCRIPT = {}
 		//if (name == "_Sand") print(template)
 	
 		const code = buildTemplate(template)
-		//if (name == "_Sand") print(code)
+		if (name == "_Lava") print(code)
 		return code
 	}
 	
