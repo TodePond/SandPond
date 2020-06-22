@@ -194,7 +194,7 @@ const JAVASCRIPT = {}
 			// Condition //
 			//===========//
 			const conditionInnerCode = chunk.conditions.join(" && ")
-			if (chunk.conditions.length === 0) lines.push(`	{`)
+			if (chunk.conditions.length === 0) lines.push(`${margin}{`)
 			else lines.push(`${margin}if (${conditionInnerCode}) {`)
 			
 			//========//
