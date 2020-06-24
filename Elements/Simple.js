@@ -68,12 +68,24 @@ element _Acid {
 	any(xz) @_ => _@
 }
 
+element _Carrot {
+	colour "rgb(200, 80, 0)"
+	category "Testing"
+	data id
+	
+	
+	
+	element Leaf {
+		colour "green"
+		arg id
+	}
+}
+
 element _Rabbit {
 	colour "white"
 	emissive "grey"
 	category "Testing"
 	data id
-	default true
 	
 	element Part {
 		colour "white"
@@ -132,13 +144,15 @@ element _Rabbit {
 	P@P => P_P
 	___    P@P
 	
-	// Move
+	// Breed
+	//@.R => 
 	
-	maybe(1/10) pov(right) any(z) {
+	// Move
+	maybe(1/5) pov(right) any(z) {
 		@_ => _@
 	}
 	
-	maybe(1/2) any(x) {
+	maybe(1/5) any(x) {
 		P_P_    _P_P
 		P@P_ => _P@P
 	}
@@ -217,22 +231,6 @@ element _Meteor {
 	
 	@ => E
 }
-
-element _Carrot {
-	colour "rgb(200, 80, 0)"
-	//emissive "darkorange"
-	category "Testing"
-	
-	change L () => new _Carrot.Leaf()
-	action @_ => .L
-	
-	element Leaf {
-		colour "green"
-	}
-}
-
-
-
 
 element Sand {
 	colour "#FC0"
