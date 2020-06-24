@@ -24,7 +24,7 @@ given x (element) => element === Void
 given .
 keep .
 
-element _Sand {
+element _Sand any(xz) {
 	colour "#FC0"
 	emissive "#ffa34d"
 	category "Testing"
@@ -32,10 +32,9 @@ element _Sand {
 	@ => _
 	_    @
 	
-	any(xz) {
-		@     _
-		 _ =>  @
-	}
+	
+	@     _
+	 _ =>  @
 }
 
 element _Water {
@@ -47,8 +46,102 @@ element _Water {
 	@ => _
 	_    @
 	
-	any(xz) @_ => _@
+	@ => .
+	x    .
 	
+	any(xz) @_ => _@
+}
+
+element _Acid {
+	colour "lightgreen"
+	emissive "green"
+	opacity 0.35
+	category "Testing"
+	
+	given n (element, selfElement) => element !== Void && element !== selfElement
+	@ => _
+	n    @
+	
+	@ => .
+	x    .
+	
+	any(xz) @_ => _@
+}
+
+element _Rabbit {
+	colour "white"
+	emissive "grey"
+	category "Testing"
+	data id
+	default true
+	
+	element Part {
+		colour "white"
+		emissive "grey"
+		arg id
+		
+		given R (element, atom, self) => element === _Rabbit && atom.id === self.id
+		
+		@R => ..
+		R@ => ..
+		
+		@  => .
+		 R     .
+		
+		 @ =>  .
+		R     .
+		
+		@ => _
+	}
+	
+	// Init ID
+	given i (self) => self.id === undefined
+	keep i (self) => self.id = Math.random()
+	i => i
+	
+	// Grow body
+	change P (self, atom) => new _Rabbit.Part(self.id)
+	@_ => .P
+	_@ => P.
+	
+	_  => P
+	 @     .
+	
+	 _ =>  P
+	@     .
+	
+	// Die because can't grow
+	given n (element, atom, self) => element !== _Rabbit.Part || atom.id !== self.id
+	n  => .
+	 @     _
+	 _     .
+	
+	 n =>  .
+	@     _
+	_     .
+	
+	@n => _.
+	_     .
+	
+	n@ => ._
+	 _     .
+	
+	// Fall down
+	given P (element, atom, self) => element === _Rabbit.Part && atom.id === self.id
+	P P    _ _
+	P@P => P_P
+	___    P@P
+	
+	// Move
+	
+	maybe(1/10) pov(right) any(z) {
+		@_ => _@
+	}
+	
+	maybe(1/2) any(x) {
+		P_P_    _P_P
+		P@P_ => _P@P
+	}
 }
 
 element _Lava any(xz.rotations) {
@@ -125,47 +218,21 @@ element _Meteor {
 	@ => E
 }
 
-element _Rabbit {
-	colour "white"
-	emissive "grey"
+element _Carrot {
+	colour "rgb(200, 80, 0)"
+	//emissive "darkorange"
 	category "Testing"
-	pour false
-	arg timer 50
 	
-	given p (element) => element === Empty || element === _Rabbit.Part
-	change P () => new _Rabbit.Part()
-	action @p => .P
-	action p@ => P.
-	action {
-		p     P
-		 @ =>  .
-	}
-	action {
-		 p     P
-		@  => .
-	}
+	change L () => new _Carrot.Leaf()
+	action @_ => .L
 	
-	@ => _
-	_    @
-	
-	given r (element) => element === _Rabbit || element === _Rabbit.Part
-	change R () => new _Rabbit()
-	any(xz.rotations) {
-		@_r => .R.
-		@p => _@
-	}
-	
-	element Part {
-		colour "white"
-		emissive "grey"
-		data timer 1
-		keep t (self) => self.timer--
-		action @ => t
-		
-		given T (self) => self.timer < 0
-		T => _
+	element Leaf {
+		colour "green"
 	}
 }
+
+
+
 
 element Sand {
 	colour "#FC0"

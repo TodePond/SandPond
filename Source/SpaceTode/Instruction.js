@@ -49,7 +49,7 @@ INSTRUCTION.make = (name, generate = () => { throw new Error(`[SpaceTode] The ${
 		const maybeMods = [...chunkMods, (chunk) => {
 			chunk.maybeChance = chance
 			if (chunk.maybes === undefined) chunk.maybes = []
-			chunk.maybes.push({id: maybeId, chance})
+			chunk.maybes = [...chunk.maybes, {id: maybeId, chance}]
 		}]
 		for (let i = 0; i < instructions.length; i++) {
 			const instruction = instructions[i]
@@ -464,7 +464,8 @@ INSTRUCTION.make = (name, generate = () => { throw new Error(`[SpaceTode] The ${
 	//============//
 	// ID Results //
 	//============//
-	const idResultsCache = {}
+	let idResultsCache = {}
+	INSTRUCTION.resetIdResultCache = () => idResultsCache = {} 
 	const makeIdResult = (result, id, paramNames) => {
 		const name = `${result.name}${id}Result`
 		if (idResultsCache.has(name)) return idResultsCache[name]
@@ -477,14 +478,6 @@ INSTRUCTION.make = (name, generate = () => { throw new Error(`[SpaceTode] The ${
 		idResultsCache[name] = idResult
 		return idResult
 	}
-	
-	//===============//
-	// Symmetry Need //
-	//===============//
-	/*const makeSymmetryNeed = (need, symmetry) => {
-		const name = `${need.name}Symmetry${symmetry.name}`.d
-		makeNeed()
-	}*/
 	
 }
 

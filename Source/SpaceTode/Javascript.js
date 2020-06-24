@@ -152,35 +152,67 @@ const JAVASCRIPT = {}
 		return code
 	}
 	
-	const makeChunksLines = (chunks, margin, alreadyGots, constants) => {
+	const makeChunksLines = (chunks, margin, gots, constants, missGap = false) => {
+		let alreadyGots = gots
 		const lines = []
-		
 		const maybeBlocks = []
+		const maybeGots = []
 		
 		for (let i = 0; i < chunks.length; i++) {
 			const chunk = chunks[i]
-			lines.push(``)
+			if (missGap) missGap = false
+			else lines.push(``)
 			if (chunk.is(String)) {
 				lines.push(`${margin}` + chunk)
 				continue
 			}
 			
 			//=======//
-			// Maybe // TODO: fix this. it messes things up if it's not the last thing. should copy its own alreadygots, or something
+			// Maybe //
 			//=======//
 			let maybes = chunk.maybes
 			if (maybes === undefined) maybes = []
+			
+			const oldId = maybeBlocks.last? maybeBlocks.last.id : undefined
+			const newId = maybes.last? maybes.last.id : undefined
+			
+			const isStartMaybe = newId !== undefined && oldId !== newId
+			//const isOldMaybe = 
+			
+			// Start Maybe
 			if (maybes.length > maybeBlocks.length) {
 				const maybe = maybes.last
 				maybeBlocks.push(maybe)
+				maybeGots.push([...alreadyGots])
+				lines.push(`${margin}// maybe(${maybes.last.chance})`)
 				lines.push(`${margin}if (Math.random() < ${maybe.chance}) {`)
+				lines.push(`${margin}`)
 				margin += `	`
 			}
-			else if (maybes.length < maybeBlocks.length) {
+			// End Maybe
+			else if (maybes.length < maybeBlocks.length || oldId !== newId) {
+				const afterMaybeGots = [...maybeGots.last]
 				maybeBlocks.pop()
+				maybeGots.pop()
+				
+				const tail = chunks.slice(i)
+				const afterLines = makeChunksLines(tail, `${margin}`, afterMaybeGots, constants, true)
+				lines.push(`${margin}// Continue rules after successful 'maybe'`)
+				lines.push(...afterLines)
+				lines.push(`${margin}return`)
+				
 				margin = margin.slice(0, -1)
 				lines.push(`${margin}}`)
+				lines.push(`${margin}`)
+				lines.push(`${margin}// Continue rules after failing 'maybe'`)
+				i--
+				missGap = true
+				continue
+				
 			}
+			
+			if (maybeBlocks.length > 0) alreadyGots = maybeGots.last
+			else alreadyGots = gots
 			
 			//=======//
 			// Input //
@@ -210,7 +242,11 @@ const JAVASCRIPT = {}
 			//=================//
 			if (chunk.isInAction) {
 				const tail = chunks.slice(i+1).filter(c => c.actionId !== chunk.actionId)
-				const afterLines = makeChunksLines(tail, `${margin}	`, outputAlreadyGots, constants)
+				const afterLines = makeChunksLines(tail, `${margin}	`, outputAlreadyGots, constants, true)
+				if (afterLines.length > 0) {
+					lines.push(`${margin}	`)
+					lines.push(`${margin}	// Continue rules after successful 'action'`)
+				}
 				lines.push(...afterLines)
 			}
 			
@@ -221,7 +257,9 @@ const JAVASCRIPT = {}
 				const tail = chunks.slice(i+1)
 				const tailActions = tail.filter(chunk => chunk.isInAction)
 				if (tailActions[0] !== undefined) {
-					const afterLines = makeChunksLines(tailActions, `${margin}	`, outputAlreadyGots, constants)
+					const afterLines = makeChunksLines(tailActions, `${margin}	`, outputAlreadyGots, constants, true)
+					lines.push(`${margin}	`)
+					lines.push(`${margin}	// Continue 'action's after matching a rule`)
 					lines.push(...afterLines)
 				}
 			}
@@ -265,8 +303,8 @@ const JAVASCRIPT = {}
 	// Behave //
 	//========//
 	const makeBehaveCode = (instructions, name) => {
-	
-		let template = JAVASCRIPT.makeEmptyTemplate()
+		INSTRUCTION.resetIdResultCache() //spent one whole hour hunting a bug because i forgot to reset the cache for each element. caches are evil
+		const template = JAVASCRIPT.makeEmptyTemplate()
 		
 		const blockStart = {type: INSTRUCTION.TYPE.NAKED}
 		const blockEnd = {type: INSTRUCTION.TYPE.BLOCK_END}
@@ -281,10 +319,9 @@ const JAVASCRIPT = {}
 			if (jumps !== undefined) i += jumps
 		}
 		
-		//if (name == "_Sand") print(template)
 	
 		const code = buildTemplate(template)
-		if (name == "_Lava") print(code)
+		if (name == "_Rabbit") print(code)
 		return code
 	}
 	

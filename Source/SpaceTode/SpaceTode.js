@@ -774,11 +774,11 @@
 		
 		result = {code} = EAT.gap(code)
 		result = {code, success} = EAT.javascript(code)
-		if (!success) return EAT.fail(code)
+		//if (!success) return EAT.fail(code)
 		
 		scope.data[name] = result.value
 		
-		return result
+		return {...result, success: true}
 		
 	}
 	
