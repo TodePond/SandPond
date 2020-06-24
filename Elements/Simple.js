@@ -71,13 +71,38 @@ element _Acid {
 element _Carrot {
 	colour "rgb(200, 80, 0)"
 	category "Testing"
-	data id
 	
-	
+	// Init
+	change i () => new _Carrot.Leaf(Math.random())
+	@ => i
 	
 	element Leaf {
 		colour "green"
 		arg id
+		
+		// Grow
+		change P (self, atom) => new _Carrot.Part(self.id)
+		_@ => P.
+		_ @ => P .
+		
+		// Die
+		given n (element, atom, self) => element !== _Carrot.Part || atom.id !== self.id
+		n@ => ._
+		n @ => . _
+		
+		given P (self, atom, element) => element === _Carrot.Part && atom.id === self.id
+		PP@ => ___
+		___    PP@
+	}
+	
+	element Part {
+		colour "rgb(200, 80, 0)"
+		arg id
+		
+		given L (self, atom, element) => element === _Carrot.Leaf && atom.id === self.id
+		@L => ..
+		@ L => . .
+		@ => _
 	}
 }
 
