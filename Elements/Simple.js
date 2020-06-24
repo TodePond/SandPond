@@ -79,6 +79,10 @@ element _Carrot {
 	element Leaf {
 		colour "green"
 		arg id
+		data eaten false
+		
+		given e (self) => self.eaten
+		e => _
 		
 		// Grow
 		change P (self, atom) => new _Carrot.Part(self.id)
@@ -98,11 +102,15 @@ element _Carrot {
 	element Part {
 		colour "rgb(200, 80, 0)"
 		arg id
+		data eaten false
 		
 		given L (self, atom, element) => element === _Carrot.Leaf && atom.id === self.id
-		@L => ..
-		@ L => . .
+		keep l (self, atom) => atom.eaten = self.eaten
+		@L => .l
+		@ L => . l
+		
 		@ => _
+		
 	}
 }
 
@@ -111,6 +119,7 @@ element _Rabbit {
 	emissive "grey"
 	category "Testing"
 	data id
+	data type
 	
 	element Part {
 		colour "white"
@@ -133,7 +142,10 @@ element _Rabbit {
 	
 	// Init ID
 	given i (self) => self.id === undefined
-	keep i (self) => self.id = Math.random()
+	keep i (self) => {
+		self.id = Math.random()
+		self.type = [Math.floor(Math.random() * 3)]
+	}
 	i => i
 	
 	// Grow body
@@ -169,15 +181,31 @@ element _Rabbit {
 	P@P => P_P
 	___    P@P
 	
-	// Breed
-	//@.R => 
+	any(xyz.rotations) {
+	
+		// Eat
+		given C (element) => element === _Carrot.Leaf || element === _Carrot.Part
+		keep C (atom) => atom.eaten = true
+		@.C => ..C
+		@C => .C
+		
+		// Breed
+		given R (element, atom, self) => (element === _Rabbit || element === _Rabbit.Part) && self.id !== atom.id
+		change B () => new _Rabbit()
+		maybe(1/15) {
+			@_R => .B.
+			@R_ => ..B
+			_@R => B..
+			_@.R => B...
+		}
+	}
 	
 	// Move
-	maybe(1/5) pov(right) any(z) {
+	maybe(1/2) pov(right) any(z) {
 		@_ => _@
 	}
 	
-	maybe(1/5) any(x) {
+	any(x) {
 		P_P_    _P_P
 		P@P_ => _P@P
 	}
