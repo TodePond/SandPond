@@ -171,6 +171,13 @@ UIstarted = true
 				font-family: Rosario;
 			}
 			
+			#argsBar {
+				font-size: 18px;
+				padding: 3px;
+				font-family: UbuntuMono;
+				width: 225px;
+			}
+			
 			#sourceBox {
 				font-family: UbuntuMono;
 				font-size: 18px;
@@ -282,6 +289,11 @@ UIstarted = true
 						<div id="pourPourOption" class="pourOption dynamic option box clickable"><div class="label">Pour</div></div>
 						<div id="singlePourOption" class="pourOption dynamic option box clickable"><div class="label">Single</div></div>
 					</section>
+					<section>
+						<div class="miniTitle">ARGS</div>
+						<input class="clickable" type="text" id="argsBar" value="">
+					</section>
+					
 				</div>
 				
 				<div id="mode" class="form minimised">
@@ -434,10 +446,12 @@ UIstarted = true
 	// Events //
 	//========//
 	on.keydown(e => {
-		const searchWindow = $("#searchBar")
-		if (!searchWindow.classList.contains("minimised")) {
-			const searchBar = $("#searchBar")
+		const searchBar = $("#searchBar")
+		if (!searchBar.classList.contains("minimised")) {
 			searchBar.focus()
+		}
+		else if (!$("#dropper").classList.contains("minimised")) {
+			
 		}
 		else {
 			if (e.key == " ") {
@@ -586,6 +600,11 @@ UIstarted = true
 	
 	$("#searchBar").on.input(function() {
 		updateSearch()
+	})
+	
+	$("#argsBar").on.input(function(){
+		DROPPER_ARGS_NEEDS_EVAL = true
+		DROPPER_ARGS_SOURCE = this.value
 	})
 	
 	$("#modeGo").on.click(() => {

@@ -11,6 +11,10 @@ let MAX_SHADOW = 21
 let DROPPER_POUR = "default"
 let DROPPER_HEIGHT = 5
 
+let DROPPER_ARGS_NEEDS_EVAL = false
+let DROPPER_ARGS_SOURCE = ""
+let DROPPER_ARGS = []
+
 {
 
 	//===========//
@@ -228,7 +232,11 @@ let DROPPER_HEIGHT = 5
 			if (atomType != space.atom.element) return dropAtom(x, y, z, yOffset + 1, justShow, shadowNumber)
 		}
 		if (!justShow) {
-			const atom = new atomType()
+			if (DROPPER_ARGS_NEEDS_EVAL) {
+				DROPPER_ARGS = JS("[" + DROPPER_ARGS_SOURCE + "]")
+				DROPPER_ARGS_NEEDS_EVAL = false
+			}
+			const atom = new atomType(...DROPPER_ARGS)
 			SPACE.setAtom(space, atom, atomType)
 		}
 		else {

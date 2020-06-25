@@ -114,12 +114,39 @@ element _Carrot {
 	}
 }
 
+element _WeatherBot any(xz.rotations) {
+	
+	category "Testing"
+	arg rain _Water
+	arg chance 1/100
+	arg birthday
+	
+	given i (self) => self.birthday === undefined
+	keep i (self, time) => self.birthday = time
+	i => i
+	
+	given r (element, self) => element === Empty && (Math.random() < self.chance)
+	change R (self) => new self.rain()
+	@ => .
+	r    R
+	
+	_ => @
+	@    _
+	
+	change W (selfElement, self) => new selfElement(self.rain, self.chance, self.birthday)
+	maybe(1/5) @_ => W@
+	
+	given W (element, atom, self) => element === _WeatherBot && self.birthday >= atom.birthday
+	@W => _@
+	@_ => _@
+	
+}
+
 element _Rabbit {
 	colour "white"
 	emissive "grey"
 	category "Testing"
 	data id
-	data type
 	
 	element Part {
 		colour "white"
@@ -127,7 +154,6 @@ element _Rabbit {
 		arg id
 		
 		given R (element, atom, self) => element === _Rabbit && atom.id === self.id
-		
 		@R => ..
 		R@ => ..
 		
@@ -142,14 +168,16 @@ element _Rabbit {
 	
 	// Init ID
 	given i (self) => self.id === undefined
-	keep i (self) => {
-		self.id = Math.random()
-		self.type = [Math.floor(Math.random() * 3)]
-	}
+	keep i (self) => self.id = Math.random()
 	i => i
 	
 	// Grow body
-	change P (self, atom) => new _Rabbit.Part(self.id)
+	change P (self, atom) => {
+		const part = new _Rabbit.Part(self.id)
+		part.colour = self.colour
+		part.emissive = self.emissive
+		return part
+	}
 	@_ => .P
 	_@ => P.
 	
@@ -250,7 +278,6 @@ element _Forkbomb {
 
 element _Res {
 	category "Testing"
-	//default true
 	any(xyz.rotations) @_ => _@
 }
 
@@ -280,8 +307,10 @@ element _Meteor {
 	 @ => .
 	M    .
 	
-	change E () => new Explosion(35)
+	/* @ =>  _
+	x     .*/
 	
+	change E () => new Explosion(35)
 	@ => E
 }
 
@@ -710,7 +739,6 @@ element Plank {
 	
 	colour "#753d0c"
 	emissive "#753d0c"
-	//default true
 	category "Sandbox"
 	data bday undefined
 	
@@ -761,7 +789,6 @@ element Clay {
 	category "Sandbox"
 	data stuck false
 	data stuckTime -Infinity
-	//default true
 	prop state STATE.SOLID
 	data sticky true
 	behave {

@@ -50,7 +50,7 @@ const JAVASCRIPT = {}
 				propertyNames += `, ${argName}: ${argName}`
 			}
 			else {
-				constructorArgNames += `${argName} = ${argName}Default`
+				constructorArgNames += `, ${argName} = ${argName}Default`
 				propertyNames += `, ${argName}: ${argName}`
 			}
 		}
@@ -321,7 +321,7 @@ const JAVASCRIPT = {}
 		
 	
 		const code = buildTemplate(template)
-		if (name == "_Rabbit") print(code)
+		//if (name == "_Rabbit") print(code)
 		return code
 	}
 	
