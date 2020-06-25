@@ -21,7 +21,7 @@ given # (element) => element !== Empty && element !== Void
 
 given x (element) => element === Void
 
-given .
+given . (element) => element !== Void
 keep .
 
 element _Sand any(xz) {
@@ -112,6 +112,24 @@ element _Carrot {
 		@ => _
 		
 	}
+}
+
+element _Explosion any(xyz.rotations) {
+	colour "darkorange"
+	emissive "red"
+	opacity 0.3
+	category "Testing"
+	arg timer 20
+	
+	keep t (self) => self.timer--
+	action @ => t
+	
+	given t (self) => self.timer <= 0
+	t => _
+	
+	change E (self, selfElement) => new selfElement(self.timer)
+	@. => .E
+	
 }
 
 element _WeatherBot any(xz.rotations) {
@@ -306,9 +324,6 @@ element _Meteor {
 	given M (element, selfElement) => element === selfElement
 	 @ => .
 	M    .
-	
-	/* @ =>  _
-	x     .*/
 	
 	change E () => new Explosion(35)
 	@ => E

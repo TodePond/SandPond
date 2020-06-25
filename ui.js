@@ -688,6 +688,7 @@ UIstarted = true
 	})
 	
 	$$(".elementButton").on.click(function(e) {
+	
 		const newButton = this
 		const newId = newButton.id
 		
@@ -709,6 +710,12 @@ UIstarted = true
 			UI.selectedElement = newElement
 			newButton.style.outline = ""
 			updateSourceUI()
+		}
+		
+		if (oldElement !== newElement) {
+			$("#argsBar").value = ""
+			DROPPER_ARGS_SOURCE = ""
+			DROPPER_ARGS_NEEDS_EVAL = true
 		}
 		
 	})
