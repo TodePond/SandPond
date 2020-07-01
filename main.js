@@ -161,7 +161,7 @@ let shuffleCounter = 0
 
 let currentTrack = true
 	
-if (SHUFFLE_MODE) {
+if (RANDOM === "shuffle") {
 	let time = 0
 	on.process(() => {
 		if (paused) {
@@ -178,7 +178,7 @@ if (SHUFFLE_MODE) {
 		time++
 	})
 }
-else if (PURE_RANDOM_MODE) {
+else if (RANDOM === "pure") {
 	let time = 0
 	on.process(() => {
 		if (paused) {
@@ -194,7 +194,7 @@ else if (PURE_RANDOM_MODE) {
 		time++		
 	})
 }
-else {
+else if (RANDOM === "track") {
 
 	let time = 0
 	on.process(() => {
@@ -215,6 +215,40 @@ else {
 		currentTrack = !currentTrack
 		time++
 	})
+}
+else if (RANDOM === "firing") {
+	let time = 0
+	
+	// https://developer.mozilla.org/en-US/docs/Web/API/Crypto/getRandomValues#Exceptions
+	const eventCount = 65536 / 4
+	const idRatio = (1 / 2**32) * spaceCount
+	const eventRatio = Math.ceil(spaceCount / eventCount)
+	
+	const ids = new Uint32Array(eventCount)
+	
+	on.process(() => {
+		if (paused === true) {
+			if (stepCount <= 0) return
+			stepCount--
+		}
+		
+		for (let e = 0; e < eventRatio; e++) {
+			crypto.getRandomValues(ids)	
+			for (let i = 0; i < eventCount; i++) {
+				const id = Math.floor(ids[i] * idRatio)
+				const space = spaces[id]
+				const element = space.element
+				if (element === Empty) continue
+				element.behave(space, element, time)
+			}
+		}
+		
+		time++
+		
+	})
+}
+else {
+	throw new Error(`[SandPond] Unrecognised randomness mode: '${RANDOM}'`)
 }
 
 function measureConcentration(filter = (atom => atom.element != Empty)) {

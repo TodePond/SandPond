@@ -14,10 +14,11 @@ const TINY_MODE = urlParams.has("tiny")
 const LONG_MODE = urlParams.has("long")
 const PURE_RANDOM_MODE = urlParams.has("pure")
 const SHUFFLE_MODE = urlParams.has("shuffle")
+const FIRING_MODE = urlParams.has("firing")
 const MEDIUM_MODE = urlParams.has("medium")
 const RIDICULOUS_MODE = urlParams.has("ridiculous")
 
-const RANDOM = SHUFFLE_MODE? "shuffle" : (PURE_RANDOM_MODE? "pure" : "track")
+const RANDOM = SHUFFLE_MODE? "shuffle" : (PURE_RANDOM_MODE? "pure" : (FIRING_MODE? "firing" : "track"))
 
 const FLOOR_TYPE = urlParams.has("nofloor")? "nofloor" : "floor"
 

@@ -341,6 +341,7 @@ UIstarted = true
 						<div id="trackOption" class="randomOption option box clickable"><div class="label">Tagging</div></div>
 						<div id="pureOption" class="randomOption option box clickable"><div class="label">Shuffled</div></div>
 						<div id="shuffleOption" class="randomOption option box clickable"><div class="label">Shuffling</div></div>
+						<div id="firingOption" class="randomOption option box clickable"><div class="label">Firing</div></div>
 					</section>
 					<section>
 						<div id="modeGo" class="box option clickable"><div class="label">RELOAD</div></div>
