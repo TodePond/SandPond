@@ -31,7 +31,7 @@ INSTRUCTION.make = (name, generate = () => { throw new Error(`[SpaceTode] The ${
 	})
 	
 	INSTRUCTION.TYPE.ANY = INSTRUCTION.make("AnyBlock", (template, selfSymmetry, instructions, spotMods = [], chunkMods = [], symmetry, symmetryId) => {
-		const totalSymmetry = selfSymmetry //combineSymmetries(selfSymmetry, symmetry) //TODO
+		const totalSymmetry = selfSymmetry
 		const totalSymmetryId = template.symmetry.push(totalSymmetry) - 1
 		for (let i = 0; i < instructions.length; i++) {
 			const instruction = instructions[i]
