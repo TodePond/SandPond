@@ -236,6 +236,7 @@ const JAVASCRIPT = {}
 			// Start For
 			if (nextForSymmId !== undefined && prevForSymmId !== nextForSymmId) {
 				const iName = `i${nextForSymmId}`
+				lines.push(`${margin}const transNumsShuffledSymm${nextForSymmId} = transNumsSymm${nextForSymmId}Const.shuffled`)
 				lines.push(`${margin}for(let ${iName} = 0; ${iName} < ${chunk.forSymmTransCount}; ${iName}++) {`)
 				lines.push(``)
 				margin += `	`
