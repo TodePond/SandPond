@@ -24,14 +24,14 @@ given x (element) => element === Void
 given . (element) => element !== Void
 keep .
 
-element _Sand any(xz) {
+element _Sand for(xz.rotations) {
 	colour "#FC0"
 	emissive "#ffa34d"
 	category "Testing"
+	default true
 	
 	@ => _
 	_    @
-	
 	
 	@     _
 	 _ =>  @
@@ -49,7 +49,7 @@ element _Water {
 	@ => .
 	x    .
 	
-	any(xz) @_ => _@
+	for(xz.rotations) @_ => _@
 }
 
 element _Acid {

@@ -157,6 +157,7 @@ const JAVASCRIPT = {}
 		const lines = []
 		const maybeBlocks = []
 		const maybeGots = []
+		let prevForSymmId = undefined
 		
 		for (let i = 0; i < chunks.length; i++) {
 			const chunk = chunks[i]
@@ -177,7 +178,6 @@ const JAVASCRIPT = {}
 			const newId = maybes.last? maybes.last.id : undefined
 			
 			const isStartMaybe = newId !== undefined && oldId !== newId
-			//const isOldMaybe = 
 			
 			// Start Maybe
 			if (maybes.length > maybeBlocks.length) {
@@ -208,18 +208,46 @@ const JAVASCRIPT = {}
 				i--
 				missGap = true
 				continue
-				
 			}
 			
 			if (maybeBlocks.length > 0) alreadyGots = maybeGots.last
 			else alreadyGots = gots
+			
+			//================//
+			// Pre-Loop Input //
+			//================//
+			//lines.push(...chunk.debug.source.split("\n").map(s => `${margin}// ${s}`))
+			for (const needer of chunk.input.needers) {
+				if (needer.need.preLoop) lines.push(...makeNeederLines(needer, `${margin}`, alreadyGots, true, constants))
+			}
+			
+			//=====//
+			// For //
+			//=====//
+			const nextForSymmId = chunk.forSymmId
+			
+			// End For
+			if (prevForSymmId !== undefined && nextForSymmId !== prevForSymmId) {
+				prevForSymmId = undefined
+				margin = margin.slice(0, -1)
+				lines.push(`${margin}}`)
+			}
+			
+			// Start For
+			if (nextForSymmId !== undefined && prevForSymmId !== nextForSymmId) {
+				const iName = `i${nextForSymmId}`
+				lines.push(`${margin}for(let ${iName} = 0; ${iName} < ${chunk.forSymmTransCount}; ${iName}++) {`)
+				lines.push(``)
+				margin += `	`
+				prevForSymmId = nextForSymmId
+			}
 			
 			//=======//
 			// Input //
 			//=======//
 			lines.push(...chunk.debug.source.split("\n").map(s => `${margin}// ${s}`))
 			for (const needer of chunk.input.needers) {
-				lines.push(...makeNeederLines(needer, `${margin}`, alreadyGots, true, constants))
+				if (!needer.need.preLoop) lines.push(...makeNeederLines(needer, `${margin}`, alreadyGots, true, constants))
 			}
 			
 			//===========//
@@ -267,6 +295,15 @@ const JAVASCRIPT = {}
 			lines.push(`${margin}	return`)
 			lines.push(`${margin}}`)
 		}
+		
+		//==========//
+		// Tidy For //
+		//==========//
+		if (prevForSymmId !== undefined) {
+			prevForSymmId = undefined
+			margin = margin.slice(0, -1)
+			lines.push(`${margin}}`)
+		}
 			
 		//============//
 		// Tidy Maybe //
@@ -284,16 +321,16 @@ const JAVASCRIPT = {}
 		const lines = []
 		const need = needer.need
 		if (need.generateGet && !alreadyGots.includes(needer.name)) {
-			const getCode = need.generateGet(needer.x, needer.y, needer.z, needer.symmetry, needer.symmetryId, needer.id, needer.argNames, needer.idResultName, needer.symmetry)
+			const getCode = need.generateGet(needer.x, needer.y, needer.z, needer.symmetry, needer.symmetryId, needer.id, needer.argNames, needer.idResultName, needer.forSymmId)
 			if (getCode !== undefined) lines.push(`${indent}const ${needer.name} = ${getCode}`)
 			if (cache) alreadyGots.push(needer.name)
 		}
 		if (need.generateConstant) {
-			const constantCode = need.generateConstant(needer.x, needer.y, needer.z, needer.symmetry, needer.symmetryId, needer.id, needer.argNames, needer.idResultName, needer.symmetry)
-			if (constantCode !== undefined) constants.pushUnique(`const ${needer.name} = ${constantCode}`)
+			const constantCode = need.generateConstant(needer.x, needer.y, needer.z, needer.symmetry, needer.symmetryId, needer.id, needer.argNames, needer.idResultName, needer.forSymmId)
+			if (constantCode !== undefined) constants.pushUnique(`const ${needer.name}Const = ${constantCode}`)
 		}
 		if (need.generateExtra) {
-			const extraCode = need.generateExtra(needer.x, needer.y, needer.z, needer.symmetry, needer.symmetryId, needer.id, needer.argNames, needer.idResultName, needer.symmetry)
+			const extraCode = need.generateExtra(needer.x, needer.y, needer.z, needer.symmetry, needer.symmetryId, needer.id, needer.argNames, needer.idResultName, needer.forSymmId)
 			if (extraCode !== undefined) lines.push(`${indent}${extraCode}`)
 		}
 		return lines
@@ -321,7 +358,7 @@ const JAVASCRIPT = {}
 		
 	
 		const code = buildTemplate(template)
-		//if (name == "_Rabbit") print(code)
+		if (name == "_Sand") print(code)
 		return code
 	}
 	
