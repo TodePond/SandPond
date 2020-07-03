@@ -17,8 +17,24 @@ INSTRUCTION.TYPE = {}
 INSTRUCTION.make = (name, generate = () => { throw new Error(`[SpaceTode] The ${name} instruction is not supported yet`) }) => ({name, generate})
 
 {
-	INSTRUCTION.TYPE.MIMIC = INSTRUCTION.make("Mimic")
-	INSTRUCTION.TYPE.POV = INSTRUCTION.make("PointOfView")
+	
+	INSTRUCTION.TYPE.MIMIC = INSTRUCTION.make("Mimic", (template, targetGetter, instructions) => {
+		const target = targetGetter()
+		
+		const blockStart = {type: INSTRUCTION.TYPE.NAKED}
+		const blockEnd = {type: INSTRUCTION.TYPE.BLOCK_END}
+		const fullInstructions = [blockStart, ...target.instructions, blockEnd]
+	
+		for (let i = 0; i < fullInstructions.length; i++) {
+			const instruction = fullInstructions[i]
+			const type = instruction.type
+			const value = instruction.value
+			const tail = fullInstructions.slice(i+1)
+			const jumps = type.generate(template, value, tail)
+			if (jumps !== undefined) i += jumps
+		}
+		//print(instructions)
+	})
 
 	INSTRUCTION.TYPE.BLOCK_END = INSTRUCTION.make("BlockEnd", () => {
 		throw new Error(`[SpaceTode] The BlockEnd instruction should never be parsed on its own. Something has gone wrong with parsing.`)

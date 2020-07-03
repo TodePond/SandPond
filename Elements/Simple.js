@@ -44,11 +44,10 @@ element _Water {
 	opacity 0.35
 	category "Testing"
 	
-	@ => _
-	_    @
-	
 	@ => .
 	x    .
+	
+	mimic(_Sand)
 	
 	symbol W _Water
 	
