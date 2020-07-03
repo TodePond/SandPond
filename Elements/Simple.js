@@ -35,6 +35,7 @@ element _Sand for(xz.rotations) {
 	
 	@     _
 	 _ =>  @
+	
 }
 
 element _Water {
@@ -49,7 +50,9 @@ element _Water {
 	@ => .
 	x    .
 	
-	for(xz.rotations) @_ => _@
+	symbol W _Water
+	
+	for(xz.rotations) @_ => _W
 }
 
 element _Acid {

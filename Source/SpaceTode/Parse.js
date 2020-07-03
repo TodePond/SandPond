@@ -626,6 +626,7 @@
 		"given",
 		"change",
 		"keep",
+		"symbol",
 	]
 	
 	EAT.symbolName = EAT.many(EAT.regex(/[^ 	\n]/))
@@ -668,7 +669,7 @@
 		
 		// TODO: throw warning if you add javascript to a symbol part that doesn't use it
 		// eg: origin, symbol
-		result = {code, success, snippet, funcCode} = EAT.javascript(code)
+		result = {code, success, snippet, funcCode} = EAT.javascript(code, undefined, undefined, undefined, undefined, symbolPartName === "symbol")
 		const javascript = funcCode
 		
 		if (scope.symbols[symbolName] == undefined) {
@@ -683,6 +684,12 @@
 			throw new Error(`[SpaceTode] You can't define more than one '${symbolPartName}' on the '${symbolName}' symbol.`)
 		}
 		symbol[symbolPartName] = javascript		
+		
+		if (symbolPartName === "symbol") {
+			symbol.given = `(element) => element === (${javascript})`
+			symbol.change = `() => new (${javascript})()`
+		}
+		
 		if (!success) return nojsResult
 		else return result
 	}
