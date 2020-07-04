@@ -9,8 +9,6 @@ const STATE = {
 
 SpaceTode`
 
-
-
 origin @
 change @ (self) => self
 
@@ -24,17 +22,18 @@ given x (element) => element === Void
 given . (element) => element !== Void
 keep .
 
-element _Sand for(xz.rotations) {
+element _Sand {
 	colour "#FC0"
 	emissive "#ffa34d"
 	category "Testing"
 	//default true
 	
-	@ => _
-	_    @
+	given D (element) => element === Empty || element === _Water
+	select D (atom) => atom
+	change D (selected) => new Empty()
 	
-	@     _
-	 _ =>  @
+	@ => D
+	D    @
 	
 }
 
@@ -44,10 +43,12 @@ element _Water {
 	opacity 0.35
 	category "Testing"
 	
+	
+	@ => _
+	_    @
+	
 	@ => .
 	x    .
-	
-	mimic(_Sand)
 	
 	symbol W _Water
 	

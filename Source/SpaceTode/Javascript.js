@@ -92,9 +92,21 @@ const JAVASCRIPT = {}
 		// Head contains stores of global functions that we need
 		head: {
 			given: [],
+			select: [],
+			check: [],
 			change: [],
 			keep: [],
 			behave: [],
+		},
+		
+		// Stores the characters for symbol parts held in head
+		chars: {
+			given: [],
+			select: [],
+			check: [],
+			change: [],
+			keep: [],
+			//behave: [],
 		},
 		
 		// Cache stores global variables that we might use more than once
@@ -135,7 +147,7 @@ const JAVASCRIPT = {}
 		lines.push("//========//")
 		lines.push(`const behave = (origin, selfElement, time, self = origin.atom) => {`)
 		const constants = []
-		lines.push(...makeChunksLines(template.main, `	`, [], constants))
+		lines.push(...makeChunksLines(template.main, `	`, [], constants, false, template))
 		lines.push(`}`)
 		lines.push(``)
 		lines.push(`return behave`)
@@ -152,7 +164,7 @@ const JAVASCRIPT = {}
 		return code
 	}
 	
-	const makeChunksLines = (chunks, margin, gots, constants, missGap = false) => {
+	const makeChunksLines = (chunks, margin, gots, constants, missGap = false, template) => {
 		let alreadyGots = gots
 		const lines = []
 		const maybeBlocks = []
@@ -196,7 +208,7 @@ const JAVASCRIPT = {}
 				maybeGots.pop()
 				
 				const tail = chunks.slice(i)
-				const afterLines = makeChunksLines(tail, `${margin}`, afterMaybeGots, constants, true)
+				const afterLines = makeChunksLines(tail, `${margin}`, afterMaybeGots, constants, true, template)
 				lines.push(`${margin}// Continue rules after successful 'maybe'`)
 				lines.push(...afterLines)
 				lines.push(`${margin}return`)
@@ -218,7 +230,7 @@ const JAVASCRIPT = {}
 			//================//
 			//lines.push(...chunk.debug.source.split("\n").map(s => `${margin}// ${s}`))
 			for (const needer of chunk.input.needers) {
-				if (needer.need.preLoop) lines.push(...makeNeederLines(needer, `${margin}`, alreadyGots, true, constants))
+				if (needer.need.preLoop) lines.push(...makeNeederLines(needer, `${margin}`, alreadyGots, true, constants, template))
 			}
 			
 			//=====//
@@ -248,7 +260,7 @@ const JAVASCRIPT = {}
 			//=======//
 			lines.push(...chunk.debug.source.split("\n").map(s => `${margin}// ${s}`))
 			for (const needer of chunk.input.needers) {
-				if (!needer.need.preLoop) lines.push(...makeNeederLines(needer, `${margin}`, alreadyGots, true, constants))
+				if (!needer.need.preLoop) lines.push(...makeNeederLines(needer, `${margin}`, alreadyGots, true, constants, template))
 			}
 			
 			//===========//
@@ -263,7 +275,7 @@ const JAVASCRIPT = {}
 			//========//
 			const outputAlreadyGots = [...alreadyGots]
 			for (const needer of chunk.output.needers) {
-				lines.push(...makeNeederLines(needer, `${margin}	`, outputAlreadyGots, true, constants))
+				lines.push(...makeNeederLines(needer, `${margin}	`, outputAlreadyGots, true, constants, template))
 			}
 			
 			//=================//
@@ -271,7 +283,7 @@ const JAVASCRIPT = {}
 			//=================//
 			if (chunk.isInAction) {
 				const tail = chunks.slice(i+1).filter(c => c.actionId !== chunk.actionId)
-				const afterLines = makeChunksLines(tail, `${margin}	`, outputAlreadyGots, constants, true)
+				const afterLines = makeChunksLines(tail, `${margin}	`, outputAlreadyGots, constants, true, template)
 				if (afterLines.length > 0) {
 					lines.push(`${margin}	`)
 					lines.push(`${margin}	// Continue rules after successful 'action'`)
@@ -286,7 +298,7 @@ const JAVASCRIPT = {}
 				const tail = chunks.slice(i+1)
 				const tailActions = tail.filter(chunk => chunk.isInAction)
 				if (tailActions[0] !== undefined) {
-					const afterLines = makeChunksLines(tailActions, `${margin}	`, outputAlreadyGots, constants, true)
+					const afterLines = makeChunksLines(tailActions, `${margin}	`, outputAlreadyGots, constants, true, template)
 					lines.push(`${margin}	`)
 					lines.push(`${margin}	// Continue 'action's after matching a rule`)
 					lines.push(...afterLines)
@@ -318,20 +330,20 @@ const JAVASCRIPT = {}
 		return lines
 	}
 	
-	const makeNeederLines = (needer, indent, alreadyGots, cache = true, constants) => {
+	const makeNeederLines = (needer, indent, alreadyGots, cache = true, constants, template) => {
 		const lines = []
 		const need = needer.need
 		if (need.generateGet && !alreadyGots.includes(needer.name)) {
-			const getCode = need.generateGet(needer.x, needer.y, needer.z, needer.symmetry, needer.symmetryId, needer.id, needer.argNames, needer.idResultName, needer.forSymmId)
+			const getCode = need.generateGet(needer.x, needer.y, needer.z, needer.symmetry, needer.symmetryId, needer.id, needer.argNames, needer.idResultName, needer.forSymmId, needer.char, template, needer.diagram)
 			if (getCode !== undefined) lines.push(`${indent}const ${needer.name} = ${getCode}`)
 			if (cache) alreadyGots.push(needer.name)
 		}
 		if (need.generateConstant) {
-			const constantCode = need.generateConstant(needer.x, needer.y, needer.z, needer.symmetry, needer.symmetryId, needer.id, needer.argNames, needer.idResultName, needer.forSymmId)
+			const constantCode = need.generateConstant(needer.x, needer.y, needer.z, needer.symmetry, needer.symmetryId, needer.id, needer.argNames, needer.idResultName, needer.forSymmId, needer.char, template, needer.diagram)
 			if (constantCode !== undefined) constants.pushUnique(`const ${needer.name}Const = ${constantCode}`)
 		}
 		if (need.generateExtra) {
-			const extraCode = need.generateExtra(needer.x, needer.y, needer.z, needer.symmetry, needer.symmetryId, needer.id, needer.argNames, needer.idResultName, needer.forSymmId)
+			const extraCode = need.generateExtra(needer.x, needer.y, needer.z, needer.symmetry, needer.symmetryId, needer.id, needer.argNames, needer.idResultName, needer.forSymmId, needer.char, template, needer.diagram)
 			if (extraCode !== undefined) lines.push(`${indent}${extraCode}`)
 		}
 		return lines
@@ -342,6 +354,7 @@ const JAVASCRIPT = {}
 	//========//
 	const makeBehaveCode = (instructions, name) => {
 		INSTRUCTION.resetIdResultCache() //spent one whole hour hunting a bug because i forgot to reset the cache for each element. caches are evil
+		INSTRUCTION.resetCharIdCache() //lol made another cache instead of doing it properly. im sure njothing will go wrong
 		const template = JAVASCRIPT.makeEmptyTemplate()
 		
 		const blockStart = {type: INSTRUCTION.TYPE.NAKED}
@@ -353,12 +366,12 @@ const JAVASCRIPT = {}
 			const type = instruction.type
 			const value = instruction.value
 			const tail = fullInstructions.slice(i+1)
-			const jumps = type.generate(template, value, tail)
+			const jumps = type.generate(template, value, tail, undefined, undefined, undefined, undefined, undefined, undefined)
 			if (jumps !== undefined) i += jumps
 		}
 		
 		const code = buildTemplate(template)
-		//if (name == "_Water") print(code)
+		if (name == "_Sand") print(code)
 		return code
 	}
 	
@@ -368,10 +381,6 @@ const JAVASCRIPT = {}
 		const indentedCode = indentedLines.join("\n")
 		return indentedCode
 	}
-	
-	const ALPHABET = "abcdefghijklmnopqrstuvwxyz"
-	
-	
 	
 }
 

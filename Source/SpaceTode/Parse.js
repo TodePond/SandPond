@@ -33,8 +33,8 @@
 		}
 	}
 	
-	const getSymbol = (name, scope) => {
-		if (scope.symbols[name] != undefined) {
+	const getSymbol = (name, scope, {parentOnly = false} = {}) => {
+		if (!parentOnly && scope.symbols[name] != undefined) {
 			return scope.symbols[name]
 		}
 		else if (scope.parent != undefined) {
@@ -627,6 +627,7 @@
 		"change",
 		"keep",
 		"symbol",
+		"select",
 	]
 	
 	EAT.symbolName = EAT.many(EAT.regex(/[^ 	\n]/))
@@ -658,6 +659,12 @@
 		result = {code, success, snippet} = EAT.symbolName(code)
 		const symbolName = snippet
 		if (!success) return EAT.fail(code)
+		
+		const existingSymbol = getSymbol(symbolName, scope, {parentOnly: true})
+		if (existingSymbol !== undefined) {
+			throw new Error(`[SpaceTode] You can't define a symbol over multiple scopes: '${symbolName}'`)
+		}
+		
 		const nojsResult = result
 		
 		result = {code} = EAT.gap(code)
@@ -1249,7 +1256,7 @@
 				if (input == undefined) throw new Error(`[SpaceTode] Unrecognised symbol: ${lhsChar}`)
 				if (output == undefined) throw new Error(`[SpaceTode] Unrecognised symbol: ${rhsChar}`)
 				
-				if (!input.has("origin") && !input.has("given")) {
+				if (!input.has("origin") && !input.has("given") && !input.has("select")) {
 					throw new Error(`[SpaceTode] Symbol '${lhsChar}' used on left-hand-side of diagram but doesn't have any left-hand-side parts, eg: given`)
 				}
 				
@@ -1257,7 +1264,7 @@
 					throw new Error(`[SpaceTode] Symbol '${rhsChar}' used on right-hand-side of diagram but doesn't have any right-hand-side parts, eg: change`)
 				}
 				
-				const space = {x, y, z:0, input, output}
+				const space = {x, y, z:0, input, output, inputChar: lhsChar, outputChar: rhsChar}
 				spaces.push(space)
 			}
 		}
