@@ -32,8 +32,15 @@ element _Sand {
 	select D (atom) => atom
 	change D (selected) => new Empty()
 	
+	given T (element) => element === Empty || element === _Water
+	select T (atom) => atom
+	change T (selected) => new Empty()
+	
 	@ => D
 	D    @
+	
+	@T => DT
+	 D     @
 	
 }
 

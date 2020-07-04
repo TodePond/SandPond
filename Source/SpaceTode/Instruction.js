@@ -18,7 +18,7 @@ INSTRUCTION.make = (name, generate = () => { throw new Error(`[SpaceTode] The ${
 
 {
 	
-	INSTRUCTION.TYPE.MIMIC = INSTRUCTION.make("Mimic", (template, targetGetter, instructions, spotMods = [], chunkMods = [], symmetry, symmetryId, forSymmId, char) => {
+	INSTRUCTION.TYPE.MIMIC = INSTRUCTION.make("Mimic", (template, targetGetter, instructions, spotMods = [], chunkMods = [], symmetry, symmetryId, forSymmId, char, diagramId) => {
 		const target = targetGetter()
 		
 		const blockStart = {type: INSTRUCTION.TYPE.NAKED}
@@ -30,7 +30,8 @@ INSTRUCTION.make = (name, generate = () => { throw new Error(`[SpaceTode] The ${
 			const type = instruction.type
 			const value = instruction.value
 			const tail = fullInstructions.slice(i+1)
-			const jumps = type.generate(template, value, tail, spotMods, chunkMods, symmetry, symmetryId, forSymmId, char)
+			const newDiagramId = `${diagramId}D${i}`
+			const jumps = type.generate(template, value, tail, spotMods, chunkMods, symmetry, symmetryId, forSymmId, char, newDiagramId)
 			if (jumps !== undefined) i += jumps
 		}
 		//print(instructions)
@@ -45,7 +46,7 @@ INSTRUCTION.make = (name, generate = () => { throw new Error(`[SpaceTode] The ${
 		template.main.push(`behave${id}(origin, selfElement, time, self)`)
 	})
 	
-	INSTRUCTION.TYPE.FOR = INSTRUCTION.make("ForBlock", (template, forSymmetry, instructions, spotMods = [], chunkMods = [], symmetry, symmetryId, forSymmId, char) => {
+	INSTRUCTION.TYPE.FOR = INSTRUCTION.make("ForBlock", (template, forSymmetry, instructions, spotMods = [], chunkMods = [], symmetry, symmetryId, forSymmId, char, diagramId) => {
 		if (forSymmId !== undefined) throw new Error(`[SpaceTode] You can't have a 'for' block inside another 'for' block because I haven't figured out how I want it to work yet.`)
 		if (symmetry !== undefined) throw new Error(`[SpaceTode] You can't have an 'for' block inside an 'any' block because I haven't figured out how I want it to work yet.`)
 		const totalSymmetry = forSymmetry
@@ -61,12 +62,13 @@ INSTRUCTION.make = (name, generate = () => { throw new Error(`[SpaceTode] The ${
 			if (type === INSTRUCTION.TYPE.BLOCK_END) return i + 1
 			const value = instruction.value
 			const tail = instructions.slice(i+1)
-			const jumps = type.generate(template, value, tail, spotMods, forChunkMods, totalSymmetry, totalSymmetryId, newForSymmId, char)
+			const newDiagramId = `${diagramId}D${i}`
+			const jumps = type.generate(template, value, tail, spotMods, forChunkMods, totalSymmetry, totalSymmetryId, newForSymmId, char, newDiagramId)
 			if (jumps !== undefined) i += jumps
 		}
 	})
 	
-	INSTRUCTION.TYPE.ANY = INSTRUCTION.make("AnyBlock", (template, selfSymmetry, instructions, spotMods = [], chunkMods = [], symmetry, symmetryId, forSymmId, char) => {
+	INSTRUCTION.TYPE.ANY = INSTRUCTION.make("AnyBlock", (template, selfSymmetry, instructions, spotMods = [], chunkMods = [], symmetry, symmetryId, forSymmId, char, diagramId) => {
 		if (forSymmId !== undefined) throw new Error(`[SpaceTode] You can't have an 'any' block inside a 'for' block because I haven't figured out how I want it to work yet.`)
 		if (symmetry !== undefined) throw new Error(`[SpaceTode] You can't have an 'any' block inside another 'any' block because I haven't figured out how I want it to work yet.`)
 		const totalSymmetry = selfSymmetry
@@ -77,12 +79,13 @@ INSTRUCTION.make = (name, generate = () => { throw new Error(`[SpaceTode] The ${
 			if (type === INSTRUCTION.TYPE.BLOCK_END) return i + 1
 			const value = instruction.value
 			const tail = instructions.slice(i+1)
-			const jumps = type.generate(template, value, tail, spotMods, chunkMods, totalSymmetry, totalSymmetryId, forSymmId, char)
+			const newDiagramId = `${diagramId}D${i}`
+			const jumps = type.generate(template, value, tail, spotMods, chunkMods, totalSymmetry, totalSymmetryId, forSymmId, char, newDiagramId)
 			if (jumps !== undefined) i += jumps
 		}
 	})
 	
-	INSTRUCTION.TYPE.MAYBE = INSTRUCTION.make("MaybeBlock", (template, chance, instructions, spotMods = [], chunkMods = [], symmetry, symmetryId, forSymmId, char) => {
+	INSTRUCTION.TYPE.MAYBE = INSTRUCTION.make("MaybeBlock", (template, chance, instructions, spotMods = [], chunkMods = [], symmetry, symmetryId, forSymmId, char, diagramId) => {
 		const maybeId = Symbol("MaybeId")
 		const maybeMods = [...chunkMods, (chunk) => {
 			chunk.maybeChance = chance
@@ -95,12 +98,13 @@ INSTRUCTION.make = (name, generate = () => { throw new Error(`[SpaceTode] The ${
 			if (type === INSTRUCTION.TYPE.BLOCK_END) return i + 1
 			const value = instruction.value
 			const tail = instructions.slice(i+1)
-			const jumps = type.generate(template, value, tail, spotMods, maybeMods, symmetry, symmetryId, forSymmId, char)
+			const newDiagramId = `${diagramId}D${i}`
+			const jumps = type.generate(template, value, tail, spotMods, maybeMods, symmetry, symmetryId, forSymmId, char, newDiagramId)
 			if (jumps !== undefined) i += jumps
 		}
 	})
 	
-	INSTRUCTION.TYPE.ACTION = INSTRUCTION.make("ActionBlock", (template, v, instructions, spotMods = [], chunkMods = [], symmetry, symmetryId, forSymmId, char) => {
+	INSTRUCTION.TYPE.ACTION = INSTRUCTION.make("ActionBlock", (template, v, instructions, spotMods = [], chunkMods = [], symmetry, symmetryId, forSymmId, char, diagramId) => {
 		const actionId = Symbol("ActionId")
 		const actionMods = [...chunkMods, (chunk) => {
 			chunk.isInAction = true
@@ -112,12 +116,13 @@ INSTRUCTION.make = (name, generate = () => { throw new Error(`[SpaceTode] The ${
 			if (type === INSTRUCTION.TYPE.BLOCK_END) return i + 1
 			const value = instruction.value
 			const tail = instructions.slice(i+1)
-			const jumps = type.generate(template, value, tail, spotMods, actionMods, symmetry, symmetryId, forSymmId, char)
+			const newDiagramId = `${diagramId}D${i}`
+			const jumps = type.generate(template, value, tail, spotMods, actionMods, symmetry, symmetryId, forSymmId, char, newDiagramId)
 			if (jumps !== undefined) i += jumps
 		}
 	})
 	
-	INSTRUCTION.TYPE.POV = INSTRUCTION.make("PointOfView", (template, pov, instructions, spotMods = [], chunkMods = [], symmetry, symmetryId, forSymmId, char) => {
+	INSTRUCTION.TYPE.POV = INSTRUCTION.make("PointOfView", (template, pov, instructions, spotMods = [], chunkMods = [], symmetry, symmetryId, forSymmId, char, diagramId) => {
 		const povMods = [...spotMods, pov.mod]
 		for (let i = 0; i < instructions.length; i++) {
 			const instruction = instructions[i]
@@ -125,24 +130,26 @@ INSTRUCTION.make = (name, generate = () => { throw new Error(`[SpaceTode] The ${
 			if (type === INSTRUCTION.TYPE.BLOCK_END) return i + 1
 			const value = instruction.value
 			const tail = instructions.slice(i+1)
-			const jumps = type.generate(template, value, tail, povMods, chunkMods, symmetry, symmetryId, forSymmId, char)
+			const newDiagramId = `${diagramId}D${i}`
+			const jumps = type.generate(template, value, tail, povMods, chunkMods, symmetry, symmetryId, forSymmId, char, newDiagramId)
 			if (jumps !== undefined) i += jumps
 		}
 	})
 	
-	INSTRUCTION.TYPE.NAKED = INSTRUCTION.make("NakedBlock", (template, v, instructions, spotMods = [], chunkMods = [], symmetry, symmetryId, forSymmId, char) => {
+	INSTRUCTION.TYPE.NAKED = INSTRUCTION.make("NakedBlock", (template, v, instructions, spotMods = [], chunkMods = [], symmetry, symmetryId, forSymmId, char, diagramId) => {
 		for (let i = 0; i < instructions.length; i++) {
 			const instruction = instructions[i]
 			const type = instruction.type
 			if (type === INSTRUCTION.TYPE.BLOCK_END) return i + 1
 			const value = instruction.value
 			const tail = instructions.slice(i+1)
-			const jumps = type.generate(template, value, tail, spotMods, chunkMods, symmetry, symmetryId, forSymmId, char)
+			const newDiagramId = `${diagramId}D${i}`
+			const jumps = type.generate(template, value, tail, spotMods, chunkMods, symmetry, symmetryId, forSymmId, char, newDiagramId)
 			if (jumps !== undefined) i += jumps
 		}
 	})
 	
-	INSTRUCTION.TYPE.DIAGRAM = INSTRUCTION.make("Diagram", (template, diagram, instructions, spotMods = [], chunkMods = [], symmetry, symmetryId, forSymmId, char) => {
+	INSTRUCTION.TYPE.DIAGRAM = INSTRUCTION.make("Diagram", (template, diagram, instructions, spotMods = [], chunkMods = [], symmetry, symmetryId, forSymmId, char, diagramId) => {
 		const moddedDiagram = modDiagram(diagram, spotMods)
 		const chunk = makeEmptyChunk()
 		chunk.debug = diagram.debug
@@ -164,6 +171,7 @@ INSTRUCTION.make = (name, generate = () => { throw new Error(`[SpaceTode] The ${
 				forSymmId,
 				char: inputChar,
 				diagram,
+				diagramId,
 			})
 			
 			processFunc ({
@@ -178,6 +186,7 @@ INSTRUCTION.make = (name, generate = () => { throw new Error(`[SpaceTode] The ${
 				forSymmId,
 				char: inputChar,
 				diagram,
+				diagramId,
 			})
 			
 			processFunc ({
@@ -192,6 +201,7 @@ INSTRUCTION.make = (name, generate = () => { throw new Error(`[SpaceTode] The ${
 				forSymmId,
 				char: inputChar,
 				diagram,
+				diagramId,
 			})
 			
 			processFunc ({
@@ -206,6 +216,7 @@ INSTRUCTION.make = (name, generate = () => { throw new Error(`[SpaceTode] The ${
 				forSymmId,
 				char: outputChar,
 				diagram,
+				diagramId,
 			})
 			
 			processFunc ({
@@ -220,6 +231,7 @@ INSTRUCTION.make = (name, generate = () => { throw new Error(`[SpaceTode] The ${
 				forSymmId,
 				char: outputChar,
 				diagram,
+				diagramId,
 			})
 		}
 		
@@ -252,7 +264,7 @@ INSTRUCTION.make = (name, generate = () => { throw new Error(`[SpaceTode] The ${
 	//======//
 	// Func //
 	//======//
-	const processFunc = ({name, func, spot, template, chunk, side, symmetry, symmetryId, forSymmId, char, diagram}) => {
+	const processFunc = ({name, func, spot, template, chunk, side, symmetry, symmetryId, forSymmId, char, diagram, diagramId}) => {
 		if (func === undefined) return
 		
 		const {x, y, z} = spot
@@ -263,12 +275,12 @@ INSTRUCTION.make = (name, generate = () => { throw new Error(`[SpaceTode] The ${
 		const result = getResult(name)
 		const paramNames = getParamNames(func)
 		const params = paramNames.map(paramName => getParam(paramName))
-		const argNames = params.map(param => getName(param, x, y, z, symmetryId, char))
+		const argNames = params.map(param => getName(param, x, y, z, symmetryId, char, diagramId))
 		
 		const idResult = makeIdResult(result, id, paramNames)
 		const needs = getNeeds(idResult)
-		const idResultName = getName(idResult, x, y, z, symmetryId, char)
-		const needers = needs.map(need => makeNeeder({need, x, y, z, symmetry, symmetryId, forSymmId, id, argNames, idResultName, char, diagram}))
+		const idResultName = getName(idResult, x, y, z, symmetryId, char, diagramId)
+		const needers = needs.map(need => makeNeeder({need, x, y, z, symmetry, symmetryId, forSymmId, id, argNames, idResultName, char, diagram, diagramId}))
 		for (const needer of needers) {
 			if (needer.need.isCondition) chunk.conditions.pushUnique(needer.name)
 			chunk[side].needers[needer.name] = needer
@@ -301,9 +313,9 @@ INSTRUCTION.make = (name, generate = () => { throw new Error(`[SpaceTode] The ${
 		return needs
 	}
 	
-	const makeNeeder = ({need, x, y, z, id, symmetry, symmetryId, argNames, idResultName, forSymmId, char, diagram}) => {
-		const name = getName(need, x, y, z, symmetryId, char)
-		return {need, name, x, y, z, symmetry, symmetryId, id, argNames, idResultName, forSymmId, char, diagram}
+	const makeNeeder = ({need, x, y, z, id, symmetry, symmetryId, argNames, idResultName, forSymmId, char, diagram, diagramId}) => {
+		const name = getName(need, x, y, z, symmetryId, char, diagramId)
+		return {need, name, x, y, z, symmetry, symmetryId, id, argNames, idResultName, forSymmId, char, diagram, diagramId}
 	}
 	
 	//====================//
@@ -321,14 +333,14 @@ INSTRUCTION.make = (name, generate = () => { throw new Error(`[SpaceTode] The ${
 		return result
 	}
 	
-	const getName = (param, x, y, z, symmetryId, char) => {
+	const getName = (param, x, y, z, symmetryId, char, diagramId) => {
 		const type = param.type
 		let name = param.name
 		if (type === NEED_TYPE.ARG) return name
 		if (type === NEED_TYPE.GLOBAL) return name
 		if (type === NEED_TYPE.SYMMETRY) return getSymmetryName(name, symmetryId)
 		if (type === NEED_TYPE.LOCAL) return getLocalName(name, x, y, z, symmetryId)
-		if (type === NEED_TYPE.SYMBOL) return getSymbolName(name, char)
+		if (type === NEED_TYPE.SYMBOL) return getSymbolName(name, char, diagramId)
 		throw new Error(`[SpaceTode] Unrecognised named param type: ${type}`)
 	}
 	
@@ -355,9 +367,9 @@ INSTRUCTION.make = (name, generate = () => { throw new Error(`[SpaceTode] The ${
 		return paramNames
 	}
 	
-	const getSymbolName = (name, char) => {
+	const getSymbolName = (name, char, diagramId) => {
 		const id = getCharId(char)
-		return name + "Char" + id
+		return name + diagramId + "Char" + id
 	}
 	
 	const uniqueCache = {}
@@ -516,7 +528,7 @@ INSTRUCTION.make = (name, generate = () => { throw new Error(`[SpaceTode] The ${
 	
 	PARAM.selected = makeNeed({
 		name: "selected",
-		type: NEED_TYPE.GLOBAL,
+		type: NEED_TYPE.SYMBOL,
 		needNames: [],
 		generateGet: (x, y, z, symmetry, symmetryId, id, args, idResultName, forSymmId, char, template, diagram) => {
 			const selectId = getSymbolId(char, "select", template)
@@ -525,10 +537,10 @@ INSTRUCTION.make = (name, generate = () => { throw new Error(`[SpaceTode] The ${
 				if (spot.inputChar === char) {
 					// TODO: randomly select from multiple selects
 					if (selectResultPos !== undefined) throw new Error(`[SpaceTode] You can only have one '${char}' symbol in the left-hand-side of a diagram because it has a 'select' keyword.`)
-					selectResultPos = [spot.x, spot.y, spot.z].d
+					selectResultPos = [spot.x, spot.y, spot.z]
 				}
 			}
-			const selectResultName = getLocalName(`select${selectId}Result`, ...selectResultPos).d
+			const selectResultName = getLocalName(`select${selectId}Result`, ...selectResultPos)
 			return selectResultName
 		},
 	})

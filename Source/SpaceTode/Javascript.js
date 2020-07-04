@@ -366,7 +366,8 @@ const JAVASCRIPT = {}
 			const type = instruction.type
 			const value = instruction.value
 			const tail = fullInstructions.slice(i+1)
-			const jumps = type.generate(template, value, tail, undefined, undefined, undefined, undefined, undefined, undefined)
+			const diagramId = `D${i}`
+			const jumps = type.generate(template, value, tail, undefined, undefined, undefined, undefined, undefined, undefined, diagramId)
 			if (jumps !== undefined) i += jumps
 		}
 		
