@@ -611,7 +611,7 @@
 		parentScope.elements[scope.name] = element
 		
 		if (parentScope.global == true) {
-			if (window[scope.name] != undefined) console.warn(`[SpaceTode] Overriding existing value with new element: '${scope.name}'`)
+			if (window[scope.name] !== undefined) console.warn(`[SpaceTode] Overriding existing value with new element: '${scope.name}'`)
 			window[scope.name] = element
 		}
 		

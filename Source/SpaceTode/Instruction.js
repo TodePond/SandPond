@@ -540,7 +540,7 @@ INSTRUCTION.make = (name, generate = () => { throw new Error(`[SpaceTode] The ${
 					selectResultPos = [spot.x, spot.y, spot.z]
 				}
 			}
-			const selectResultName = getLocalName(`select${selectId}Result`, ...selectResultPos)
+			const selectResultName = getLocalName(`select${selectId}Result`, ...selectResultPos, symmetryId)
 			return selectResultName
 		},
 	})

@@ -4,8 +4,8 @@
 const WORLD = {}
 
 SpaceTode `
-	element Empty visible false
 	element Void hidden true
+	element Empty visible false	
 `
 
 {
@@ -15,7 +15,6 @@ SpaceTode `
 	// "I store my SPACES."
 	// "I draw myself."
 	//
-	// GRID: keep a huge 3D grid of spaces
 	// MESH: keep one giant mesh that renders to display all spaces in this world
 	// ATTRIBUTES and INSTANCES: a fancy way of telling the renderer how to render the mesh
 	
@@ -324,7 +323,8 @@ SpaceTode `
 	}
 	
 	const voidAtom = new Void()
-	const voidSpace = {atom: voidAtom, element: Void}
+	voidSpace = {atom: voidAtom, element: Void}
+	Object.freeze(voidSpace)
 	
 	const selectGridSpace = (grid, x, y, z) => {
 		const gridy = grid[y]

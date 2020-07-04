@@ -372,7 +372,7 @@ const JAVASCRIPT = {}
 		}
 		
 		const code = buildTemplate(template)
-		if (name == "_Sand") print(code)
+		//if (name == "_Sand") print(code)
 		return code
 	}
 	

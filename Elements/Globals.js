@@ -1,20 +1,14 @@
-TodeSplat`
+SpaceTode`
 
-given . (space) => space
-keep .
-
-given @ (self, atom) => self == atom
+origin @
 change @ (self) => self
 
-given # (atom) => atom
-keep #
+symbol _ Empty
+symbol x Void
 
-given _ (space, atom) => space && !atom
-change _ () => undefined
+given . (element) => element !== Void
+keep .
 
-given x (space) => !space
-keep x
-
-
+given # (element) => element !== Empty && element !== Void
 
 `

@@ -360,8 +360,8 @@ UIstarted = true
 		</div>
 	`
 	
-	const makeElementButton = (element) => HTML `
-		<div id="${element.name}Button" class="${element.name}Button elementButton box vertical clickable"><div class="label">${element.name}</div></div>
+	const makeElementButton = (element, name) => HTML `
+		<div id="${name}Button" class="${name}Button elementButton box vertical clickable"><div class="label">${name}</div></div>
 	`
 	
 	const updatePauseUI = () => {
@@ -381,26 +381,26 @@ UIstarted = true
 	document.head.appendChild(UI_STYLE)
 	document.body.appendChild(UI_ELEMENT)
 	
-	for (const element of SpaceTode.global.elements) {
-		if (element.hidden) continue
+	const addElementToUI = (element, name = element.name) => {
+		if (element.hidden) return
 		
-		const searchItemButton = makeElementButton(element)
+		const searchItemButton = makeElementButton(element, name)
 		const searchItems = $("#searchItems")
 		searchItems.appendChild(searchItemButton)
 		
 		const style = HTML `
 			<style>
 				
-				.${element.name}Button {
+				.${name}Button {
 					background-color: ${element.colour};
 				}
 				
-				.${element.name}Button:hover {
+				.${name}Button:hover {
 					outline: 2px solid ${element.colour};
 					overflow: visible;
 				}
 				
-				.${element.name}Button.selected {
+				.${name}Button.selected {
 					outline: 2px solid black;
 				}
 				
@@ -420,7 +420,14 @@ UIstarted = true
 				if (category == "Sandbox") newCategoryElement.classList.add("selected")
 			}
 		}
-
+		
+		for (const subElement of element.elements) {
+			if (subElement.default) UI.selectedElement = subElement
+		}
+	}
+	
+	for (const element of SpaceTode.global.elements) {
+		addElementToUI(element)
 	}
 	
 	updatePauseUI()
@@ -440,8 +447,10 @@ UIstarted = true
 	//else if (UI.selectedReality == "nonvr") $("#nonvrOption").classList.add("selected")
 	
 	$(`#${UI.floorTypeOption}Option`).classList.add("selected")
-	
-	if (UI.selectedElement) $(`#${UI.selectedElement.name}Button`).classList.add("selected")
+	if (UI.selectedElement) {
+		const button = $(`#${UI.selectedElement.name}Button`)
+		if (button) button.classList.add("selected")
+	}
 	
 	//========//
 	// Events //
@@ -702,7 +711,7 @@ UIstarted = true
 		const oldId = oldElement.name + idEnd
 		const oldButton = $("#" + oldId)
 		
-		if (oldElement) {
+		if (oldElement && oldButton) {
 			oldButton.classList.remove("selected")
 		}
 		

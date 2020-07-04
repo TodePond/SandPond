@@ -9,19 +9,6 @@ const STATE = {
 
 SpaceTode`
 
-origin @
-change @ (self) => self
-
-change _ () => new Empty()
-given _ (element) => element === Empty
-
-given # (element) => element !== Empty && element !== Void
-
-given x (element) => element === Void
-
-given . (element) => element !== Void
-keep .
-
 element _Sand {
 	colour "#FC0"
 	emissive "#ffa34d"
@@ -78,7 +65,7 @@ element _Acid {
 	any(xz) @_ => _@
 }
 
-element _Carrot {
+/*element _Carrot {
 	colour "rgb(200, 80, 0)"
 	category "Testing"
 	
@@ -122,7 +109,7 @@ element _Carrot {
 		@ => _
 		
 	}
-}
+}*/
 
 element _Explosion any(xyz.rotations) {
 	colour "darkorange"
