@@ -20,7 +20,7 @@ element Water {
 	prop temperature COOL
 	prop states () => ({
 		[HOT]: Steam,
-		[COLD]: Snow,
+		[COLD]: [Snow, 0.1],
 	})
 	
 	mimic(Temperature)
@@ -74,8 +74,8 @@ element Lava {
 	prop state SOLID
 	prop temperature HOT
 	prop states () => ({
-		[COOL]: Rock,
-		[COLD]: Rock,
+		[COOL]: [Rock, 0.05],
+		[COLD]: [Rock, 0.1],
 	})
 	
 	mimic(Temperature)
@@ -126,7 +126,7 @@ element Snow {
 	prop temperature COLD
 	prop states () => ({
 		[HOT]: Water,
-		[WARM]: Water,
+		[WARM]: [Water, 0.5],
 	})
 	
 	mimic(Temperature)
