@@ -1,0 +1,268 @@
+SpaceTode` 
+
+element Sand {
+	colour "#ffcc00"
+	emissive "#ffa34d"
+	category "Sandbox"
+	prop state SOLID
+	prop temperature TEPID
+	
+	mimic(Temperature)
+	mimic(Powder)
+}
+
+element Water {
+	colour "lightblue"
+	emissive "blue"
+	opacity 0.35
+	category "Sandbox"
+	prop state LIQUID
+	prop temperature COOL
+	prop states () => ({
+		[HOT]: Steam,
+		[COLD]: Snow,
+	})
+	
+	mimic(Temperature)
+	mimic(Liquid)
+}
+
+element Fire {
+	colour "darkorange"
+	emissive "red"
+	category "Sandbox"
+	opacity 0.25
+	prop state EFFECT
+	prop temperature HOT
+	prop states () => ({
+		[COOL]: Empty,
+		[COLD]: Empty,
+	})
+	
+	mimic(Temperature)
+	maybe(0.2) @ => _
+	
+	given D (element, selfElement) => element !== Void && element !== selfElement && (element.state === EFFECT || element.state === undefined)
+	select D (atom) => atom
+	change D (selected) => selected
+	_ => @
+	@    _
+	
+	given n (element, selfElement) => element !== selfElement
+	n    .
+	@ => _
+	
+}
+
+element Slime {
+	colour "lightgreen"
+	emissive "green"
+	category "Sandbox"
+	opacity 0.65
+	prop state SOLID
+	prop temperature WARM
+	
+	mimic(Temperature)
+	mimic(Goo)
+}
+
+element Lava {
+	colour "red"
+	emissive "darkred"
+	category "Sandbox"
+	opacity 0.5
+	prop state SOLID
+	prop temperature HOT
+	prop states () => ({
+		[COOL]: Rock,
+		[COLD]: Rock,
+	})
+	
+	mimic(Temperature)
+	
+	change F () => new Fire()
+	action {
+		_ => F
+		@    .
+	}
+	
+	mimic(Goo)
+	
+}
+
+element Rock {
+	colour "grey"
+	emissive "black"
+	prop state SOLID
+	category "Sandbox"
+	mimic(Temperature)
+	mimic(Solid)
+}
+
+element Steam {
+	colour "lightgrey"
+	emissive "darkgrey"
+	category "Sandbox"
+	opacity 0.2
+	prop state GAS
+	prop temperature WARM
+	
+	mimic(Temperature)
+	
+	given D (element) => element !== Void && (element.state === EFFECT || element.state === undefined)
+	select D (atom) => atom
+	change D (selected) => selected
+	D => @
+	@    D
+	
+	mimic(Gas)
+}
+
+element Snow {
+	colour "white"
+	emissive "grey"
+	category "Sandbox"
+	prop state SOLID
+	prop temperature COLD
+	prop states () => ({
+		[HOT]: Water,
+		[WARM]: Water,
+	})
+	
+	mimic(Temperature)
+	mimic(Powder)
+}
+
+/*element Steam {
+	colour "lightgrey"
+	emissive "darkgrey"
+	category "Sandbox"
+	opacity 0.3
+	floor true
+	state "gas"
+	
+	change W () => new Water()
+	
+	rule 0.0002 { @ => W }
+	
+	rule {
+		_ => @
+		@    _
+	}
+	
+	rule xz { @_ => _@ }
+	
+}
+
+element WallSeed {
+	colour "rgb(128, 128, 128)"
+	emissive "rgb(2, 128, 200)"
+	category "Sandbox"
+	state "solid"
+	
+	data fuel 10
+	
+	ruleset Solid
+	
+	given W (element) => element == Solid || element == WallSeed
+	given W (self) => self.fuel == 10
+	rule {
+		@ => _
+		W    .
+	}
+	
+	change W () => new Solid()
+	change S (self) => {
+		self.fuel--
+		if (self.fuel > 0) return self
+	}
+
+	rule {
+		_ => S
+		@    W
+	}
+	
+}
+
+element Platform {
+	colour "rgb(128, 128, 128)"
+	emissive "rgb(2, 128, 200)"
+	category "Sandbox"
+	state "solid"
+	data fuel 100
+	//default true
+	precise true
+	pour false
+	
+	given f (self) => self.fuel <= 0
+	rule { f => _ }
+	
+	change S () => new Static()
+	change P (self) => new Platform({fuel: (self.fuel-1)/2})
+	rule { _@_ => PSP}
+	
+	change B (self) => new Platform({fuel: self.fuel-1})
+	rule x { @_ => SB }
+	
+	//rule { #@# => ._. }
+	
+	rule x { @x => _. }
+}
+
+element Ball {
+	colour "grey"
+	emissive "black"
+	state "solid"
+	category "Sandbox"
+	
+	data fallSpeed 0
+	
+	keep f (self) => {
+		self.fallSpeed += 0.015
+		if (self.fallSpeed > 2) self.fallSpeed = 2
+	}
+	action {
+		@ => f
+		_    .
+	}
+	
+	given s (atom) => atom
+	select s (atom) => atom
+	keep s (self, selected) => {
+		self.fallSpeed += 0.015
+		if (selected.fallSpeed != undefined) {
+			if (selected.fallSpeed < self.fallSpeed) {
+				selected.fallSpeed = self.fallSpeed
+			}
+		}
+		if (self.fallSpeed < 0) self.fallSpeed = 0
+	}
+	action {
+		@ => s
+		s    .
+	}
+	
+	keep c (self) => self.fallSpeed = 0
+	action {
+		@ => c
+		x    .
+	}
+	
+	given q (space, atom) => space && !atom
+	given q (self) => Math.random() < self.fallSpeed / 2
+	rule {
+		@ => _
+		_    _
+		q    @
+	}
+	
+	given e (space, atom) => space && !atom
+	given e (self) => Math.random() < self.fallSpeed
+	rule {
+		@ => _
+		e    @
+	}
+	
+}*/
+
+`

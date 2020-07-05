@@ -1,9 +1,8 @@
 
 const SOLID = 0
-const GOO = 1
-const LIQUID = 2
-const GAS = 3
-const EFFECT = 4
+const LIQUID = 1
+const GAS = 2
+const EFFECT = 3
 
 SpaceTode`
 
@@ -48,23 +47,24 @@ element Liquid {
 	@ => .
 	x    .
 	
-	for(xz.rotations) @D => D@
+	any(xz.rotations) @D => D@
 }
 
 element Goo {
-	prop state GOO
+	prop state SOLID
 	category "Rulesets"
 	
-	given D (element) => element !== Void && (element.state > GOO || element.state === undefined)
+	given D (element) => element !== Void && element.state !== SOLID
 	select D (atom) => atom
 	change D (selected) => selected
+	
 	@ => D
 	D    @
 		
 	@ => .
 	x    .
-	
-	maybe(1/150) for(xz.rotations) @D => D@
+		
+	maybe(1/50) any(xz.rotations) @D => D@
 }
 
 element Gas {
@@ -74,7 +74,7 @@ element Gas {
 	given D (element) => element !== Void && (element.state === EFFECT || element.state === undefined)
 	select D (atom) => atom
 	change D (selected) => selected
-	for(xyz.rotations) @D => D@
+	any(xyz.rotations) @D => D@
 }
 
 `

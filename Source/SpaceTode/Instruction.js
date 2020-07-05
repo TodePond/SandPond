@@ -635,7 +635,7 @@ INSTRUCTION.make = (name, generate = () => { throw new Error(`[SpaceTode] The ${
 	// Symbol ID //
 	//===========//
 	const getSymbolId = (char, partName, template) => {
-		return template.chars[partName].indexOf("D")
+		return template.chars[partName].indexOf(char)
 	}
 	
 }
