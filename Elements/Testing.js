@@ -55,52 +55,6 @@ SpaceTode`
 	}
 }*/
 
-element _Explosion any(xyz.rotations) {
-	colour "darkorange"
-	emissive "red"
-	opacity 0.3
-	category "Testing"
-	arg timer 20
-	
-	keep t (self) => self.timer--
-	action @ => t
-	
-	given t (self) => self.timer <= 0
-	t => _
-	
-	change E (self, selfElement) => new selfElement(self.timer)
-	@. => .E
-	
-}
-
-element _WeatherBot any(xz.rotations) {
-	
-	category "Testing"
-	arg rain _Water
-	arg chance 1/100
-	arg birthday
-	
-	given i (self) => self.birthday === undefined
-	keep i (self, time) => self.birthday = time
-	i => i
-	
-	given r (element, self) => element === Empty && (Math.random() < self.chance)
-	change R (self) => new self.rain()
-	@ => .
-	r    R
-	
-	_ => @
-	@    _
-	
-	change W (selfElement, self) => new selfElement(self.rain, self.chance, self.birthday)
-	maybe(1/5) @_ => W@
-	
-	given W (element, atom, self) => element === _WeatherBot && self.birthday >= atom.birthday
-	@W => _@
-	@_ => _@
-	
-}
-
 element _Rabbit {
 	colour "white"
 	emissive "grey"

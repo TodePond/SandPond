@@ -193,6 +193,35 @@ element Explosion any(xyz.rotations) {
 	
 }
 
+element Cloud any(xz.rotations) {
+	
+	category "Sandbox"
+	arg rain Water
+	arg chance 1/100
+	arg birthday
+	opacity 0.35
+	
+	given i (self) => self.birthday === undefined
+	keep i (self, time) => self.birthday = time
+	i => i
+	
+	given r (element, self) => element === Empty && (Math.random() < self.chance)
+	change R (self) => new self.rain()
+	@ => .
+	r    R
+	
+	_ => @
+	@    _
+	
+	change W (selfElement, self) => new selfElement(self.rain, self.chance, self.birthday)
+	maybe(1/5) @_ => W@
+	
+	given W (element, selfElement, atom, self) => element === selfElement && self.birthday >= atom.birthday
+	@W => _@
+	@_ => _@
+	
+}
+
 /*
 element WallSeed {
 	colour "rgb(128, 128, 128)"
