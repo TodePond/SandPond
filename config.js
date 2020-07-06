@@ -27,8 +27,8 @@ let MAX_Z = D1_MODE? 0 : (D2_MODE? 0 : MAX_X)
 let MAX_Y = D1_MODE? 0 : (SMALL_MODE? 30 : 40) * (D2_MODE? 8 : 1)
 
 if (TINY_MODE) {
-	MAX_X = Math.floor(MAX_X * 0.4)
-	MAX_Z = Math.floor(MAX_Z * 0.4)
+	MAX_X = Math.floor(MAX_X * 0.6)
+	MAX_Z = Math.floor(MAX_Z * 0.6)
 	MAX_Y = Math.floor(MAX_Y * 0.7)
 }
 

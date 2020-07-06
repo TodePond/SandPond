@@ -1,7 +1,7 @@
 
 const COLD = 0
 const COOL = 1
-const TEPID = 2
+//const TEPID = 2
 const WARM = 3
 const HOT = 4
 
@@ -11,6 +11,9 @@ element Temperature {
 	category "Rulesets"
 	prop temperature HOT
 	
+	//============//
+	// Init Cache //
+	//============//
 	given i (selfElement) => selfElement.statesCache === undefined
 	keep i (selfElement) => {
 		const cache = {...(selfElement.states? selfElement.states() : {})}
@@ -24,9 +27,30 @@ element Temperature {
 		}
 		selfElement.statesChancesCache = chancesCache
 		selfElement.statesCache = cache
+		if (cache[selfElement.temperature] !== undefined) {
+			selfElement.stateSelfCache = cache[selfElement.temperature]
+			selfElement.stateSelfChanceCache = chancesCache[selfElement.temperature]
+		}
 	}
 	action i => i
 	
+	//======//
+	// Self //
+	//======//
+	origin s
+	given s (selfElement) => {
+		const cache = selfElement.stateSelfCache
+		if (cache === undefined) return false
+		const chance = selfElement.stateSelfChanceCache
+		if (chance !== undefined && Math.random() > chance) return false
+		return true
+	}
+	change s (selfElement) => new selfElement.stateSelfCache()
+	s => s
+	
+	//=======//
+	// Other //
+	//=======//
 	given c (element, selfElement) => {
 		const cache = element.statesCache
 		if (cache === undefined) return false
@@ -49,7 +73,9 @@ element Temperature {
 	
 	change h (element, selfElement) => new (element.statesCache[selfElement.temperature])()
 	
-	any(xyz.rotations) @c => ch
+	any(xyz.rotations) {
+		@c => ch
+	}
 }
 
 `

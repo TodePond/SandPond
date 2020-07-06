@@ -5,7 +5,7 @@ const WORLD = {}
 
 SpaceTode `
 	element Void hidden true
-	element Empty visible false	
+	element Empty visible false
 `
 
 {

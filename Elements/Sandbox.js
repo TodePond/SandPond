@@ -5,7 +5,6 @@ element Sand {
 	emissive "#ffa34d"
 	category "Sandbox"
 	prop state SOLID
-	prop temperature TEPID
 	
 	mimic(Temperature)
 	mimic(Powder)
@@ -106,6 +105,9 @@ element Steam {
 	opacity 0.2
 	prop state GAS
 	prop temperature WARM
+	prop states () => ({
+		[WARM]: [Empty, 0.04],
+	})
 	
 	mimic(Temperature)
 	
@@ -126,7 +128,9 @@ element Snow {
 	prop temperature COLD
 	prop states () => ({
 		[HOT]: Water,
-		[WARM]: [Water, 0.5],
+		[WARM]: [Water, 0.2],
+		[COOL]: [Water, 0.1],
+		[COLD]: [Water, 0.00001]
 	})
 	
 	mimic(Temperature)

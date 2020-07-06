@@ -64,7 +64,7 @@ element Goo {
 	@ => .
 	x    .
 		
-	maybe(1/50) any(xz.rotations) @D => D@
+	maybe(1/40) any(xz.rotations) @D => D@
 }
 
 element Gas {
