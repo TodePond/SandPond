@@ -260,36 +260,6 @@ element _RainbowRabbit {
 	}
 }
 
-element _Meteor {
-	colour "#781a00"
-	emissive "black"
-	category "Testing"
-	
-	change F () => new Fire()
-	action {
-		 _ => F
-		@    .
-	}
-	
-	given F (element) => element === Fire
-	 @  => _
-	F     @ 
-	
-	given E (element) => element === Explosion
-	 @  => _
-	E     .
-	
-	 @  => _
-	_     @
-	
-	given M (element, selfElement) => element === selfElement
-	 @ => .
-	M    .
-	
-	change E () => new Explosion(35)
-	@ => E
-}
-
 element Laser {
 	colour "red"
 	opacity 0.2

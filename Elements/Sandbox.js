@@ -222,6 +222,36 @@ element Cloud any(xz.rotations) {
 	
 }
 
+element Meteor {
+	colour "#781a00"
+	emissive "black"
+	category "Sandbox"
+	
+	change F () => new Fire()
+	action {
+		 _ => F
+		@    .
+	}
+	
+	given F (element) => element === Fire
+	 @  => _
+	F     @ 
+	
+	given E (element) => element === Explosion
+	 @  => _
+	E     .
+	
+	 @  => _
+	_     @
+	
+	given M (element, selfElement) => element === selfElement
+	 @ => .
+	M    .
+	
+	change E () => new Explosion(35)
+	@ => E
+}
+
 /*
 element WallSeed {
 	colour "rgb(128, 128, 128)"
