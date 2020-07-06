@@ -45,19 +45,19 @@ const SPACE = {}
 		WORLD.setSpaceColour(_world, space, atom.colour, atom.emissive)
 	}
 	
-	const updateAppearanceNoShadow = (space) => {
+	const updateAppearanceNoShadow = (space, _world = world) => {
 		const atom = space.atom
 		if (atom == undefined || !atom.visible) {
-			WORLD.setSpaceVisible(world, space, false)
+			WORLD.setSpaceVisible(_world, space, false)
 			//WORLD.hideSpace(world, space)
 			//WORLD.setSpaceColour(world, space, atom.colour, atom.emissive)
 			//WORLD.setSpaceOpacity(world, space, 255)
 			return
 		}
-		WORLD.setSpaceVisible(world, space, true)
+		WORLD.setSpaceVisible(_world, space, true)
 		//WORLD.showSpace(world, space)
-		WORLD.setSpaceOpacity(world, space, atom.opacity)
-		WORLD.setSpaceColour(world, space, atom.colour, atom.emissive)
+		WORLD.setSpaceOpacity(_world, space, atom.opacity)
+		WORLD.setSpaceColour(_world, space, atom.colour, atom.emissive)
 	}
 	
 	SPACE.updateAppearance = SHADOW_MODE? updateAppearanceShadow : updateAppearanceNoShadow
