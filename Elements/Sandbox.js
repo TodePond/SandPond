@@ -175,6 +175,24 @@ element Acid {
 	}	
 }
 
+element Explosion any(xyz.rotations) {
+	colour "darkorange"
+	emissive "red"
+	opacity 0.3
+	category "Sandbox"
+	arg timer 20
+	
+	keep t (self) => self.timer--
+	action @ => t
+	
+	given t (self) => self.timer <= 0
+	t => _
+	
+	change E (self, selfElement) => new selfElement(self.timer)
+	@. => .E
+	
+}
+
 /*
 element WallSeed {
 	colour "rgb(128, 128, 128)"
