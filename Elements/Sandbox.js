@@ -252,6 +252,24 @@ element Meteor {
 	@ => E
 }
 
+element Laser {
+	colour "red"
+	opacity 0.2
+	prop state EFFECT
+	prop temperature HOT
+	category "Sandbox"
+	
+	symbol L Laser
+	@ => _
+	.    @
+	.    L
+	
+	@ => _
+	.    @
+	
+	@ => _
+}
+
 /*
 element WallSeed {
 	colour "rgb(128, 128, 128)"
