@@ -6,7 +6,6 @@ element Sand {
 	category "Sandbox"
 	prop state SOLID
 	
-	mimic(Temperature)
 	mimic(Powder)
 }
 
@@ -97,7 +96,7 @@ element Rock {
 	emissive "black"
 	prop state SOLID
 	category "Sandbox"
-	mimic(Temperature)
+	//mimic(Temperature)
 	mimic(Solid)
 }
 
@@ -152,7 +151,7 @@ element Acid {
 		[COLD]: Slime,
 	})
 	
-	mimic(Temperature)
+	//mimic(Temperature)
 	
 	symbol S Steam
 	given n (element, selfElement) => (element.state === undefined || element.state < GAS) && element !== Void && element !== Empty && element !== selfElement && element !== Slime
@@ -268,6 +267,13 @@ element Laser {
 	.    @
 	
 	@ => _
+}
+
+element Clay {
+	colour "brown"
+	category "Sandbox"
+	prop state SOLID
+	mimic(Sticky)
 }
 
 /*

@@ -9,7 +9,7 @@
 		data: {},
 		args: {},
 		instructions: [],
-		symbols: {_: undefined},
+		symbols: {_: undefined, o: undefined},
 		properties: {},
 		categories: [],
 	})
@@ -662,6 +662,7 @@
 		
 		const existingSymbol = getSymbol(symbolName, scope, {parentOnly: true})
 		if (existingSymbol !== undefined) {
+			// TODO: fix bug - can't have a symbol called 'o'
 			throw new Error(`[SpaceTode] You can't define a symbol over multiple scopes: '${symbolName}'`)
 		}
 		

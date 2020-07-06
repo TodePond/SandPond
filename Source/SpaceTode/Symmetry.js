@@ -98,4 +98,21 @@ const SYMMETRY = {}
 		T("yxz"),
 		T("-y-xz"),
 	])
+	
+	SYMMETRY.TYPE.xyz.flips = SYMMETRY.make("XYZ.FLIPS", [
+		T("xyz"),
+		T("x-yz"),
+		T("-xyz"),
+		T("-x-yz"),
+		
+		T("zxy"),
+		T("z-xy"),
+		T("-zxy"),
+		T("-z-xy"),
+		
+		T("yzx"),
+		T("y-zx"),
+		T("-yzx"),
+		T("-y-zx"),
+	])
 }

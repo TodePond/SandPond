@@ -30,22 +30,22 @@ const SPACE = {}
 		}
 	}
 	
-	const updateAppearanceShadow = (space, world) => {
+	const updateAppearanceShadow = (space, _world = world) => {
 		const atom = space.atom
 		if (atom == undefined || !atom.visible) {
 			//WORLD.setSpaceVisible(world, space, false)
-			WORLD.hideSpace(world, space)
+			WORLD.hideSpace(_world, space)
 			//WORLD.setSpaceColour(world, space, atom.colour, atom.emissive)
 			//WORLD.setSpaceOpacity(world, space, 255)
 			return
 		}
 		//WORLD.setSpaceVisible(world, space, true)
-		WORLD.showSpace(world, space)
-		WORLD.setSpaceOpacity(world, space, atom.opacity)
-		WORLD.setSpaceColour(world, space, atom.colour, atom.emissive)
+		WORLD.showSpace(_world, space)
+		WORLD.setSpaceOpacity(_world, space, atom.opacity)
+		WORLD.setSpaceColour(_world, space, atom.colour, atom.emissive)
 	}
 	
-	const updateAppearanceNoShadow = (space, world) => {
+	const updateAppearanceNoShadow = (space) => {
 		const atom = space.atom
 		if (atom == undefined || !atom.visible) {
 			WORLD.setSpaceVisible(world, space, false)
@@ -65,7 +65,7 @@ const SPACE = {}
 	SPACE.setAtom = (space, atom, element = atom.element) => {
 		space.atom = atom
 		space.element = element
-		SPACE.updateAppearance(space, world)
+		SPACE.updateAppearance(space)
 	}
 	
 }
