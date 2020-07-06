@@ -180,6 +180,10 @@ const JAVASCRIPT = {}
 				continue
 			}
 			
+			// Update gots each time
+			if (maybeBlocks.length > 0) alreadyGots = maybeGots.last
+			else alreadyGots = gots
+			
 			//=======//
 			// Maybe //
 			//=======//
@@ -222,6 +226,7 @@ const JAVASCRIPT = {}
 				continue
 			}
 			
+			// Update gots after potentially changing block
 			if (maybeBlocks.length > 0) alreadyGots = maybeGots.last
 			else alreadyGots = gots
 			
@@ -372,7 +377,7 @@ const JAVASCRIPT = {}
 		}
 		
 		const code = buildTemplate(template)
-		//if (name == "_Sand") print(code)
+		//if (name == "DReg") print(code)
 		return code
 	}
 	
