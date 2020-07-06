@@ -60,6 +60,9 @@ element Slime {
 	opacity 0.65
 	prop state SOLID
 	prop temperature WARM
+	prop states () => ({
+		[HOT]: Acid,
+	})
 	
 	mimic(Temperature)
 	mimic(Goo)
@@ -107,6 +110,8 @@ element Steam {
 	prop temperature WARM
 	prop states () => ({
 		[WARM]: [Empty, 0.04],
+		[COOL]: [Water, 0.1],
+		[COLD]: Water,
 	})
 	
 	mimic(Temperature)
@@ -137,27 +142,40 @@ element Snow {
 	mimic(Powder)
 }
 
-/*element Steam {
-	colour "lightgrey"
-	emissive "darkgrey"
+element Acid {
+	colour "lightgreen"
+	emissive "green"
+	opacity 0.35
 	category "Sandbox"
-	opacity 0.3
-	floor true
-	state "gas"
+	prop state LIQUID
+	prop states () => ({
+		[COLD]: Slime,
+	})
 	
-	change W () => new Water()
+	mimic(Temperature)
 	
-	rule 0.0002 { @ => W }
+	symbol S Steam
+	given n (element, selfElement) => (element.state === undefined || element.state < GAS) && element !== Void && element !== Empty && element !== selfElement && element !== Slime
+	n => S
+	@    _
 	
-	rule {
-		_ => @
-		@    _
-	}
+	@ => S
+	n    _
 	
-	rule xz { @_ => _@ }
+	@ => _
+	_    @
 	
+	any(xz.rotations) {
+		@n => _S
+		
+		@ => .
+		x    .
+		
+		@_ => _@
+	}	
 }
 
+/*
 element WallSeed {
 	colour "rgb(128, 128, 128)"
 	emissive "rgb(2, 128, 200)"

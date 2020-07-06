@@ -9,46 +9,6 @@ const STATE = {
 
 SpaceTode`
 
-element _Sand {
-	colour "#FC0"
-	emissive "#ffa34d"
-	category "Testing"
-	//default true
-	
-	given D (element) => element === Empty || element === _Water
-	select D (atom) => atom
-	change D (selected) => new Empty()
-	
-	given T (element) => element === Empty || element === _Water
-	select T (atom) => atom
-	change T (selected) => new Empty()
-	
-	@ => D
-	D    @
-	
-	@T => DT
-	 D     @
-	
-}
-
-element _Water {
-	colour "lightblue"
-	emissive "blue"
-	opacity 0.35
-	category "Testing"
-	
-	
-	@ => _
-	_    @
-	
-	@ => .
-	x    .
-	
-	symbol W _Water
-	
-	for(xz.rotations) @_ => _W
-}
-
 element _Acid {
 	colour "lightgreen"
 	emissive "green"
