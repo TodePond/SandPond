@@ -448,6 +448,7 @@
 				EAT.string("any"),
 				EAT.string("for"),
 				EAT.string("pov"),
+				EAT.string("rule"),
 				EAT.string("{"),
 			)(code)
 			if (testResult.success) return testResult
@@ -468,6 +469,19 @@
 		
 		result = {success} = EAT.pov(code, scope)
 		if (success) return result
+		
+		// rule block
+		const ruleBlockCode = code
+		result = {success, code} = EAT.string("rule")(code)
+		if (success) {
+			result = {code} = EAT.gap(code)
+			const blockScope = makeScope(scope)
+			result = {code, success} = EAT.block(EAT.todeSplat)(code, blockScope)
+			scope.instructions.push({type: INSTRUCTION.TYPE.NAKED})
+			scope.instructions.push(...blockScope.instructions)
+			scope.instructions.push({type: INSTRUCTION.TYPE.BLOCK_END})
+			return {...result, blockScope}
+		}
 		
 		// naked block
 		const blockScope = makeScope(scope)
