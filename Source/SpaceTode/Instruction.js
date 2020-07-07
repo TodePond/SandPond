@@ -441,7 +441,7 @@ INSTRUCTION.make = (name, generate = () => { throw new Error(`[SpaceTode] The ${
 	PARAM.transformationNumber = makeNeed({
 		name: "transformationNumber",
 		type: NEED_TYPE.SYMMETRY,
-		needNames: ["transNums"],
+		needNames: ["transformationNumbers"],
 		generateGet: (x, y, z, symmetry, symmetryId, id, argNames, idResultName, forSymmId) => {
 			if (symmetry === undefined) return undefined
 			if (forSymmId !== undefined) return `transNumsShuffledSymm${symmetryId}[i${symmetryId}]`
@@ -449,8 +449,8 @@ INSTRUCTION.make = (name, generate = () => { throw new Error(`[SpaceTode] The ${
 		}
 	})
 	
-	PARAM.transNums = makeNeed({
-		name: "transNums",
+	PARAM.transformationNumbers = makeNeed({
+		name: "transformationNumbers",
 		type: NEED_TYPE.SYMMETRY,
 		needNames: [],
 		generateConstant: (x, y, z, symmetry, symmetryId, id, argNames, idResultName, forSymmId) => {

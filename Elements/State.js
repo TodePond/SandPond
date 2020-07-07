@@ -49,7 +49,7 @@ element Liquid {
 	@ => .
 	x    .
 	
-	any(xz.rotations) @D => D@
+	for(xz.rotations) @D => D@
 }
 
 element Goo {
