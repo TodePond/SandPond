@@ -4,7 +4,7 @@ const LIQUID = 1
 const GAS = 2
 const EFFECT = 3
 
-const STICKY_FALL_TIME = 40
+const STICKY_FALL_TIME = 30
 
 SpaceTode`
 
@@ -91,7 +91,7 @@ element Sticky {
 	action i => i
 	
 	// Debug colour
-	keep c (self, time, origin) => {
+	/*keep c (self, time, origin) => {
 		let timeDiff = Math.round((time - self.stuckTime) * 255 / STICKY_FALL_TIME)
 		if (timeDiff > 255) timeDiff = 255
 		self.colour.r = timeDiff
@@ -99,7 +99,7 @@ element Sticky {
 		self.colour.g = 255 - timeDiff
 		SPACE.updateAppearance(origin)
 	}
-	action @ => c
+	action @ => c*/
 	
 	// Contact with ground
 	keep t (self, time) => self.stuckTime = time
@@ -115,7 +115,7 @@ element Sticky {
 	given r (selfElement, element, self, atom) => element === selfElement && self.stuckTime < atom.stuckTime
 	keep r (self, atom) => self.stuckTime = atom.stuckTime
 	change $ (selfElement) => new selfElement()
-	for(xyz.rotations) {
+	all(xyz.rotations) {
 		action @s => .s
 		//action @_s => .$s
 		//action @ s => . s
@@ -124,7 +124,7 @@ element Sticky {
 		//action @ r => @ r
 	}
 	
-	for(xyz.flips) {
+	all(xyz.flips) {
 		action {
 			 s =>  s
 			@     .
