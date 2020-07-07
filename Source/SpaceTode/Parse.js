@@ -447,6 +447,7 @@
 				EAT.string("action"),
 				EAT.string("any"),
 				EAT.string("for"),
+				EAT.string("all"),
 				EAT.string("pov"),
 				EAT.string("rule"),
 				EAT.string("{"),
@@ -465,6 +466,9 @@
 		if (success) return result
 		
 		result = {success} = EAT.for(code, scope)
+		if (success) return result
+		
+		result = {success} = EAT.all(code, scope)
 		if (success) return result
 		
 		result = {success} = EAT.pov(code, scope)
@@ -985,6 +989,45 @@
 		const chance = result.value
 		
 		scope.instructions.push({type: INSTRUCTION.TYPE.FOR, value: result.value})
+		
+		result = {code} = EAT.gap(code)
+		result = {code, success} = EAT.todeSplatBlock(code, scope)
+		if (!success) return EAT.fail(code)
+		
+		absorbScope(scope, result.blockScope)
+		/*scope.properties.o= result.blockScope.properties
+		scope.instructions.push(...result.blockScope.instructions)*/
+		scope.instructions.push({type: INSTRUCTION.TYPE.BLOCK_END})
+		
+		return result
+		
+	}
+	
+	EAT.all = (source, scope) => {
+		let result = undefined
+		let success = undefined
+		let snippet = undefined
+		let code = source
+		
+		result = {code, success} = EAT.string("all")(code)
+		if (!success) return EAT.fail(code)
+		
+		result = {code} = EAT.gap(code)
+		result = {code, success} = EAT.string("(")(code)
+		if (!success) return EAT.fail(code)
+		
+		let jsHead = ``
+		for (const symmetryName in SYMMETRY.TYPE) {
+			jsHead += `const ${symmetryName.as(LowerCase)} = SYMMETRY.TYPE.${symmetryName}\n`
+		}
+		
+		result = {code} = EAT.gap(code)
+		result = {code, success, snippet} = EAT.javascriptArg(code, jsHead)
+		if (!success) return EAT.fail(code)
+		
+		const chance = result.value
+		
+		scope.instructions.push({type: INSTRUCTION.TYPE.FOR, value: {...result.value, type: "all"}})
 		
 		result = {code} = EAT.gap(code)
 		result = {code, success} = EAT.todeSplatBlock(code, scope)

@@ -29,7 +29,6 @@ element Powder  {
 	@ => D
 	D    @
 	
-	
 	given F (element) => element !== Void && element.state !== SOLID
 	any(xz.rotations) {
 		@D => D@
@@ -50,7 +49,7 @@ element Liquid {
 	@ => .
 	x    .
 	
-	any(xz.rotations) @D => D@
+	for(xz.rotations) @D => D@
 }
 
 element Goo {

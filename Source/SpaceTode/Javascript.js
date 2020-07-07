@@ -253,7 +253,7 @@ const JAVASCRIPT = {}
 			// Start For
 			if (nextForSymmId !== undefined && prevForSymmId !== nextForSymmId) {
 				const iName = `i${nextForSymmId}`
-				lines.push(`${margin}const transNumsShuffledSymm${nextForSymmId} = transformationNumbersSymm${nextForSymmId}Const.shuffled`)
+				if (!chunk.forSymmIsAll) lines.push(`${margin}const transNumsShuffledSymm${nextForSymmId} = transformationNumbersSymm${nextForSymmId}Const.shuffled`)
 				lines.push(`${margin}for(let ${iName} = 0; ${iName} < ${chunk.forSymmTransCount}; ${iName}++) {`)
 				lines.push(``)
 				margin += `	`
@@ -339,16 +339,16 @@ const JAVASCRIPT = {}
 		const lines = []
 		const need = needer.need
 		if (need.generateGet && !alreadyGots.includes(needer.name)) {
-			const getCode = need.generateGet(needer.x, needer.y, needer.z, needer.symmetry, needer.symmetryId, needer.id, needer.argNames, needer.idResultName, needer.forSymmId, needer.char, template, needer.diagram)
+			const getCode = need.generateGet(needer.x, needer.y, needer.z, needer.symmetry, needer.symmetryId, needer.id, needer.argNames, needer.idResultName, needer.forSymmId, needer.char, template, needer.diagram, needer.isAll)
 			if (getCode !== undefined) lines.push(`${indent}const ${needer.name} = ${getCode}`)
 			if (cache) alreadyGots.push(needer.name)
 		}
 		if (need.generateConstant) {
-			const constantCode = need.generateConstant(needer.x, needer.y, needer.z, needer.symmetry, needer.symmetryId, needer.id, needer.argNames, needer.idResultName, needer.forSymmId, needer.char, template, needer.diagram)
+			const constantCode = need.generateConstant(needer.x, needer.y, needer.z, needer.symmetry, needer.symmetryId, needer.id, needer.argNames, needer.idResultName, needer.forSymmId, needer.char, template, needer.diagram, needer.isAll)
 			if (constantCode !== undefined) constants.pushUnique(`const ${needer.name}Const = ${constantCode}`)
 		}
 		if (need.generateExtra) {
-			const extraCode = need.generateExtra(needer.x, needer.y, needer.z, needer.symmetry, needer.symmetryId, needer.id, needer.argNames, needer.idResultName, needer.forSymmId, needer.char, template, needer.diagram)
+			const extraCode = need.generateExtra(needer.x, needer.y, needer.z, needer.symmetry, needer.symmetryId, needer.id, needer.argNames, needer.idResultName, needer.forSymmId, needer.char, template, needer.diagram, needer.isAll)
 			if (extraCode !== undefined) lines.push(`${indent}${extraCode}`)
 		}
 		return lines
