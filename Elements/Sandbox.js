@@ -97,6 +97,31 @@ element Rock {
 	prop state SOLID
 	category "Sandbox"
 	//mimic(Temperature)
+	//mimic(Solid)
+	mimic(Sticky)
+}
+
+element HotRock {
+	colour "orange"
+	emissive "brown"
+	prop state SOLID
+	prop temperature HOT
+	
+	prop states () => ({
+		[HOT]: [Rock, 0.008]
+	})
+	
+	mimic(Temperature)
+	mimic(Solid)
+}
+
+element Stone {
+	category "Sandbox"
+	prop state SOLID
+	prop states () => ({
+		[HOT]: HotRock,
+	})
+	mimic(Temperature)
 	mimic(Solid)
 }
 
