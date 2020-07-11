@@ -33,8 +33,8 @@ element Fire {
 	prop state EFFECT
 	prop temperature HOT
 	prop states () => ({
-		[COOL]: Empty,
 		[COLD]: Empty,
+		[COOL]: Empty,
 	})
 	
 	mimic(Temperature)
@@ -101,15 +101,14 @@ element Rock {
 	mimic(Sticky)
 }
 
-element HotRock {
+element Magma {
 	colour "orange"
 	emissive "brown"
 	prop state SOLID
 	prop temperature HOT
 	
-	prop states () => ({
-		[HOT]: [Rock, 0.008]
-	})
+	symbol R Rock
+	maybe(0.03) @ => R
 	
 	mimic(Temperature)
 	mimic(Solid)
@@ -119,7 +118,7 @@ element Stone {
 	category "Sandbox"
 	prop state SOLID
 	prop states () => ({
-		[HOT]: HotRock,
+		[HOT]: Magma,
 	})
 	mimic(Temperature)
 	mimic(Solid)
@@ -133,7 +132,7 @@ element Steam {
 	prop state GAS
 	prop temperature WARM
 	prop states () => ({
-		[WARM]: [Empty, 0.04],
+		[ROOM]: [Empty, 0.1],
 		[COOL]: [Water, 0.1],
 		[COLD]: Water,
 	})
@@ -159,7 +158,7 @@ element Snow {
 		[HOT]: Water,
 		[WARM]: [Water, 0.2],
 		[COOL]: [Water, 0.1],
-		[COLD]: [Water, 0.00001]
+		[ROOM]: [Water, 0.0001],
 	})
 	
 	mimic(Temperature)
@@ -224,6 +223,7 @@ element Cloud any(xz.rotations) {
 	arg chance 1/100
 	arg birthday
 	opacity 0.35
+	prop state EFFECT
 	
 	given i (self) => self.birthday === undefined
 	keep i (self, time) => self.birthday = time
@@ -250,6 +250,8 @@ element Meteor {
 	colour "#781a00"
 	emissive "black"
 	category "Sandbox"
+	prop state SOLID
+	prop temperature WARM
 	
 	change F () => new Fire()
 	action {
@@ -338,7 +340,6 @@ element Platform {
 	category "Sandbox"
 	state "solid"
 	data fuel 100
-	//default true
 	precise true
 	pour false
 	

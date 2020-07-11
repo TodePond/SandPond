@@ -1,7 +1,7 @@
 
 const COLD = 0
 const COOL = 1
-//const TEPID = 2
+const ROOM = 2
 const WARM = 3
 const HOT = 4
 
@@ -9,7 +9,6 @@ SpaceTode`
 
 element Temperature {
 	category "Rulesets"
-	prop temperature HOT
 	
 	//============//
 	// Init Cache //
@@ -27,14 +26,14 @@ element Temperature {
 		}
 		selfElement.statesChancesCache = chancesCache
 		selfElement.statesCache = cache
-		if (cache[selfElement.temperature] !== undefined) {
+		/*if (cache[selfElement.temperature] !== undefined) {
 			selfElement.stateSelfCache = cache[selfElement.temperature]
 			selfElement.stateSelfChanceCache = chancesCache[selfElement.temperature]
-		}
+		}*/
 	}
 	i => i
 	
-	//======//
+/*	//======//
 	// Self //
 	//======//
 	origin s
@@ -46,24 +45,28 @@ element Temperature {
 		return true
 	}
 	change s (selfElement) => new selfElement.stateSelfCache()
-	s => s
+	s => s*/
 	
 	//=======//
 	// Other //
 	//=======//
-	given c (element, selfElement) => {
-		const cache = element.statesCache
-		if (cache === undefined) return false
-		const temp = selfElement.temperature
+	// change self
+	
+	/*select c (element) => element
+	keep c (selected, space, selfElement) => {
+	
+	
+		const cache = selfElement.statesCache
+		let temp = selected.temperature
+		if (temp === undefined) temp = ROOM
 		if (cache[temp] === undefined) return false
 		const chance = element.statesChancesCache[temp]
 		if (chance !== undefined && Math.random() > chance) return false
 		return true
-	}
-	select c (element) => element
-	keep c (selected, space, selfElement) => {
+	
 		const cache = selfElement.statesCache
-		const temp = selected.temperature
+		let temp = selected.temperature
+		if (temp === undefined) temp = ROOM
 		const newElement = cache[temp]
 		if (newElement === undefined) return
 		const chance = selfElement.statesChancesCache[temp]
@@ -71,11 +74,30 @@ element Temperature {
 		SPACE.setAtom(space, new newElement(), newElement)
 	}
 	
-	change h (element, selfElement) => new (element.statesCache[selfElement.temperature])()
+	// change other
+	keep h
+	//change h (element, selfElement) => new (element.statesCache[selfElement.temperature])()
+	*/
 	
-	any(xyz.rotations) {
-		@c => ch
+	select s (element) => element
+	keep s (space, selfElement, selected) => {
+		const selfTargets = selfElement.statesCache
+		if (selfTargets === undefined) return
+		
+		let otherTemp = selected.temperature
+		if (otherTemp === undefined) otherTemp = ROOM
+		
+		const selfTarget = selfTargets[otherTemp]
+		if (selfTarget === undefined) return
+		
+		const selfChances = selfElement.statesChancesCache
+		const selfChance = selfChances[otherTemp]
+		if (selfChance !== undefined && Math.random() > selfChance) return
+		
+		SPACE.setAtom(space, new selfTarget(), selfTarget)
 	}
+	
+	action any(xyz.rotations) @s => s.
 }
 
 `
