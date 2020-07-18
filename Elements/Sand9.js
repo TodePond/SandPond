@@ -8,13 +8,6 @@ element Sand9 {
 	category "Sand9"
 }
 
-element Water9 {
-	colour "lightblue"
-	emissive "blue"
-	opacity 0.35
-	category "Sand9"
-}
-
 element Graviton9 any(xyz.rotations) {
 	colour "brown"
 	opacity 0.1
