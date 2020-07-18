@@ -417,7 +417,7 @@ UIstarted = true
 			if (!categoryElement) {
 				const newCategoryElement = HTML `<div class="category heading box clickable" id="${category}Heading"><div class="label">${category}</div></div>`
 				$("#elements > .menu").appendChild(newCategoryElement)
-				if (category == "Sandbox") newCategoryElement.classList.add("selected")
+				if (category == "Sand1") newCategoryElement.classList.add("selected")
 			}
 		}
 		

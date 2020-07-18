@@ -8,6 +8,7 @@ element Sand1 any(xz.rotations) {
 	colour "#ffcc00"
 	emissive "#ffa34d"
 	category "Sand1"
+	default true
 	
 	@ => _
 	_    @
@@ -349,7 +350,6 @@ element Sand8 {
 	colour "#ffcc00"
 	emissive "#ffa34d"
 	category "Sand8"
-	default true
 	
 	behave {
 	
