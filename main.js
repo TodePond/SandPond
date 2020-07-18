@@ -80,7 +80,7 @@ let spaceIds = spaces.map(space => space.id).sort(() => Math.random() - 0.5)
 
 let shuffleWorker = undefined
 try {
-	shuffleWorker = new WorkerProxy("Source/ShuffleWorker.js")
+	shuffleWorker = new WorkerProxy("Source/SandPond/ShuffleWorker.js")
 }
 catch {
 	if (RANDOM == "shuffle") {

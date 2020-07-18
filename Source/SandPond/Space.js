@@ -61,6 +61,7 @@ const SPACE = {}
 	}
 	
 	SPACE.updateAppearance = SHADOW_MODE? updateAppearanceShadow : updateAppearanceNoShadow
+	SPACE.update = SPACE.updateAppearance
 	
 	SPACE.setAtom = (space, atom, element = atom.element) => {
 		space.atom = atom
