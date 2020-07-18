@@ -48,10 +48,10 @@ element Water3 {
 	@ => .
 	x    .
 	
-	any(xz.rotations) @_ => _@
+	for(xz.rotations) @_ => _@
 }
 
-element FoodColouring3 any(xz.rotations) {
+element FoodColouring3 for(xz.rotations) {
 	colour "lightgreen"
 	emissive "green"
 	opacity 0.35

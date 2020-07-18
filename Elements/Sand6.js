@@ -24,7 +24,7 @@ element Sand6 any(xz.rotations) {
 	 F     .
 }
 
-element Water6 any(xz.rotations) {
+element Water6 for(xz.rotations) {
 	colour "lightblue"
 	emissive "blue"
 	opacity 0.35
@@ -55,7 +55,7 @@ element Slime6 {
 	@ => .
 	x    .
 	
-	maybe(0.001) any(xz.rotations) @_ => _@
+	maybe(0.001) for(xz.rotations) @_ => _@
 }
 
 `

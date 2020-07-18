@@ -14,7 +14,7 @@ element Sand2 any(xz.rotations) {
 	 _     .
 }
 
-element Water2 any(xz.rotations) {
+element Water2 for(xz.rotations) {
 	colour "lightblue"
 	emissive "blue"
 	opacity 0.35

@@ -47,10 +47,10 @@ element Water4 {
 	@ => .
 	x    .
 	
-	any(xz.rotations) @_ => _@
+	for(xz.rotations) @_ => _@
 }
 
-element FoodColouring4 any(xz.rotations) {
+element FoodColouring4 for(xz.rotations) {
 	colour "green"
 	emissive "green"
 	opacity 0.35
@@ -69,7 +69,7 @@ element FoodColouring4 any(xz.rotations) {
 	@_ => _@
 }
 
-element Lemonade4 any(xz.rotations) {
+element Lemonade4 for(xz.rotations) {
 	colour "white"
 	emissive "grey"
 	opacity 0.40

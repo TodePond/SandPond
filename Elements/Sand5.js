@@ -28,7 +28,7 @@ element Sand5 any(xz.rotations) {
 	 F     .
 }
 
-element Water5 any(xz.rotations) {
+element Water5 for(xz.rotations) {
 	colour "lightblue"
 	emissive "blue"
 	opacity 0.35
@@ -44,7 +44,7 @@ element Water5 any(xz.rotations) {
 	@_ => _@
 }
 
-element Lemonade5 any(xz.rotations) {
+element Lemonade5 for(xz.rotations) {
 	colour "white"
 	emissive "grey"
 	opacity 0.40
