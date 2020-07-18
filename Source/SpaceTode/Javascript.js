@@ -64,7 +64,7 @@ const JAVASCRIPT = {}
 		lines.push(`			visible: ${visible},`)
 		lines.push(`			colour: {r: ${shaderColour.r}, g: ${shaderColour.g}, b: ${shaderColour.b}},`)
 		lines.push(`			emissive: {r: ${shaderEmissive.r}, g: ${shaderEmissive.g}, b: ${shaderEmissive.b}},`)
-		lines.push(`			opacity: ${shaderOpacity}`)
+		lines.push(`			opacity: ${D2_MODE? 255 : shaderOpacity}`)
 		lines.push(`			${propertyNames}`)
 		lines.push(`		}`)
 		lines.push(`		return atom`)
