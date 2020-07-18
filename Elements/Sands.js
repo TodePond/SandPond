@@ -1,14 +1,13 @@
 SpaceTode` 
 
-element Static {
-	category "Sands"
-	prop resistance 1.0
+element Static1 {
+	category "Sand1"
 }
 
 element Sand1 any(xz.rotations) {
 	colour "#ffcc00"
 	emissive "#ffa34d"
-	category "Sands"
+	category "Sand1"
 	
 	@ => _
 	_    @
@@ -21,7 +20,7 @@ element Water1 any(xz.rotations) {
 	colour "lightblue"
 	emissive "blue"
 	opacity 0.35
-	category "Sands"
+	category "Sand1"
 	@ => _
 	_    @
 	
@@ -34,7 +33,7 @@ element Water1 any(xz.rotations) {
 element Sand2 any(xz.rotations) {
 	colour "#ffcc00"
 	emissive "#ffa34d"
-	category "Sands"
+	category "Sand2"
 	
 	@ => _
 	_    @
@@ -47,7 +46,7 @@ element Water2 any(xz.rotations) {
 	colour "lightblue"
 	emissive "blue"
 	opacity 0.35
-	category "Sands"
+	category "Sand2"
 	@ => _
 	_    @
 	
@@ -60,7 +59,7 @@ element Water2 any(xz.rotations) {
 element Sand3 any(xz.rotations) {
 	colour "#ffcc00"
 	emissive "#ffa34d"
-	category "Sands"
+	category "Sand3"
 	
 	@ => _
 	_    @
@@ -80,7 +79,7 @@ element Water3 {
 	colour "lightblue"
 	emissive "blue"
 	opacity 0.35
-	category "Sands"
+	category "Sand3"
 	
 	
 	data dyed false
@@ -109,7 +108,7 @@ element FoodColouring3 any(xz.rotations) {
 	colour "green"
 	emissive "green"
 	opacity 0.35
-	category "Sands"
+	category "Sand3"
 	@ => _
 	_    @
 	
@@ -127,7 +126,7 @@ element FoodColouring3 any(xz.rotations) {
 element Sand4 any(xz.rotations) {
 	colour "#ffcc00"
 	emissive "#ffa34d"
-	category "Sands"
+	category "Sand4"
 	
 	given D (element) => element === Water4 || element === Empty
 	select D (atom) => atom
@@ -146,7 +145,7 @@ element Water4 {
 	colour "lightblue"
 	emissive "blue"
 	opacity 0.35
-	category "Sands"
+	category "Sand4"
 	
 	data dyed false
 	given D (element, selfElement, atom) => element === selfElement && atom.dyed
@@ -174,7 +173,7 @@ element Lemonade4 {
 	colour "white"
 	emissive "grey"
 	opacity 0.35
-	category "Sands"
+	category "Sand4"
 	
 	@ => _
 	_    @
@@ -189,7 +188,7 @@ element FoodColouring4 any(xz.rotations) {
 	colour "green"
 	emissive "green"
 	opacity 0.35
-	category "Sands"
+	category "Sand4"
 	@ => _
 	_    @
 	
@@ -213,7 +212,7 @@ SpaceTode`
 element Sand5 any(xz.rotations) {
 	colour "#ffcc00"
 	emissive "#ffa34d"
-	category "Sands"
+	category "Sand5"
 	prop state SOLID5
 	
 	given D (element) => element !== Void && element.state !== SOLID5
@@ -233,7 +232,7 @@ element Water5 any(xz.rotations) {
 	colour "lightblue"
 	emissive "blue"
 	opacity 0.35
-	category "Sands"
+	category "Sand5"
 	prop state LIQUID5
 	
 	@ => _
@@ -249,7 +248,7 @@ element Lemonade5 any(xz.rotations) {
 	colour "white"
 	emissive "grey"
 	opacity 0.35
-	category "Sands"
+	category "Sand5"
 	prop state LIQUID5
 	
 	@ => _
@@ -264,7 +263,7 @@ element Lemonade5 any(xz.rotations) {
 element Sand6 any(xz.rotations) {
 	colour "#ffcc00"
 	emissive "#ffa34d"
-	category "Sands"
+	category "Sand6"
 	prop resistance 1.0
 	
 	given D (element) => element !== Void && element.resistance === undefined || element.resistance < Math.random()
@@ -284,7 +283,7 @@ element Water6 any(xz.rotations) {
 	colour "lightblue"
 	emissive "blue"
 	opacity 0.35
-	category "Sands"
+	category "Sand6"
 	prop resistance 0.8
 	
 	@ => _
@@ -299,7 +298,7 @@ element Water6 any(xz.rotations) {
 element Sand7 any(xz.rotations) {
 	colour "#ffcc00"
 	emissive "#ffa34d"
-	category "Sands"
+	category "Sand7"
 	
 	given D (element) => element === Empty || element === Water7
 	select D (atom) => atom
@@ -335,7 +334,7 @@ element Water7 any(xz.rotations) {
 	colour "lightblue"
 	emissive "blue"
 	opacity 0.35
-	category "Sands"
+	category "Sand7"
 	
 	@ => _
 	_    @
@@ -349,7 +348,7 @@ element Water7 any(xz.rotations) {
 element Sand8 {
 	colour "#ffcc00"
 	emissive "#ffa34d"
-	category "Sands"
+	category "Sand8"
 	default true
 	
 	behave {
@@ -389,7 +388,7 @@ element Water8 any(xz.rotations) {
 	colour "lightblue"
 	emissive "blue"
 	opacity 0.35
-	category "Sands"
+	category "Sand8"
 	
 	behave {
 	
