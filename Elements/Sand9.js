@@ -19,7 +19,6 @@ element Graviton9 any(xyz.rotations) {
 	colour "brown"
 	opacity 0.1
 	category "Sand9"
-	default true
 	
 	behave {
 		
