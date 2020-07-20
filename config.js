@@ -51,9 +51,9 @@ if (LONG_MODE) {
 }
 
 if (MEDIUM_MODE) {
-	MAX_X = 40
-	MAX_Y = 35
-	MAX_Z = 40
+	MAX_X = 40 * (D1_MODE? 2 : 1) * (D2_MODE? 5 : 1)
+	MAX_Y = 35 * (D2_MODE? 8 : 1)
+	MAX_Z = D1_MODE? 0 : (D2_MODE? 0 : MAX_X)
 }
 
 let SIZE = SMALL_MODE? "small" : "big"
