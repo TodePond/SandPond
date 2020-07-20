@@ -2,19 +2,6 @@ SpaceTode`
 
 element Static7 category "Sand7"
 
-element Float7 {
-	symbol W Water7
-	given F (element) => element === Empty || element === Water7
-	keep F
-	
-	maybe(0.5) {
-		@W => W@
-		 F     F
-	}
-	
-	@ => .
-}
-
 element Sand7 any(xz.rotations) {
 	colour "#ffcc00"
 	emissive "#ffa34d"
@@ -32,7 +19,9 @@ element Sand7 any(xz.rotations) {
 	given M (element) => element === Empty || element === Water7 || element === Sand7
 	keep M
 	
-	// Simple
+	//=======//
+	// EMPTY //
+	//=======//
 	@ => _
 	_    @
 	
@@ -40,11 +29,14 @@ element Sand7 any(xz.rotations) {
 	x    .
 	
 	@_ => _@
-	sF    sF
+	s_    sF
 	
 	@_ => _@
-	SF    SF
+	S_    S_
 	
+	//=============//
+	// WATER BELOW //
+	//=============//
 	@ => _
 	W    @
 	_    W
@@ -95,12 +87,61 @@ element Sand7 any(xz.rotations) {
 	@M  => _M
 	W      @
 	
-	maybe(0.8) mimic(Float7)
+	//=============//
+	// WATER SLIDE //
+	//=============//
+	@      _
+	MW_ => M@W
 	
-	//
-	@ => W
-	W    @
+	@     _
+	MW => M@
+	 _     W
 	
+	@      _
+	MWM => M@M
+	  _      W
+	
+	@      _
+	MW  => M@
+	 M_     MW
+	 
+	@ _    _ W
+	MWM => M@M
+	
+	  _      W
+	@ M    _ M
+	MWM => M@M
+	
+	  _      W
+	@MM    _MM
+	 W  =>  @
+	
+	  _      W
+	@MM    _MM
+	 W  =>  @
+	
+	@_    _W
+	 W =>  @
+	
+	
+	//=====================//
+	// WORST CASE SCENARIO //
+	//=====================//
+	FS    .S
+	@W => W@
+	
+	S     .
+	@W => W@
+	
+	maybe(0.15) {
+		@W => W@
+		WF    .F
+	}
+	
+	maybe(0.15) {
+		@ => W
+		W    @
+	}
 	
 }
 
