@@ -8,7 +8,6 @@ const HOT = 4
 SpaceTode`
 
 element Temperature {
-	category "Rulesets"
 	
 	//============//
 	// Init Cache //
@@ -26,59 +25,12 @@ element Temperature {
 		}
 		selfElement.statesChancesCache = chancesCache
 		selfElement.statesCache = cache
-		/*if (cache[selfElement.temperature] !== undefined) {
-			selfElement.stateSelfCache = cache[selfElement.temperature]
-			selfElement.stateSelfChanceCache = chancesCache[selfElement.temperature]
-		}*/
 	}
 	i => i
 	
-/*	//======//
-	// Self //
-	//======//
-	origin s
-	given s (selfElement) => {
-		const cache = selfElement.stateSelfCache
-		if (cache === undefined) return false
-		const chance = selfElement.stateSelfChanceCache
-		if (chance !== undefined && Math.random() > chance) return false
-		return true
-	}
-	change s (selfElement) => new selfElement.stateSelfCache()
-	s => s*/
-	
-	//=======//
-	// Other //
-	//=======//
-	// change self
-	
-	/*select c (element) => element
-	keep c (selected, space, selfElement) => {
-	
-	
-		const cache = selfElement.statesCache
-		let temp = selected.temperature
-		if (temp === undefined) temp = ROOM
-		if (cache[temp] === undefined) return false
-		const chance = element.statesChancesCache[temp]
-		if (chance !== undefined && Math.random() > chance) return false
-		return true
-	
-		const cache = selfElement.statesCache
-		let temp = selected.temperature
-		if (temp === undefined) temp = ROOM
-		const newElement = cache[temp]
-		if (newElement === undefined) return
-		const chance = selfElement.statesChancesCache[temp]
-		if (chance !== undefined && Math.random() > chance) return
-		SPACE.setAtom(space, new newElement(), newElement)
-	}
-	
-	// change other
-	keep h
-	//change h (element, selfElement) => new (element.statesCache[selfElement.temperature])()
-	*/
-	
+	//==============//
+	// Change State //
+	//==============//
 	select s (element) => element
 	keep s (space, selfElement, selected) => {
 		const selfTargets = selfElement.statesCache

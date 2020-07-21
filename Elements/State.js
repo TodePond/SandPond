@@ -8,6 +8,11 @@ const STICKY_FALL_TIME = 30
 
 SpaceTode`
 
+element Static {
+	prop state SOLID
+	category "Rulesets"
+}
+
 element Solid {
 	prop state SOLID
 	category "Rulesets"
@@ -80,6 +85,7 @@ element Gas {
 }
 
 element Sticky {
+	prop state SOLID
 	category "Rulesets"
 	
 	// Init atom properties
@@ -103,7 +109,7 @@ element Sticky {
 	
 	// Contact with ground
 	keep t (self, time) => self.stuckTime = time
-	given n (element, selfElement) => element !== selfElement && element !== Empty
+	given n (element, selfElement) => element !== selfElement && element === Void || element.state === SOLID
 	action {
 		@ => t
 		n    .
@@ -139,9 +145,12 @@ element Sticky {
 	given S (self, time) => time - self.stuckTime < STICKY_FALL_TIME
 	S => .
 	
+	given D (element) => element !== Void && element.state !== SOLID
+	select D (atom) => atom
+	change D (selected) => selected
 	// Fall
-	@ => _
-	_    @
+	@ => D
+	D    @
 	
 }
 
