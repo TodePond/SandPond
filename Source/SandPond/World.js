@@ -4,7 +4,11 @@
 const WORLD = {}
 
 SpaceTode `
-	element Void hidden true
+	
+	element Void {
+		colour "rgb(32, 32, 32)"
+		emissive bgColourString
+	}
 	element Empty visible false
 `
 
