@@ -82,7 +82,7 @@ element Gas {
 	prop state GAS
 	category "Rulesets"
 	
-	given D (element) => element.state > GAS
+	given D (element) => element.state >= GAS
 	select D (atom) => atom
 	change D (selected) => selected
 	any(xyz.rotations) @D => D@
