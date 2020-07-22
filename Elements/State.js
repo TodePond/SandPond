@@ -12,11 +12,6 @@ Void.state = VOID
 
 SpaceTode`
 
-element Static {
-	prop state SOLID
-	category "Rulesets"
-}
-
 element Solid {
 	prop state SOLID
 	category "Rulesets"
