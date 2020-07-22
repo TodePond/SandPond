@@ -14,7 +14,7 @@ SpaceTode`
 
 element Solid {
 	prop state SOLID
-	category "Rulesets"
+	//category "Rulesets"
 	
 	given D (element) => element.state > SOLID
 	select D (atom) => atom
@@ -25,7 +25,7 @@ element Solid {
 
 element Powder  {
 	prop state SOLID
-	category "Rulesets"
+	//category "Rulesets"
 	
 	given D (element) => element.state > SOLID
 	select D (atom) => atom
@@ -42,7 +42,7 @@ element Powder  {
 
 element Liquid {
 	prop state LIQUID
-	category "Rulesets"
+	//category "Rulesets"
 	
 	given D (element) => element.state > LIQUID
 	select D (atom) => atom
@@ -58,7 +58,7 @@ element Liquid {
 
 element Goo {
 	prop state SOLID
-	category "Rulesets"
+	//category "Rulesets"
 	
 	given D (element) => element.state > LIQUID
 	select D (atom) => atom
@@ -75,7 +75,7 @@ element Goo {
 
 element Gas {
 	prop state GAS
-	category "Rulesets"
+	//category "Rulesets"
 	
 	given D (element) => element.state >= GAS
 	select D (atom) => atom
@@ -85,7 +85,7 @@ element Gas {
 
 element Sticky {
 	prop state SOLID
-	category "Rulesets"
+	//category "Rulesets"
 	
 	// Init atom properties
 	given i (self) => self.stickyInit === undefined
