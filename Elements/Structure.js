@@ -7,7 +7,6 @@ element Wall {
 	prop state SOLID
 	prop temperature ROOM
 	arg fuel 10
-	default true
 	
 	mimic(Solid)
 	
