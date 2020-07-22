@@ -50,6 +50,9 @@ element Temperature {
 	}
 	
 	action any(xyz.rotations) @s => s.
+	
+	given N (self, atom) => self !== atom
+	N => .
 }
 
 `

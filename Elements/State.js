@@ -1,10 +1,14 @@
 
-const SOLID = 0
-const LIQUID = 1
-const GAS = 2
-const EFFECT = 3
+const VOID = 0
+const SOLID = 1
+const LIQUID = 2
+const GAS = 3
+const EFFECT = 4
 
 const STICKY_FALL_TIME = 30
+
+Empty.state = GAS
+Void.state = VOID
 
 SpaceTode`
 
@@ -17,7 +21,7 @@ element Solid {
 	prop state SOLID
 	category "Rulesets"
 	
-	given D (element) => element !== Void && element.state !== SOLID
+	given D (element) => element.state > SOLID
 	select D (atom) => atom
 	change D (selected) => selected
 	@ => D
@@ -28,13 +32,13 @@ element Powder  {
 	prop state SOLID
 	category "Rulesets"
 	
-	given D (element) => element !== Void && element.state !== SOLID
+	given D (element) => element.state > SOLID
 	select D (atom) => atom
 	change D (selected) => selected
 	@ => D
 	D    @
 	
-	given F (element) => element !== Void && element.state !== SOLID
+	given F (element) => element.state > SOLID
 	any(xz.rotations) {
 		@D => D@
 		 F     .
@@ -45,7 +49,7 @@ element Liquid {
 	prop state LIQUID
 	category "Rulesets"
 	
-	given D (element) => element !== Void && (element.state > LIQUID || element.state === undefined)
+	given D (element) => element.state > LIQUID
 	select D (atom) => atom
 	change D (selected) => selected
 	@ => D
@@ -61,7 +65,7 @@ element Goo {
 	prop state SOLID
 	category "Rulesets"
 	
-	given D (element) => element !== Void && element.state !== SOLID
+	given D (element) => element.state > LIQUID
 	select D (atom) => atom
 	change D (selected) => selected
 	
@@ -78,7 +82,7 @@ element Gas {
 	prop state GAS
 	category "Rulesets"
 	
-	given D (element) => element !== Void && (element.state === EFFECT || element.state === undefined)
+	given D (element) => element.state > GAS
 	select D (atom) => atom
 	change D (selected) => selected
 	any(xyz.rotations) @D => D@
@@ -109,7 +113,7 @@ element Sticky {
 	
 	// Contact with ground
 	keep t (self, time) => self.stuckTime = time
-	given n (element, selfElement) => element !== selfElement && element === Void || element.state === SOLID
+	given n (element, selfElement) => element !== selfElement && element.state <= SOLID
 	action {
 		@ => t
 		n    .
@@ -123,11 +127,7 @@ element Sticky {
 	change $ (selfElement) => new selfElement()
 	all(xyz.rotations) {
 		action @s => .s
-		//action @_s => .$s
-		//action @ s => . s
 		action @r => .r
-		//action @_r => @$r
-		//action @ r => @ r
 	}
 	
 	all(xyz.flips) {
@@ -145,7 +145,7 @@ element Sticky {
 	given S (self, time) => time - self.stuckTime < STICKY_FALL_TIME
 	S => .
 	
-	given D (element) => element !== Void && element.state !== SOLID
+	given D (element) => element.state > SOLID
 	select D (atom) => atom
 	change D (selected) => selected
 	// Fall
