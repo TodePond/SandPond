@@ -60,6 +60,13 @@ const SYMMETRY = {}
 		T("-y-xz"),
 	])
 	
+	SYMMETRY.TYPE.xy.rotations = SYMMETRY.make("XY.ROTATIONS", [
+		T("xyz"),
+		T("-x-yz"),
+		T("yxz"),
+		T("-y-xz"),
+	])
+	
 	SYMMETRY.TYPE.xz = SYMMETRY.make("XZ", [
 		T("xyz"),
 		T("-xyz"),
@@ -86,6 +93,13 @@ const SYMMETRY = {}
 		T("xzy"),
 		T("x-zy"),
 		T("xz-y"),
+		T("x-z-y"),
+	])
+	
+	SYMMETRY.TYPE.yz.rotations = SYMMETRY.make("YZ.ROTATIONS", [
+		T("xyz"),
+		T("x-y-z"),
+		T("xzy"),
 		T("x-z-y"),
 	])
 	
