@@ -3,26 +3,55 @@ SpaceTode`
 element Clear {
 	colour "brown"
 	category "Clear"
-	pour false
+	arg timer 0
 	
-	symbol C Clear
-	symbol D Clear.Done
-	symbol B Clear.Bomb
+	given C (element) => element === Clear
+	change C (self) => new Clear(self.timer)
+	change c (self) => {
+		//self.timer++
+		return new Clear(self.timer + 0.1)
+	}
+	
+	given B (element) => element === Clear.Bomb
+	change B (self) => new Clear.Bomb(self.timer)
+	change b (atom) => new Clear.Bomb(atom.timer)
+	
+	keep T (self, atom) => self.timer = atom.timer + 20
+	
+	given D (element) => element === Clear.Done
+	change D (self) => new Clear.Done(self.timer)
 	
 	// Other element
-	given O (element) => element !== Void && element !== Clear && element !== Clear.Done
+	given O (element) => element !== Void && element !== Clear && element !== Clear.Done && element !== Clear.Bomb
 	
-	all(xyz.rotations) @O => .C
+	all(xyz.rotations) {
+		//@B => .T
+		@O => .c
+	}
 	any(xyz.rotations) {
 		@x => D.
 		@D => D.
 	}
 	
 	element Done {
-		colour "blue"
-		emissive "darkblue"
+		colour "grey"
+		emissive "black"
+		arg timer 0
 		all(xyz.rotations) @C => ..
-		@ => _
+		@ => B
+	}
+	
+	element Bomb {
+		colour "lightgreen"
+		emissive "green"
+		arg timer 0
+		all(xyz.rotations) action @C => @B
+		all(others) {
+			action @O => ._
+		}
+		
+		given t (self) => self.timer-- < 0
+		t => _
 	}
 	
 }
@@ -87,26 +116,55 @@ element Wipe {
 element Clear2D {
 	colour "brown"
 	category "Clear"
-	pour false
+	arg timer 0
 	
-	symbol C Clear2D
-	symbol D Clear2D.Done
-	symbol B Clear2D.Bomb
+	given C (element) => element === Clear2D
+	change C (self) => new Clear2D(self.timer)
+	change c (self) => {
+		//self.timer++
+		return new Clear2D(self.timer + 0.2)
+	}
+	
+	given B (element) => element === Clear2D.Bomb
+	change B (self) => new Clear2D.Bomb(self.timer)
+	change b (atom) => new Clear2D.Bomb(atom.timer)
+	
+	keep T (self, atom) => self.timer = atom.timer + 20
+	
+	given D (element) => element === Clear2D.Done
+	change D (self) => new Clear2D.Done(self.timer)
 	
 	// Other element
-	given O (element) => element !== Void && element !== Clear2D && element !== Clear2D.Done
+	given O (element) => element !== Void && element !== Clear2D && element !== Clear2D.Done && element !== Clear2D.Bomb
 	
-	all(xy.rotations) @O => .C
+	all(xy.rotations) {
+		//@B => .T
+		@O => .c
+	}
 	any(xy.rotations) {
 		@x => D.
 		@D => D.
 	}
 	
 	element Done {
-		colour "blue"
-		emissive "darkblue"
-		all(xy.rotations) @C => ..
-		@ => _
+		colour "grey"
+		emissive "black"
+		arg timer 0
+		all(xyz.rotations) @C => ..
+		@ => B
+	}
+	
+	element Bomb {
+		colour "lightgreen"
+		emissive "green"
+		arg timer 0
+		all(xy.rotations) action @C => @B
+		all(xy.others) {
+			action @O => ._
+		}
+		
+		given t (self) => self.timer-- < 0
+		t => _
 	}
 	
 }
