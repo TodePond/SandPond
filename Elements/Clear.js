@@ -172,13 +172,15 @@ element Clear2D {
 element Wipe2D {
 	colour "brown"
 	category "Clear"
+	//default true
 	
 	symbol W Wipe2D
 	symbol E Wipe2D.Edge
 	symbol D Wipe2D.Done
+	symbol B Wipe2D.Bomb
 	
 	// Other element
-	given O (element) => element !== Void && element !== Wipe2D && element !== Wipe2D.Done && element !== Wipe2D.Edge 
+	given O (element) => element !== Void && element !== Wipe2D && element !== Wipe2D.Done && element !== Wipe2D.Edge && element !== Wipe2D.Bomb 
 	
 	@O => @W
 	@x => E.
@@ -200,8 +202,6 @@ element Wipe2D {
 			@ => D
 			D    .
 		}
-		
-		
 	}
 	
 	element Done {
@@ -219,10 +219,23 @@ element Wipe2D {
 			 D     .
 		}
 		
-		.@ => @_
+		.@ => @B
 		
-		x@ => ._
+		x@ => .B
 		
+	}
+	
+	element Bomb {
+		colour "lightgreen"
+		emissive "green"
+		arg timer 10
+		
+		all(xy.others) {
+			action @O => ._
+		}
+		
+		given t (self) => self.timer-- < 0
+		t => _
 	}
 }
 
