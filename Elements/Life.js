@@ -3,6 +3,9 @@ SpaceTode`
 element Carrot {
 	colour "rgb(200, 80, 0)"
 	category "Life"
+	prop state SOLID
+	prop temperature ROOM
+	prop food PLANT
 	
 	change i () => new Carrot.Leaf(Math.random(), false)
 	@ => i
@@ -33,12 +36,12 @@ element Carrot {
 		arg grown true
 		prop state SOLID
 		prop temperature ROOM
-		prop edible true
+		prop food PLANT
 		
 		any(xz.rotations) {
 			origin g
 			given g (self) => !self.grown
-			keep g (self) => self.grown = true		
+			keep g (self) => self.grown = true
 			g => g
 			_    P
 			_    P
@@ -85,7 +88,7 @@ element Carrot {
 		arg id
 		prop state SOLID
 		prop temperature ROOM
-		prop edible true
+		prop food PLANT
 		
 		any(xz.rotations) {
 			L    1
@@ -121,12 +124,19 @@ element Rabbit {
 	colour "white"
 	emissive "grey"
 	category "Life"
+	prop state SOLID
+	prop temperature WARM
+	prop food MEAT
+	
 	data id
 	
 	element Part {
 		colour "white"
 		emissive "grey"
 		arg id
+		prop state SOLID
+		prop temperature WARM
+		prop food MEAT
 		
 		given R (element, atom, self) => element === Rabbit && atom.id === self.id
 		@R => ..
@@ -212,6 +222,7 @@ element Rabbit {
 		P_P_    _P_P
 		P@P_ => _P@P
 	}
+	
 }
 
 element RainbowRabbit {
