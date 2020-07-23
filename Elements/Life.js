@@ -4,45 +4,102 @@ element Carrot {
 	colour "rgb(200, 80, 0)"
 	category "Life"
 	
-	// Init
-	change i () => new Carrot.Leaf(Math.random())
+	change i () => new Carrot.Leaf(Math.random(), false)
 	@ => i
 	
-	element Leaf {
+	given L (self, element, atom) => element === Carrot.Leaf && atom.id === self.id
+	change L (self) => new Carrot.Leaf(self.id)
+	
+	given P (self, element, atom) => element === Carrot.Part && atom.id === self.id
+	change P (self) => new Carrot.Part(self.id)
+	
+	given 1 (element) => element.state > SOLID
+	select 1 (atom) => atom
+	change 1 (selected) => selected
+	
+	given 2 (element) => element.state > SOLID
+	select 2 (atom) => atom
+	change 2 (selected) => selected
+	
+	given 3 (element) => element.state > SOLID
+	select 3 (atom) => atom
+	change 3 (selected) => selected
+	
+	given n (element) => element.state === undefined || element.state <= SOLID
+		
+	element Leaf any(xz.rotations) {
 		colour "green"
 		arg id
-		data eaten false
+		arg grown true
+		prop state SOLID
+		prop temperature ROOM
+		prop edible true
 		
-		given e (self) => self.eaten
-		e => _
+		origin g
+		given g (self) => !self.grown
+		keep g (self) => self.grown = true		
+		g => g
+		_    P
+		_    P
 		
-		// Grow
-		change P (self, atom) => new Carrot.Part(self.id)
-		_@ => P.
-		_ @ => P .
+		g => _
+	
+		P    1
+		P => P
+		@    P
+		1    @
+	
+		P      2
+		P   => 1
+		@12    @PP
+		n      .
+	
+		@PP => 123
+		123    @PP
 		
-		// Die
-		given n (element, atom, self) => element !== Carrot.Part || atom.id !== self.id
-		n@ => ._
-		n @ => . _
+		@PP => 1P2
+		 1n     P.
+		 2      @
 		
-		given P (self, atom, element) => element === Carrot.Part && atom.id === self.id
-		PP@ => ___
-		___    PP@
+		PP@ => 1@2
+		 1n     P.
+		 2      P
+		
+		@PP => P12
+		1 n    P .
+		2      @
+		
+		PP@ => @12
+		1 n    P .
+		2      P
 	}
 	
-	element Part {
+	element Part any(xz.rotations) {
 		colour "rgb(200, 80, 0)"
 		arg id
-		data eaten false
+		prop state SOLID
+		prop temperature ROOM
+		prop edible true
 		
-		given L (self, atom, element) => element === Carrot.Leaf && atom.id === self.id
-		keep l (self, atom) => atom.eaten = self.eaten
-		@L => .l
-		@ L => . l
+		L    1
+		@ => L
+		P    @
+		1    P
+	
+		L      1
+		@   => 2
+		P12    P@L
+	
+		L      1
+		P   => 2
+		@12    @PL
+		n      .
+	 
+		L@P => 123
+		123    L@P
 		
-		@ => _
-		
+		LP@ => 123
+		123    LP@
 	}
 }
 

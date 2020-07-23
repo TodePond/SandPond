@@ -276,9 +276,9 @@ INSTRUCTION.make = (name, generate = () => { throw new Error(`[SpaceTode] The ${
 		
 		const {x, y, z} = spot
 		const {head, cache, chars} = template
-		
 		const id = head[name].pushUnique(func)
-		chars[name][id] = char
+		if (chars[name][id] === undefined) chars[name][id] = []
+		chars[name][id].pushUnique(char)
 		const result = getResult(name)
 		const paramNames = getParamNames(func)
 		const params = paramNames.map(paramName => getParam(paramName))
@@ -645,7 +645,12 @@ INSTRUCTION.make = (name, generate = () => { throw new Error(`[SpaceTode] The ${
 	// Symbol ID //
 	//===========//
 	const getSymbolId = (char, partName, template) => {
-		return template.chars[partName].indexOf(char)
+		const arr = template.chars[partName]
+		for (const i in arr) {
+			const e = arr[i]
+			if (e.includes(char)) return i.as(Number)
+		}
+		return -1
 	}
 	
 }

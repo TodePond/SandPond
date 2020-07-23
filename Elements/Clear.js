@@ -1,5 +1,48 @@
 SpaceTode`
 
+element Eater {
+	colour "brown"
+	category "Clear"
+	arg energy 10
+	
+	change D (self) => new Eater.Done(self.energy)
+	change B (self) => new Eater.Bomb(self.energy)
+	change E (self) => new Eater(self.energy)
+	change Y (self) => new Eater(self.energy + 1)
+	change N (self) => new Eater()
+	
+	given O (element) => element !== Empty && element !== Void && element !== Eater && element !== Eater.Done && element !== Eater.Bomb
+	
+	given e (self) => self.energy-- < 0
+	e => D
+	
+	for(xyz.rotations) {
+		@O => YY
+	}
+	
+	any(xyz.rotations) {
+		@_ => EE
+	}
+	
+	element Done {
+		colour "grey"
+		emissive "black"
+		arg energy 0
+		@ => B
+	}
+	
+	element Bomb {
+		colour "lightgreen"
+		emissive "green"
+		arg energy 0
+		all(others) {
+			action @O => .N
+		}
+		
+		@ => _
+	}
+}
+
 element Clear {
 	colour "brown"
 	category "Clear"
@@ -260,49 +303,6 @@ element Wipe2D {
 		
 		given t (self) => self.timer-- < 0
 		t => _
-	}
-}
-
-element Eater {
-	colour "brown"
-	category "Clear"
-	arg energy 10
-	
-	change D (self) => new Eater.Done(self.energy)
-	change B (self) => new Eater.Bomb(self.energy)
-	change E (self) => new Eater(self.energy)
-	change Y (self) => new Eater(self.energy + 1)
-	change N (self) => new Eater()
-	
-	given O (element) => element !== Empty && element !== Void && element !== Eater && element !== Eater.Done && element !== Eater.Bomb
-	
-	given e (self) => self.energy-- < 0
-	e => D
-	
-	for(xyz.rotations) {
-		@O => YY
-	}
-	
-	any(xyz.rotations) {
-		@_ => EE
-	}
-	
-	element Done {
-		colour "grey"
-		emissive "black"
-		arg energy 0
-		@ => B
-	}
-	
-	element Bomb {
-		colour "lightgreen"
-		emissive "green"
-		arg energy 0
-		all(others) {
-			action @O => .N
-		}
-		
-		@ => _
 	}
 }
 
