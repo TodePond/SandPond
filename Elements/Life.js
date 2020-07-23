@@ -27,7 +27,7 @@ element Carrot {
 	
 	given n (element) => element.state === undefined || element.state <= SOLID
 		
-	element Leaf any(xz.rotations) {
+	element Leaf  {
 		colour "green"
 		arg id
 		arg grown true
@@ -35,71 +35,85 @@ element Carrot {
 		prop temperature ROOM
 		prop edible true
 		
-		origin g
-		given g (self) => !self.grown
-		keep g (self) => self.grown = true		
-		g => g
-		_    P
-		_    P
+		any(xz.rotations) {
+			origin g
+			given g (self) => !self.grown
+			keep g (self) => self.grown = true		
+			g => g
+			_    P
+			_    P
+			
+			g => _
 		
-		g => _
-	
-		P    1
-		P => P
-		@    P
-		1    @
-	
-		P      2
-		P   => 1
-		@12    @PP
-		n      .
-	
-		@PP => 123
-		123    @PP
+			P    1
+			P => P
+			@    P
+			1    @
 		
-		@PP => 1P2
-		 1n     P.
-		 2      @
+			P      2
+			P   => 1
+			@12    @PP
+			n      .
 		
-		PP@ => 1@2
-		 1n     P.
-		 2      P
+			@PP => 123
+			123    @PP
+			
+			@PP => 1P2
+			 1n     P.
+			 2      @
+			
+			PP@ => 1@2
+			 1n     P.
+			 2      P
+			
+			@PP => P12
+			1 n    P .
+			2      @
+			
+			PP@ => @12
+			1 n    P .
+			2      P
+		}
 		
-		@PP => P12
-		1 n    P .
-		2      @
+		all(xyz.rotations) @PP => ...
+		mimic(Powder)
 		
-		PP@ => @12
-		1 n    P .
-		2      P
 	}
 	
-	element Part any(xz.rotations) {
+	element Part {
 		colour "rgb(200, 80, 0)"
 		arg id
 		prop state SOLID
 		prop temperature ROOM
 		prop edible true
 		
-		L    1
-		@ => L
-		P    @
-		1    P
-	
-		L      1
-		@   => 2
-		P12    P@L
-	
-		L      1
-		P   => 2
-		@12    @PL
-		n      .
-	 
-		L@P => 123
-		123    L@P
+		any(xz.rotations) {
+			L    1
+			@ => L
+			P    @
+			1    P
 		
-		LP@ => 123
-		123    LP@
+			L      1
+			@   => 2
+			P12    P@L
+		
+			L      1
+			P   => 2
+			@12    @PL
+			n      .
+		 
+			L@P => 123
+			123    L@P
+			
+			LP@ => 123
+			123    LP@
+		}
+		
+		all(xyz.rotations) {
+			P@L => ...
+			@PL => ...
+		}
+		mimic(Powder)
 	}
 }
 
