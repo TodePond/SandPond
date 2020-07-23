@@ -56,63 +56,6 @@ element Clear {
 	
 }
 
-element Wipe {
-	colour "brown"
-	category "Clear"
-	
-	symbol W Wipe
-	symbol E Wipe.Edge
-	symbol D Wipe.Done
-	
-	// Other element
-	given O (element) => element !== Void && element !== Wipe && element !== Wipe.Done && element !== Wipe.Edge 
-	
-	@O => @W
-	@x => E.
-	
-	element Edge {
-		colour "brown"
-		
-		all(yz.rotations) {
-			O => E
-			@    .
-		}
-		
-		all(yz.rotations) {
-			x => .
-			@    D
-		}
-		
-		all(yz.rotations) {
-			@ => D
-			D    .
-		}
-		
-		
-	}
-	
-	element Done {
-		colour "grey"
-		emissive "black"
-		
-		all(yz.rotations) {
-			@  => .
-			E     .
-		
-			@  => .
-			 E     .
-		
-			@  => .
-			 D     .
-		}
-		
-		.@ => @_
-		
-		x@ => ._
-		
-	}
-}
-
 element Clear2D {
 	colour "brown"
 	category "Clear"
@@ -167,6 +110,87 @@ element Clear2D {
 		t => _
 	}
 	
+}
+
+element Wipe {
+	colour "brown"
+	category "Clear"
+	arg timer 4
+	
+	given W (element) => element === Wipe
+	change W (self) => new Wipe(self.timer)
+	
+	given E (element) => element === Wipe.Edge
+	change E (self) => new Wipe.Edge(self.timer)
+	change e (self) => new Wipe.Edge(self.timer + 0.1)
+	
+	given D (element) => element === Wipe.Done
+	change D (self) => new Wipe.Done(self.timer)
+	
+	given B (element) => element === Wipe.Bomb
+	change B (self) => new Wipe.Bomb(self.timer)
+	
+	// Other element
+	given O (element) => element !== Void && element !== Wipe && element !== Wipe.Done && element !== Wipe.Edge && element !== Wipe.Bomb 
+	
+	@O => @W
+	@x => E.
+	
+	element Edge {
+		arg timer 0
+		colour "brown"
+		
+		all(yz.rotations) {
+			O => e
+			@    .
+		}
+		
+		all(yz.rotations) {
+			x => .
+			@    D
+		}
+		
+		all(yz.rotations) {
+			@ => D
+			D    .
+		}
+	}
+	
+	element Done {
+		colour "grey"
+		emissive "black"
+		arg timer 0
+		
+		all(yz.rotations) {
+			@  => .
+			E     .
+		
+			@  => .
+			 E     .
+		
+			@  => .
+			 D     .
+		}
+		
+		.@ => @B
+		
+		x@ => .B
+		
+	}
+	
+	element Bomb {
+		colour "lightgreen"
+		emissive "green"
+		arg timer 0
+		
+		all(xyz.rotations) action @E => @B
+		all(others) {
+			action @O => ._
+		}
+		
+		given t (self) => self.timer-- < 0
+		t => _
+	}
 }
 
 element Wipe2D {
@@ -228,7 +252,7 @@ element Wipe2D {
 	element Bomb {
 		colour "lightgreen"
 		emissive "green"
-		arg timer 10
+		arg timer 4
 		
 		all(xy.others) {
 			action @O => ._
