@@ -8,12 +8,12 @@ const SYMMETRY = {}
 	const transformationCache = {}
 	const getTransformation = (sig) => {
 		if (transformationCache.has(sig)) return transformationCache[sig]
-		const xSign = getAxisSign(sig, "x")
-		const ySign = getAxisSign(sig, "y")
-		const zSign = getAxisSign(sig, "z")
 		const xAxis = getAxisAxis(sig, 0)
 		const yAxis = getAxisAxis(sig, 1)
 		const zAxis = getAxisAxis(sig, 2)
+		const xSign = getAxisSign(sig, xAxis)
+		const ySign = getAxisSign(sig, yAxis)
+		const zSign = getAxisSign(sig, zAxis)
 		const code = `(x, y, z) => [${xSign}${xAxis}, ${ySign}${yAxis}, ${zSign}${zAxis}]`
 		return JS(code)
 		
@@ -112,16 +112,41 @@ const SYMMETRY = {}
 	])
 	
 	SYMMETRY.TYPE.xyz = {}
+	
+	/*SYMMETRY.TYPE.xyz.flips = SYMMETRY.make("XYZ", [
+		T("xyz"),	T("xzy"),
+		T("x-yz"),	T("xz-y"),
+		T("-xyz"),	T("-xzy"),
+		T("-x-yz"),	T("-xz-y"),
+	])*/
+	
 	SYMMETRY.TYPE.xyz.rotations = SYMMETRY.make("XYZ.ROTATIONS", [
 		T("xyz"),
-		T("-xy-z"),
-		T("zyx"),
-		T("-zy-x"),
-		T("yxz"),
-		T("-y-xz"),
+		T("-x-yz"),
+		T("zxy"),
+		T("z-x-y"),
+		T("yzx"),
+		T("-yz-x"),
 	])
 	
-	SYMMETRY.TYPE.xyz.flips = SYMMETRY.make("XYZ.FLIPS", [
+	SYMMETRY.TYPE.xyz.rotations2 = SYMMETRY.make("XYZ.ROTATIONS2", [
+		T("xyz"),	T("xzy"),
+		T("x-yz"),	T("xz-y"),
+		T("-xyz"),	T("-xzy"),
+		T("-x-yz"),	T("-xz-y"),
+		
+		T("zyx"),	T("yxz"),
+		T("z-yx"),	T("-yxz"),
+		T("zy-x"),	T("y-xz"),
+		T("z-y-x"),	T("-y-xz"),
+		
+		T("zxy"),	T("yzx"),
+		T("zx-y"),	T("-yzx"),
+		T("z-xy"),	T("yz-x"),
+		T("z-x-y"),	T("-yz-x"),
+	])
+	
+	SYMMETRY.TYPE.xyz.shifts = SYMMETRY.make("XYZ.SHIFTS", [
 		T("xyz"),
 		T("x-yz"),
 		T("-xyz"),
@@ -129,13 +154,13 @@ const SYMMETRY = {}
 		
 		T("zxy"),
 		T("z-xy"),
-		T("-zxy"),
-		T("-z-xy"),
+		T("zx-y"),
+		T("z-x-y"),
 		
 		T("yzx"),
-		T("y-zx"),
+		T("yz-x"),
 		T("-yzx"),
-		T("-y-zx"),
+		T("-yz-x"),
 	])
 	
 	SYMMETRY.TYPE.others = SYMMETRY.make("OTHERS", SITE_POSITIONS.filter((p, i) => i !== 12).map(p => () => p))

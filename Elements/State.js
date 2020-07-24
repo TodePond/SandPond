@@ -125,7 +125,7 @@ element Sticky {
 		action @r => .r
 	}
 	
-	all(xyz.flips) {
+	all(xyz.shifts) {
 		action {
 			 s =>  s
 			@     .

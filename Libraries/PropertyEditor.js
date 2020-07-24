@@ -223,7 +223,8 @@
 	Reflect.defineProperty(Object.prototype, "has", {
 		value(propertyName) {
 			return propertyName in this
-		}
+		},
+		writable: true,
 	})
 	
 }

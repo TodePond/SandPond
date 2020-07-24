@@ -1,3 +1,9 @@
+// Food Flags
+const PLANT = Flag(0)
+const MEAT = Flag(1)
+const WATER = Flag(2) 
+const BUG = Flag(3)
+
 SpaceTode`
 
 element Carrot {
@@ -118,6 +124,36 @@ element Carrot {
 		}
 		mimic(Powder)
 	}
+}
+
+element Ant {
+	colour "grey"
+	emissive "black"
+	category "Life"
+	prop state SOLID
+	prop temperature WARM
+	prop food Flag.and(BUG, MEAT)
+	
+	given M (element) => element.state > LIQUID
+	select M (atom) => atom
+	change M (selected) => selected
+	
+	given S (element, selfElement) => element.state <= SOLID && element !== selfElement
+	any(xyz.rotations2) {
+		@M => M@
+		 S     .
+		 
+		 S     .
+		@M => M@
+	}
+	
+	all(xyz.rotations) {
+		@S => ..
+	}
+	
+	@ => M
+	M    @
+	
 }
 
 element Rabbit {
