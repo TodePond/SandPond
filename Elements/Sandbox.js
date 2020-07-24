@@ -19,7 +19,7 @@ element Water {
 	prop temperature COOL
 	prop states () => ({
 		[HOT]: Steam,
-		[COLD]: [Snow, 0.1],
+		[COLD]: [Ice, 0.1],
 	})
 	
 	mimic(Temperature)
@@ -41,6 +41,24 @@ element Snow {
 	
 	mimic(Temperature)
 	mimic(Powder)
+}
+
+element Ice {
+	colour "lightblue"
+	emissive "#87c5c7"
+	category "Sandbox"
+	opacity 0.4
+	prop state SOLID
+	prop temperature COLD
+	prop states () => ({
+		[HOT]: Water,
+		[WARM]: [Water, 0.2],
+		[COOL]: [Water, 0.05],
+		[ROOM]: [Water, 0.0001],
+	})
+	
+	mimic(Temperature)
+	mimic(Sticky)
 }
 
 element Steam {
