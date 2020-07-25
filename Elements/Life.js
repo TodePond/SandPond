@@ -139,7 +139,7 @@ element Ant {
 	change M (selected) => selected
 	
 	given S (element, selfElement) => element.state <= SOLID && element !== selfElement
-	any(xyz.rotations2) {
+	any(xyz.rotations) {
 		@M => M@
 		 S     .
 		 
