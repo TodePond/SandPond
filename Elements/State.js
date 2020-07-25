@@ -102,6 +102,7 @@ element Sticky {
 	keep i (self, time) => {
 		self.stickyInit = true
 		self.stuckTime = -Infinity
+		self.stuck = false
 	}
 	action i => i
 	
@@ -117,8 +118,8 @@ element Sticky {
 	action @ => c*/
 	
 	// Contact with ground
+	given n (element, selfElement, atom) => element !== selfElement && element.state <= SOLID && atom.stuck !== false
 	keep t (self, time) => self.stuckTime = time
-	given n (element, selfElement) => element !== selfElement && element.state <= SOLID
 	action {
 		@ => t
 		n    .
@@ -147,7 +148,11 @@ element Sticky {
 	}
 	
 	// Stuck!
-	given S (self, time) => time - self.stuckTime < STICKY_FALL_TIME
+	given S (self, time) => {
+		const stuck = time - self.stuckTime < STICKY_FALL_TIME
+		self.stuck = stuck
+		return stuck
+	}
 	S => .
 	
 	/*given D (element) => element.state > SOLID
