@@ -107,6 +107,7 @@ element Rock {
 	emissive "black"
 	prop state SOLID
 	prop temperature ROOM
+	data stuck false
 	category "Sandbox"
 	mimic(Sticky)
 	mimic(Solid)
@@ -192,10 +193,11 @@ element Meteor {
 	category "Sandbox"
 	prop state SOLID
 	prop temperature WARM
+	data stuck false
 	prop states () => ({
 		[COLD]: Rock,
 		[CHILLY]: Rock,
-		//[COOL]: [Rock, 0.4], //TODO: when i can make it check for sticky, do this
+		[COOL]: [Rock, 0.4],
 	})
 	
 	mimic(Temperature)
@@ -220,15 +222,17 @@ element Meteor {
 	 @  => D
 	D     @
 	
-	given M (element, selfElement) => element === selfElement
+	given M (element, selfElement, atom) => element === selfElement || atom.stuck === false
 	 @ => .
 	M    .
 	
 	change E () => new Explosion(35)
 	@ => E
+	
+	mimic(Sticky)
 }
 
-element Explosion any(xyz.rotations) {
+element Explosion any(xyz.directions) {
 	colour "darkorange"
 	emissive "red"
 	opacity 0.3

@@ -90,7 +90,7 @@ element Gas {
 	given D (element) => element.state >= GAS
 	select D (atom) => atom
 	change D (selected) => selected
-	any(xyz.rotations) @D => D@
+	any(xyz.directions) @D => D@
 }
 
 element Sticky {
@@ -131,7 +131,7 @@ element Sticky {
 	given r (selfElement, element, self, atom) => element === selfElement && self.stuckTime < atom.stuckTime
 	keep r (self, atom) => self.stuckTime = atom.stuckTime
 	change $ (selfElement) => new selfElement()
-	all(xyz.rotations) {
+	all(xyz.directions) {
 		action @s => .s
 		action @r => .r
 	}

@@ -985,7 +985,10 @@
 		result = {code, success, snippet} = EAT.javascriptArg(code, jsHead)
 		if (!success) return EAT.fail(code)
 		
-		const chance = result.value
+		const symm = result.value
+		if (symm === undefined) {
+			throw new Error(`[SpaceTode] Unrecognised symmetry: '${snippet.slice(0, -1)}'`)
+		}
 		
 		scope.instructions.push({type: INSTRUCTION.TYPE.FOR, value: result.value})
 		
@@ -1024,7 +1027,10 @@
 		result = {code, success, snippet} = EAT.javascriptArg(code, jsHead)
 		if (!success) return EAT.fail(code)
 		
-		const chance = result.value
+		const symm = result.value
+		if (symm === undefined) {
+			throw new Error(`[SpaceTode] Unrecognised symmetry: '${snippet.slice(0, -1)}'`)
+		}
 		
 		scope.instructions.push({type: INSTRUCTION.TYPE.FOR, value: {...result.value, type: "all"}})
 		
@@ -1063,7 +1069,10 @@
 		result = {code, success, snippet} = EAT.javascriptArg(code, jsHead)
 		if (!success) return EAT.fail(code)
 		
-		const chance = result.value
+		const symm = result.value
+		if (symm === undefined) {
+			throw new Error(`[SpaceTode] Unrecognised symmetry: '${snippet.slice(0, -1)}'`)
+		}
 		
 		scope.instructions.push({type: INSTRUCTION.TYPE.ANY, value: result.value})
 		

@@ -1,6 +1,6 @@
 SpaceTode`
 
-element Forkbomb any(xyz.rotations) {
+element Forkbomb any(xyz.directions) {
 	colour "grey"
 	emissive "black"
 	category "T2Tile"
@@ -9,7 +9,7 @@ element Forkbomb any(xyz.rotations) {
 	@_ => .F
 }
 
-element Res any(xyz.rotations) {
+element Res any(xyz.directions) {
 	category "T2Tile"
 	colour "slategrey"
 	emissive "grey"
@@ -17,7 +17,7 @@ element Res any(xyz.rotations) {
 	@_ => _@
 }
 
-element DReg any(xyz.rotations) {
+element DReg any(xyz.directions) {
 
 	colour "brown"
 	emissive "brown"

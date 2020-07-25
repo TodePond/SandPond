@@ -51,7 +51,7 @@ element Temperature {
 		SPACE.setAtom(space, new selfTarget(), selfTarget)
 	}
 	
-	action any(xyz.rotations) @s => s.
+	action any(xyz.directions) @s => s.
 	
 	given N (self, atom) => self !== atom
 	N => .

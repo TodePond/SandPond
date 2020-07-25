@@ -84,7 +84,7 @@ element Carrot {
 			2      P
 		}
 		
-		all(xyz.rotations) @PP => ...
+		all(xyz.directions) @PP => ...
 		mimic(Powder)
 		
 	}
@@ -118,7 +118,7 @@ element Carrot {
 			123    LP@
 		}
 		
-		all(xyz.rotations) {
+		all(xyz.directions) {
 			P@L => ...
 			@PL => ...
 		}
@@ -147,7 +147,7 @@ element Ant {
 		@M => M@
 	}
 	
-	all(xyz.rotations) {
+	all(xyz.directions) {
 		@S => ..
 	}
 	
@@ -230,7 +230,7 @@ element Rabbit {
 	P@P => P_P
 	___    P@P
 	
-	any(xyz.rotations) {
+	any(xyz.directions) {
 	
 		// Eat
 		given C (element) => element === Carrot.Leaf || element === Carrot.Part

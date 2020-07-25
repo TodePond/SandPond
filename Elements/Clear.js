@@ -16,11 +16,11 @@ element Eater {
 	given e (self) => self.energy-- < 0
 	e => D
 	
-	for(xyz.rotations) {
+	for(xyz.directions) {
 		@O => YY
 	}
 	
-	any(xyz.rotations) {
+	any(xyz.directions) {
 		@_ => EE
 	}
 	
@@ -35,7 +35,7 @@ element Eater {
 		colour "lightgreen"
 		emissive "green"
 		arg energy 0
-		all(others) {
+		all(xyz.others) {
 			action @O => .N
 		}
 		
@@ -67,11 +67,11 @@ element Clear {
 	// Other element
 	given O (element) => element !== Void && element !== Clear && element !== Clear.Done && element !== Clear.Bomb
 	
-	all(xyz.rotations) {
+	all(xyz.directions) {
 		//@B => .T
 		@O => .c
 	}
-	any(xyz.rotations) {
+	any(xyz.directions) {
 		@x => D.
 		@D => D.
 	}
@@ -80,7 +80,7 @@ element Clear {
 		colour "grey"
 		emissive "black"
 		arg timer 0
-		all(xyz.rotations) @C => ..
+		all(xyz.directions) @C => ..
 		@ => B
 	}
 	
@@ -88,8 +88,8 @@ element Clear {
 		colour "lightgreen"
 		emissive "green"
 		arg timer 0
-		all(xyz.rotations) action @C => @B
-		all(others) {
+		all(xyz.directions) action @C => @B
+		all(xyz.others) {
 			action @O => ._
 		}
 		
@@ -136,7 +136,7 @@ element Clear2D {
 		colour "grey"
 		emissive "black"
 		arg timer 0
-		all(xyz.rotations) @C => ..
+		all(xyz.directions) @C => ..
 		@ => B
 	}
 	
@@ -226,8 +226,8 @@ element Wipe {
 		emissive "green"
 		arg timer 0
 		
-		all(xyz.rotations) action @E => @B
-		all(others) {
+		all(xyz.directions) action @E => @B
+		all(xyz.others) {
 			action @O => ._
 		}
 		

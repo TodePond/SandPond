@@ -113,19 +113,29 @@ const SYMMETRY = {}
 	
 	SYMMETRY.TYPE.xyz = {}
 	
-	/*SYMMETRY.TYPE.xyz.flips = SYMMETRY.make("XYZ", [
-		T("xyz"),	T("xzy"),
-		T("x-yz"),	T("xz-y"),
-		T("-xyz"),	T("-xzy"),
-		T("-x-yz"),	T("-xz-y"),
-	])*/
-	
-	SYMMETRY.TYPE.xyz.rotations = SYMMETRY.make("XYZ.ROTATIONS", [
+	SYMMETRY.TYPE.xyz.directions = SYMMETRY.make("XYZ.DIRECTIONS", [
 		T("xyz"),
 		T("-x-yz"),
 		T("zxy"),
 		T("z-x-y"),
 		T("yzx"),
+		T("-yz-x"),
+	])
+	
+	SYMMETRY.TYPE.xyz.shifts = SYMMETRY.make("XYZ.SHIFTS", [
+		T("xyz"),
+		T("x-yz"),
+		T("-xyz"),
+		T("-x-yz"),
+		
+		T("zxy"),
+		T("z-xy"),
+		T("zx-y"),
+		T("z-x-y"),
+		
+		T("yzx"),
+		T("yz-x"),
+		T("-yzx"),
 		T("-yz-x"),
 	])
 	
@@ -146,22 +156,5 @@ const SYMMETRY = {}
 		T("z-x-y"),	T("-yz-x"),
 	])
 	
-	SYMMETRY.TYPE.xyz.shifts = SYMMETRY.make("XYZ.SHIFTS", [
-		T("xyz"),
-		T("x-yz"),
-		T("-xyz"),
-		T("-x-yz"),
-		
-		T("zxy"),
-		T("z-xy"),
-		T("zx-y"),
-		T("z-x-y"),
-		
-		T("yzx"),
-		T("yz-x"),
-		T("-yzx"),
-		T("-yz-x"),
-	])
-	
-	SYMMETRY.TYPE.others = SYMMETRY.make("OTHERS", SITE_POSITIONS.filter((p, i) => i !== 12).map(p => () => p))
+	SYMMETRY.TYPE.xyz.others = SYMMETRY.make("XYZ.OTHERS", SITE_POSITIONS.filter((p, i) => i !== 12).map(p => () => p))
 }
