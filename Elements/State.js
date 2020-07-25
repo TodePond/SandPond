@@ -60,17 +60,27 @@ element Goo {
 	prop state SOLID
 	//category "Rulesets"
 	
-	given D (element) => element.state > LIQUID
+	given D (element) => element.state > SOLID
 	select D (atom) => atom
 	change D (selected) => selected
 	
+	given F (element) => element.state > SOLID
+	
 	@ => D
 	D    @
-		
+	
 	@ => .
 	x    .
+	
+	any(xz.rotations) {
 		
-	maybe(1/40) any(xz.rotations) @D => D@
+		maybe(1/20) {
+			@D => D@
+			 F     .
+		}
+	
+		maybe(1/30) @D => D@
+	}
 }
 
 element Gas {
@@ -140,12 +150,12 @@ element Sticky {
 	given S (self, time) => time - self.stuckTime < STICKY_FALL_TIME
 	S => .
 	
-	given D (element) => element.state > SOLID
+	/*given D (element) => element.state > SOLID
 	select D (atom) => atom
 	change D (selected) => selected
 	// Fall
 	@ => D
-	D    @
+	D    @*/
 	
 }
 

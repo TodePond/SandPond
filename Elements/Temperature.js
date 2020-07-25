@@ -1,9 +1,11 @@
 
-const COLD = 0
-const COOL = 1
-const ROOM = 2
-const WARM = 3
-const HOT = 4
+const COLD   = 0 // ...     -10C
+const CHILLY = 1 // -10C to   0C
+const COOL   = 2 //   0C to  15C
+const ROOM   = 3 //  15C to  30C
+const BODY   = 4 //  30C to  40C
+const WARM   = 5 //  40C to 100C
+const HOT    = 6 // 100C ...
 
 SpaceTode`
 

@@ -18,29 +18,14 @@ element Water {
 	prop state LIQUID
 	prop temperature COOL
 	prop states () => ({
+		[COLD]: [Ice, 0.05],
+		[CHILLY]: [Snow, 0.05],
+		[WARM]: [Steam, 0.4],
 		[HOT]: Steam,
-		[COLD]: [Ice, 0.1],
 	})
 	
 	mimic(Temperature)
 	mimic(Liquid)
-}
-
-element Snow {
-	colour "white"
-	emissive "grey"
-	category "Sandbox"
-	prop state SOLID
-	prop temperature COLD
-	prop states () => ({
-		[HOT]: Water,
-		[WARM]: [Water, 0.2],
-		[COOL]: [Water, 0.1],
-		[ROOM]: [Water, 0.0001],
-	})
-	
-	mimic(Temperature)
-	mimic(Powder)
 }
 
 element Ice {
@@ -51,14 +36,34 @@ element Ice {
 	prop state SOLID
 	prop temperature COLD
 	prop states () => ({
-		[HOT]: Water,
-		[WARM]: [Water, 0.2],
-		[COOL]: [Water, 0.05],
+		[COOL]: [Water, 0.0001],
 		[ROOM]: [Water, 0.0001],
+		[BODY]: [Water, 0.01],
+		[WARM]: Water,
+		[HOT]: Water,
 	})
 	
 	mimic(Temperature)
 	mimic(Sticky)
+	mimic(Powder)
+}
+
+element Snow {
+	colour "white"
+	emissive "grey"
+	category "Sandbox"
+	prop state SOLID
+	prop temperature CHILLY
+	prop states () => ({
+		[COOL]: [Water, 0.04],
+		[ROOM]: [Water, 0.00005],
+		[BODY]: [Water, 0.01],
+		[WARM]: Water,
+		[HOT]: Water,
+	})
+	
+	mimic(Temperature)
+	mimic(Powder)
 }
 
 element Steam {
@@ -69,9 +74,10 @@ element Steam {
 	prop state GAS
 	prop temperature WARM
 	prop states () => ({
-		[ROOM]: [Empty, 0.1],
-		[COOL]: [Water, 0.1],
 		[COLD]: Water,
+		[CHILLY]: Water,
+		[COOL]: [Water, 0.1],
+		[ROOM]: [Empty, 0.1],
 	})
 	
 	mimic(Temperature)
@@ -88,6 +94,7 @@ element Steam {
 element Stone {
 	category "Sandbox"
 	prop state SOLID
+	prop temperature ROOM
 	prop states () => ({
 		[HOT]: Magma,
 	})
@@ -102,6 +109,7 @@ element Rock {
 	prop temperature ROOM
 	category "Sandbox"
 	mimic(Sticky)
+	mimic(Solid)
 }
 
 element Fire {
@@ -113,8 +121,10 @@ element Fire {
 	prop temperature HOT
 	prop states () => ({
 		[COLD]: Empty,
+		[CHILLY]: Empty,
 		[COOL]: Empty,
 		[ROOM]: [Empty, 0.3],
+		[BODY]: [Empty, 0.1],
 	})
 	
 	mimic(Temperature)
@@ -129,6 +139,25 @@ element Fire {
 	n    .
 	@ => _
 	
+}
+
+element Magma {
+	colour "orange"
+	emissive "brown"
+	category "Sandbox"
+	prop state SOLID
+	prop temperature HOT
+	prop states () => ({
+		[COLD]: Rock,
+		[CHILLY]: Rock,
+		[COOL]: Rock,
+		[ROOM]: [Rock, 0.075],
+		[BODY]: [Rock, 0.065],
+		[WARM]: [Rock, 0.05],
+	})
+	
+	mimic(Temperature)
+	mimic(Goo)
 }
 
 element Lava {
@@ -155,29 +184,21 @@ element Lava {
 	
 }
 
-element Magma {
-	colour "orange"
-	emissive "brown"
-	category "Sandbox"
-	prop state SOLID
-	prop temperature HOT
-	prop states () => ({
-		[COLD]: Rock,
-		[COOL]: Rock,
-		[ROOM]: [Rock, 0.075],
-		[WARM]: [Rock, 0.05],
-	})
-	
-	mimic(Temperature)
-	mimic(Goo)
-}
-
+// TODO: implement direction and make it an arg
+// needs quite a lot of work - need firstclass directions in the SpaceTode language, similar to symmetries
 element Meteor {
 	colour "#781a00"
 	emissive "black"
 	category "Sandbox"
 	prop state SOLID
 	prop temperature WARM
+	prop states () => ({
+		[COLD]: Rock,
+		[CHILLY]: Rock,
+		//[COOL]: [Rock, 0.4], //TODO: when i can make it check for sticky, do this
+	})
+	
+	mimic(Temperature)
 	
 	change F () => new Fire()
 	action {
@@ -193,8 +214,11 @@ element Meteor {
 	 @  => _
 	E     .
 	
-	 @  => _
-	_     @
+	given D (element) => element.state > SOLID
+	select D (atom) => atom
+	change D (selected) => selected
+	 @  => D
+	D     @
 	
 	given M (element, selfElement) => element === selfElement
 	 @ => .
@@ -209,6 +233,8 @@ element Explosion any(xyz.rotations) {
 	emissive "red"
 	opacity 0.3
 	category "Sandbox"
+	prop temperature HOT
+	prop state EFFECT
 	arg timer 20
 	
 	keep t (self) => self.timer--
@@ -246,7 +272,7 @@ element Slime {
 	category "Sandbox"
 	opacity 0.65
 	prop state SOLID
-	prop temperature WARM
+	prop temperature BODY
 	prop states () => ({
 		[HOT]: Acid,
 	})
@@ -264,6 +290,7 @@ element Acid {
 	prop temperature ROOM
 	prop states () => ({
 		[COLD]: Slime,
+		[CHILLY]: Slime,
 	})
 	
 	mimic(Temperature)
