@@ -33,9 +33,12 @@ element Powder  {
 	@ => D
 	D    @
 	
+	given S (element) => element.state > SOLID && element.state !== EFFECT
+	select S (atom) => atom
+	change S (selected) => selected
 	given F (element) => element.state > SOLID
 	any(xz.rotations) {
-		@D => D@
+		@S => S@
 		 F     .
 	}
 }
@@ -53,7 +56,10 @@ element Liquid {
 	@ => .
 	x    .
 	
-	for(xz.rotations) @D => D@
+	given S (element) => element.state > SOLID && element.state !== EFFECT
+	select S (atom) => atom
+	change S (selected) => selected
+	for(xz.rotations) @S => S@
 }
 
 element Goo {
@@ -87,7 +93,7 @@ element Gas {
 	prop state GAS
 	//category "Rulesets"
 	
-	given D (element) => element.state >= GAS
+	given D (element) => element.state >= GAS && element.state !== EFFECT
 	select D (atom) => atom
 	change D (selected) => selected
 	any(xyz.directions) @D => D@
