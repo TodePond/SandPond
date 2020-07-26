@@ -62,6 +62,13 @@ const SYMMETRY = {}
 	
 	SYMMETRY.TYPE.xy.rotations = SYMMETRY.make("XY.ROTATIONS", [
 		T("xyz"),
+		T("-yxz"),
+		T("-x-yz"),
+		T("y-xz"),
+	])
+	
+	SYMMETRY.TYPE.xy.directions = SYMMETRY.make("XY.DIRECTIONS", [
+		T("xyz"),
 		T("-x-yz"),
 		T("yxz"),
 		T("-y-xz"),
