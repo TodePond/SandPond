@@ -28,7 +28,7 @@ element Blue  {
 	@ => _    // Else, disappear
 }
 
-element _Lava {
+/*element _Lava {
 	default true
 	pour false
 	
@@ -39,7 +39,7 @@ element _Lava {
 	
 	action @_ => .F
 	
-}
+}*/
 
 `
 
