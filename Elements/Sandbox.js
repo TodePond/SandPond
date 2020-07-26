@@ -107,6 +107,7 @@ element Rock {
 	emissive "black"
 	prop state SOLID
 	prop temperature ROOM
+	prop stickiness 1.0
 	data stuck false
 	category "Sandbox"
 	mimic(Sticky)

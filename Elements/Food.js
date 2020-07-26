@@ -2,7 +2,7 @@ SpaceTode`
 
 element Carrot {
 	colour "rgb(200, 80, 0)"
-	category "Life"
+	category "Food"
 	prop state SOLID
 	prop temperature ROOM
 	prop food PLANT
@@ -117,6 +117,109 @@ element Carrot {
 			@PL => ...
 		}
 		mimic(Powder)
+	}
+}
+
+element Cheese {
+	colour "#fcc203"
+	emissive "#fc4e03"
+	category "Food"
+	prop state SOLID
+	prop temperature ROOM
+	prop food DAIRY
+	prop stickiness 0.5
+	prop states () => ({
+		[WARM]: Fondue,
+		[HOT]: Fondue,
+	})
+	
+	// Make holes
+	given i (self) => self.init !== true
+	keep i (self, origin) => {
+		if (Math.random() < 0.3) return SPACE.setAtom(origin, new Empty(), Empty)
+		self.init = true
+	}
+	action i => i
+	
+	symbol S Cheese.Smell
+	
+	data age 0
+	data smelly false
+	given E (self, element) => {
+		if (self.smelly) return element === Empty
+		self.age++
+		if (self.age < 20) return false
+		self.smelly = true
+		return false
+	}
+	maybe(0.2) any(xyz.directions) action @E => @S
+	
+	mimic(Temperature)
+	mimic(Sticky)	
+	mimic(Solid)
+	
+	element Smell {
+		colour "#fcc203"
+		emissive "#fc4e03"
+		opacity 0.1
+		prop state GAS
+		prop temperature ROOM
+		maybe(0.005) @ => _
+		
+		
+		given D (element) => element.state >= GAS && element.state !== EFFECT
+		select D (atom) => atom
+		change D (selected) => selected
+		
+		@ => _
+		$    .
+		
+		@    D
+		D => @
+		
+		for(xz.rotations) @D => D@
+		
+		D => @
+		@    D
+	}
+}
+
+element Fondue {
+	colour "#fcc203"
+	emissive "#fc4e03"
+	category "Food"
+	opacity 0.3
+	prop state SOLID
+	prop temperature BODY
+	prop food DAIRY
+	prop states () => ({
+		[COLD]: Cheese,
+		[CHILLY]: Cheese,
+		[COOL]: Cheese,
+	})
+	
+	symbol S Fondue.Smell
+	maybe(0.003) any(xyz.directions) action @_ => @S
+	mimic(Temperature)
+	mimic(Goo)
+	
+	element Smell {
+		colour "#fcc203"
+		emissive "#fc4e03"
+		opacity 0.1
+		prop state GAS
+		prop temperature ROOM
+		maybe(0.02) @ => _
+		
+		given D (element) => element.state >= GAS && element.state !== EFFECT
+		select D (atom) => atom
+		change D (selected) => selected
+		
+		D => @
+		@    D
+		
+		for(xyz.rotations) @D => D@
+		@ => _
 	}
 }
 

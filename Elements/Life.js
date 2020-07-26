@@ -1,17 +1,85 @@
 // Food Flags
-const PLANT = Flag(0)
-const MEAT = Flag(1)
-const WATER = Flag(2) 
-const BUG = Flag(3)
+const PLANT = Flag(1)
+const MEAT = Flag(2)
+const WATER = Flag(3) 
+const BUG = Flag(4)
+const DAIRY = Flag(5)
 
 SpaceTode`
 
 element Mouse {
 	colour "grey"
+	category "Life"
 	prop state SOLID
 	prop temperature BODY
 	prop food MEAT
+	prop diet Flag.and(PLANT, DAIRY)
+	data stuck false
+	arg energy 0.5
+		
+	for(xyz.rotations) {
+		//=======//
+		// Breed //
+		//=======//
+		given b (element, Self, self) => self.energy > 0.9 && element === Self
+		select b (atom) => atom
+		change b (Self, self, selected) => {
+			self.energy -= 0.3
+			selected.energy -= 0.3
+			return new Self(0.5)
+		}
+		@_b => @b.
+		
+		//=====//
+		// Eat //
+		//=====//
+		given f (element, Self) => Flag.has(element.food, Self.diet)
+		change e (self) => {
+			self.energy += 0.05
+			if (self.energy > 1) self.energy = 1
+			return self
+		}
+		 f =>  e
+		@     _
+		
+		@f => _e
+	}
 	
+	//=======//
+	// Smell //
+	//=======//
+	symbol s Cheese.Smell
+	given m (element) => element.state > LIQUID && element.state !== EFFECT
+	select m (atom) => atom
+	change m (selected) => selected
+	for(xz.rotations) {
+		@ms => m@.
+		@sm => m@s
+		@s => s@
+	}
+	
+	//======//
+	// Move //
+	//======//
+	given S (element, selfElement) => element.state <= SOLID && element !== selfElement
+	given M (self, element) => self.energy + 0.1 > Math.random() && element.state > LIQUID && element.state !== EFFECT
+	select M (atom) => atom
+	change M (selected, self) => {
+		self.energy -= 0.005
+		if (self.energy < 0) self.energy = 0
+		return selected
+	}
+	any(xz.rotations) {
+		@M => M@
+		 S     .
+		
+		@M => M@ 
+		$     .
+	}
+	
+	//======//
+	// Fall //
+	//======//
 	given F (element) => element.state > LIQUID
 	select F (atom) => atom
 	change F (selected) => selected

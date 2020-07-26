@@ -5,8 +5,6 @@ const LIQUID = 2
 const GAS = 3
 const EFFECT = 4
 
-const STICKY_FALL_TIME = 30
-
 Empty.state = GAS
 Void.state = VOID
 
@@ -105,16 +103,18 @@ element Sticky {
 	
 	// Init atom properties
 	given i (self) => self.stickyInit === undefined
-	keep i (self, time) => {
+	keep i (self, time, Self) => {
 		self.stickyInit = true
 		self.stuckTime = -Infinity
 		self.stuck = false
+		if (Self.stickiness === undefined) Self.stickiness = 1.0
+		if (Self.stickinessNormalised === undefined) Self.stickinessNormalised = Math.floor(Self.stickiness * 30)
 	}
 	action i => i
 	
 	// Debug colour
-	/*keep c (self, time, origin) => {
-		let timeDiff = Math.round((time - self.stuckTime) * 255 / STICKY_FALL_TIME)
+	/*keep c (self, time, origin, Self) => {
+		let timeDiff = Math.round((time - self.stuckTime) * 255 / Self.stickinessNormalised)
 		if (timeDiff > 255) timeDiff = 255
 		self.colour.r = timeDiff
 		self.colour.b = 255 - timeDiff
@@ -136,7 +136,6 @@ element Sticky {
 	keep s (self, atom) => atom.stuckTime = self.stuckTime
 	given r (selfElement, element, self, atom) => element === selfElement && self.stuckTime < atom.stuckTime
 	keep r (self, atom) => self.stuckTime = atom.stuckTime
-	change $ (selfElement) => new selfElement()
 	all(xyz.directions) {
 		action @s => .s
 		action @r => .r
@@ -154,8 +153,8 @@ element Sticky {
 	}
 	
 	// Stuck!
-	given S (self, time) => {
-		const stuck = time - self.stuckTime < STICKY_FALL_TIME
+	given S (self, time, Self) => {
+		const stuck = time - self.stuckTime < Self.stickinessNormalised
 		self.stuck = stuck
 		return stuck
 	}
