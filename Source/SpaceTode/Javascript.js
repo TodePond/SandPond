@@ -299,7 +299,7 @@ const JAVASCRIPT = {}
 			//===================//
 			// Remaining Actions //
 			//===================//
-			else {
+			/*else {
 				const tail = chunks.slice(i+1)
 				const tailActions = tail.filter(chunk => chunk.isInAction)
 				if (tailActions[0] !== undefined) {
@@ -308,7 +308,7 @@ const JAVASCRIPT = {}
 					lines.push(`${margin}	// Continue 'action's after matching a rule`)
 					lines.push(...afterLines)
 				}
-			}
+			}*/
 			
 			lines.push(`${margin}	return`)
 			lines.push(`${margin}}`)

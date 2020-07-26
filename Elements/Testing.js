@@ -6,8 +6,11 @@ element Red {
 	symbol R Red
 	symbol B Blue
 	
+	all(xy.directions) {
+		@_ => @R    // Super Forkbomb
+	}
+	
 	any(xy.directions) {
-		@_ => @R    // Forkbomb
 		@x => B.    // Turn blue when I touch the edge
 		@B => B.    // Turn blue when I touch blue
 	}
@@ -23,6 +26,19 @@ element Blue  {
 	}
 	
 	@ => _    // Else, disappear
+}
+
+element _Lava {
+	default true
+	pour false
+	
+	symbol F Fire
+	
+	@ => _
+	_    @
+	
+	action @_ => .F
+	
 }
 
 `
