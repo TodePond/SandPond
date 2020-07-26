@@ -41,9 +41,32 @@ INSTRUCTION.make = (name, generate = () => { throw new Error(`[SpaceTode] The ${
 		throw new Error(`[SpaceTode] The BlockEnd instruction should never be parsed on its own. Something has gone wrong with parsing.`)
 	})
 	
-	INSTRUCTION.TYPE.BEHAVE = INSTRUCTION.make("Behave", (template, behave) => {
+	INSTRUCTION.TYPE.BEHAVE = INSTRUCTION.make("Behave", (template, behave, instructions, spotMods = [], chunkMods = [], symmetry, symmetryId, forSymmId, char, diagramId, isAll) => {
 		const id = template.head.behave.push(behave) - 1
-		template.main.push(`behave${id}(origin, selfElement, time, self)`)
+		const chunk = makeEmptyChunk()
+		chunk.debug = {source: `behave${id}`}
+		
+		processFunc ({
+			name: "behave",
+			func: behave,
+			undefined,
+			template,
+			chunk,
+			side: "input",
+			symmetry,
+			symmetryId,
+			forSymmId,
+			char: "behave",
+			undefined,
+			diagramId,
+			isAll,
+		})
+		
+		for (const mod of chunkMods) {
+			mod(chunk)
+		}
+		
+		template.main.push(chunk)
 	})
 	
 	INSTRUCTION.TYPE.FOR = INSTRUCTION.make("ForBlock", (template, forSymmetry, instructions, spotMods = [], chunkMods = [], symmetry, symmetryId, forSymmId, char, diagramId, oldIsAll) => {
@@ -271,7 +294,7 @@ INSTRUCTION.make = (name, generate = () => { throw new Error(`[SpaceTode] The ${
 	//======//
 	// Func //
 	//======//
-	const processFunc = ({name, func, spot, template, chunk, side, symmetry, symmetryId, forSymmId, char, diagram, diagramId, isAll}) => {
+	const processFunc = ({name, func, spot = {}, template, chunk, side, symmetry, symmetryId, forSymmId, char, diagram, diagramId, isAll}) => {
 		if (func === undefined) return
 		
 		const {x, y, z} = spot
@@ -346,7 +369,10 @@ INSTRUCTION.make = (name, generate = () => { throw new Error(`[SpaceTode] The ${
 		if (type === NEED_TYPE.ARG) return name
 		if (type === NEED_TYPE.GLOBAL) return name
 		if (type === NEED_TYPE.SYMMETRY) return getSymmetryName(name, symmetryId)
-		if (type === NEED_TYPE.LOCAL) return getLocalName(name, x, y, z, symmetryId)
+		if (type === NEED_TYPE.LOCAL) {
+			if (x === undefined) throw new Error(`\n\n[SpaceTode] Can't get local parameter '${name}' in a global setting.\n\nAre you trying to use '${name}' in a 'behave' function?\nYou can only use global parameters, such as 'origin', 'sites', 'self' and 'Self'.\n`)
+			return getLocalName(name, x, y, z, symmetryId)
+		}
 		if (type === NEED_TYPE.SYMBOL) return getSymbolName(name, char, diagramId)
 		throw new Error(`[SpaceTode] Unrecognised named param type: ${type}`)
 	}
@@ -434,9 +460,18 @@ INSTRUCTION.make = (name, generate = () => { throw new Error(`[SpaceTode] The ${
 	
 	const PARAM = {}
 	PARAM.self = makeNeed({name: "self", type: NEED_TYPE.ARG})
-	PARAM.selfElement = makeNeed({name: "selfElement", type: NEED_TYPE.ARG})
+	PARAM.Self = makeNeed({name: "Self", type: NEED_TYPE.ARG})
 	PARAM.time = makeNeed({name: "time", type: NEED_TYPE.ARG})
 	PARAM.origin = makeNeed({name: "origin", type: NEED_TYPE.ARG})
+	
+	// Legacy
+	PARAM.selfElement = makeNeed({
+		name: "selfElement",
+		type: NEED_TYPE.GLOBAL,
+		needNames: ["Self"],
+		generateGet: () => `Self`,
+	})
+	
 	PARAM.sites = makeNeed({
 		name: "sites",
 		type: NEED_TYPE.GLOBAL,
@@ -612,6 +647,17 @@ INSTRUCTION.make = (name, generate = () => { throw new Error(`[SpaceTode] The ${
 		}
 	})
 	
+	RESULT.behave = makeNeed({
+		name: "behave",
+		type: NEED_TYPE.GLOBAL,
+		needs: [],
+		isCondition: true,
+		generateGet: (x, y, z, symmetry, symmetryId, id, args) => {
+			const argsInner = args.join(", ")
+			return `behave${id}(${argsInner})`
+		},
+	})
+	
 	//============//
 	// ID Results //
 	//============//
@@ -629,6 +675,21 @@ INSTRUCTION.make = (name, generate = () => { throw new Error(`[SpaceTode] The ${
 		idResultsCache[name] = idResult
 		return idResult
 	}
+	
+	//=============//
+	// Behave Need //
+	//=============//
+	/*const makeBehaveNeed = (func, id) => {
+		const params = getParamNames(func)
+		return makeNeed({
+			name: `behave${id}`,
+			type: NEED_TYPE.GLOBAL,
+			needNames: params,
+			generateExtra: () => {
+				return `behave${id}`
+			}
+		})
+	}*/
 	
 	//=========//
 	// Char ID //

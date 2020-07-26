@@ -106,7 +106,7 @@ const JAVASCRIPT = {}
 			check: [],
 			change: [],
 			keep: [],
-			//behave: [],
+			behave: [],
 		},
 		
 		// Cache stores global variables that we might use more than once
@@ -145,7 +145,7 @@ const JAVASCRIPT = {}
 		lines.push("//========//")
 		lines.push("// BEHAVE //")
 		lines.push("//========//")
-		lines.push(`const behave = (origin, selfElement, time, self = origin.atom) => {`)
+		lines.push(`const behave = (origin, Self, time, self = origin.atom) => {`)
 		const constants = []
 		lines.push(...makeChunksLines(template.main, `	`, [], constants, false, template))
 		lines.push(`}`)

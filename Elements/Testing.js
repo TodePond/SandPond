@@ -1,6 +1,32 @@
 SpaceTode`
 
-element Red {
+/*element Behaver {
+	default true
+	
+	symbol B Behaver
+	
+	behave (origin, sites) => {
+		if (Math.random() < 0.005) {
+			SPACE.setAtom(origin, new Empty(), Empty)
+			return false
+		}
+		return true
+	}
+	
+	@ => .
+	_    B
+}*/
+
+/*element Shifter {
+	default true
+	
+	any(xyz.shifts) {
+		 _ =>  @
+		@     _
+	}
+}*/
+
+/*element Red {
 	colour "brown"
 	
 	symbol R Red
@@ -26,7 +52,7 @@ element Blue  {
 	}
 	
 	@ => _    // Else, disappear
-}
+}*/
 
 /*element _Lava {
 	default true
