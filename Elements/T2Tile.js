@@ -36,6 +36,137 @@ element DReg any(xyz.directions) {
 	
 }
 
+element SwapLine {
+	colour "brown"
+	category "T2Tile"
+	
+	symbol L SwapLine
+	symbol D SwapLine.Done
+	
+	for(y) {
+		_ => L
+		@    .
+		
+		x => .
+		@    D
+		
+		D => .
+		@    D
+	}
+	
+	given O (element) => element !== SwapLine
+	for(y) {
+		O => .
+		@    D
+	}
+	
+	element Done {
+		colour "grey"
+		emissive "black"
+		
+		
+		for(y) {
+			D     .
+			 @ =>  .
+			
+			L     .
+			 @ =>  .
+			
+			L    .
+			@ => .
+		}
+		
+		@D => _@
+		@L => _@
+		@x => _.
+		@? => ?@
+	}
+	
+}
+
+element SwapWall {
+	colour "brown"
+	category "T2Tile"
+	arg timer 0
+	
+	given W (element) => element === SwapWall
+	change W (self) => new SwapWall(self.timer)
+	change w (self) => new SwapWall(self.timer + 1)
+	
+	given D (element) => element === SwapWall.Done
+	change D (self) => new SwapWall.Done(self.timer)
+	
+	given E (element) => element === SwapWall.Egg
+	change E (self) => new SwapWall.Egg(self.timer)
+	
+	for(yz.directions) {
+		_ => w
+		@    .
+	}
+	
+	for(yz.directions) {
+		x => .
+		@    E
+		
+		E => .
+		@    E
+		
+		D => .
+		@    E
+	}
+	
+	given O (element) => element !== SwapWall
+	for(yz.directions) {
+		O => .
+		@    D
+	}
+	
+	element Egg {
+		colour "lightgreen"
+		emissive "green"
+		arg timer 0
+		
+		given t (self) => self.timer-- > 0
+		t => .
+		
+		for(yz.directions) {
+			W    .
+			@ => .
+		}
+		
+		@ => D
+	}
+	
+	element Done {
+		colour "grey"
+		emissive "black"
+		arg timer 0
+		
+		for(yz) {
+			D     .
+			 @ =>  .
+			
+			W     .
+			 @ =>  .
+			
+			E     .
+			 @ =>  .
+			
+			W    .
+			@ => .
+			
+			E    .
+			@ => .
+		}
+		
+		@D => _@
+		@W => _@
+		@x => _.
+		@? => ?@
+	}
+	
+}
+
 element RainbowRabbit {
 	colour "white"
 	emissive "grey"

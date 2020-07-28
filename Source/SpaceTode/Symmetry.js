@@ -125,6 +125,13 @@ const SYMMETRY = {}
 		T("x-z-y"),
 	])
 	
+	SYMMETRY.TYPE.yz.directions = SYMMETRY.make("YZ.DIRECTIONS", [
+		T("xyz"),
+		T("x-y-z"),
+		T("xzy"),
+		T("x-z-y"),
+	])
+	
 	SYMMETRY.TYPE.xyz = {}
 	
 	SYMMETRY.TYPE.xyz.directions = SYMMETRY.make("XYZ.DIRECTIONS", [
