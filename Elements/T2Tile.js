@@ -84,6 +84,100 @@ element SwapLine {
 	
 }
 
+element ThickSwapLine {
+	colour "brown"
+	category "T2Tile"
+	
+	symbol L ThickSwapLine
+	symbol F ThickSwapLine.Front
+	symbol B ThickSwapLine.Back
+	
+	given l (element) => element !== ThickSwapLine
+	given f (element) => element !== ThickSwapLine.Front
+	given b (element) => element !== ThickSwapLine.Back
+	
+	given N (element) => element === ThickSwapLine || element === ThickSwapLine.Front || element === ThickSwapLine.Back
+	given n (element) => element !== ThickSwapLine && element !== ThickSwapLine.Front && element !== ThickSwapLine.Back
+	
+	 ln     ..
+	@_n => .F.
+	 ln     ..
+	
+	for(y) {
+		 nnnn    ....
+		  __n =>  $F.
+		  @F      ..
+	}
+	
+	
+	for(y) {
+	
+		xxf => ...
+		@Ff    B..
+		  f      .
+		
+		BFf => ...
+		@Ff    B..
+		  f      .
+		
+		N       .
+		 nnf =>  ...
+		 @Ff     B..
+		   f       .
+	}
+	
+
+	element Back {
+		colour "green"
+		emissive "lightgreen"
+		
+		@f => _.
+		
+		for(y) {
+			 @ =>  _
+			F     .
+		}
+		
+	}
+	
+	element Front {
+		colour "grey"
+		emissive "black"
+		
+		for(y) {
+			L => .
+			@    _
+		}
+		
+		n@ => ._
+		
+		B@x => __.
+		
+		@B => _.
+		
+		for(y) {
+			 B =>  .
+			@     _
+		}
+		
+		for(y) {
+		
+			BF  => ..
+			  @      .
+			
+			LF    ..
+			 @ =>  .
+		}
+		
+		   n       .
+		B@_n => _B@.
+		   n       .
+		
+		
+	}
+	
+}
+
 element SwapWall {
 	colour "brown"
 	category "T2Tile"
