@@ -520,12 +520,6 @@ INSTRUCTION.make = (name, generate = () => { throw new Error(`[SpaceTode] The ${
 			const siteNumbers = symmetry.transformations.map(t => EVENTWINDOW.getSiteNumber(...t(x, y, z)))
 			return `[${siteNumbers.join(", ")}]`
 		},
-		/*generateGet: (x, y, z, symmetry, symmetryId, id, argNames, idResultName, forSymmId) => {
-			if (x === 0 && y === 0 && z === 0) return undefined
-			if (forSymmId === undefined) return undefined
-			const possibleSiteNumbersName = getLocalName("possibleSiteNumbers", x, y, z, symmetryId, true)
-			return `${possibleSiteNumbersName}.shuffled`
-		},*/
 	})
 	
 	PARAM.siteNumber = makeNeed({
@@ -539,6 +533,84 @@ INSTRUCTION.make = (name, generate = () => { throw new Error(`[SpaceTode] The ${
 			const transformationNumberName = getSymmetryName("transformationNumber", symmetryId)
 			return `${possibleSiteNumbersName}[${transformationNumberName}]`
 		},
+	})
+	
+	PARAM.possibleXs = makeNeed({
+		name: "possibleXs",
+		type: NEED_TYPE.LOCAL,
+		needNames: [],
+		preLoop: true,
+		generateConstant: (x, y, z, symmetry, symmetryId) => {
+			if (x === 0 && y === 0 && z === 0) return undefined
+			if (symmetry === undefined) return undefined
+			const xs = symmetry.transformations.map(t => t(x, y, z)[0])
+			return `[${xs.join(", ")}]`
+		},
+	})
+	
+	PARAM.x = makeNeed({
+		name: "x",
+		type: NEED_TYPE.LOCAL,
+		needNames: ["transformationNumber", "possibleXs"],
+		generateGet: (x, y, z, symmetry, symmetryId, id, argNames, idResultName, forSymmId) => {
+			if (x === 0 && y === 0 && z === 0) return 0
+			if (symmetry === undefined) return x
+			const possibleXsName = getLocalName("possibleXs", x, y, z, symmetryId, true)
+			const transformationNumberName = getSymmetryName("transformationNumber", symmetryId)
+			return `${possibleXsName}[${transformationNumberName}]`
+		}
+	})
+	
+	PARAM.possibleYs = makeNeed({
+		name: "possibleYs",
+		type: NEED_TYPE.LOCAL,
+		needNames: [],
+		preLoop: true,
+		generateConstant: (x, y, z, symmetry, symmetryId) => {
+			if (x === 0 && y === 0 && z === 0) return undefined
+			if (symmetry === undefined) return undefined
+			const ys = symmetry.transformations.map(t => t(x, y, z)[1])
+			return `[${ys.join(", ")}]`
+		},
+	})
+	
+	PARAM.y = makeNeed({
+		name: "y",
+		type: NEED_TYPE.LOCAL,
+		needNames: ["transformationNumber", "possibleYs"],
+		generateGet: (x, y, z, symmetry, symmetryId, id, argNames, idResultName, forSymmId) => {
+			if (x === 0 && y === 0 && z === 0) return 0
+			if (symmetry === undefined) return y
+			const possibleYsName = getLocalName("possibleYs", x, y, z, symmetryId, true)
+			const transformationNumberName = getSymmetryName("transformationNumber", symmetryId)
+			return `${possibleYsName}[${transformationNumberName}]`
+		}
+	})
+	
+	PARAM.possibleZs = makeNeed({
+		name: "possibleZs",
+		type: NEED_TYPE.LOCAL,
+		needNames: [],
+		preLoop: true,
+		generateConstant: (x, y, z, symmetry, symmetryId) => {
+			if (x === 0 && y === 0 && z === 0) return undefined
+			if (symmetry === undefined) return undefined
+			const zs = symmetry.transformations.map(t => t(x, y, z)[2])
+			return `[${zs.join(", ")}]`
+		},
+	})
+	
+	PARAM.z = makeNeed({
+		name: "z",
+		type: NEED_TYPE.LOCAL,
+		needNames: ["transformationNumber", "possibleZs"],
+		generateGet: (x, y, z, symmetry, symmetryId, id, argNames, idResultName, forSymmId) => {
+			if (x === 0 && y === 0 && z === 0) return 0
+			if (symmetry === undefined) return z
+			const possibleZsName = getLocalName("possibleZs", x, y, z, symmetryId, true)
+			const transformationNumberName = getSymmetryName("transformationNumber", symmetryId)
+			return `${possibleZsName}[${transformationNumberName}]`
+		}
 	})
 	
 	PARAM.space = makeNeed({

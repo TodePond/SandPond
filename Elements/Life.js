@@ -7,6 +7,110 @@ const DAIRY = Flag(5)
 
 SpaceTode`
 
+element Pheromone {
+	category "Testing"
+	prop state GAS
+	prop temperature ROOM
+	colour "pink"
+	emissive "purple"
+	opacity 0.3
+	arg target
+	
+	given i (self) => self.target === undefined
+	keep i (self) => self.target = [0, 0, 0]
+	i => i
+	
+	maybe(0.01) @ => _
+	
+	given F (element, Self) => element.state >= GAS && element !== Self
+	select F (atom) => atom
+	change F (selected, self) => {
+		self.target[1] -= 1
+		return selected
+	}
+	@ => F
+	F    @
+	
+	change M (self, x, y, z) => {
+		self.target[0] += x
+		self.target[1] += y
+		self.target[2] += z
+		return self
+	}
+	
+	given D (element, Self) => element.state >= GAS && element !== Self
+	select D (atom) => atom
+	change D (selected) => selected
+	for(xyz.directions) @D => DM
+	
+}
+
+element Smeller {
+	category "Testing"
+	prop state SOLID
+	prop temperature BODY
+	data target undefined
+	data interest 0
+	
+	given i (self) => self.target === undefined
+	keep i (self) => {
+		self.target = [0, 0, 0]
+	}
+	i => i
+	
+	
+	given D (element) => element.state > SOLID
+	select D (atom) => atom
+	change D (selected) => selected
+	@ => D
+	D    @
+	
+	given P (element) => element === Pheromone
+	select P (atom) => atom.target
+	keep P (self, selected) => {
+		self.target = [...selected]
+		self.interest = 1.0
+	}	
+	action for(xz.directions) @P => P.
+	
+	given I (self) => self.interest > 0
+	keep I (self) => self.interest -= 0.01
+	action I => I
+	
+	given M (element, x, z, self) => {
+		if (self.interest <= 0) return false
+		if (element.state <= SOLID) return false
+		if (x > 0 && self.target[0] < 0) return true
+		if (x < 0 && self.target[0] > 0) return true
+		if (z > 0 && self.target[2] < 0) return true
+		if (z < 0 && self.target[2] > 0) return true
+		return false
+	}
+	select M (atom, x, z) => [atom, x, z]
+	change M (selected) => {
+		const [atom, x, z] = selected
+		if (atom.target !== undefined) {
+			atom.target[0] -= x
+			atom.target[2] -= z
+		}
+		return atom
+	}
+	change m (x, z, self) => {
+		self.target[0] += x
+		self.target[2] += z
+		return self
+	}
+	for(xz.directions) {
+		@M => Mm
+		
+		 M =>  m
+		@     M
+	}
+	
+	maybe(0.15) any(xz.directions) @D => D@
+	
+}
+
 element Mouse {
 	category "Life"
 	prop state SOLID

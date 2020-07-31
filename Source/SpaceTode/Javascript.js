@@ -184,6 +184,16 @@ const JAVASCRIPT = {}
 			if (maybeBlocks.length > 0) alreadyGots = maybeGots.last
 			else alreadyGots = gots
 			
+			//=========//
+			// End For //
+			//=========//
+			const nextForSymmId = chunk.forSymmId
+			if (prevForSymmId !== undefined && nextForSymmId !== prevForSymmId) {
+				prevForSymmId = undefined
+				margin = margin.slice(0, -1)
+				lines.push(`${margin}}`)
+			}
+			
 			//=======//
 			// Maybe //
 			//=======//
@@ -238,19 +248,9 @@ const JAVASCRIPT = {}
 				if (needer.need.preLoop) lines.push(...makeNeederLines(needer, `${margin}`, alreadyGots, true, constants, template))
 			}
 			
-			//=====//
-			// For //
-			//=====//
-			const nextForSymmId = chunk.forSymmId
-			
-			// End For
-			if (prevForSymmId !== undefined && nextForSymmId !== prevForSymmId) {
-				prevForSymmId = undefined
-				margin = margin.slice(0, -1)
-				lines.push(`${margin}}`)
-			}
-			
-			// Start For
+			//===========//
+			// Start For //
+			//===========//
 			if (nextForSymmId !== undefined && prevForSymmId !== nextForSymmId) {
 				const iName = `i${nextForSymmId}`
 				if (!chunk.forSymmIsAll) lines.push(`${margin}const transNumsShuffledSymm${nextForSymmId} = transformationNumbersSymm${nextForSymmId}Const.shuffled`)

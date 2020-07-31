@@ -986,7 +986,7 @@
 		if (!success) return EAT.fail(code)
 		
 		const symm = result.value
-		if (symm === undefined) {
+		if (symm === undefined || symm.transformations === undefined) {
 			throw new Error(`[SpaceTode] Unrecognised symmetry: '${snippet.slice(0, -1)}'`)
 		}
 		
@@ -1028,7 +1028,7 @@
 		if (!success) return EAT.fail(code)
 		
 		const symm = result.value
-		if (symm === undefined) {
+		if (symm === undefined || symm.transformations === undefined) {
 			throw new Error(`[SpaceTode] Unrecognised symmetry: '${snippet.slice(0, -1)}'`)
 		}
 		
@@ -1070,7 +1070,7 @@
 		if (!success) return EAT.fail(code)
 		
 		const symm = result.value
-		if (symm === undefined) {
+		if (symm === undefined || symm.transformations === undefined) {
 			throw new Error(`[SpaceTode] Unrecognised symmetry: '${snippet.slice(0, -1)}'`)
 		}
 		
