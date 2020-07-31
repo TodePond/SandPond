@@ -1,52 +1,6 @@
-// Food Flags
-const PLANT = Flag(1)
-const MEAT = Flag(2)
-const WATER = Flag(3) 
-const BUG = Flag(4)
-const DAIRY = Flag(5)
-
 SpaceTode`
 
-element Pheromone {
-	category "Testing"
-	prop state GAS
-	prop temperature ROOM
-	colour "pink"
-	emissive "purple"
-	opacity 0.3
-	arg target
-	
-	given i (self) => self.target === undefined
-	keep i (self) => self.target = [0, 0, 0]
-	i => i
-	
-	maybe(0.01) @ => _
-	
-	given F (element, Self) => element.state >= GAS && element !== Self
-	select F (atom) => atom
-	change F (selected, self) => {
-		self.target[1] -= 1
-		return selected
-	}
-	@ => F
-	F    @
-	
-	change M (self, x, y, z) => {
-		self.target[0] += x
-		self.target[1] += y
-		self.target[2] += z
-		return self
-	}
-	
-	given D (element, Self) => element.state >= GAS && element !== Self
-	select D (atom) => atom
-	change D (selected) => selected
-	for(xyz.directions) @D => DM
-	
-}
-
 element Smeller {
-	category "Testing"
 	prop state SOLID
 	prop temperature BODY
 	data target undefined
@@ -68,6 +22,7 @@ element Smeller {
 	given P (element) => element === Pheromone
 	select P (atom) => atom.target
 	keep P (self, selected) => {
+		if (selected === undefined) return
 		self.target = [...selected]
 		self.interest = 1.0
 	}	
@@ -113,11 +68,17 @@ element Smeller {
 
 element Mouse {
 	category "Life"
+	colour "white"
+	emissive "grey"
+	default true
 	prop state SOLID
 	prop temperature BODY
 	prop food MEAT
 	prop diet PLANT | DAIRY
+	prop pheromone LOVE | STINK
 	data stuck false
+	data target undefined
+	data interest 0
 	arg energy 0.85
 	arg id
 	
@@ -132,6 +93,7 @@ element Mouse {
 	given i (self) => self.id === undefined
 	change i (self) => {
 		self.id = Math.random()
+		self.target = [0, 0, 0]
 		return self
 	}
 	i => i
@@ -150,7 +112,7 @@ element Mouse {
 	//=====//
 	// Eat //
 	//=====//
-	given F (Self, element) => element.food & Self.diet > 0
+	given F (Self, element) =>  Flag.has(element.food, Self.diet)
 	change e (self) => {
 		self.energy += 0.05
 		return new Empty()
@@ -164,6 +126,11 @@ element Mouse {
 		 F =>  @
 		T@    eT
 	}
+	
+	//=======//
+	// Sniff //
+	//=======//
+	mimic(Sniffer)
 	
 	//======//
 	// Fall //
@@ -195,16 +162,55 @@ element Mouse {
 		@D    .T
 	}
 	
+	//==============//
+	// Follow Smell //
+	//==============//
+	given s (self) => Math.random() > self.energy + 0.1
+	given f (element, x, z, self) => {
+		if (self.interest <= 0) return false
+		if (element.state <= SOLID) return false
+		if (x > 0 && self.target[0] < 0) return true
+		if (x < 0 && self.target[0] > 0) return true
+		if (z > 0 && self.target[2] < 0) return true
+		if (z < 0 && self.target[2] > 0) return true
+		return false
+	}
+	select f (atom, x, z) => [atom, x, z]
+	change f (selected, self) => {
+		const [atom, x, z] = selected
+		if (atom.target !== undefined) {
+			atom.target[0] -= x
+			atom.target[2] -= z
+		}
+		return atom
+	}
+	
+	change F (self, x, z) => {
+		self.target[0] += x
+		self.target[2] += z
+		return self
+	}
+	
 	//======//
 	// Move //
 	//======//
-	given s (self) => Math.random() > self.energy + 0.1
-	
 	given m (element) => element.state > SOLID
 	select m (atom) => atom
 	change m (selected, self) => {
-		self.energy -= 0.001
+		self.energy -= 0.0005
 		return selected
+	}
+	
+	for(xz.directions) {
+		T@f => fTF
+		
+		 df =>  TF
+		T@     df
+	}
+	
+	for(xz) pov(top) {
+		f     F
+		T@ => .f
 	}
 	
 	action {
@@ -257,7 +263,7 @@ element Mouse {
 		prop diet PLANT | DAIRY
 		data stuck false
 		colour "pink"
-		emissive "rgb(255, 64, 64)"
+		emissive "rgb(255, 64, 128)"
 		arg id
 	}
 }

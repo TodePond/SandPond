@@ -1,8 +1,15 @@
+// Food Flags
+const PLANT = Flag(1)
+const MEAT = Flag(2)
+const WATER = Flag(3) 
+const BUG = Flag(4)
+const DAIRY = Flag(5)
+
 SpaceTode`
 
 element Carrot {
 	colour "rgb(200, 80, 0)"
-	category "Food"
+	category "Life"
 	prop state SOLID
 	prop temperature ROOM
 	prop food PLANT
@@ -123,7 +130,7 @@ element Carrot {
 element Cheese {
 	colour "#fcc203"
 	emissive "#fc4e03"
-	category "Food"
+	category "Life"
 	prop state SOLID
 	prop temperature ROOM
 	prop food DAIRY
@@ -164,30 +171,15 @@ element Cheese {
 		opacity 0.1
 		prop state GAS
 		prop temperature ROOM
-		maybe(0.005) @ => _
-		
-		
-		given D (element) => element.state >= GAS && element.state !== EFFECT
-		select D (atom) => atom
-		change D (selected) => selected
-		
-		@ => _
-		$    .
-		
-		@    D
-		D => @
-		
-		for(xz.rotations) @D => D@
-		
-		D => @
-		@    D
+		prop smell STINK
+		mimic(Smell)
 	}
 }
 
 element Fondue {
 	colour "#fcc203"
 	emissive "#fc4e03"
-	category "Food"
+	category "Life"
 	opacity 0.3
 	prop state SOLID
 	prop temperature BODY
@@ -209,17 +201,8 @@ element Fondue {
 		opacity 0.1
 		prop state GAS
 		prop temperature ROOM
-		maybe(0.02) @ => _
-		
-		given D (element) => element.state >= GAS && element.state !== EFFECT
-		select D (atom) => atom
-		change D (selected) => selected
-		
-		D => @
-		@    D
-		
-		for(xyz.rotations) @D => D@
-		@ => _
+		prop smell STINK
+		mimic(Smell)
 	}
 }
 
