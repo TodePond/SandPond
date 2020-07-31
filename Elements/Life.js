@@ -7,7 +7,7 @@ const DAIRY = Flag(5)
 
 SpaceTode`
 
-element _Mouse {
+element Mouse {
 	category "Life"
 	prop state SOLID
 	prop temperature BODY
@@ -17,10 +17,10 @@ element _Mouse {
 	arg energy 0.85
 	arg id
 	
-	given T (self, element, atom) => element === _Mouse.Tail && atom.id == self.id
-	change T (self) => new _Mouse.Tail(self.id)
+	given T (self, element, atom, Self) => element === Self.Tail && atom.id == self.id
+	change T (self, Self) => new Self.Tail(self.id)
 	
-	change M (self) => new _Mouse(self.id)
+	change M (self, Self) => new Self(self.id)
 	
 	//======//
 	// Init //
@@ -126,9 +126,9 @@ element _Mouse {
 	// Grow Tail //
 	//===========//
 	given g (element, self) => element === Empty && self.energy > 0.5
-	change g (self) => {
+	change g (self, Self) => {
 		self.energy -= 0.5
-		return new _Mouse.Tail(self.id)
+		return new Self.Tail(self.id)
 	}
 	for(xyz.directions) @T => ..
 	any(xyz.directions) @g => .g
@@ -156,86 +156,6 @@ element _Mouse {
 		emissive "rgb(255, 64, 64)"
 		arg id
 	}
-}
-
-element Mouse {
-	colour "grey"
-	category "Life"
-	prop state SOLID
-	prop temperature BODY
-	prop food MEAT
-	prop diet Flag.and(PLANT, DAIRY)
-	data stuck false
-	arg energy 0.5
-		
-	for(xyz.rotations) {
-		//=======//
-		// Breed //
-		//=======//
-		given b (element, Self, self) => self.energy > 0.9 && element === Self
-		select b (atom) => atom
-		change b (Self, self, selected) => {
-			self.energy -= 0.3
-			selected.energy -= 0.3
-			return new Self(0.5)
-		}
-		@_b => @b.
-		
-		//=====//
-		// Eat //
-		//=====//
-		given f (element, Self) => Flag.has(element.food, Self.diet)
-		change e (self) => {
-			self.energy += 0.05
-			if (self.energy > 1) self.energy = 1
-			return self
-		}
-		 f =>  e
-		@     _
-		
-		@f => _e
-	}
-	
-	//=======//
-	// Smell //
-	//=======//
-	symbol s Cheese.Smell
-	given m (element) => element.state > LIQUID && element.state !== EFFECT
-	select m (atom) => atom
-	change m (selected) => selected
-	for(xz.rotations) {
-		@ms => m@.
-		@sm => m@s
-		@s => s@
-	}
-	
-	//======//
-	// Move //
-	//======//
-	given S (element, selfElement) => element.state <= SOLID && element !== selfElement
-	given M (self, element) => self.energy + 0.1 > Math.random() && element.state > LIQUID && element.state !== EFFECT
-	select M (atom) => atom
-	change M (selected, self) => {
-		self.energy -= 0.005
-		if (self.energy < 0) self.energy = 0
-		return selected
-	}
-	any(xz.rotations) {
-		@M => M@
-		 S     .
-		
-		@M => M@ 
-		$     .
-	}
-	
-	//======//
-	// Fall //
-	//======//
-	given F (element) => element.state > LIQUID
-	select F (atom) => atom
-	change F (selected) => selected
-	@ => F
-	F    @
 }
 
 element Ant {
