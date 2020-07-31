@@ -70,7 +70,6 @@ element Mouse {
 	category "Life"
 	colour "white"
 	emissive "grey"
-	default true
 	prop state SOLID
 	prop temperature BODY
 	prop food MEAT
@@ -99,14 +98,27 @@ element Mouse {
 	i => i
 	
 	//=======//
-	// Breed //
+	// Scent //
 	//=======//
-	given B (element, atom, self, Self) => (element === Self || element === Self.Tail) && (atom.id !== self.id) && atom.energy > 0.9 && self.energy > 0.9
-	keep B (atom) => atom.energy -= 0.5
-	change b (Self) => new Self(0.6)
+	origin p
+	given p (self) => self.energy > 0.9
+	change p (self) => new Pheromone(0.94, self)
+	given ~ (element) => element === Empty || false
+	
+	//=======//
+	// Breed //
+	//=======//	
+	given B (element, atom, self, Self) => (element === Self || element === Self.Tail) && (atom.id !== self.id) && self.energy > 0.9
+	keep B (atom) => atom.energy -= 0.0
+	change b (self, Self) => {
+		self.energy -= 0.6
+		return new Self(0.6)
+	}
+	given , (element) => element === Empty || element.state === GAS
 	for(xyz.directions) {
-		@B_ => BBb
-		@_B => BbB
+		action p~ => .p
+		@B, => BBb
+		@,B => BbB
 	}
 	
 	//=====//
@@ -115,6 +127,7 @@ element Mouse {
 	given F (Self, element) =>  Flag.has(element.food, Self.diet)
 	change e (self) => {
 		self.energy += 0.05
+		if (self.energy > 1) self.energy = 1
 		return new Empty()
 	}
 	
@@ -194,10 +207,14 @@ element Mouse {
 	//======//
 	// Move //
 	//======//
+	given h (self) => self.energy > 0.9
+	maybe(0.75) h => .
+	
 	given m (element) => element.state > SOLID
 	select m (atom) => atom
 	change m (selected, self) => {
 		self.energy -= 0.0005
+		if (self.energy < 0) self.energy = 0
 		return selected
 	}
 	

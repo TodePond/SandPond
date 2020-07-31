@@ -5,7 +5,7 @@ const STINK = Flag(2)
 SpaceTode`
 
 element Sniffer {
-	given P (element, Self) => Flag.has(element.smell, Self.pheromone)
+	given P (element, self, atom, Self) => Flag.has(element.smell, Self.pheromone) && (atom.owner !== self)
 	select P (atom) => atom.target
 	keep P (self, selected) => {
 		if (selected === undefined) return
@@ -27,11 +27,12 @@ element Smell {
 	given i (self) => self.target === undefined
 	keep i (self) => {
 		self.target = [0, 0, 0]
-		if (self.strength === undefined) self.strength = 0.01
+		if (self.strength === undefined) self.strength = 0.99
 	}
 	i => i
 	
-	maybe(0.01) @ => _
+	given S (self) => Math.random() > self.strength
+	S => _
 	
 	given F (element, Self) => element.state >= GAS && element !== Self
 	select F (atom) => atom
@@ -61,6 +62,8 @@ element Pheromone {
 	prop state GAS
 	prop temperature ROOM
 	prop smell LOVE
+	arg strength 0.99
+	arg owner undefined
 	colour "pink"
 	emissive "rgb(255, 64, 128)"
 	opacity 0.3
