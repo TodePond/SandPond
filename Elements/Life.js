@@ -8,14 +8,13 @@ const DAIRY = Flag(5)
 SpaceTode`
 
 element _Mouse {
-	default true
 	category "Life"
 	prop state SOLID
 	prop temperature BODY
 	prop food MEAT
 	prop diet PLANT | DAIRY
 	data stuck false
-	arg energy 1.6
+	arg energy 0.85
 	arg id
 	
 	given T (self, element, atom) => element === _Mouse.Tail && atom.id == self.id
@@ -32,6 +31,17 @@ element _Mouse {
 		return self
 	}
 	i => i
+	
+	//=======//
+	// Breed //
+	//=======//
+	given B (element, atom, self, Self) => (element === Self || element === Self.Tail) && (atom.id !== self.id) && atom.energy > 0.9 && self.energy > 0.9
+	keep B (atom) => atom.energy -= 0.5
+	change b (Self) => new Self(0.6)
+	for(xyz.directions) {
+		@B_ => BBb
+		@_B => BbB
+	}
 	
 	//=====//
 	// Eat //
@@ -115,9 +125,9 @@ element _Mouse {
 	//===========//
 	// Grow Tail //
 	//===========//
-	given g (element, self) => element === Empty && self.energy > 0.8
+	given g (element, self) => element === Empty && self.energy > 0.5
 	change g (self) => {
-		self.energy -= 0.6
+		self.energy -= 0.5
 		return new _Mouse.Tail(self.id)
 	}
 	for(xyz.directions) @T => ..
