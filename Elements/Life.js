@@ -7,6 +7,147 @@ const DAIRY = Flag(5)
 
 SpaceTode`
 
+element _Mouse {
+	default true
+	category "Life"
+	prop state SOLID
+	prop temperature BODY
+	prop food MEAT
+	prop diet PLANT | DAIRY
+	data stuck false
+	arg energy 1.6
+	arg id
+	
+	given T (self, element, atom) => element === _Mouse.Tail && atom.id == self.id
+	change T (self) => new _Mouse.Tail(self.id)
+	
+	change M (self) => new _Mouse(self.id)
+	
+	//======//
+	// Init //
+	//======//
+	given i (self) => self.id === undefined
+	change i (self) => {
+		self.id = Math.random()
+		return self
+	}
+	i => i
+	
+	//=====//
+	// Eat //
+	//=====//
+	given F (Self, element) => element.food & Self.diet > 0
+	change e (self) => {
+		self.energy += 0.05
+		return new Empty()
+	}
+	
+	for(xyz.directions) {
+		T@F => eT@
+	}
+	
+	for(xyz.rotations) {
+		 F =>  @
+		T@    eT
+	}
+	
+	//======//
+	// Fall //
+	//======//
+	given D (element) => element.state > SOLID
+	select D (atom) => atom
+	change D (selected) => selected	
+	
+	given d (element) => element.state > SOLID
+	select d (atom) => atom
+	change d (selected) => selected	
+	T => D
+	@    T
+	D    @
+	
+	@ => T
+	T    @
+	
+	for(xz.directions) {
+		@T => Dd
+		Dd    @T
+		
+		 @T =>  Dd
+		Dd     @T
+	}
+	
+	for(xz.directions) {
+		T  => D
+		@D    .T
+	}
+	
+	//======//
+	// Move //
+	//======//
+	given s (self) => Math.random() > self.energy + 0.1
+	
+	given m (element) => element.state > SOLID
+	select m (atom) => atom
+	change m (selected, self) => {
+		self.energy -= 0.001
+		return selected
+	}
+	
+	action {
+		
+		s => .
+	
+		for(xz.directions) {
+			T@m => mT@
+			
+			 dm =>  T@
+			T@     dm
+		}
+		
+		for(xz) pov(top) {
+			m     @
+			T@ => .m
+		}
+	}
+	
+	! => .
+	
+	//===========//
+	// Grow Tail //
+	//===========//
+	given g (element, self) => element === Empty && self.energy > 0.8
+	change g (self) => {
+		self.energy -= 0.6
+		return new _Mouse.Tail(self.id)
+	}
+	for(xyz.directions) @T => ..
+	any(xyz.directions) @g => .g
+	
+	//==================//
+	// Act Without Tail //
+	//==================//
+	@ => D
+	D    @
+	
+	action {
+		s => .
+		for(xz.directions) @m => m@
+	}
+	
+	! => .
+	
+	element Tail {
+		prop state SOLID
+		prop temperature BODY
+		prop food MEAT
+		prop diet PLANT | DAIRY
+		data stuck false
+		colour "pink"
+		emissive "rgb(255, 64, 64)"
+		arg id
+	}
+}
+
 element Mouse {
 	colour "grey"
 	category "Life"

@@ -232,6 +232,7 @@ let DROPPER_ARGS = []
 			if (atomType != space.atom.element) return dropAtom(x, y, z, yOffset + 1, justShow, shadowNumber)
 		}
 		if (!justShow) {
+			if (atomType === space.atom.element) return
 			if (DROPPER_ARGS_NEEDS_EVAL) {
 				DROPPER_ARGS = JS("[" + DROPPER_ARGS_SOURCE + "]")
 				DROPPER_ARGS_NEEDS_EVAL = false

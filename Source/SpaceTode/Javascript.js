@@ -339,16 +339,27 @@ const JAVASCRIPT = {}
 		const lines = []
 		const need = needer.need
 		if (need.generateGet && !alreadyGots.includes(needer.name)) {
-			const getCode = need.generateGet(needer.x, needer.y, needer.z, needer.symmetry, needer.symmetryId, needer.id, needer.argNames, needer.idResultName, needer.forSymmId, needer.char, template, needer.diagram, needer.isAll)
+			// "I'll just add one more parameter to this function. This is the last one, I swear."
+			// "I'll just add one more parameter to this function. This is the last one, I swear."
+			// "I'll just add one more parameter to this function. This is the last one, I swear."
+			// "I'll just add one more parameter to this function. This is the last one, I swear."
+			// "I'll just add one more parameter to this function. This is the last one, I swear."
+			// "I'll just add one more parameter to this function. This is the last one, I swear."
+			// "I'll just add one more parameter to this function. This is the last one, I swear."
+			// "I'll just add one more parameter to this function. This is the last one, I swear."
+			// "I'll just add one more parameter to this function. This is the last one, I swear."
+			// "I'll just add one more parameter to this function. This is the last one, I swear."
+			// "I'll just add one more parameter to this function. This is the last one, I swear."
+			const getCode = need.generateGet(needer.x, needer.y, needer.z, needer.symmetry, needer.symmetryId, needer.id, needer.argNames, needer.idResultName, needer.forSymmId, needer.char, template, needer.diagram, needer.isAll, needer.spotMods)
 			if (getCode !== undefined) lines.push(`${indent}const ${needer.name} = ${getCode}`)
 			if (cache) alreadyGots.push(needer.name)
 		}
 		if (need.generateConstant) {
-			const constantCode = need.generateConstant(needer.x, needer.y, needer.z, needer.symmetry, needer.symmetryId, needer.id, needer.argNames, needer.idResultName, needer.forSymmId, needer.char, template, needer.diagram, needer.isAll)
+			const constantCode = need.generateConstant(needer.x, needer.y, needer.z, needer.symmetry, needer.symmetryId, needer.id, needer.argNames, needer.idResultName, needer.forSymmId, needer.char, template, needer.diagram, needer.isAll, needer.spotMods)
 			if (constantCode !== undefined) constants.pushUnique(`const ${needer.name}Const = ${constantCode}`)
 		}
 		if (need.generateExtra) {
-			const extraCode = need.generateExtra(needer.x, needer.y, needer.z, needer.symmetry, needer.symmetryId, needer.id, needer.argNames, needer.idResultName, needer.forSymmId, needer.char, template, needer.diagram, needer.isAll)
+			const extraCode = need.generateExtra(needer.x, needer.y, needer.z, needer.symmetry, needer.symmetryId, needer.id, needer.argNames, needer.idResultName, needer.forSymmId, needer.char, template, needer.diagram, needer.isAll, needer.spotMods)
 			if (extraCode !== undefined) lines.push(`${indent}${extraCode}`)
 		}
 		return lines

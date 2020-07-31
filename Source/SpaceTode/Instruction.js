@@ -198,6 +198,7 @@ INSTRUCTION.make = (name, generate = () => { throw new Error(`[SpaceTode] The ${
 				diagram,
 				diagramId,
 				isAll,
+				spotMods,
 			})
 			
 			processFunc ({
@@ -214,6 +215,7 @@ INSTRUCTION.make = (name, generate = () => { throw new Error(`[SpaceTode] The ${
 				diagram,
 				diagramId,
 				isAll,
+				spotMods,
 			})
 			
 			processFunc ({
@@ -230,6 +232,7 @@ INSTRUCTION.make = (name, generate = () => { throw new Error(`[SpaceTode] The ${
 				diagram,
 				diagramId,
 				isAll,
+				spotMods,
 			})
 			
 			processFunc ({
@@ -246,6 +249,7 @@ INSTRUCTION.make = (name, generate = () => { throw new Error(`[SpaceTode] The ${
 				diagram,
 				diagramId,
 				isAll,
+				spotMods,
 			})
 			
 			processFunc ({
@@ -262,6 +266,7 @@ INSTRUCTION.make = (name, generate = () => { throw new Error(`[SpaceTode] The ${
 				diagram,
 				diagramId,
 				isAll,
+				spotMods,
 			})
 		}
 		
@@ -294,7 +299,7 @@ INSTRUCTION.make = (name, generate = () => { throw new Error(`[SpaceTode] The ${
 	//======//
 	// Func //
 	//======//
-	const processFunc = ({name, func, spot = {}, template, chunk, side, symmetry, symmetryId, forSymmId, char, diagram, diagramId, isAll}) => {
+	const processFunc = ({name, func, spot = {}, template, chunk, side, symmetry, symmetryId, forSymmId, char, diagram, diagramId, isAll, spotMods}) => {
 		if (func === undefined) return
 		
 		const {x, y, z} = spot
@@ -310,7 +315,7 @@ INSTRUCTION.make = (name, generate = () => { throw new Error(`[SpaceTode] The ${
 		const idResult = makeIdResult(result, id, paramNames)
 		const needs = getNeeds(idResult)
 		const idResultName = getName(idResult, x, y, z, symmetryId, char, diagramId)
-		const needers = needs.map(need => makeNeeder({need, x, y, z, symmetry, symmetryId, forSymmId, id, argNames, idResultName, char, diagram, diagramId, isAll}))
+		const needers = needs.map(need => makeNeeder({need, x, y, z, symmetry, symmetryId, forSymmId, id, argNames, idResultName, char, diagram, diagramId, isAll, spotMods}))
 		for (const needer of needers) {
 			if (needer.need.isCondition) chunk.conditions.pushUnique(needer.name)
 			chunk[side].needers[needer.name] = needer
@@ -343,9 +348,9 @@ INSTRUCTION.make = (name, generate = () => { throw new Error(`[SpaceTode] The ${
 		return needs
 	}
 	
-	const makeNeeder = ({need, x, y, z, id, symmetry, symmetryId, argNames, idResultName, forSymmId, char, diagram, diagramId, isAll}) => {
+	const makeNeeder = ({need, x, y, z, id, symmetry, symmetryId, argNames, idResultName, forSymmId, char, diagram, diagramId, isAll, spotMods}) => {
 		const name = getName(need, x, y, z, symmetryId, char, diagramId)
-		return {need, name, x, y, z, symmetry, symmetryId, id, argNames, idResultName, forSymmId, char, diagram, diagramId, isAll}
+		return {need, name, x, y, z, symmetry, symmetryId, id, argNames, idResultName, forSymmId, char, diagram, diagramId, isAll, spotMods}
 	}
 	
 	//====================//
@@ -575,10 +580,11 @@ INSTRUCTION.make = (name, generate = () => { throw new Error(`[SpaceTode] The ${
 		name: "selected",
 		type: NEED_TYPE.SYMBOL,
 		needNames: [],
-		generateGet: (x, y, z, symmetry, symmetryId, id, args, idResultName, forSymmId, char, template, diagram) => {
+		generateGet: (x, y, z, symmetry, symmetryId, id, args, idResultName, forSymmId, char, template, diagram, isAll, spotMods) => {
 			const selectId = getSymbolId(char, "select", template)
 			let selectResultPos = undefined
-			for (const spot of diagram) {
+			const moddedDiagram = modDiagram(diagram, spotMods)
+			for (const spot of moddedDiagram) {
 				if (spot.inputChar === char) {
 					// TODO: randomly select from multiple selects
 					if (selectResultPos !== undefined) throw new Error(`[SpaceTode] You can only have one '${char}' symbol in the left-hand-side of a diagram because it has a 'select' keyword.`)

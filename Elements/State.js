@@ -1,9 +1,9 @@
 
-const VOID = 0
-const SOLID = 1
-const LIQUID = 2
-const GAS = 3
-const EFFECT = 4
+const EFFECT = 0
+const VOID = 1
+const SOLID = 2
+const LIQUID = 3
+const GAS = 4
 
 Empty.state = GAS
 Void.state = VOID
@@ -14,7 +14,7 @@ element Solid {
 	prop state SOLID
 	//category "Rulesets"
 	
-	given D (element) => element.state > SOLID
+	given D (element) => element.state > SOLID && element.state !== EFFECT
 	select D (atom) => atom
 	change D (selected) => selected
 	@ => D
@@ -25,7 +25,7 @@ element Powder  {
 	prop state SOLID
 	//category "Rulesets"
 	
-	given D (element) => element.state > SOLID
+	given D (element) => element.state > SOLID && element.state !== EFFECT
 	select D (atom) => atom
 	change D (selected) => selected
 	@ => D
@@ -45,7 +45,7 @@ element Liquid {
 	prop state LIQUID
 	//category "Rulesets"
 	
-	given D (element) => element.state > LIQUID
+	given D (element) => element.state > LIQUID && element.state !== EFFECT
 	select D (atom) => atom
 	change D (selected) => selected
 	@ => D
