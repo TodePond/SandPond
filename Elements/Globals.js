@@ -7,7 +7,7 @@ given ! (atom, self) => atom !== self
 
 symbol _ Empty
 symbol x Void
-symbol + Void
+symbol * Void
 
 given . (element) => element !== Void
 keep .

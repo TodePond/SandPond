@@ -100,6 +100,11 @@ const SYMMETRY = {}
 		T("-zy-x"),
 	])
 	
+	SYMMETRY.TYPE.xz.swaps = SYMMETRY.make("XZ.SWAPS", [
+		T("xyz"),
+		T("zyx")
+	])
+	
 	SYMMETRY.TYPE.xz.rotations = SYMMETRY.make("XZ.ROTATIONS", [
 		T("xyz"),
 		T("-xy-z"),

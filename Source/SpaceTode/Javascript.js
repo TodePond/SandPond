@@ -169,7 +169,8 @@ const JAVASCRIPT = {}
 		const lines = []
 		const maybeBlocks = []
 		const maybeGots = []
-		let prevForSymmId = undefined
+		const maybeSymms = []
+		let prevForSymmId = []
 		
 		for (let i = 0; i < chunks.length; i++) {
 			const chunk = chunks[i]
@@ -188,10 +189,30 @@ const JAVASCRIPT = {}
 			// End For //
 			//=========//
 			const nextForSymmId = chunk.forSymmId
-			if (prevForSymmId !== undefined && nextForSymmId !== prevForSymmId) {
-				prevForSymmId = undefined
+			if (prevForSymmId.length !== 0 && nextForSymmId !== prevForSymmId.last) {
+				prevForSymmId.pop()
 				margin = margin.slice(0, -1)
 				lines.push(`${margin}}`)
+			}
+			
+			//================//
+			// Pre-Loop Input //
+			//================//
+			//lines.push(...chunk.debug.source.split("\n").map(s => `${margin}// ${s}`))
+			for (const needer of chunk.input.needers) {
+				if (needer.need.preLoop) lines.push(...makeNeederLines(needer, `${margin}`, alreadyGots, true, constants, template))
+			}
+			
+			//===========//
+			// Start For //
+			//===========//
+			if (nextForSymmId !== undefined && prevForSymmId.last !== nextForSymmId) {
+				const iName = `i${nextForSymmId}`
+				if (!chunk.forSymmIsAll) lines.push(`${margin}const transNumsShuffledSymm${nextForSymmId} = transformationNumbersSymm${nextForSymmId}Const.shuffled`)
+				lines.push(`${margin}for(let ${iName} = 0; ${iName} < ${chunk.forSymmTransCount}; ${iName}++) {`)
+				lines.push(``)
+				margin += `	`
+				prevForSymmId.push(nextForSymmId)
 			}
 			
 			//=======//
@@ -222,6 +243,14 @@ const JAVASCRIPT = {}
 				maybeGots.pop()
 				
 				const tail = chunks.slice(i)
+				for (const t in tail) {
+					if (tail[t].forSymmId !== undefined) {
+						if (tail[t].forSymmId === prevForSymmId.last) {
+							tail[t] = {...tail[t], forSymmId: undefined}
+						}
+					}
+				}
+				
 				const afterLines = makeChunksLines(tail, `${margin}`, afterMaybeGots, constants, true, template)
 				lines.push(`${margin}// Continue rules after successful 'maybe'`)
 				lines.push(...afterLines)
@@ -239,26 +268,6 @@ const JAVASCRIPT = {}
 			// Update gots after potentially changing block
 			if (maybeBlocks.length > 0) alreadyGots = maybeGots.last
 			else alreadyGots = gots
-			
-			//================//
-			// Pre-Loop Input //
-			//================//
-			//lines.push(...chunk.debug.source.split("\n").map(s => `${margin}// ${s}`))
-			for (const needer of chunk.input.needers) {
-				if (needer.need.preLoop) lines.push(...makeNeederLines(needer, `${margin}`, alreadyGots, true, constants, template))
-			}
-			
-			//===========//
-			// Start For //
-			//===========//
-			if (nextForSymmId !== undefined && prevForSymmId !== nextForSymmId) {
-				const iName = `i${nextForSymmId}`
-				if (!chunk.forSymmIsAll) lines.push(`${margin}const transNumsShuffledSymm${nextForSymmId} = transformationNumbersSymm${nextForSymmId}Const.shuffled`)
-				lines.push(`${margin}for(let ${iName} = 0; ${iName} < ${chunk.forSymmTransCount}; ${iName}++) {`)
-				lines.push(``)
-				margin += `	`
-				prevForSymmId = nextForSymmId
-			}
 			
 			//=======//
 			// Input //
@@ -317,8 +326,8 @@ const JAVASCRIPT = {}
 		//==========//
 		// Tidy For //
 		//==========//
-		if (prevForSymmId !== undefined) {
-			prevForSymmId = undefined
+		while (prevForSymmId.length !== 0) {
+			prevForSymmId.pop()
 			margin = margin.slice(0, -1)
 			lines.push(`${margin}}`)
 		}

@@ -1,3 +1,23 @@
+/*SpaceTode`
+
+element Maybeer {
+	default true
+	
+	for(x) {
+		maybe(0.2) @_ => _@
+		
+		@ => _
+		_    @
+		
+		@ => _
+		_    @
+	}
+}
+
+`
+
+print(Maybeer.behaveCode)*/
+
 SpaceTode`
 
 /*element Behaver {

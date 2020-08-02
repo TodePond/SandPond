@@ -77,7 +77,7 @@ element Mouse {
 	prop pheromone LOVE | STINK
 	data stuck false
 	data target undefined
-	data interest 0
+	data interest 0.0
 	arg energy 0.85
 	arg id
 	
@@ -271,6 +271,8 @@ element Mouse {
 		for(xz.directions) @m => m@
 	}
 	
+	// TODO: more behaviours here? eg: smell following
+	
 	! => .
 	
 	element Tail {
@@ -282,7 +284,261 @@ element Mouse {
 		colour "pink"
 		emissive "rgb(255, 64, 128)"
 		arg id
+		
+		given ^ (element, atom, self) => element === SpaceTode.global.elements.Mouse
+		for(xyz.directions) @^ => ..
+		mimic(Powder)
 	}
+}
+
+element _Rabbit {
+	category "Life"
+	colour "white"
+	emissive "grey"
+	prop state SOLID
+	prop temperature BODY
+	prop food MEAT
+	prop diet PLANT
+	prop pheromone LOVE
+	data stuck false
+	data target undefined
+	data interest 0.0
+	data energy 0.6
+	
+	//================//
+	// Global Symbols //
+	//================//
+	given R (element, atom, self) => element === _Rabbit && atom.id === self.id
+	change R (Self, self) => new Self(self.id)
+	
+	given E (element, atom, self) => element === _Rabbit.Ear && atom.id === self.id
+	change E (Self, self) => new Self.Ear(self.id)
+	
+	given T (element, atom, self) => element === _Rabbit.Trail && atom.id === self.id
+	change T (Self, self) => new Self.Trail(self.id)
+	
+	//======//
+	// Init //
+	//======//
+	{
+		arg id
+		given i (self) => self.id === undefined
+		change i (self) => {
+			self.id = Math.random()
+			self.target = [0, 0, 0]
+			return self
+		}
+		i => i
+	}
+	
+	//===========//
+	// Grow Ears //
+	//===========//
+	{
+		data grown false
+		origin g
+		given g (self) => !self.grown
+		keep g (self) => self.grown = true
+		for(xz.directions) {
+			_ _    E E
+			_g_ => EgE
+		}
+	}
+	
+	//======//
+	// Fall //
+	//======//
+	for(xz.directions) {
+		given 1 (element) => element.state > SOLID
+		select 1 (atom) => atom
+		change 1 (selected) => selected
+		
+		given 2 (element) => element.state > SOLID
+		select 2 (atom) => atom
+		change 2 (selected) => selected
+		
+		given 3 (element) => element.state > SOLID
+		select 3 (atom) => atom
+		change 3 (selected) => selected
+	
+		. . => 1 3
+		E@.    E2E
+		123    E@E
+	}
+	
+	//======//
+	// Jump //
+	//======//
+	pour false
+	action {
+	
+		data jumpDistance 0
+		data jumpDirection
+		
+		// Start Jump
+		origin s
+		given s (self) => self.jumpDistance === 0
+		
+		// Jump
+		origin j
+		given j (self) => self.jumpDistance > 0 && self.jumpDistance < 10
+		change j (self) => {
+			self.jumpDistance++
+			return self
+		}
+		
+		// First Trail
+		given f (element) => element.state > SOLID
+		select f (x, y, z) => [x, y, z]
+		change f (self, selected) => {
+			self.jumpDirection = [...selected]
+			return new _Rabbit.Trail(self.id, selected, self.distance)
+		}
+		
+		// Trail
+		given t (element, self, x, z) => {
+			if (self.jumpDirection === undefined) return false
+			if (element.state <= SOLID) return false
+			if (self.jumpDirection[0] !== x) return false
+			if (self.jumpDirection[2] !== z) return false
+			return true
+		}
+		select t (x, y, z) => [x, y, z]
+		change t (self, selected) => {
+			return new _Rabbit.Trail(self.id, selected, self.distance)
+		}
+		
+		// End Jump
+		given e (self) => self.jumpDistance >= 10
+		keep e (self) => {
+			self.jumpDistance = 0
+			self.jumpDirection = undefined
+		}
+		
+		for(xz.directions) {
+			sT => ..    // Wait
+		}
+		
+		for(xz.directions) {
+			maybe(0.1) sf => fj    // Start Jump
+			jt => tj    // Continue Jump
+			e  => e     // End Jump
+		}
+		
+	}
+	
+	! => .
+	
+	//======//
+	// Turn //
+	//======//
+	
+	
+	//=========//
+	// Injured //
+	//=========//
+	/*{
+		for(xz.swaps) {
+			E E    . .
+			E@E => ...
+		}
+		
+		for(xyz.directions) @T => ..
+	
+		// Fall
+		given D (element) => element.state > SOLID
+		select D (atom) => atom
+		change D (selected) => selected
+		@ => D
+		D    @
+		
+		// Move
+		any(xz.directions) {
+			@D => D@
+		}
+	}*/
+	
+	//==============//
+	// Sub-Elements //
+	//==============//
+	element Trail {
+		colour "yellow"
+		opacity 0.5
+		prop state EFFECT
+		prop temperature ROOM
+		data stuck false
+		arg id
+		arg target
+		arg position 0
+		
+		all(xz.directions) {
+		
+			given t (element, atom, self) => element === _Rabbit.Trail && atom.position > self.position
+			@t => ..
+			@E => ..
+			
+			 E =>  .
+			@     .
+		}
+		
+		@ => _
+	}
+	
+	element Ear {
+		category "Life"
+		colour "white"
+		emissive "grey"
+		prop state SOLID
+		prop temperature BODY
+		data stuck false
+		arg id
+		data target
+		
+		//===========//
+		// Get Trail //
+		//===========//
+		{
+			keep t (self, atom) => self.target = [...atom.target]
+			action all(xz.directions) {
+				@T => .t
+				
+				@  => .
+				 T     t
+			}
+			
+			given t (self) => self.target === undefined
+			t => .
+		}
+		
+		//==============//
+		// Follow Trail //
+		//==============//
+		{
+			given f (element, x, y, z, self) => {
+				if (element.state <= SOLID) return false
+				if (x > 0 && self.target[0] > 0) return true
+				if (x < 0 && self.target[0] < 0) return true
+				if (y > 0 && self.target[1] > 0) return true
+				if (y < 0 && self.target[1] < 0) return true
+				if (z > 0 && self.target[2] > 0) return true
+				if (z < 0 && self.target[2] < 0) return true
+				return false
+			}
+			select f (atom, x, y, z) => [atom, x, y, z]
+			change f (selected, self) => {
+				const [atom, x, y, z] = selected
+				self.target[0] -= x
+				self.target[1] -= y
+				self.target[2] -= z
+				return atom
+			}
+			
+			for(xyz.rotations) @f => f@
+		}
+		
+		
+	}
+	
 }
 
 element Ant {

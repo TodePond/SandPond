@@ -14,7 +14,7 @@
 		categories: [],
 	})
 	
-	const absorbScope = (receiver, target, propsOnly = false) => {
+	const absorbScope = (receiver, target, propsOnly = false, copySymbols = true) => {
 		receiver.args.o= target.args
 		receiver.data.o= target.data
 		receiver.elements.o= target.elements
@@ -24,6 +24,7 @@
 		receiver.categories.push(...target.categories)
 		receiver.properties.o= target.properties
 		
+		if (!copySymbols) return
 		for (const symbolName in target.symbols) {
 			if (target.symbols[symbolName] === undefined) continue
 			if (receiver.symbols[symbolName] === undefined) {
@@ -481,8 +482,9 @@
 			result = {code} = EAT.gap(code)
 			const blockScope = makeScope(scope)
 			result = {code, success} = EAT.block(EAT.todeSplat)(code, blockScope)
+			absorbScope(scope, blockScope)
 			scope.instructions.push({type: INSTRUCTION.TYPE.NAKED})
-			scope.instructions.push(...blockScope.instructions)
+			absorbScope(scope, blockScope, false, false)
 			scope.instructions.push({type: INSTRUCTION.TYPE.BLOCK_END})
 			return {...result, blockScope}
 		}
@@ -492,7 +494,7 @@
 		result = {code, success} = EAT.block(EAT.todeSplat, true)(code, blockScope)
 		if (success) {
 			scope.instructions.push({type: INSTRUCTION.TYPE.NAKED})
-			scope.instructions.push(...blockScope.instructions)
+			absorbScope(scope, blockScope, false, false)
 			scope.instructions.push({type: INSTRUCTION.TYPE.BLOCK_END})
 			return {...result, blockScope}
 		}
@@ -917,7 +919,7 @@
 		result = {code, success} = EAT.todeSplatBlock(code, scope)
 		if (!success) return EAT.fail(code)
 		
-		absorbScope(scope, result.blockScope)
+		absorbScope(scope, result.blockScope, false, false)
 		//scope.instructions.push(...result.blockScope.instructions)
 		scope.instructions.push({type: INSTRUCTION.TYPE.BLOCK_END})
 		
@@ -955,7 +957,7 @@
 		result = {code, success} = EAT.todeSplatBlock(code, scope)
 		if (!success) return EAT.fail(code)
 		
-		absorbScope(scope, result.blockScope)
+		absorbScope(scope, result.blockScope, false, false)
 		//scope.instructions.push(...result.blockScope.instructions)
 		scope.instructions.push({type: INSTRUCTION.TYPE.BLOCK_END})
 		
@@ -996,7 +998,7 @@
 		result = {code, success} = EAT.todeSplatBlock(code, scope)
 		if (!success) return EAT.fail(code)
 		
-		absorbScope(scope, result.blockScope)
+		absorbScope(scope, result.blockScope, false, false)
 		/*scope.properties.o= result.blockScope.properties
 		scope.instructions.push(...result.blockScope.instructions)*/
 		scope.instructions.push({type: INSTRUCTION.TYPE.BLOCK_END})
@@ -1038,7 +1040,7 @@
 		result = {code, success} = EAT.todeSplatBlock(code, scope)
 		if (!success) return EAT.fail(code)
 		
-		absorbScope(scope, result.blockScope)
+		absorbScope(scope, result.blockScope, false, false)
 		/*scope.properties.o= result.blockScope.properties
 		scope.instructions.push(...result.blockScope.instructions)*/
 		scope.instructions.push({type: INSTRUCTION.TYPE.BLOCK_END})
@@ -1080,7 +1082,7 @@
 		result = {code, success} = EAT.todeSplatBlock(code, scope)
 		if (!success) return EAT.fail(code)
 		
-		absorbScope(scope, result.blockScope)
+		absorbScope(scope, result.blockScope, false, false)
 		/*scope.properties.o= result.blockScope.properties
 		scope.instructions.push(...result.blockScope.instructions)*/
 		scope.instructions.push({type: INSTRUCTION.TYPE.BLOCK_END})
@@ -1104,7 +1106,7 @@
 		result = {code, success} = EAT.todeSplatBlock(code, scope)
 		if (!success) return EAT.fail(code)
 		
-		absorbScope(scope, result.blockScope)
+		absorbScope(scope, result.blockScope, false, false)
 		//scope.instructions.push(...result.blockScope.instructions)
 		scope.instructions.push({type: INSTRUCTION.TYPE.BLOCK_END})
 		
