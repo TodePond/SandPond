@@ -296,7 +296,13 @@ const JAVASCRIPT = {}
 			// Remaining Rules //
 			//=================//
 			if (chunk.isInAction) {
-				const tail = chunks.slice(i+1).filter(c => c.actionId === undefined || c.actionId < chunk.actionId)
+				const tail = chunks.slice(i+1).filter(c => {
+					if (c.actionIds === undefined) return true
+					if (c.actionIds.length === chunk.actionIds.length && c.actionIds.last !== chunk.actionIds.last) return true
+					if ((c.actionIds.length > chunk.actionIds.length) && c.actionIds[chunk.actionIds.length-1] !== chunk.actionIds[chunk.actionIds.length-1]) return true
+					if (c.actionIds.length < chunk.actionIds.length) return true
+					return false
+				})
 				const afterLines = makeChunksLines(tail, `${margin}	`, outputAlreadyGots, constants, true, template)
 				if (afterLines.length > 0) {
 					lines.push(`${margin}	`)

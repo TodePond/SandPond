@@ -3,16 +3,18 @@
 element Actioner {
 	default true
 	
-	{
-		@_ => _$
-		
+	action {
 		action {
+			@_ => _$
+		}
+		
+		action action action {
 			@ => _
 			_    $
 		}
 	}
 	
-	_@ => $_
+	
 	
 }
 

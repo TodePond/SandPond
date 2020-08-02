@@ -370,9 +370,15 @@ element _Rabbit {
 	//======//
 	pour false
 	{
+	
 		action @ => <
-		action {
 		
+		/*default true
+		keep | (self) => print(self.continue)
+		action @ => |*/
+		
+		action {
+			
 			data jumpDistance 0
 			data jumpDirection
 			data jumpBounceTimer 0
