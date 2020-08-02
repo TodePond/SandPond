@@ -296,7 +296,7 @@ const JAVASCRIPT = {}
 			// Remaining Rules //
 			//=================//
 			if (chunk.isInAction) {
-				const tail = chunks.slice(i+1).filter(c => c.actionId !== chunk.actionId)
+				const tail = chunks.slice(i+1).filter(c => c.actionId === undefined || c.actionId < chunk.actionId)
 				const afterLines = makeChunksLines(tail, `${margin}	`, outputAlreadyGots, constants, true, template)
 				if (afterLines.length > 0) {
 					lines.push(`${margin}	`)

@@ -133,7 +133,8 @@ INSTRUCTION.make = (name, generate = () => { throw new Error(`[SpaceTode] The ${
 		const actionId = Symbol("ActionId")
 		const actionMods = [...chunkMods, (chunk) => {
 			chunk.isInAction = true
-			chunk.actionId = actionId
+			if (chunk.actionId === undefined) chunk.actionId = 0
+			chunk.actionId++
 		}]
 		for (let i = 0; i < instructions.length; i++) {
 			const instruction = instructions[i]

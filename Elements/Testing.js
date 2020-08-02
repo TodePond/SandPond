@@ -1,5 +1,27 @@
 /*SpaceTode`
 
+element Actioner {
+	default true
+	
+	{
+		@_ => _$
+		
+		action {
+			@ => _
+			_    $
+		}
+	}
+	
+	_@ => $_
+	
+}
+
+`
+
+print(Actioner.behaveCode)*/
+
+/*SpaceTode`
+
 element Maybeer {
 	default true
 	
