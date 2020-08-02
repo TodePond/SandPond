@@ -185,6 +185,47 @@ const JAVASCRIPT = {}
 			if (maybeBlocks.length > 0) alreadyGots = maybeGots.last
 			else alreadyGots = gots
 			
+			//=======//
+			// Maybe //
+			//=======//
+			let maybes = chunk.maybes
+			if (maybes === undefined) maybes = []
+			
+			const oldId = maybeBlocks.last? maybeBlocks.last.id : undefined
+			const newId = maybes.last? maybes.last.id : undefined
+			
+			const maybesLength = maybes.length
+			const maybeBlocksLength = maybeBlocks.length
+			
+			// End Maybe
+			if (maybesLength < maybeBlocksLength && oldId !== newId) {
+				const afterMaybeGots = [...maybeGots.last]
+				maybeBlocks.pop()
+				maybeGots.pop()
+				
+				const tail = chunks.slice(i)
+				for (const t in tail) {
+					if (tail[t].forSymmId !== undefined) {
+						if (tail[t].forSymmId === prevForSymmId.last) {
+							tail[t] = {...tail[t], forSymmId: undefined}
+						}
+					}
+				}
+				
+				const afterLines = makeChunksLines(tail, `${margin}`, afterMaybeGots, constants, true, template)
+				lines.push(`${margin}// Continue rules after successful 'maybe'`)
+				lines.push(...afterLines)
+				lines.push(`${margin}return`)
+				
+				margin = margin.slice(0, -1)
+				lines.push(`${margin}}`)
+				lines.push(`${margin}`)
+				lines.push(`${margin}// Continue rules after failing 'maybe'`)
+				i--
+				missGap = true
+				continue
+			}
+			
 			//=========//
 			// End For //
 			//=========//
@@ -215,19 +256,8 @@ const JAVASCRIPT = {}
 				prevForSymmId.push(nextForSymmId)
 			}
 			
-			//=======//
-			// Maybe //
-			//=======//
-			let maybes = chunk.maybes
-			if (maybes === undefined) maybes = []
-			
-			const oldId = maybeBlocks.last? maybeBlocks.last.id : undefined
-			const newId = maybes.last? maybes.last.id : undefined
-			
-			const isStartMaybe = newId !== undefined && oldId !== newId
-			
 			// Start Maybe
-			if (maybes.length > maybeBlocks.length) {
+			if (maybesLength > maybeBlocksLength) {
 				const maybe = maybes.last
 				maybeBlocks.push(maybe)
 				maybeGots.push([...alreadyGots])
@@ -235,34 +265,6 @@ const JAVASCRIPT = {}
 				lines.push(`${margin}if (Math.random() < ${maybe.chance}) {`)
 				lines.push(`${margin}`)
 				margin += `	`
-			}
-			// End Maybe
-			else if (maybes.length < maybeBlocks.length || oldId !== newId) {
-				const afterMaybeGots = [...maybeGots.last]
-				maybeBlocks.pop()
-				maybeGots.pop()
-				
-				const tail = chunks.slice(i)
-				for (const t in tail) {
-					if (tail[t].forSymmId !== undefined) {
-						if (tail[t].forSymmId === prevForSymmId.last) {
-							tail[t] = {...tail[t], forSymmId: undefined}
-						}
-					}
-				}
-				
-				const afterLines = makeChunksLines(tail, `${margin}`, afterMaybeGots, constants, true, template)
-				lines.push(`${margin}// Continue rules after successful 'maybe'`)
-				lines.push(...afterLines)
-				lines.push(`${margin}return`)
-				
-				margin = margin.slice(0, -1)
-				lines.push(`${margin}}`)
-				lines.push(`${margin}`)
-				lines.push(`${margin}// Continue rules after failing 'maybe'`)
-				i--
-				missGap = true
-				continue
 			}
 			
 			// Update gots after potentially changing block

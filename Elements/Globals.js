@@ -21,9 +21,8 @@ given ? (element) => element !== Void
 select ? (atom) => atom
 change ? (selected) => selected
 
-
-given < (self) => self.continue === false
-given > (self) => self.continue === true
+check < (self) => self.continue === false
+check > (self) => self.continue === true
 keep < (self) => self.continue = false
 keep > (self) => self.continue = true
 

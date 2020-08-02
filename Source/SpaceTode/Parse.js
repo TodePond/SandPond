@@ -648,6 +648,7 @@
 		"keep",
 		"symbol",
 		"select",
+		"check",
 	]
 	
 	EAT.symbolName = EAT.many(EAT.regex(/[^ 	\n]/))
@@ -1324,7 +1325,7 @@
 				if (input == undefined) throw new Error(`[SpaceTode] Unrecognised symbol: ${lhsChar}`)
 				if (output == undefined) throw new Error(`[SpaceTode] Unrecognised symbol: ${rhsChar}`)
 				
-				if (!input.has("origin") && !input.has("given") && !input.has("select")) {
+				if (!input.has("origin") && !input.has("given") && !input.has("select") && !input.has("check")) {
 					throw new Error(`[SpaceTode] Symbol '${lhsChar}' used on left-hand-side of diagram but doesn't have any left-hand-side parts, eg: given`)
 				}
 				

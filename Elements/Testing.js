@@ -1,5 +1,19 @@
 /*SpaceTode`
 
+element Checker {
+	default true
+	check c (self, origin) => Math.random() < 0.1
+	c@c => ._.
+	
+	c => _
+}
+
+`
+
+print(Checker.behaveCode)*/
+
+/*SpaceTode`
+
 element Actioner {
 	default true
 	

@@ -704,8 +704,9 @@ INSTRUCTION.make = (name, generate = () => { throw new Error(`[SpaceTode] The ${
 	
 	RESULT.check = makeNeed({
 		name: "check",
-		type: NEED_TYPE.GLOBAL,
+		type: NEED_TYPE.SYMBOL,
 		needNames: [],
+		isCondition: true,
 		generateGet: (x, y, z, symmetry, symmetryId, id, args) => {
 			const argsInner = args.join(", ")
 			return `check${id}(${argsInner})`

@@ -314,7 +314,11 @@ element _Rabbit {
 	given E (element, atom, self) => element === _Rabbit.Ear && atom.id === self.id
 	change E (self) => new _Rabbit.Ear(self.id)
 	
-	given T (element, atom, self) => element === _Rabbit.Trail && atom.id === self.id
+	given P (element, atom, self) => element === _Rabbit.Projection && atom.id === self.id
+	change P (self) => new _Rabbit.Projection(self.id)
+	
+	given Q (element, atom, self) => element === _Rabbit.Projection.Ear && atom.id === self.id
+	change Q (self) => new _Rabbit.Projection.Ear(self.id)
 	
 	//======//
 	// Init //
@@ -368,128 +372,26 @@ element _Rabbit {
 	//======//
 	// Jump //
 	//======//
-	pour false
-	{
+	action {
 	
+		//
+		// Check that I am full-bodied and ready to move!
 		action @ => <
+		all(xz.swaps) action {
+			E E => . .
+			E@E    .>.
+		}
+		< => .
 		
-		/*default true
-		keep | (self) => print(self.continue)
-		action @ => |*/
-		
-		action {
-			
-			data jumpDistance 0
-			data jumpDirection
-			data jumpBounceTimer 0
-			
-			// Start Jump
-			origin s
-			given s (self) => self.jumpDistance === 0
-			
-			// Jump
-			origin j
-			given j (self) => self.jumpDistance > 0 && self.jumpDistance < 12
-			change j (self) => {
-				self.jumpDistance++
-				self.jumpBounceTimer = 0
-				return self
-			}
-			
-			// First Trail
-			given f (element) => element.state > SOLID
-			select f (x, y, z) => [x, y, z]
-			change f (self, selected) => {
-				self.jumpDirection = [...selected]
-				return new _Rabbit.Trail(self.id, selected, self.distance)
-			}
-			
-			// Trail
-			given t (element, self, x, z) => {
-				if (self.jumpDirection === undefined) return false
-				if (element.state <= SOLID) return false
-				if (self.jumpDirection[0] !== x) return false
-				if (self.jumpDirection[2] !== z) return false
-				return true
-			}
-			select t (x, y, z) => [x, y, z]
-			change t (self, selected) => {
-				return new _Rabbit.Trail(self.id, selected, self.distance)
-			}
-			
-			// Crash
-			given c (element, self, x, z) => {
-				if (self.jumpDirection === undefined) return false
-				if (self.jumpDirection[0] !== x) return false
-				if (self.jumpDirection[2] !== z) return false
-				if (element.state <= SOLID) return true
-				return false
-			}
-			
-			// End Jump
-			given e (self) => self.jumpDistance >= 10
-			keep e (self) => {
-				self.jumpDistance = 0
-				self.jumpDirection = undefined
-				self.jumpBounceTimer = 0
-			}
-			
-			// Bounce
-			origin b
-			given b (self) => self.jumpBounceTimer > 12
-			keep b (self) => (self.jumpBounceTimer++)
-			
-			// Bounce Trail
-			given B (element, atom, self) => element === _Rabbit.Trail && atom.id === self.id
-			select B (atom) => atom
-			change B (self, selected) => {
-				self.jumpDistance = 0
-				self.jumpDirection = undefined
-				self.jumpBounceTimer = 0
-				selected.target[0] = -selected.target[0]
-				selected.target[2] = -selected.target[2]
-				return selected
-			}
-			for(xz.directions) {
-				bB => B@    // Bounce back!
-			}
-			
-			for(xz.directions) {
-				@T => b.        // Wait - when ready to jump
-				//action jT => b. // Wait - during jump // Impossible?
-			}
-			
-			for(xz.directions) {
-				jt => tj       // Continue Jump
-				jc => e.       // Crash
-			}
-			e => e // End Jump
-			
-			
-			//=====
-			action @ => <
-			for(xz.swaps) {
-				action {
-					E E => . .
-					E@E    .>.
-				}
-			}
-			< => >
-			action @ => <
-			//========
-			
-			
-			for(xz.directions) {
-				maybe(0.1) {
-					sf => fj   // Start Jump
-				}
-			}
-			
-			@ => >
-			
+		// Check that I haven't already done a projection
+		all(xz.directions) {
+			@P => ..
 		}
 		
-		< => .
+		// Project my new position
+		for(xz.directions) {
+			@_ => .P
+		}
 	}
 	
 	
@@ -507,8 +409,6 @@ element _Rabbit {
 			E@E => ...
 		}
 		
-		for(xyz.directions) @T => ..
-	
 		// Fall
 		given D (element) => element.state > SOLID
 		select D (atom) => atom
@@ -525,23 +425,33 @@ element _Rabbit {
 	//==============//
 	// Sub-Elements //
 	//==============//
-	element Trail {
+	element Projection {
 		colour "yellow"
 		opacity 0.5
-		prop state EFFECT
-		prop temperature ROOM
+		prop state SOLID
+		prop temperature BODY
+		prop food MEAT
 		data stuck false
 		arg id
-		arg target
 		
-		all(xz.directions) {
-			@E => ..
-			
-			 E =>  .
-			@     .
+		maybe(0.1) @ => _
+		
+		for(xz.directions) {
+			@R => ..
 		}
 		
 		@ => _
+		
+		element Ear {
+			colour "yellow"
+			opacity 0.5
+			prop state SOLID
+			prop temperature BODY
+			prop food MEAT
+			data stuck false
+			arg id
+			
+		}
 	}
 	
 	element Ear {
@@ -552,52 +462,6 @@ element _Rabbit {
 		prop temperature BODY
 		data stuck false
 		arg id
-		data target
-		
-		//===========//
-		// Get Trail //
-		//===========//
-		{
-			action @ => <
-			keep t (self, atom) => self.target = [...atom.target]
-			action all(xz.directions) {
-				@T => >t
-				
-				@  => >
-				 T     t
-			}
-			
-			< => .
-			
-			given t (self) => self.target === undefined
-			t => .
-		}
-		
-		//==============//
-		// Follow Trail //
-		//==============//
-		{
-			given f (element, x, y, z, self) => {
-				if (element.state <= SOLID) return false
-				if (x > 0 && self.target[0] > 0) return true
-				if (x < 0 && self.target[0] < 0) return true
-				if (y > 0 && self.target[1] > 0) return true
-				if (y < 0 && self.target[1] < 0) return true
-				if (z > 0 && self.target[2] > 0) return true
-				if (z < 0 && self.target[2] < 0) return true
-				return false
-			}
-			select f (atom, x, y, z) => [atom, x, y, z]
-			change f (selected, self) => {
-				const [atom, x, y, z] = selected
-				self.target[0] -= x
-				self.target[1] -= y
-				self.target[2] -= z
-				return atom
-			}
-			
-			for(xyz.rotations) @f => f@
-		}
 		
 		
 	}
