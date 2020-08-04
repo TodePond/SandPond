@@ -308,17 +308,21 @@ element _Rabbit {
 	//================//
 	// Global Symbols //
 	//================//
+	// Rabbit
 	given R (element, atom, self) => element === _Rabbit && atom.id === self.id
 	change R (self) => new _Rabbit(self.id)
 	
+	// Rabbit Ears
 	given E (element, atom, self) => element === _Rabbit.Ear && atom.id === self.id
 	change E (self) => new _Rabbit.Ear(self.id)
 	
-	given P (element, atom, self) => element === _Rabbit.Projection && atom.id === self.id
-	change P (self) => new _Rabbit.Projection(self.id)
+	// Stretch
+	given r (element, atom, self) => element === _Rabbit.Stretch && atom.id === self.id
+	change r (self) => new _Rabbit.Stretch(self.id)
 	
-	given Q (element, atom, self) => element === _Rabbit.Projection.Ear && atom.id === self.id
-	change Q (self) => new _Rabbit.Projection.Ear(self.id)
+	// Stretch Ears
+	given e (element, atom, self) => element === _Rabbit.Stretch.Ear && atom.id === self.id
+	change e (self) => new _Rabbit.Stretch.Ear(self.id)
 	
 	//======//
 	// Init //
@@ -342,7 +346,7 @@ element _Rabbit {
 		origin g
 		given g (self) => !self.grown
 		keep g (self) => self.grown = true
-		for(xz.directions) {
+		for(xz.swaps) {
 			_ _    E E
 			_g_ => EgE
 		}
@@ -351,7 +355,12 @@ element _Rabbit {
 	//======//
 	// Fall //
 	//======//
-	for(xz.directions) {
+	data jumpRemaining 0
+	{
+		given j (self) => self.jumpRemaining >= 0
+		keep j (self) => self.jumpRemaining--
+		action j => j
+	
 		given 1 (element) => element.state > SOLID
 		select 1 (atom) => atom
 		change 1 (selected) => selected
@@ -364,105 +373,151 @@ element _Rabbit {
 		select 3 (atom) => atom
 		change 3 (selected) => selected
 	
-		. . => 1 3
-		E@.    E2E
-		123    E@E
+		origin f
+		given f (self) => self.jumpRemaining <= 0
+	
+		for(xz.rotations) {
+			E E => 1 3
+			EfE    E2E
+			123    E@E
+		}
 	}
 	
 	//======//
-	// Jump //
+	// Move //
 	//======//
+	{
+		// If I'm currently stretching, catch up with (or wait for) the stretch
+		given g (element, atom, self) => element === _Rabbit.Stretch && atom.id === self.id && atom.grown
+		for(xz.rotations) {
+			 g =>  @
+			@     _
+			
+			 r     .
+			@  => >
+		}
+	}
+		
+	action @ => <
 	action {
-	
-		//
-		// Check that I am full-bodied and ready to move!
-		action @ => <
-		all(xz.swaps) action {
-			E E => . .
-			E@E    .>.
-		}
-		< => .
 		
-		// Check that I haven't already done a projection
-		all(xz.directions) {
-			@P => ..
+		// Check I have all my body parts (:
+		all(xz.rotations) action {
+			E E    . .
+			E@E => .>.
 		}
+		< => >
 		
-		// Project my new position
-		for(xz.directions) {
-			@_ => .P
+		// Start a new stretch
+		change n (self, transformationNumber) => {
+			let t = transformationNumber + 1
+			if (t > 3) t -= 4
+			self.jumpRemaining = 5
+			return new _Rabbit.Stretch(self.id, t)
+		}
+		for(xz.rotations) {
+			 _     n
+			@  => @
 		}
 	}
-	
-	
-	//======//
-	// Turn //
-	//======//
-	
+	< => .
 	
 	//=========//
 	// Injured //
 	//=========//
 	{
-		for(xz.swaps) {
-			E E    . .
-			E@E => ...
+		/*given m (element, atom, self) => (element === _Rabbit.Stretch.Ear || element === _Rabbit.Ear) && atom.id === self.id
+		for(xz.rotations) {
+			m m    . .
+			m@m => ...
+			
+			 r     .
+			@  => .
+			
+			@e => ..
 		}
 		
 		// Fall
-		given D (element) => element.state > SOLID
-		select D (atom) => atom
-		change D (selected) => selected
-		@ => D
-		D    @
+		given I (element) => element.state > SOLID
+		select I (atom) => atom
+		change I (selected) => selected
+		@ => I
+		I    @
 		
 		// Move
-		any(xz.directions) {
-			@D => D@
-		}
+		any(xz.rotations) {
+			@I => I@
+		}*/
 	}
 	
 	//==============//
 	// Sub-Elements //
 	//==============//
-	element Projection {
+	element Ear {
+		category "Life"
+		colour "white"
+		emissive "grey"
+		prop state SOLID
+		prop temperature BODY
+		data stuck false
+		arg id
+		arg part
+		
+		// Catch up with my stretch
+		given g (element, atom, self) => element === _Rabbit.Stretch.Ear && atom.id === self.id
+		for(xz.rotations) {
+			 g     @
+			@  => _
+		}
+	}
+	
+	element Stretch {
 		colour "yellow"
+		//emissive "blue"
+		//colour "pink"
+		//emissive "purple"
 		opacity 0.5
 		prop state SOLID
 		prop temperature BODY
 		prop food MEAT
 		data stuck false
 		arg id
-		
-		maybe(0.1) @ => _
-		
-		for(xz.directions) {
-			@R => ..
+		arg transformationNumber
+
+		{
+			data grown false
+			origin g
+			given g (self, transformationNumber) => !self.grown && self.transformationNumber === transformationNumber
+			keep g (self) => self.grown = true
+			for(xz.rotations) {
+				_ _    e e
+				_g_ => ege
+			}
+			
+			origin G
+			given G (self) => self.grown
+			given m (element, atom, self) => (element === _Rabbit.Stretch.Ear || element === _Rabbit.Ear) && atom.id === self.id
+			for(xz.rotations) {
+				m m    . .
+				mGm => ...
+			}
+			
+			@ => _
 		}
-		
-		@ => _
 		
 		element Ear {
 			colour "yellow"
+			//emissive "blue"
+			//colour "pink"
+			//emissive "purple"
 			opacity 0.5
 			prop state SOLID
 			prop temperature BODY
-			prop food MEAT
 			data stuck false
 			arg id
+			arg part
 			
 		}
-	}
-	
-	element Ear {
-		category "Life"
-		colour "grey"
-		emissive "black"
-		prop state SOLID
-		prop temperature BODY
-		data stuck false
-		arg id
-		
 		
 	}
 	

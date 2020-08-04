@@ -3,7 +3,7 @@ SpaceTode`
 origin @
 change @ (self) => self
 
-given ! (atom, self) => atom !== self
+given ! (origin, self) => origin.atom !== self
 
 symbol _ Empty
 symbol x Void
