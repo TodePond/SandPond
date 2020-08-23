@@ -226,7 +226,7 @@ else if (RANDOM === "firing") {
 	
 	const ids = new Uint32Array(eventCount)
 	
-	const ewCount = 20
+	/*const ewCount = 20
 	const ews = []
 	
 	const ewgeo = new THREE.BoxGeometry(0.95 * ATOM_SIZE, 0.95 * ATOM_SIZE, 0.95 * ATOM_SIZE)
@@ -261,7 +261,7 @@ else if (RANDOM === "firing") {
 		requestAnimationFrame(posEw)
 	}
 	
-	requestAnimationFrame(posEw)
+	requestAnimationFrame(posEw)*/
 	
 	on.process(() => {
 		if (paused === true) {
