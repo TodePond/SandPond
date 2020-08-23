@@ -1,7 +1,6 @@
 # SandPond
 SandPond is an engine for atoms that follow spatial rules.<br>
 Try it out at [www.sandpond.cool](http://www.sandpond.cool).<br>
-The latest version with experimental stuff is at [dev.sandpond.cool](https://dev.sandpond.cool).<br>
 It is heavily inspired by Dave Ackley's [T2Tile Project](https://t2tile.org/).
 
 For more info, check out my [videos](https://www.youtube.com/playlist?list=PL9uRa69RF-7wastqKWXT4d9F84BAzfVd4).<br>
@@ -22,8 +21,8 @@ Try it out at [www.sandpond.cool](http://www.sandpond.cool).<br>
 Or [download](https://github.com/l2wilson94/SandPond/archive/master.zip) it and open `index.html` in a browser.<br>
 
 ## Make your own element
-1. Write some TodeSplat using the `TodeSplat` function.<br>
+1. Write some SpaceTode using the `SpaceTode` function.<br>
 Let me know if you want any help! :)
 
-To learn more, check out the [TodeSplat Documentation](https://github.com/l2wilson94/SandPond/wiki/TodeSplat-Documentation) on the [wiki](https://github.com/l2wilson94/SandPond/wiki/).<br>
-Or check out the examples in the [Elements](https://github.com/l2wilson94/SandPond/tree/master/Elements) folder.
+To learn more, check out the [SpaceTode Documentation](https://github.com/l2wilson94/SandPond/wiki/SpaceTode-Documentation) on the [wiki](https://github.com/l2wilson94/SandPond/wiki/).<br>
+Or check out the examples in the [Elements](https://github.com/l2wilson94/SandPond/tree/main/Elements) folder.
