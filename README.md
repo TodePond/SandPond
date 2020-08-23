@@ -16,7 +16,7 @@ The `@` represents the atom.<br>
 The `_` represents an empty space.<br>
 So... the rule makes the atom fall down if there's an empty space below it.<br>
 
-## Getting Started
+## Try it out
 Try it out at [www.sandpond.cool](http://www.sandpond.cool).<br>
 Or [download](https://github.com/l2wilson94/SandPond/archive/master.zip) it and open `index.html` in a browser.<br>
 
