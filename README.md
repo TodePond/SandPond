@@ -21,8 +21,7 @@ Try it out at [www.sandpond.cool](http://www.sandpond.cool).<br>
 Or [download](https://github.com/l2wilson94/SandPond/archive/master.zip) it and open `index.html` in a browser.<br>
 
 ## Make your own element
-1. Write some SpaceTode using the `SpaceTode` function.<br>
-Let me know if you want any help! :) 
-
+Elements are written in the [SpaceTode language](https://github.com/l2wilson94/SpaceTode).<br>
+[This guide](Making-your-first-element) shows you how to make your first element.<br>
 To learn more, check out the [SpaceTode Documentation](https://github.com/l2wilson94/SandPond/wiki/SpaceTode-Documentation) on the [wiki](https://github.com/l2wilson94/SandPond/wiki/).<br>
 Or check out the examples in the [Elements](https://github.com/l2wilson94/SandPond/tree/main/Source/Elements) folder.
