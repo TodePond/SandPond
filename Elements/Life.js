@@ -305,6 +305,8 @@ element _Rabbit {
 	data interest 0.0
 	data energy 0.6
 	
+	default true
+	
 	//================//
 	// Global Symbols //
 	//================//
@@ -353,37 +355,6 @@ element _Rabbit {
 	}
 	
 	//======//
-	// Fall //
-	//======//
-	data jumpRemaining 0
-	{
-		given j (self) => self.jumpRemaining >= 0
-		keep j (self) => self.jumpRemaining--
-		action j => j
-	
-		given 1 (element) => element.state > SOLID
-		select 1 (atom) => atom
-		change 1 (selected) => selected
-		
-		given 2 (element) => element.state > SOLID
-		select 2 (atom) => atom
-		change 2 (selected) => selected
-		
-		given 3 (element) => element.state > SOLID
-		select 3 (atom) => atom
-		change 3 (selected) => selected
-	
-		origin f
-		given f (self) => self.jumpRemaining <= 0
-	
-		for(xz.rotations) {
-			E E => 1 3
-			EfE    E2E
-			123    E@E
-		}
-	}
-	
-	//======//
 	// Move //
 	//======//
 	{
@@ -422,11 +393,42 @@ element _Rabbit {
 	}
 	< => .
 	
+	//======//
+	// Fall //
+	//======//
+	data jumpRemaining 0
+	{
+		given j (self) => self.jumpRemaining >= 0
+		keep j (self) => self.jumpRemaining--
+		action j => j
+	
+		given 1 (element) => element.state > SOLID
+		select 1 (atom) => atom
+		change 1 (selected) => selected
+		
+		given 2 (element) => element.state > SOLID
+		select 2 (atom) => atom
+		change 2 (selected) => selected
+		
+		given 3 (element) => element.state > SOLID
+		select 3 (atom) => atom
+		change 3 (selected) => selected
+	
+		origin f
+		given f (self) => self.jumpRemaining <= 0
+	
+		for(xz.rotations) {
+			E E => 1 3
+			EfE    E2E
+			123    E@E
+		}
+	}
+	
 	//=========//
 	// Injured //
 	//=========//
 	{
-		/*given m (element, atom, self) => (element === _Rabbit.Stretch.Ear || element === _Rabbit.Ear) && atom.id === self.id
+		given m (element, atom, self) => (element === _Rabbit.Stretch.Ear || element === _Rabbit.Ear) && atom.id === self.id
 		for(xz.rotations) {
 			m m    . .
 			m@m => ...
@@ -447,7 +449,7 @@ element _Rabbit {
 		// Move
 		any(xz.rotations) {
 			@I => I@
-		}*/
+		}
 	}
 	
 	//==============//
