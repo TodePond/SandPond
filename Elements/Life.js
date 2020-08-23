@@ -305,8 +305,6 @@ element _Rabbit {
 	data interest 0.0
 	data energy 0.6
 	
-	default true
-	
 	//================//
 	// Global Symbols //
 	//================//
