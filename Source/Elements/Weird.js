@@ -21,13 +21,7 @@ element Glooper {
 		}
 	}
 	action @ => c
-	
-	action @ => <
-	for(xyz.directions) {
-		action @$ => >.
-	}
-	< => .
-	
+		
 	keep u (self, time) => {
 		self.direction = "up"
 		self.directionTime = time
@@ -65,6 +59,14 @@ element Glooper {
 		@  => _
 		_$    @.
 	}
+	
+	default true
+	
+	action @ => <
+	for(xyz.directions) {
+		action @$ => >.
+	}
+	< => _
 	
 	given d (self, element) => element === Empty && self.direction == "down"
 	maybe(0.2) {
