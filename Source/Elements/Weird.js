@@ -22,6 +22,30 @@ element Glooper {
 	}
 	action @ => c
 	
+	action @ => <
+	for(xyz.directions) {
+		action @$ => >.
+	}
+	< => .
+	
+	keep u (self, time) => {
+		self.direction = "up"
+		self.directionTime = time
+	}
+	action {
+		@ => u
+		x    .
+	}
+	
+	keep d (self, time) => {
+		self.direction = "down"
+		self.directionTime = time
+	}
+	action {
+		x    .
+		@ => d
+	}
+	
 	given D (Self, element, self, atom) => {
 		return Self === element && self.directionTime < atom.directionTime
 	}
