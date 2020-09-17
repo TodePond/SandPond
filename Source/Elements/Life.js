@@ -378,15 +378,17 @@ element _Rabbit {
 		< => >
 		
 		// Start a new stretch
+		given n (element, self) => element === Empty && self.jumpRemaining > 0
 		change n (self, transformationNumber) => {
 			let t = transformationNumber + 1
 			if (t > 3) t -= 4
-			self.jumpRemaining = 5
+			self.jumpRemaining--
+			//self.jumpRemaining = 5
 			return new _Rabbit.Stretch(self.id, t)
 		}
 		for(xz.rotations) {
-			 _     n
-			@  => @
+			 n     n
+			@  => <
 		}
 	}
 	< => .
@@ -394,11 +396,11 @@ element _Rabbit {
 	//======//
 	// Fall //
 	//======//
-	data jumpRemaining 0
+	data jumpRemaining 10
 	{
-		given j (self) => self.jumpRemaining >= 0
+		/*given j (self) => self.jumpRemaining >= 0
 		keep j (self) => self.jumpRemaining--
-		action j => j
+		action j => j*/
 	
 		given 1 (element) => element.state > SOLID
 		select 1 (atom) => atom

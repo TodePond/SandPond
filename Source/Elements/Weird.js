@@ -60,8 +60,6 @@ element Glooper {
 		_$    @.
 	}
 	
-	default true
-	
 	action @ => <
 	for(xyz.directions) {
 		action @$ => >.
