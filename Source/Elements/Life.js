@@ -366,7 +366,7 @@ element _Rabbit {
 			@  => >
 		}
 	}
-		
+	//default true
 	action @ => <
 	action {
 		
@@ -378,11 +378,17 @@ element _Rabbit {
 		< => >
 		
 		// Start a new stretch
-		given n (element, self) => element === Empty && self.jumpRemaining > 0
+		given n (element, self) => {
+			self.jumpRemaining--
+			if (element === Empty && self.jumpRemaining >= 0) {
+				return true
+			}
+			return false
+		}
 		change n (self, transformationNumber) => {
 			let t = transformationNumber + 1
 			if (t > 3) t -= 4
-			self.jumpRemaining--
+			//self.jumpRemaining--
 			//self.jumpRemaining = 5
 			return new _Rabbit.Stretch(self.id, t)
 		}
@@ -398,10 +404,6 @@ element _Rabbit {
 	//======//
 	data jumpRemaining 10
 	{
-		/*given j (self) => self.jumpRemaining >= 0
-		keep j (self) => self.jumpRemaining--
-		action j => j*/
-	
 		given 1 (element) => element.state > SOLID
 		select 1 (atom) => atom
 		change 1 (selected) => selected
