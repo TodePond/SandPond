@@ -353,6 +353,30 @@ element _Rabbit {
 	}
 	
 	//======//
+	// Land //
+	//======//
+	{
+		
+		given L (element) => element.state <= SOLID
+		keep l (self) => self.jumpRemaining = 10
+		
+		action {
+			@ => l
+			L    .
+		}
+		
+		for(xz.directions) action {
+			E@ => .l
+			L     .
+		}
+		
+		for(xz.directions) action {
+			@E => l.
+			 L     .
+		}
+	}
+	
+	//======//
 	// Move //
 	//======//
 	{
@@ -366,6 +390,7 @@ element _Rabbit {
 			@  => >
 		}
 	}
+	
 	//default true
 	action @ => <
 	action {
@@ -402,7 +427,7 @@ element _Rabbit {
 	//======//
 	// Fall //
 	//======//
-	data jumpRemaining 10
+	data jumpRemaining 0
 	{
 		given 1 (element) => element.state > SOLID
 		select 1 (atom) => atom
@@ -476,11 +501,11 @@ element _Rabbit {
 	}
 	
 	element Stretch {
-		colour "yellow"
-		//emissive "blue"
+		colour "white"
+		emissive "grey"
 		//colour "pink"
 		//emissive "purple"
-		opacity 0.5
+		//opacity 0.5
 		prop state SOLID
 		prop temperature BODY
 		prop food MEAT
@@ -510,11 +535,11 @@ element _Rabbit {
 		}
 		
 		element Ear {
-			colour "yellow"
-			//emissive "blue"
+			colour "white"
+			emissive "grey"
 			//colour "pink"
 			//emissive "purple"
-			opacity 0.5
+			//opacity 0.5
 			prop state SOLID
 			prop temperature BODY
 			data stuck false
