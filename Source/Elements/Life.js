@@ -358,21 +358,26 @@ element _Rabbit {
 	{
 		
 		given L (element) => element.state <= SOLID
-		keep l (self) => self.jumpRemaining = 10
-		
-		action {
-			@ => l
-			L    .
+		keep l (self) => {
+			self.jumpRemaining = 5
+			self.jumpDirection = undefined
 		}
 		
-		for(xz.directions) action {
-			E@ => .l
-			L     .
-		}
-		
-		for(xz.directions) action {
-			@E => l.
-			 L     .
+		maybe(1/25) {
+			action {
+				@ => l
+				L    .
+			}
+			
+			for(xz.directions) action {
+				E@ => .l
+				L     .
+			}
+			
+			for(xz.directions) action {
+				@E => l.
+				 L     .
+			}
 		}
 	}
 	
@@ -391,7 +396,6 @@ element _Rabbit {
 		}
 	}
 	
-	//default true
 	action @ => <
 	action {
 		
@@ -403,7 +407,14 @@ element _Rabbit {
 		< => >
 		
 		// Start a new stretch
-		given n (element, self) => {
+		given n (element, self, transformationNumber) => {
+			if (self.jumpDirection === undefined) {
+				self.jumpDirection = transformationNumber
+			}
+			else if (transformationNumber == self.jumpDirection) {
+			
+			}
+			else return false
 			self.jumpRemaining--
 			if (element === Empty && self.jumpRemaining >= 0) {
 				return true
@@ -428,6 +439,7 @@ element _Rabbit {
 	// Fall //
 	//======//
 	data jumpRemaining 0
+	data jumpDirection
 	{
 		given 1 (element) => element.state > SOLID
 		select 1 (atom) => atom

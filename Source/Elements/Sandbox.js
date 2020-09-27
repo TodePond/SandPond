@@ -233,26 +233,6 @@ element Meteor {
 	mimic(Sticky)
 }
 
-element Explosion any(xyz.directions) {
-	colour "darkorange"
-	emissive "red"
-	opacity 0.3
-	category "Sandbox"
-	prop temperature HOT
-	prop state EFFECT
-	arg timer 20
-	
-	keep t (self) => self.timer--
-	action @ => t
-	
-	given t (self) => self.timer <= 0
-	t => _
-	
-	change E (self, selfElement) => new selfElement(self.timer)
-	@. => .E
-	
-}
-
 element Laser {
 	colour "red"
 	opacity 0.2

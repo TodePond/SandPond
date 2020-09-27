@@ -44,6 +44,7 @@ const SPACE = {}
 		WORLD.setSpaceOpacity(_world, space, atom.opacity)
 		WORLD.setSpaceColour(_world, space, atom.colour, atom.emissive)
 	}
+
 	
 	const updateAppearanceNoShadow = (space, _world = world) => {
 		const atom = space.atom
