@@ -59,6 +59,57 @@ element Digger {
 	@? => ?@
 	
 }
+
+element Cool1 {
+	category "Video"
+	
+	
+	_@ => @_
+	 x     .
+	
+	 _ =>  @
+	x@    ._
+	
+	@  => _
+	 _     @
+	
+}
+
+element Cool2 {
+	category "Video"
+	
+	_@_ => $_$
+	
+	pov(top) {
+		_    $
+		@ => _
+		_    $
+	}
+	
+	@ => _
+	_    _
+	_    @
+	
+}
+
+element Cool3 {
+	category "Video"
+	
+	any(xyz.rotations) {
+		...    $$$
+		.@. => ___
+		 x      .
+	}
+	
+	_    @
+	@ => $
+	$    _
+	
+	@ => _
+	_    @
+	
+}
+
 `
 
 /*SpaceTode`
