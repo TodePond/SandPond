@@ -3,7 +3,7 @@ SpaceTode`
 element Glooper {
 
 	colour "rgb(110, 120, 200)"
-	category "Weird"
+	category "T2Tile"
 	
 	arg direction "down"
 	arg directionTime 0
@@ -86,14 +86,15 @@ element Glooper {
 		@  => _
 	}
 	
-	
-	
 }
 
 element AntiGlooper {
 	
 	colour "rgb(200, 120, 110)"
-	category "Weird"
+	category "T2Tile"
+	
+	arg direction "down"
+	arg directionTime 0
 	
 	symbol G Glooper
 	symbol E Eater
@@ -106,10 +107,10 @@ element AntiGlooper {
 	
 }
 
-element Gridder {
+element GloopGridder {
 	
 	colour "rgb(50, 150, 50)"
-	category "Weird"
+	category "T2Tile"
 	
 	arg timer 300
 	symbol S Glooper
@@ -134,7 +135,7 @@ element UpSignal {
 		atom.direction = "up"
 		atom.directionTime = time
 	}
-	category "Weird"
+	category "T2Tile"
 	
 	@ => _
 	_    @
@@ -153,7 +154,7 @@ element DownSignal {
 		atom.direction = "down"
 		atom.directionTime = time
 	}
-	category "Weird"
+	category "T2Tile"
 	
 	@ => _
 	_    @

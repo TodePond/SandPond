@@ -13,6 +13,7 @@ given . (element) => element !== Void
 keep .
 
 given # (element) => element !== Empty && element !== Void
+keep #
 
 given $ (element, Self) => element === Self
 change $ (Self) => new Self()

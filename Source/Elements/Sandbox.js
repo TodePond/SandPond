@@ -186,53 +186,6 @@ element Lava {
 	
 }
 
-// TODO: implement direction and make it an arg
-// needs quite a lot of work - need firstclass directions in the SpaceTode language, similar to symmetries
-element Meteor {
-	colour "#781a00"
-	emissive "black"
-	category "Sandbox"
-	prop state SOLID
-	prop temperature WARM
-	data stuck false
-	prop states () => ({
-		[COLD]: Rock,
-		[CHILLY]: Rock,
-		[COOL]: [Rock, 0.4],
-	})
-	
-	mimic(Temperature)
-	
-	change F () => new Fire()
-	action {
-		 _ => F
-		@    .
-	}
-	
-	given F (element) => element === Fire
-	 @  => _
-	F     @ 
-	
-	given E (element) => element === Explosion
-	 @  => _
-	E     .
-	
-	given D (element) => element.state > SOLID
-	select D (atom) => atom
-	change D (selected) => selected
-	 @  => D
-	D     @
-	
-	given M (element, selfElement, atom) => element === selfElement || atom.stuck === false
-	 @ => .
-	M    .
-	
-	change E () => new Explosion(35)
-	@ => E
-	
-	mimic(Sticky)
-}
-
 element Laser {
 	colour "red"
 	opacity 0.2
@@ -332,10 +285,16 @@ element Cloud any(xz.rotations) {
 	
 }
 
+element Static {
+	prop state SOLID
+	prop temperature ROOM
+	category "Structure"
+}
+
 element Wall {
 	colour "rgb(128, 128, 128)"
 	emissive "rgb(2, 128, 200)"
-	category "Sandbox"
+	category "Structure"
 	prop state SOLID
 	prop temperature ROOM
 	arg fuel 10
@@ -378,12 +337,6 @@ element Wall {
 		@    _
 	}
 	
-}
-
-element Static {
-	prop state SOLID
-	prop temperature ROOM
-	category "Sandbox"
 }
 
 `

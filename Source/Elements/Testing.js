@@ -1,3 +1,66 @@
+SpaceTode`
+
+element Stayer {
+	category "Video"
+	@ => @
+	
+}
+
+
+element Faller {
+	category "Video"
+	
+	@ => _
+	_    @
+	
+}
+
+
+element Copier {
+	category "Video"
+
+	.    @
+	@ => .
+
+}
+
+element Flier {
+	category "Video"
+
+	_@ => @_
+
+	x@ => ._
+	
+}
+
+element Jumper {
+	category "Video"
+
+	@ => _
+	_    @
+	
+	 _     @
+	@  => _
+	#     .
+
+}
+
+element Stairs {
+	category "Video"
+	category "Structure"
+	
+	_     $
+	@$ => ..
+}
+
+element Digger {
+	category "Video"
+	
+	@? => ?@
+	
+}
+`
+
 /*SpaceTode`
 
 element Checker {
