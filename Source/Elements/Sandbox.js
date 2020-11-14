@@ -339,4 +339,47 @@ element Wall {
 	
 }
 
+element Cardboard {
+	colour "brown"
+	//default true
+	category "Structure"
+	prop state SOLID
+	prop temperature ROOM
+	arg id
+	arg ready false
+	
+	given S (element) => element.state > SOLID
+	select S (atom) => atom
+	change S (selected) => selected
+	
+	given i (self) => self.id === undefined
+	keep i (self) => self.id = Cardboard.id
+	action i => i
+	
+	given R (self) => !self.ready && !Mouse.down
+	keep R (self) => self.ready = true
+	action R => R
+	
+	
+	given r (self) => !self.ready
+	r => .
+	
+	for(xz.rotations) {
+		$     .
+		 @ =>  .
+	}
+	
+	any(xz.rotations) {
+		@ => S
+		S    @
+	}
+}
+
 `
+
+on.mousedown(e => {
+	if (UI.selectedElement === Cardboard) {
+		if (e.buttons !== 1) return
+		Cardboard.id = Math.random()
+	}
+})

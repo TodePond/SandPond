@@ -369,4 +369,40 @@ element RainbowRabbit {
 	}
 }
 
+element Pulse {
+	category "T2Tile"
+	//default true
+	colour "brown"
+	
+	symbol H Pulse.Head
+	symbol T Pulse.Tail
+	
+	___    HHH
+	_@_ => HTH
+	___    HHH
+	
+	@ => _
+	
+	element Head {
+		colour "brown"
+		
+		any(xy.directions) {
+			H     .
+			@_ => T@
+			H     .
+		}
+	}
+	
+	element Tail {
+		colour "grey"
+		emissive "black"
+		
+		given n (element) => element !== Pulse.Head && element !== Pulse.Tail && element !== Pulse
+		
+		all(xy.directions) {
+			@n => _.
+		}
+	}
+}
+  
 `

@@ -1,11 +1,15 @@
 SpaceTode`
 
+
+
+
+
 element Stayer {
 	category "Video"
+	
 	@ => @
 	
 }
-
 
 element Faller {
 	category "Video"
@@ -65,10 +69,10 @@ element Cool1 {
 	
 	
 	_@ => @_
-	 x     .
+	 *     .
 	
 	 _ =>  @
-	x@    ._
+	*@    ._
 	
 	@  => _
 	 _     @
@@ -98,7 +102,7 @@ element Cool3 {
 	any(xyz.rotations) {
 		...    $$$
 		.@. => ___
-		 x      .
+		 *      .
 	}
 	
 	_    @
