@@ -18,7 +18,8 @@ const FIRING_MODE = urlParams.has("firing")
 const MEDIUM_MODE = urlParams.has("medium")
 const RIDICULOUS_MODE = urlParams.has("ridiculous")
 
-const RANDOM = SHUFFLE_MODE? "shuffle" : (PURE_RANDOM_MODE? "pure" : (FIRING_MODE? "firing" : "track"))
+const DEFAULT_RANDOMNESS_MODE = "track"
+const RANDOM = SHUFFLE_MODE? "shuffle" : (PURE_RANDOM_MODE? "pure" : (FIRING_MODE? "firing" : DEFAULT_RANDOMNESS_MODE))
 
 const FLOOR_TYPE = urlParams.has("nofloor")? "nofloor" : "floor"
 

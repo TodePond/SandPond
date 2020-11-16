@@ -404,5 +404,42 @@ element Pulse {
 		}
 	}
 }
+
+element Gravifull {
+	category "T2Tile"
+	colour "pink"
+	emissive "red"
+	//default true
+	
+	for(xyz.directions) @_ => .$
+	
+	symbol W Gravifull.Worker
+	symbol B Gravifull.Builder
+	@ => B
+	
+	element Builder {
+		colour "pink"
+		emissive "red"
+		arg timer 1.0
+		
+		keep t (self, origin) => {
+			if (self.timer > 0) {
+				self.timer -= 0.01
+				if (self.timer < 0) self.timer = 0
+				self.opacity = Math.floor(255 * self.timer)
+				SPACE.update(origin)
+			}
+		}
+		action @ => t
+		
+		given t (self) => self.timer <= 0
+		t => W
+	}
+	
+	element Worker {
+		visible false
+	}
+	
+}
   
 `
