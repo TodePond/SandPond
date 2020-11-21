@@ -261,6 +261,98 @@ element SwapWall {
 	
 }
 
+element SwapWallUp {
+	colour "brown"
+	category "T2Tile"
+	arg timer 0
+	
+	given W (element) => element === SwapWallUp
+	change W (self) => new SwapWallUp(self.timer)
+	change w (self) => new SwapWallUp(self.timer + 1)
+	
+	given D (element) => element === SwapWallUp.Done
+	change D (self) => new SwapWallUp.Done(self.timer)
+	
+	given E (element) => element === SwapWallUp.Egg
+	change E (self) => new SwapWallUp.Egg(self.timer)
+	
+	pov(top) {
+	
+		for(xz.directions) {
+			_ => w
+			@    .
+		}
+		
+		for(xz.directions) {
+			x => .
+			@    E
+			
+			E => .
+			@    E
+			
+			D => .
+			@    E
+		}
+		
+		given O (element) => element !== SwapWallUp
+		for(xz.directions) {
+			O => .
+			@    D
+		}
+	}
+		
+	element Egg pov(top) {
+		colour "lightgreen"
+		emissive "green"
+		arg timer 0
+		
+		given t (self) => self.timer-- > 0
+		t => .
+		
+		for(xz.directions) {
+			W    .
+			@ => .
+		}
+		
+		@ => D
+	}
+	
+	element Done {
+		colour "grey"
+		emissive "black"
+		arg timer 0
+		
+		for(xz) {
+			 @ =>  .
+			D     .
+			
+			 @ =>  .
+			W     .
+			
+			E     .
+			 @ =>  .
+			
+			W@ => ..
+			
+			E@ => ..
+		}
+		
+		D    @
+		@ => _
+		
+		W    @
+		@ => _
+		
+		x    .
+		@ => _
+		
+		?    @
+		@ => ?
+	}
+	
+}
+
+
 element RainbowRabbit {
 	colour "white"
 	emissive "grey"
@@ -415,15 +507,15 @@ element Gravifull {
 	symbol B Gravifull.Builder
 	
 	// The "No Cheating" Method
-	/*for(xyz.directions) @_ => .$
-	@ => B*/
+	for(xyz.directions) @_ => .$
+	@ => B
 	
 	// The "Cheating" Method
-	behave () => {
+	/*behave () => {
 		for (const space of spaces) {
 			SPACE.set(space, new Gravifull.Worker(), Gravifull.Worker) 
 		}
-	}
+	}*/
 	
 	element Builder {
 		colour "pink"
