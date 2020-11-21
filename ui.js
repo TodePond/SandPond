@@ -290,6 +290,11 @@ UIstarted = true
 						<div id="singlePourOption" class="pourOption dynamic option box clickable"><div class="label">Single</div></div>
 					</section>
 					<section>
+						<div class="miniTitle">OVERRIDE</div>
+						<div id="falseOverrideOption" class="overrideOption dynamic option box clickable"><div class="label">False</div></div>
+						<div id="trueOverrideOption" class="overrideOption dynamic option box clickable"><div class="label">True</div></div>
+					</section>
+					<section>
 						<div class="miniTitle">ARGS</div>
 						<input class="clickable" type="text" id="argsBar" value="">
 					</section>
@@ -494,6 +499,20 @@ UIstarted = true
 	$$(".pourOption").on.click(function(){
 		DROPPER_POUR = this.id.slice(0, -"PourOption".length)
 		updateDropperPour()
+	})
+	
+	const updateDropperOverride = () => {
+		$$(`.overrideOption`).forEach(e => {
+			e.classList.remove("selected")
+			e.classList.remove("selectedYellow")
+		})
+		$(`#${DROPPER_OVERRIDE}OverrideOption`).classList.add("selected")
+	}
+	updateDropperOverride()
+	
+	$$(".overrideOption").on.click(function(){
+		DROPPER_OVERRIDE = this.id.slice(0, -"OverrideOption".length)
+		updateDropperOverride()
 	})
 	
 	$("#dropperSizeSlider").on.input(e => {

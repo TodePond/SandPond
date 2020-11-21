@@ -70,4 +70,6 @@ const SPACE = {}
 		SPACE.updateAppearance(space)
 	}
 	
+	SPACE.set = SPACE.setAtom
+	
 }

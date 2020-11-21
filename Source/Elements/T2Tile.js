@@ -411,26 +411,35 @@ element Gravifull {
 	emissive "red"
 	//default true
 	
-	for(xyz.directions) @_ => .$
-	
 	symbol W Gravifull.Worker
 	symbol B Gravifull.Builder
-	@ => B
+	
+	// The "No Cheating" Method
+	/*for(xyz.directions) @_ => .$
+	@ => B*/
+	
+	// The "Cheating" Method
+	behave () => {
+		for (const space of spaces) {
+			SPACE.set(space, new Gravifull.Worker(), Gravifull.Worker) 
+		}
+	}
 	
 	element Builder {
 		colour "pink"
 		emissive "red"
 		arg timer 1.0
 		
-		keep t (self, origin) => {
-			if (self.timer > 0) {
-				self.timer -= 0.01
-				if (self.timer < 0) self.timer = 0
-				self.opacity = Math.floor(255 * self.timer)
+		keep t (atom, origin) => {
+			if (atom.timer > 0) {
+				atom.timer -= 0.5
+				if (atom.timer < 0) atom.timer = 0
+				atom.opacity = Math.floor(255 * atom.timer)
 				SPACE.update(origin)
 			}
 		}
 		action @ => t
+		action any(xyz.directions) @$ => tt
 		
 		given t (self) => self.timer <= 0
 		t => W
@@ -438,8 +447,85 @@ element Gravifull {
 	
 	element Worker {
 		visible false
+		
+		behave (sites, origin, Self) => {
+			//print(sites)
+			for (const site of sites) {
+				const element = site.element
+				if (element === Sandee) {
+					const sandSites = site.sites
+					const spaceBelow = sandSites[17]
+					const elBelow = spaceBelow.element
+					if (elBelow === Gravifull.Worker || elBelow === Wateree) {
+						const atomBelow = spaceBelow.atom
+						SPACE.set(spaceBelow, site.atom, Sandee)
+						SPACE.set(site, atomBelow, elBelow)
+					}
+					else {
+						const rando = Math.floor(Math.random() * 4)
+						const slidesn = [18, 16, 55, 54][rando]
+						const spaceSlide = sandSites[slidesn]
+						const elSlide = spaceSlide.element
+						if (elSlide === Gravifull.Worker || elSlide === Wateree) {
+							const atomSlide = spaceSlide.atom
+							SPACE.set(spaceSlide, site.atom, Sandee)
+							SPACE.set(site, atomSlide, elSlide)
+						}
+					}
+				}
+				else if (element === Wateree) {
+					const sandSites = site.sites
+					const spaceBelow = sandSites[17]
+					const elBelow = spaceBelow.element
+					if (elBelow === Void) continue
+					if (elBelow === Gravifull.Worker) {
+						const atomBelow = spaceBelow.atom
+						SPACE.set(spaceBelow, site.atom, Wateree)
+						SPACE.set(site, atomBelow, Gravifull.Worker)
+					}
+					else {
+						const rando = Math.floor(Math.random() * 4)
+						const slidesn = [13, 11, 32, 37][rando]
+						const spaceSlide = sandSites[slidesn]
+						const elSlide = spaceSlide.element
+						if (elSlide === Gravifull.Worker) {
+							const atomSlide = spaceSlide.atom
+							SPACE.set(spaceSlide, site.atom, Wateree)
+							SPACE.set(site, atomSlide, Gravifull.Worker)
+						}
+					}
+				}
+			}
+		}
 	}
 	
 }
+
+element Sandee {
+	colour "#ffcc00"
+	emissive "#ffa34d"
+	category "T2Tile"
+	prop state SOLID
+	prop temperature ROOM
+	
+	mimic(Gravifull.Worker)
+}
+
+element Wateree {
+	colour "lightblue"
+	emissive "blue"
+	opacity 0.35
+	category "T2Tile"
+	prop state LIQUID
+	prop temperature COOL
+	
+	mimic(Gravifull.Worker)
+}
+
+ 
   
 `
+
+
+
+//DROPPER_OVERRIDE = true

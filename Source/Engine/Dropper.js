@@ -15,6 +15,8 @@ let DROPPER_ARGS_NEEDS_EVAL = false
 let DROPPER_ARGS_SOURCE = ""
 let DROPPER_ARGS = []
 
+let DROPPER_OVERRIDE = false
+
 {
 
 	//===========//
@@ -228,7 +230,7 @@ let DROPPER_ARGS = []
 			if (justShow) dropperShadow[shadowNumber].visible = false
 			return
 		}
-		if ((!D2_MODE && !D1_MODE) && space.atom.element != Empty) {
+		if ((!D2_MODE && !D1_MODE && !DROPPER_OVERRIDE) && space.atom.element != Empty) {
 			if (atomType != space.atom.element) return dropAtom(x, y, z, yOffset + 1, justShow, shadowNumber)
 		}
 		if (!justShow) {

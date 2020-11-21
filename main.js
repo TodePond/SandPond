@@ -220,48 +220,15 @@ else if (RANDOM === "firing") {
 	let time = 0
 	
 	// https://developer.mozilla.org/en-US/docs/Web/API/Crypto/getRandomValues#Exceptions
-	const eventCount = 65536 / 4
+	let eventCount = 65536 / 4
 	const idRatio = (1 / 2**32) * spaceCount
-	const eventRatio = Math.ceil(spaceCount / eventCount)
-	
+	const floatEventRatio = spaceCount / eventCount * SPEED_MOD
+	const eventRatio = Math.ceil(floatEventRatio)
 	const ids = new Uint32Array(eventCount)
-	
-	/*const ewCount = 20
-	const ews = []
-	
-	const ewgeo = new THREE.BoxGeometry(0.95 * ATOM_SIZE, 0.95 * ATOM_SIZE, 0.95 * ATOM_SIZE)
-	const ewmat = new THREE.MeshLambertMaterial({color: "grey", emissive: "black", transparent: true, opacity: 0.7})
-	
-	for (let i = 0; i < ewCount; i++) {
-		const ew = new THREE.Object3D()
-		scene.add(ew)
-		
-		ews.push(ew)
-	
-		for (const pos of SITE_POSITIONS) {
-			//if (pos[2] !== 0) continue
-			const ewbox = new THREE.Mesh(ewgeo, ewmat)
-			ewbox.position.x += pos[0] * ATOM_SIZE
-			ewbox.position.y += pos[1] * ATOM_SIZE
-			ewbox.position.z += pos[2] * ATOM_SIZE
-			ew.add(ewbox)
-		}
+	print(floatEventRatio)
+	if (floatEventRatio < 1) {
+		eventCount = Math.floor(eventCount * floatEventRatio)
 	}
-	
-	const posEw = async () => {
-		for (const ew of ews) {
-			const rx = Math.floor(Math.random() * WORLD_WIDTH) - MAX_X
-			const ry = Math.floor(Math.random() * WORLD_HEIGHT)
-			const rz = Math.floor(Math.random() * WORLD_DEPTH) - MAX_Z
-			ew.position.x = rx * ATOM_SIZE
-			ew.position.y = ry * ATOM_SIZE
-			ew.position.z = rz * ATOM_SIZE
-		}
-		await wait(200)
-		requestAnimationFrame(posEw)
-	}
-	
-	requestAnimationFrame(posEw)*/
 	
 	on.process(() => {
 		if (paused === true) {
