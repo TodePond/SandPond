@@ -352,6 +352,89 @@ element SwapWallUp {
 	
 }
 
+element Gravifloor {
+	colour "brown"
+	category "T2Tile"
+	//default true
+	
+	symbol G Gravifloor.Grower
+	symbol B Gravifloor.Builder
+	symbol W Gravifloor.Worker
+	symbol b Gravifloor.Bullet
+	
+	@ => _
+	_    @
+	
+	@ => _
+	$    @
+	
+	@ => _
+	G    .
+	
+	@ => _
+	B    B
+	
+	@ => G
+	*    .
+	
+	@ => _
+	
+	element Grower {
+		colour "brown"
+		for(xz.directions) @_ => @$
+		@ => B
+	}
+	
+	element Builder {
+		colour "brown"
+		arg timer 1.0
+		keep t (atom, space) => {
+			if (atom.timer > 0) {
+				atom.timer -= 0.05
+				if (atom.timer < 0) atom.timer = 0
+				atom.opacity = Math.floor(255 * atom.timer)
+				SPACE.update(space)
+			}
+		}
+		action @ => t
+		
+		given t (self) => self.timer <= 0
+		t => W
+	}
+	
+	element Worker {
+		visible false
+		
+		maybe(0.001) {
+			_ => b
+			@    .
+		}
+		
+	}
+	
+	element Bullet {
+		colour "brown"
+		
+		arg timer 1.0
+		keep t (atom, origin) => {
+			if (atom.timer > 0) {
+				atom.timer -= 0.025
+				if (atom.timer < 0) atom.timer = 0
+				atom.opacity = Math.floor(255 * atom.timer)
+				SPACE.update(atom)
+			}
+		}
+		action @ => t
+		
+		* => .
+		@    _
+		
+		_ => @
+		@    _
+		
+		
+	}
+}
 
 element RainbowRabbit {
 	colour "white"
@@ -522,16 +605,16 @@ element Gravifull {
 		emissive "red"
 		arg timer 1.0
 		
-		keep t (atom, origin) => {
+		keep t (atom, space) => {
 			if (atom.timer > 0) {
 				atom.timer -= 0.5
 				if (atom.timer < 0) atom.timer = 0
 				atom.opacity = Math.floor(255 * atom.timer)
-				SPACE.update(origin)
+				SPACE.update(space)
 			}
 		}
 		action @ => t
-		action any(xyz.directions) @$ => tt
+		//action any(xyz.directions) @$ => tt
 		
 		given t (self) => self.timer <= 0
 		t => W
