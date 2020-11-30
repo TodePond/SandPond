@@ -11,7 +11,7 @@ SpaceTode `
 	}
 	
 	element Empty {
-		category "Clear"
+		//category "Clear"
 		visible false
 	}
 	
