@@ -112,5 +112,5 @@ const CAMERA_SPEED = 2
 //window.history.replaceState({}, "", window.location.pathname)
 
 let SPEED_MOD = urlParams.get("speed")
-if (SPEED_MOD === null) SPEED_MOD = "1"
+if (SPEED_MOD === null) SPEED_MOD = "0.1"
 SPEED_MOD = parseFloat(SPEED_MOD)
