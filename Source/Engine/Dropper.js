@@ -15,7 +15,7 @@ let DROPPER_ARGS_NEEDS_EVAL = false
 let DROPPER_ARGS_SOURCE = ""
 let DROPPER_ARGS = []
 
-let DROPPER_OVERRIDE = false
+let DROPPER_OVERRIDE = true
 
 {
 

@@ -9,7 +9,13 @@ SpaceTode `
 		colour "rgb(32, 32, 32)"
 		emissive bgColourString
 	}
-	element Empty visible false
+	
+	element Empty {
+		category "Clear"
+		visible false
+	}
+	
+	
 `
 
 {
