@@ -273,7 +273,7 @@ element GravityFloor4 {
 	arg initOpacity 0
 	opacity 0.0
 	category "Gravity4"
-	default true
+	//default true
 	{
 		data init false
 		given i (self) => !self.init
@@ -481,4 +481,193 @@ element GravityRay4 {
 		}
 	}
 }
+
+
+
+
+
+element Sand5 {
+	colour "#FC0"
+	emissive "#ffa34d"
+	category "Gravity5"
+}
+
+element GravityFloor5 {
+	colour "brown"
+	arg energy 0
+	arg initOpacity 0
+	opacity 0.0
+	category "Gravity5"
+	default true
+	{
+		data init false
+		given i (self) => !self.init
+		keep i (self) => {
+			self.opacity = self.initOpacity
+			self.init = true
+		}
+		action i => i
+	}
+	
+	//========//
+	// ENERGY //
+	//========//
+	{
+		// Update Opacity
+		keep o (self, origin) => {
+		
+			if (self.energy < -50) self.energy = -50
+			if (self.energy > 255) {
+				self.energy -= Math.min(255, self.energy - 255)
+				if (self.energy > 1000) self.energy = 1000
+			}
+			
+			const energy = Math.max(0, self.energy - 45)
+			
+			const de = Math.min(Math.abs(energy - self.opacity), 2)
+			const sign = (energy - self.opacity) > 0? 1 : -1
+			self.opacity += Math.floor(de) * sign
+			
+			if (self.opacity < 0) self.opacity = 0
+			if (self.opacity > 255) self.opacity = 255
+			
+			SPACE.update(origin)
+		}
+		action @ => o
+		
+	}
+	
+	//=========//
+	// GRAVITY //
+	//=========//
+	{
+		keep E (self) => {
+			self.energy += 200
+		}
+	
+		change R (self) => new GravityWall5(self.energy, self.opacity)
+		maybe(0.4) action {
+			_    .
+			_ => R
+			@    E
+			*    .
+		}
+	}
+	
+	//========//
+	// SPREAD //
+	//========//
+	@ => _
+	_    @
+	
+	any(xz.directions) {
+	
+		change E (self) => {
+			self.energy += 200
+			return self
+		}
+	
+		change e (self) => {
+			self.energy -= 255
+			return self
+		}
+	
+		keep d (self) => {
+			self.energy -= 100
+		}
+		
+		change n (self, Self) => new Self(self.energy, self.opacity)
+		
+		@_ => nE
+		*     .
+		
+		@ => d
+		*    .
+		
+	}
+	
+	@ => _
+}
+
+element GravityWall5 {
+	colour "brown"
+	arg energy 0
+	arg initOpacity 0
+	data desiredOpacity 0
+	opacity 0.0
+	category "Gravity5"
+	{
+		data init false
+		given i (self) => !self.init
+		keep i (self) => {
+			self.desiredOpacity = self.initOpacity
+			self.init = true
+			self.opacity = 255
+		}
+		action i => i
+	}
+	
+	//========//
+	// ENERGY //
+	//========//
+	{
+		// Update Opacity
+		keep o (self, origin) => {
+		
+			if (self.energy < -50) self.energy = -50
+			if (self.energy > 255) {
+				self.energy -= Math.min(255, self.energy - 255)
+				if (self.energy > 1000) self.energy = 1000
+			}
+			
+			const energy = Math.max(0, self.energy - 45)
+			
+			const de = Math.min(Math.abs(energy - self.desiredOpacity), 2)
+			const sign = (energy - self.desiredOpacity) > 0? 1 : -1
+			self.desiredOpacity += Math.floor(de) * sign
+			
+			if (self.desiredOpacity < 0) self.desiredOpacity = 0
+			if (self.desiredOpacity > 255) self.desiredOpacity = 255
+			
+			if (self.full) {
+				self.opacity = 255
+				self.colour = Sand4.shaderColour
+				self.emissive = Sand4.shaderEmissive
+			} else {
+				self.opacity = self.desiredOpacity
+				self.colour = GravityRay4.shaderColour
+				self.emissive = GravityRay4.shaderEmissive
+			}
+			
+			SPACE.update(origin)
+		}
+		//action @ => o
+	}
+	
+	{
+		
+		//======//
+		// MOVE //
+		//======//
+		{
+		
+			for(xz.rotations) {
+				 @ =>  .
+				$     .
+			}
+			
+			_ => @
+			@    _
+			
+			$ => .
+			@    _
+			
+			* => .
+			@    _
+			
+		}
+	}
+	
+}
+
 `
