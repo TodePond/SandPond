@@ -547,10 +547,20 @@ element GravityFloor5 {
 	
 		change R (self) => new GravityWall5(self.energy, self.opacity)
 		maybe(0.4) action {
-			_    .
-			_ => R
-			@    E
-			*    .
+			___   ...
+			 _ =>  R
+			 @     E
+			 *     .
+			
+			__*   ...
+			 _ =>  R
+			 @     E
+			 *     .
+			
+			*__   ...
+			 _ =>  R
+			 @     E
+			 *     .
 		}
 	}
 	
@@ -639,9 +649,10 @@ element GravityWall5 {
 				self.emissive = GravityRay4.shaderEmissive
 			}
 			
+			self.opacity = 255
 			SPACE.update(origin)
 		}
-		//action @ => o
+		action @ => o
 	}
 	
 	{
@@ -651,10 +662,47 @@ element GravityWall5 {
 		//======//
 		{
 		
-			for(xz.rotations) {
+			for(x) {
 				 @ =>  .
 				$     .
+				
+				
+				 $ =>  .
+				.     .
+				@     .
 			}
+			
+			$ => .
+			.    .
+			@    .
+			
+			action @ => <
+			action {
+				*@ => .>
+				
+				*     .
+				 @ =>  >
+				
+				$@ => .>
+				
+				$     .
+				 @ =>  >
+			}
+			< => .
+			
+			action @ => <
+			action {
+				@* => >.
+				
+				 *     .
+				@  => >
+				
+				@$ => >.
+				
+				 $     .
+				@  => >
+			}
+			< => .
 			
 			_ => @
 			@    _
