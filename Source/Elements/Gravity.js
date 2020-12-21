@@ -540,24 +540,24 @@ element GravityFloor5 {
 	//=========//
 	// GRAVITY //
 	//=========//
-	{
+	action {
 		keep E (self) => {
 			self.energy += 200
 		}
 	
+		
+		given v (element) => element !== Void && element !== Empty
+		
+		all(xz.directions) {
+			v.    ..
+			 . =>  .
+			 @     .
+		}
+		
+		given E (element) => element === Void || element === Empty
 		change R (self) => new GravityWall5(self.energy, self.opacity)
-		maybe(0.4) action {
-			___   ...
-			 _ =>  R
-			 @     E
-			 *     .
-			
-			__*   ...
-			 _ =>  R
-			 @     E
-			 *     .
-			
-			*__   ...
+		maybe(0.4) {
+			 _     .
 			 _ =>  R
 			 @     E
 			 *     .
@@ -649,7 +649,6 @@ element GravityWall5 {
 				self.emissive = GravityRay4.shaderEmissive
 			}
 			
-			self.opacity = 255
 			SPACE.update(origin)
 		}
 		action @ => o
@@ -662,7 +661,7 @@ element GravityWall5 {
 		//======//
 		{
 		
-			for(x) {
+			all(xz.rotations) {
 				 @ =>  .
 				$     .
 				
@@ -676,33 +675,41 @@ element GravityWall5 {
 			.    .
 			@    .
 			
+			given v (element, Self) => element === Void || element === Self
 			action @ => <
 			action {
-				*@ => .>
+				v@ => .>
 				
-				*     .
-				 @ =>  >
-				
-				$@ => .>
-				
-				$     .
+				v     .
 				 @ =>  >
 			}
 			< => .
 			
-			action @ => <
 			action {
-				@* => >.
+				@v => <.
 				
-				 *     .
-				@  => >
-				
-				@$ => >.
-				
-				 $     .
-				@  => >
+				 v     .
+				@  => <
 			}
-			< => .
+			> => .
+			
+			pov(right) {
+				action {
+					v@ => .>
+					
+					v     .
+					 @ =>  >
+				}
+				< => .
+				
+				action {
+					@v => <.
+					
+					 v     .
+					@  => <
+				}
+				> => .
+			}
 			
 			_ => @
 			@    _
