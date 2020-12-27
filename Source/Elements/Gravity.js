@@ -546,7 +546,7 @@ element GravityFloor5 {
 		}
 	
 		
-		given v (element) => element !== Void && element !== Empty
+		given v (element) => element !== Void && element !== Empty && element !== Sand5
 		
 		all(xz.directions) {
 			v.    ..
@@ -556,8 +556,9 @@ element GravityFloor5 {
 		
 		given E (element) => element === Void || element === Empty
 		change R (self) => new GravityWall5(self.energy, self.opacity)
-		maybe(0.4) {
-			 _     .
+		given f (element) => element === Sand5 || element === Empty
+		maybe(0.2) {
+			 f     .
 			 _ =>  R
 			 @     E
 			 *     .
@@ -641,14 +642,14 @@ element GravityWall5 {
 			
 			if (self.full) {
 				self.opacity = 255
-				self.colour = Sand4.shaderColour
-				self.emissive = Sand4.shaderEmissive
+				self.colour = Sand5.shaderColour
+				self.emissive = Sand5.shaderEmissive
 			} else {
 				self.opacity = self.desiredOpacity
-				self.colour = GravityRay4.shaderColour
-				self.emissive = GravityRay4.shaderEmissive
+				self.colour = GravityWall5.shaderColour
+				self.emissive = GravityWall5.shaderEmissive
 			}
-			
+			//self.opacity = 128
 			SPACE.update(origin)
 		}
 		action @ => o
@@ -659,7 +660,7 @@ element GravityWall5 {
 		//======//
 		// MOVE //
 		//======//
-		{
+		action {
 		
 			all(xz.rotations) {
 				 @ =>  .
@@ -676,6 +677,13 @@ element GravityWall5 {
 			@    .
 			
 			given v (element, Self) => element === Void || element === Self
+			symbol s GravityFloor5
+			
+			check l (self) => self.continue === false
+			origin l
+			
+			check r (self) => self.continue === true
+			origin r
 			action @ => <
 			action {
 				v@ => .>
@@ -683,7 +691,8 @@ element GravityWall5 {
 				v     .
 				 @ =>  >
 			}
-			< => .
+			l => .
+			s    .
 			
 			action {
 				@v => <.
@@ -691,7 +700,8 @@ element GravityWall5 {
 				 v     .
 				@  => <
 			}
-			> => .
+			r => .
+			s    .
 			
 			pov(right) {
 				action {
@@ -700,7 +710,8 @@ element GravityWall5 {
 					v     .
 					 @ =>  >
 				}
-				< => .
+				l => .
+				s    .
 				
 				action {
 					@v => <.
@@ -708,17 +719,58 @@ element GravityWall5 {
 					 v     .
 					@  => <
 				}
-				> => .
+				r => .
+				s    .
 			}
 			
+			origin f
+			given f (self) => self.full
+			
+			origin e
+			given e (self) => !self.full
+			
+			symbol S Sand5
+			given n (element) => element !== GravityFloor5
+			any(xz.rotations) {
+				S  => _
+				f_    .S
+				n     .
+			}
+			
+			change E (self) => {
+				if (!self.full) self.energy += 255
+				return self
+			}
+			
+			S => E
+			@    S
+			n    .
+			
+
+			change F (self, origin) => {
+				self.energy += 500
+				self.full = true
+				return self
+			}
+			S => F
+			e    _
+			
+			change f (self, origin) => {
+				self.energy -= 20
+				if (self.full) {
+					self.full = false
+					return new Sand5()
+				}
+				else return new Empty()
+			}
 			_ => @
-			@    _
+			@    f
 			
 			$ => .
-			@    _
+			@    f
 			
 			* => .
-			@    _
+			@    f
 			
 		}
 	}
