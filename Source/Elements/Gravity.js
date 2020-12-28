@@ -498,7 +498,6 @@ element GravityFloor5 {
 	arg initOpacity 0
 	opacity 0.0
 	category "Gravity5"
-	default true
 	{
 		data init false
 		given i (self) => !self.init
@@ -777,4 +776,132 @@ element GravityWall5 {
 	
 }
 
+
+
+element Sand6 {
+	colour "#FC0"
+	emissive "#ffa34d"
+	category "Gravity6"
+}
+
+element GravityBoss6 {
+	colour "brown"
+	opacity 1.0
+	category "Gravity6"
+	default true
+	pour false
+	
+	behave (self, sites, origin, Self) => {
+	
+		// Get starting position
+		if (self.init === undefined) {
+			const sBelow = sites[17]
+			const eBelow = sBelow.element
+			if (eBelow !== Void) {
+				const aBelow = sBelow.atom
+				SPACE.set(sBelow, self, Self)
+				SPACE.set(origin, aBelow, eBelow)
+				return
+			}
+			const sLeft = sites[11]
+			const eLeft = sLeft.element
+			if (eLeft !== Void) {
+				const aLeft = sLeft.atom
+				SPACE.set(sLeft, self, Self)
+				SPACE.set(origin, aLeft, eLeft)
+				return
+			}
+			const sBack = sites[37]
+			const eBack = sBack.element
+			if (eBack !== Void) {
+				const aBack = sBack.atom
+				SPACE.set(sBack, self, Self)
+				SPACE.set(origin, aBack, eBack)
+				return
+			}
+			
+			self.init = true
+			self.x = MIN_X
+			self.y = MIN_Y
+			self.z = MIN_Z
+			self.dx = 1
+			self.dy = 1
+			self.dz = 1
+			return
+		}
+		
+		// Patrol
+		if (self.x !== MAX_X * self.dx) {
+			const sn = EVENTWINDOW.getSiteNumber(self.dx, 0, 0)
+			const site = sites[sn]
+			const atom = site.atom
+			const element = site.element
+			bossMove(site, origin, self, Self, atom, element)
+			self.x += self.dx
+		}
+		else {
+			self.dx *= -1
+			if (self.y !== MAX_Y * (self.dy === -1? 0 : 1)) {
+				const sn = EVENTWINDOW.getSiteNumber(0, self.dy, 0)
+				const site = sites[sn]
+				const atom = site.atom
+				const element = site.element
+				bossMove(site, origin, self, Self, atom, element)
+				self.y += self.dy
+			}
+			else {
+				self.dy *= -1
+				if (self.z !== MAX_Z * self.dz) {
+					const sn = EVENTWINDOW.getSiteNumber(0, 0, self.dz)
+					const site = sites[sn]
+					const atom = site.atom
+					const element = site.element
+					bossMove(site, origin, self, Self, atom, element)
+					self.z += self.dz
+				}
+				else {
+					self.dz *= -1
+				}
+			}
+		}
+		
+	}
+	
+}
+
 `
+
+const bossMove = (site, origin, self, Self, atom, element) => {
+
+	let leaveAtom = new Empty()
+	let leaveElement = Empty
+	if (self.full) {
+		leaveAtom = new Sand6()
+		leaveElement = Sand6
+		self.full = false
+	}
+	
+	if (element === Sand6) {
+		const siteBelow = site.sites[17]
+		const eBelow = siteBelow.element
+		if (eBelow === Empty) {
+			SPACE.set(siteBelow, atom, element)
+			SPACE.set(site, new Empty(), Empty)
+		}
+		else {
+			const rando = Math.floor(Math.random() * 4)
+			const siteSlide = site.sites[[18, 16, 55, 54][rando]]
+			const eSlide = siteSlide.element
+			if (eSlide === Empty) {
+				SPACE.set(siteSlide, atom, element)
+				SPACE.set(site, new Empty(), Empty)
+			}
+			else {
+				self.full = true
+			}
+		}
+	}
+
+	SPACE.set(site, self, Self)
+	SPACE.set(origin, leaveAtom, leaveElement)
+}

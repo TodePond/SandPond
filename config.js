@@ -11,6 +11,7 @@ const D2_MODE = urlParams.has("2d")
 const D1_MODE = urlParams.has("1d")
 const VR_MODE = urlParams.has("vr")
 const TINY_MODE = urlParams.has("tiny")
+const TINY_TINY_MODE = urlParams.has("tinytiny")
 const LONG_MODE = urlParams.has("long")
 const PURE_RANDOM_MODE = urlParams.has("pure")
 const SHUFFLE_MODE = urlParams.has("shuffle")
@@ -31,6 +32,11 @@ if (TINY_MODE) {
 	MAX_X = Math.floor(MAX_X * 0.6)
 	MAX_Z = Math.floor(MAX_Z * 0.6)
 	MAX_Y = Math.floor(MAX_Y * 0.7)
+}
+if (TINY_TINY_MODE) {
+	MAX_X = Math.floor(MAX_X * 0.3)
+	MAX_Z = Math.floor(MAX_Z * 0.3)
+	MAX_Y = Math.floor(MAX_Y * 0.2)
 }
 
 if (MASSIVE_MODE) {
