@@ -777,7 +777,6 @@ element GravityWall5 {
 }
 
 
-
 element Sand6 {
 	colour "#FC0"
 	emissive "#ffa34d"
@@ -868,6 +867,494 @@ element GravityBoss6 {
 	}
 	
 }
+
+element Sand7 {
+	colour "#FC0"
+	emissive "#ffa34d"
+	category "Gravity7"
+}
+
+element GravityWall7 {
+	colour "brown"
+	arg energy 0
+	arg initOpacity 0
+	data desiredOpacity 0
+	opacity 0.0
+	category "Gravity7"
+	default true
+	{
+		data init false
+		given i (self) => !self.init
+		keep i (self) => {
+			self.desiredOpacity = self.initOpacity
+			self.init = true
+			self.opacity = 255
+		}
+		action i => i
+	}
+	
+	//========//
+	// ENERGY //
+	//========//
+	{
+		// Update Opacity
+		keep o (self, origin) => {
+		
+			if (self.energy < -50) self.energy = -50
+			if (self.energy > 255) {
+				self.energy -= Math.min(255, self.energy - 255)
+				if (self.energy > 1000) self.energy = 1000
+			}
+			
+			const energy = Math.max(0, self.energy - 45)
+			
+			const de = Math.min(Math.abs(energy - self.desiredOpacity), 2)
+			const sign = (energy - self.desiredOpacity) > 0? 1 : -1
+			self.desiredOpacity += Math.floor(de) * sign
+			
+			if (self.desiredOpacity < 0) self.desiredOpacity = 0
+			if (self.desiredOpacity > 255) self.desiredOpacity = 255
+			
+			if (self.full) {
+				self.opacity = 255
+				self.colour = Sand5.shaderColour
+				self.emissive = Sand5.shaderEmissive
+			} else {
+				self.opacity = self.desiredOpacity
+				self.colour = GravityWall7.shaderColour
+				self.emissive = GravityWall7.shaderEmissive
+			}
+			self.opacity = 80
+			SPACE.update(origin)
+		}
+		action @ => o
+	}
+	
+	{
+		
+		//======//
+		// MOVE //
+		//======//
+		
+		given S (element) => element === GravityWall7 || element === GravityWallDown7
+		for(xz.directions) {
+			 _     .
+			@_ => @$
+			 _     .
+		}
+		
+		
+		symbol D GravityWallDown7
+		* => .
+		@    D
+		
+		all(xz.directions) {
+			@  => .
+			 $     .
+			
+			
+			@  => .
+			 D     .
+			 *     .
+			
+			 D =>  .
+			@     .
+			*     .
+			
+		}
+		
+		given n (element) => element !== Void
+		
+		symbol s Sand7		
+		s => @
+		@    s
+		
+		_ => @
+		@    _
+		
+		$ => .
+		@    _
+		
+		symbol E Explosion
+		S => E
+		@    E
+		
+		
+	}
+	
+}
+
+element GravityWallDown7 {
+	colour "blue"
+	emissive "blue"
+	arg energy 0
+	arg initOpacity 0
+	data desiredOpacity 0
+	opacity 0.0
+	category "Gravity7"
+	default true
+	{
+		data init false
+		given i (self) => !self.init
+		keep i (self) => {
+			self.desiredOpacity = self.initOpacity
+			self.init = true
+			self.opacity = 255
+		}
+		action i => i
+	}
+	
+	//========//
+	// ENERGY //
+	//========//
+	{
+		// Update Opacity
+		keep o (self, origin) => {
+		
+			if (self.energy < -50) self.energy = -50
+			if (self.energy > 255) {
+				self.energy -= Math.min(255, self.energy - 255)
+				if (self.energy > 1000) self.energy = 1000
+			}
+			
+			const energy = Math.max(0, self.energy - 45)
+			
+			const de = Math.min(Math.abs(energy - self.desiredOpacity), 2)
+			const sign = (energy - self.desiredOpacity) > 0? 1 : -1
+			self.desiredOpacity += Math.floor(de) * sign
+			
+			if (self.desiredOpacity < 0) self.desiredOpacity = 0
+			if (self.desiredOpacity > 255) self.desiredOpacity = 255
+			
+			if (self.full) {
+				self.opacity = 255
+				self.colour = Sand5.shaderColour
+				self.emissive = Sand5.shaderEmissive
+			} else {
+				self.opacity = self.desiredOpacity
+				self.colour = GravityWallDown7.shaderColour
+				self.emissive = GravityWallDown7.shaderEmissive
+			}
+			self.opacity = 80
+			SPACE.update(origin)
+		}
+		action @ => o
+	}
+	
+	{
+		
+		//======//
+		// MOVE //
+		//======//
+		given S (element) => element === GravityWall7 || element === GravityWallDown7
+		for(xz.directions) {
+			 _     .
+			@_ => @$
+			 _     .
+		}
+		
+		symbol U GravityWall7
+		@    U
+		* => .
+		
+		all(xz.directions) {
+			 $     .
+			@  => .
+			
+			 *     .
+			 U     .
+			@  => .
+			
+			*     .
+			@     .
+			 U =>  .
+		}
+		
+		given n (element) => element !== Void
+		
+		symbol s Sand7
+		
+		@    _
+		s => @
+		_    s
+		
+		for(xz.rotations) {
+			@     _
+			s  => @
+			 _     s
+		}
+		
+		
+		@    s
+		s => @
+		
+		@    _
+		_ => @
+		
+		@    _
+		$ => .
+		
+		symbol E Explosion
+		@    E
+		S => E
+		
+		
+	}
+	
+}
+
+element Sand8 {
+	colour "#FC0"
+	emissive "#ffa34d"
+	category "Gravity8"
+}
+
+
+element GravityRayUp8 {
+	colour "brown"
+	arg energy 0
+	arg initOpacity 0
+	data desiredOpacity 0
+	opacity 0.0
+	category "Gravity8"
+	default true
+	{
+		data init false
+		given i (self) => !self.init
+		keep i (self) => {
+			self.desiredOpacity = self.initOpacity
+			self.init = true
+		}
+		action i => i
+	}
+	
+	action {
+		//=========//
+		// GRAVITY //
+		//=========//
+		{
+			data full false
+			change E (self) => {
+				if (!self.full) self.energy += 100
+				return self
+			}
+			
+			origin f
+			given f (self) => self.full
+			
+			symbol S Sand4
+			any(xz.rotations) {
+				S     _
+				f_ => .S
+			}
+			
+			S => E
+			@    S
+			
+			change F (self, origin) => {
+				self.full = true
+				return self
+			}
+			S => F
+			@    _
+		}
+		
+		//======//
+		// MOVE //
+		//======//
+		{
+			
+			change f (self, origin) => {
+				self.energy -= 20
+				if (self.full) {
+					self.full = false
+					return new Sand8()
+				}
+				else return new Empty()
+			}
+			
+			_ => @
+			@    f
+			
+			symbol D GravityRayDown8
+			D => @
+			@    D
+			
+			* => .
+			@    D
+		}
+	}
+	
+	//========//
+	// ENERGY //
+	//========//
+	{
+		// Update Opacity
+		keep o (self, origin) => {
+		
+			if (self.energy < -50) self.energy = -50
+			if (self.energy > 255) {
+				self.energy -= Math.min(255, self.energy - 255)
+				if (self.energy > 1000) self.energy = 1000
+			}
+			
+			const energy = Math.max(0, self.energy - 45)
+			
+			const de = Math.min(Math.abs(energy - self.desiredOpacity), 2)
+			const sign = (energy - self.desiredOpacity) > 0? 1 : -1
+			self.desiredOpacity += Math.floor(de) * sign
+			
+			if (self.desiredOpacity < 0) self.desiredOpacity = 0
+			if (self.desiredOpacity > 255) self.desiredOpacity = 255
+			
+			if (self.full) {
+				self.opacity = 255
+				self.colour = Sand8.shaderColour
+				self.emissive = Sand8.shaderEmissive
+			} else {
+				self.opacity = self.desiredOpacity
+				self.colour = GravityRayUp8.shaderColour
+				self.emissive = GravityRayUp8.shaderEmissive
+			}
+			self.opacity = 100
+			SPACE.update(origin)
+		}
+		action @ => o
+		
+		origin n
+		given n (self, atom) => self !== atom
+		keep u (space) => SPACE.update(space)
+		action {
+			. => u
+			n    .
+		}
+	}
+}
+
+
+element GravityRayDown8 {
+	colour "blue"
+	emissive "blue"
+	arg energy 0
+	arg initOpacity 0
+	data desiredOpacity 0
+	opacity 0.0
+	category "Gravity8"
+	default true
+	{
+		data init false
+		given i (self) => !self.init
+		keep i (self) => {
+			self.desiredOpacity = self.initOpacity
+			self.init = true
+		}
+		action i => i
+	}
+	
+	action {
+		//=========//
+		// GRAVITY //
+		//=========//
+		{
+			data full false
+			/*change E (self) => {
+				if (!self.full) self.energy += 100
+				return self
+			}
+			
+			origin f
+			given f (self) => self.full
+			
+			symbol S Sand4
+			any(xz.rotations) {
+				S     _
+				f_ => .S
+			}
+			
+			S => E
+			@    S
+			
+			change F (self, origin) => {
+				self.full = true
+				return self
+			}
+			S => F
+			@    _*/
+		}
+		
+		//======//
+		// MOVE //
+		//======//
+		{
+			
+			change f (self, origin) => {
+				self.energy -= 20
+				if (self.full) {
+					self.full = false
+					return new Sand8()
+				}
+				else return new Empty()
+			}
+			
+			@    f
+			_ => @
+			
+			symbol U GravityRayUp8
+			
+			@    U
+			U => @
+			
+			@    U
+			* => .
+		}
+	}
+	
+	//========//
+	// ENERGY //
+	//========//
+	{
+		// Update Opacity
+		keep o (self, origin) => {
+		
+			if (self.energy < -50) self.energy = -50
+			if (self.energy > 255) {
+				self.energy -= Math.min(255, self.energy - 255)
+				if (self.energy > 1000) self.energy = 1000
+			}
+			
+			const energy = Math.max(0, self.energy - 45)
+			
+			const de = Math.min(Math.abs(energy - self.desiredOpacity), 2)
+			const sign = (energy - self.desiredOpacity) > 0? 1 : -1
+			self.desiredOpacity += Math.floor(de) * sign
+			
+			if (self.desiredOpacity < 0) self.desiredOpacity = 0
+			if (self.desiredOpacity > 255) self.desiredOpacity = 255
+			
+			if (self.full) {
+				self.opacity = 255
+				self.colour = Sand8.shaderColour
+				self.emissive = Sand8.shaderEmissive
+			} else {
+				self.opacity = self.desiredOpacity
+				self.colour = GravityRayDown8.shaderColour
+				self.emissive = GravityRayDown8.shaderEmissive
+			}
+			self.opacity = 100
+			SPACE.update(origin)
+		}
+		action @ => o
+		
+		origin n
+		given n (self, atom) => self !== atom
+		keep u (space) => SPACE.update(space)
+		action {
+			. => u
+			n    .
+		}
+	}
+}
+
 
 `
 
