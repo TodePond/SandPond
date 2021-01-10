@@ -230,7 +230,9 @@ let DROPPER_OVERRIDE = true
 			if (justShow) dropperShadow[shadowNumber].visible = false
 			return
 		}
-		if ((!D2_MODE && !D1_MODE && !DROPPER_OVERRIDE) && space.atom.element != Empty) {
+		let override = atomType.override
+		if (override === undefined) override = DROPPER_OVERRIDE
+		if ((!D2_MODE && !D1_MODE && !override) && space.atom.element != Empty) {
 			if (atomType != space.atom.element) return dropAtom(x, y, z, yOffset + 1, justShow, shadowNumber)
 		}
 		if (!justShow) {
