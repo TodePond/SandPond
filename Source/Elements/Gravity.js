@@ -1963,7 +1963,114 @@ element GravityRay10 {
 	}
 }
 
+element Sand11 {
+	colour "#FC0"
+	emissive "#ffa34d"
+	category "Gravity11"
+	prop override false
+}
 
+element GravityPrinter11 {
+	colour "brown"
+	opacity 1.0
+	category "Gravity11"
+	default true
+	pour false
+	data printMode false
+	data contents new Empty()
+	data mapComplete false
+	data map ({})
+	data prevMap undefined
+	
+	behave (self, sites, origin, Self) => {
+	
+		// Get starting position
+		if (self.init === undefined) {
+			const sBelow = sites[17]
+			const eBelow = sBelow.element
+			if (eBelow !== Void) {
+				const aBelow = sBelow.atom
+				SPACE.set(sBelow, self, Self)
+				SPACE.set(origin, aBelow, eBelow)
+				return
+			}
+			const sLeft = sites[11]
+			const eLeft = sLeft.element
+			if (eLeft !== Void) {
+				const aLeft = sLeft.atom
+				SPACE.set(sLeft, self, Self)
+				SPACE.set(origin, aLeft, eLeft)
+				return
+			}
+			const sBack = sites[37]
+			const eBack = sBack.element
+			if (eBack !== Void) {
+				const aBack = sBack.atom
+				SPACE.set(sBack, self, Self)
+				SPACE.set(origin, aBack, eBack)
+				return
+			}
+			
+			self.init = true
+			self.x = MIN_X
+			self.y = MIN_Y
+			self.z = MIN_Z
+			self.dx = 1
+			self.dy = 1
+			self.dz = 1
+			return
+		}
+		
+		// Patrol
+		if (self.x !== MAX_X * self.dx) {
+			const sn = EVENTWINDOW.getSiteNumber(self.dx, 0, 0)
+			const site = sites[sn]
+			const atom = site.atom
+			const element = site.element
+			printerMove(site, origin, self, Self, atom, element)
+			self.x += self.dx
+		}
+		else {
+			self.dx *= -1
+			if (self.y !== MAX_Y * (self.dy === -1? 0 : 1)) {
+				const sn = EVENTWINDOW.getSiteNumber(0, self.dy, 0)
+				const site = sites[sn]
+				const atom = site.atom
+				const element = site.element
+				printerMove(site, origin, self, Self, atom, element)
+				self.y += self.dy
+			}
+			else {
+				self.dy *= -1
+				if (self.z !== MAX_Z * self.dz) {
+					const sn = EVENTWINDOW.getSiteNumber(0, 0, self.dz)
+					const site = sites[sn]
+					const atom = site.atom
+					const element = site.element
+					printerMove(site, origin, self, Self, atom, element)
+					self.z += self.dz
+				}
+				else {
+					self.dz *= -1
+					if (!self.printMode) {
+						self.map = processPrint(self.map).d
+						self.printMode = true
+					}
+					else {
+						self.printMode = false
+					}
+				}
+			}
+		}
+		
+	}
+	
+}
+
+element PrinterFluid11 {
+	colour "blue"
+	emissive "darkblue"
+}
 
 `
 
@@ -2000,4 +2107,66 @@ const bossMove = (site, origin, self, Self, atom, element) => {
 
 	SPACE.set(site, self, Self)
 	SPACE.set(origin, leaveAtom, leaveElement)
+}
+
+
+const printerMove = (site, origin, self, Self, atom, element) => {
+	
+	if (!self.printMode) {
+		let leaveAtom = new PrinterFluid11()
+		let leaveElement = PrinterFluid11
+		
+		const key = getPrinterKey(self.x, self.y, self.z)
+		self.map[key] = self.contents.element === Sand11
+		
+		self.contents = atom
+		
+		SPACE.set(site, self, Self)
+		SPACE.set(origin, leaveAtom, leaveElement)
+	}
+	else {
+		const key = getPrinterKey(self.x, self.y, self.z)		
+		let leaveAtom = new Empty()
+		let leaveElement = Empty
+		if (self.map[key]) {
+			leaveAtom = new Sand11()
+			leaveElement = Sand11
+		}
+		
+		SPACE.set(site, self, Self)
+		SPACE.set(origin, leaveAtom, leaveElement)
+	}
+}
+
+const getPrinterKey = (x, y, z) => `${x},${y},${z}`
+
+const processPrint = (map) => {
+	const newMap = {...map}
+	for (let x = MIN_X; x <= MAX_X; x++) {
+		for (let y = MIN_Y; y <= MAX_Y; y++) {
+			for (let z = MIN_Z; z <= MAX_Z; z++) {
+				const originKey = getPrinterKey(x, y, z)
+				const origin = map[originKey]
+				if (origin !== true) continue
+				const belowKey = getPrinterKey(x, y-1, z)
+				const below = map[belowKey]
+				if (below === false) {
+					newMap[originKey] = false
+					newMap[belowKey] = true
+					continue
+				}
+				
+				const slidePoss = [[1, -1, 0], [-1, -1, 0], [0, -1, 1], [0, -1, -1]]
+				const slidePos = slidePoss[Math.floor(Math.random() * 4)]
+				const slideKey = getPrinterKey(x+slidePos[0], y+slidePos[1], z+slidePos[2])
+				const slide = map[slideKey]
+				if (slide === false) {
+					newMap[originKey] = false
+					newMap[slideKey] = true
+					continue
+				}
+			}
+		}
+	}
+	return newMap
 }
