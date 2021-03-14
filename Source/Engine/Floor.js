@@ -3,7 +3,7 @@
 //=======//
 {
 
-	const floorMaterial = new THREE.MeshLambertMaterial({color: "white", emissive: "grey"})
+	const floorMaterial = DARK_MODE? new THREE.MeshLambertMaterial({color: "rgb(45, 45, 61)", emissive: "rgb(45, 45, 61)"}) : new THREE.MeshLambertMaterial({color: "white", emissive: "grey"})
 	const floorMaterials = [
 		floorMaterial,
 		floorMaterial,

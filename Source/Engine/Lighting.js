@@ -28,7 +28,9 @@ function makeSun(is2D = false) {
 }*/
 
 const bgColour = new THREE.Color()
-bgColour.setHSL(Math.random(), 1, 0.85)
+if (!DARK_MODE) bgColour.setHSL(Math.random(), 1, 0.85)
+else bgColour.setRGB(13 / 255, 16 / 255, 23 / 255)
+//else bgColour.setRGB(45 / 255, 45 / 255, 61 / 255)
 const bgColourString = `rgb(${Math.floor(bgColour.r * 255)}, ${Math.floor(bgColour.g * 255)}, ${Math.floor(bgColour.b * 255)})`
 
 function makeBackground() {

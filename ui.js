@@ -14,6 +14,7 @@ UIstarted = true
 	UI.selectedSize = SIZE
 	UI.selectedShape = SHAPE
 	UI.selectedRandom = RANDOM
+	UI.selectedDark = DARK_MODE? "dark" : "nodark"
 	UI.selectedShadow = SHADOW_MODE? "shadow" : "noshadow"
 	UI.selectedDof = DOF_MODE? "dof" : "nodof"
 	UI.selectedDimensions = D1_MODE? "d1" : (D2_MODE? "d2" : "d3")
@@ -349,6 +350,11 @@ UIstarted = true
 						<div id="firingOption" class="randomOption option box clickable"><div class="label">Firing</div></div>
 					</section>
 					<section>
+						<div class="miniTitle">DARK MODE</div>
+						<div id="darkOption" class="darkOption option box clickable"><div class="label">Dark</div></div>
+						<div id="nodarkOption" class="darkOption option box clickable"><div class="label">Light</div></div>
+					</section>
+					<section>
 						<div id="modeGo" class="box option clickable"><div class="label">RELOAD</div></div>
 					</section>
 				</div>
@@ -441,6 +447,7 @@ UIstarted = true
 	$(`#${UI.selectedSize}Option`).classList.add("selected")
 	$(`#${UI.selectedShape}Option`).classList.add("selected")
 	$(`#${UI.selectedRandom}Option`).classList.add("selected")
+	$(`#${UI.selectedDark}Option`).classList.add("selected")
 	$(`#${UI.selectedShadow}Option`).classList.add("selected")
 	$(`#${UI.selectedDof}Option`).classList.add("selected")
 	
@@ -643,6 +650,8 @@ UIstarted = true
 		params += UI.selectedRandom + "&"
 		params += UI.selectedShadow + "&"
 		params += UI.selectedDof + "&"
+		params += UI.selectedDark + "&"
+		
 		if (UI.selectedDimensions == "d1") params += "1d&"
 		else if (UI.selectedDimensions == "d2") params += "2d&"
 		//if (UI.selectedReality == "nonvr") params += "nonvr&"
@@ -674,6 +683,14 @@ UIstarted = true
 		const id = this.id
 		const randomName = id.slice(0, id.length - "Option".length)
 		UI.selectedRandom = randomName
+	})
+	
+	$$(".darkOption").on.click(function() {
+		for (const darkOption of $$(".darkOption")) darkOption.classList.remove("selected")
+		this.classList.add("selected")
+		const id = this.id
+		const darkName = id.slice(0, id.length - "Option".length)
+		UI.selectedDark = darkName
 	})
 	
 	$$(".shadowTypeOption").on.click(function() {
