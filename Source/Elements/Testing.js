@@ -1,247 +1,79 @@
 SpaceTode`
 
 
-
-
-
-element Stayer {
+element SpreadWater {
 	category "Video"
+	data direction 0
+	colour "lightblue"
+	emissive "blue"
+	opacity 0.25
 	
-	@ => @
-	
-}
-
-element Faller {
-	category "Video"
-	
+	prop state LIQUID
+	prop temperature COOL
 	@ => _
 	_    @
 	
-}
-
-
-element Copier {
-	category "Video"
-
-	.    @
-	@ => .
-
-}
-
-element Flier {
-	category "Video"
-
-	_@ => @_
-
-	x@ => ._
-	
-}
-
-element Jumper {
-	category "Video"
-
-	@ => _
-	_    @
-	
-	 _     @
-	@  => _
-	#     .
-
-}
-
-element Stairs {
-	category "Video"
-	category "Structure"
-	
-	_     $
-	@$ => ..
-}
-
-element Digger {
-	category "Video"
-	
-	@? => ?@
-	
-}
-
-element Cool1 {
-	category "Video"
-	
-	
-	_@ => @_
-	 *     .
-	
-	 _ =>  @
-	*@    ._
-	
-	@  => _
-	 _     @
-	
-}
-
-element Cool2 {
-	category "Video"
-	
-	_@_ => $_$
-	
-	pov(top) {
-		_    $
-		@ => _
-		_    $
+	given D (self, transformationNumber, element) => element === Empty && self.direction === transformationNumber
+	all(xz.directions) {
+		@D => _@
 	}
 	
-	@ => _
-	_    _
-	_    @
-	
+	keep N (self) => self.direction = Math.floor(Math.random() * 4)
+	@ => N
 }
 
-element Cool3 {
+element MomentumSand {
 	category "Video"
+	emissive "#ffa34d"
+	colour "#fc0"
+	data movement 0
 	
-	any(xyz.rotations) {
-		...    $$$
-		.@. => ___
-		 *      .
+	keep g (self) => {
+		self.movement += 0.05
+		if (self.movement > 1) self.movement = 1
 	}
-	
-	_    @
-	@ => $
-	$    _
-	
-	@ => _
-	_    @
-	
-}
-
-`
-
-/*SpaceTode`
-
-element Checker {
-	default true
-	check c (self, origin) => Math.random() < 0.1
-	c@c => ._.
-	
-	c => _
-}
-
-`
-
-print(Checker.behaveCode)*/
-
-/*SpaceTode`
-
-element Actioner {
-	default true
-	
 	action {
-		action {
-			@_ => _$
-		}
-		
-		action action action {
-			@ => _
-			_    $
-		}
+		@ => g
+		_    .
 	}
 	
-	
-	
-}
-
-`
-
-print(Actioner.behaveCode)*/
-
-/*SpaceTode`
-
-element Maybeer {
-	default true
-	
-	for(x) {
-		maybe(0.2) @_ => _@
-		
-		@ => _
-		_    @
-		
-		@ => _
-		_    @
+	given F (element, self) => {
+		if (element !== Empty && element !== SpreadWater) return false
+		return self.movement > 2/3
 	}
-}
-
-`
-
-print(Maybeer.behaveCode)*/
-
-SpaceTode`
-
-/*element Behaver {
-	default true
+	select F (atom) => atom
+	change F (selected) => selected
 	
-	symbol B Behaver
-	
-	behave (origin, sites) => {
-		if (Math.random() < 0.005) {
-			SPACE.setAtom(origin, new Empty(), Empty)
-			return false
-		}
-		return true
+	given f (element, self) => {
+		if (element !== Empty && element !== SpreadWater) return false
+		return self.movement > 1/3
 	}
-	
-	@ => .
-	_    B
-}*/
-
-/*element Shifter {
-	default true
-	
-	any(xyz.shifts) {
-		 _ =>  @
-		@     _
-	}
-}*/
-
-/*element Red {
-	colour "brown"
-	
-	symbol R Red
-	symbol B Blue
-	
-	all(xy.directions) {
-		@_ => @R    // Super Forkbomb
-	}
-	
-	any(xy.directions) {
-		@x => B.    // Turn blue when I touch the edge
-		@B => B.    // Turn blue when I touch blue
-	}
-}
-
-element Blue  {
-	colour "blue"
-	
-	symbol R Red
-	
-	all(xy.directions) {
-		@R => ..    // Do nothing if I touch red
-	}
-	
-	@ => _    // Else, disappear
-}*/
-
-/*element _Lava {
-	default true
-	pour false
-	
-	symbol F Fire
-	
+	select f (atom) => atom
+	change f (selected) => selected
 	@ => _
-	_    @
+	_    F
+	F    @
 	
-	action @_ => .F
+	@ => f
+	f    @
 	
-}*/
+	
+	given s (element, self) => {
+		if (element !== Empty && element !== SpreadWater) return false
+		return self.movement > 0.5
+	}
+	select s (atom) => atom
+	change s (selected) => selected
+	
+	change m (self) => {
+		self.movement -= 0.1
+		return self
+	}
+	any(xz.directions) {
+		@  => s
+		 s     m
+	}
+	
+}
 
 `
-
