@@ -1,3 +1,5 @@
+<img align="right" height="100" src="http://todepond.com/IMG/SandPond@0.25x.png">
+
 # SandPond
 SandPond is an engine for atoms that follow spatial rules.<br>
 Try it out at [www.sandpond.cool](http://www.sandpond.cool).<br>
