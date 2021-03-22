@@ -1,5 +1,32 @@
 SpaceTode`
 
+element RainbowSand {
+	category "Video"
+	
+	data ready false
+	given i (self) => !self.ready
+	keep i (space, self, time) => {
+		const colour = new THREE.Color("hsl(" + time + ", 100%, 50%)")
+		self.colour.r = colour.r * 255
+		self.colour.g = colour.g * 255
+		self.colour.b = colour.b * 255
+		self.emissive.r = colour.r * 255
+		self.emissive.g = colour.g * 255
+		self.emissive.b = colour.b * 255
+		self.ready = true
+		SPACE.update(space)
+	}
+	action i => i
+	
+	any(xz.directions) {
+		@ => _
+		_    @
+		
+		@  => _
+		 _     @
+	}
+}
+
 element Glooper {
 
 	colour "rgb(110, 120, 200)"
