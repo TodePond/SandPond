@@ -121,7 +121,8 @@ SpaceTode `
 	const GEOMETRY_TEMPLATE = new THREE.BoxBufferGeometry(1 * ATOM_SIZE * ATOM_SCALE, 1 * ATOM_SIZE * ATOM_SCALE, 1 * ATOM_SIZE * ATOM_SCALE)
 	//const GEOMETRY_TEMPLATE = new THREE.SphereBufferGeometry(1 * ATOM_SIZE * ATOM_SCALE)
 	const MATERIAL = new THREE.MeshLambertMaterial({
-		transparent: true,
+		transparent: !D2_MODE && !D1_MODE,
+		//transparent: true,
 		opacity: 1,
 		//flatShading: true,
 		//premultipliedAlpha: true,

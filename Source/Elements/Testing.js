@@ -13,6 +13,11 @@ element SpreadWater {
 	@ => _
 	_    @
 	
+	for(xz.directions) {
+		@  => _
+		 _     @
+	}
+	
 	given D (self, transformationNumber, element) => element === Empty && self.direction === transformationNumber
 	all(xz.directions) {
 		@D => _@
@@ -57,18 +62,31 @@ element MomentumSand {
 	@ => f
 	f    @
 	
+	given b (Self, element) => element === Self
+	keep b (atom, self) => {
+		if (atom.movement < self.movement) {
+			atom.movement = self.movement
+		}
+	}
+	action {
+		@ => .
+		b    b
+	}
 	
 	given s (element, self) => {
 		if (element !== Empty && element !== SpreadWater) return false
-		return self.movement > 0.5
+		return self.movement > 0.3
 	}
 	select s (atom) => atom
 	change s (selected) => selected
 	
 	change m (self) => {
-		self.movement -= 0.1
+		self.movement -= 0.2
+		if (self.movement < 0) self.movement = 0
 		return self
 	}
+	
+	
 	any(xz.directions) {
 		@  => s
 		 s     m
