@@ -1,6 +1,55 @@
 SpaceTode`
 
+element Fish {
+	prop state SOLID
+	prop temperature BODY
+	prop food MEAT
+	prop diet PLANT
+	data stuck false
+	colour "rgb(255, 100, 0)"
+	arg id
+	category "Life"
 
+	{
+		given i (self) => self.id === undefined
+		keep i (self) => self.id = Math.random()
+		action i => i
+	}
+
+	{
+		change T (self) => new Fish.Tail(self.id)
+		@ => T
+		_    @
+
+		any(xyz.rotations) {
+			
+			change t (self, Self) => new Self.Tail(self.id, true)
+			symbol W Water
+			@W => t@
+
+			given s (element, self, atom) => element === Fish.Tail && atom.id === self.id
+			select s (atom) => atom
+			change s (selected) => selected
+			@s => s@
+
+			s     _
+			@_ => .s
+
+		}
+	}
+
+	element Tail {
+		colour "rgb(255, 100, 0)"
+		arg id
+		arg holdsWater false
+
+		given H (element, self, atom) => element === Fish && self.id === atom.id
+		all(xyz.directions) @H => ..
+
+		change w (self) => self.holdsWater? new Water() : new Empty()
+		@ => w
+	}
+}
 
 element Smeller {
 	prop state SOLID
