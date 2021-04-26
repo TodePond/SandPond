@@ -499,7 +499,7 @@ UIstarted = true
 			e.classList.remove("selectedYellow")
 		})
 		$(`#${DROPPER_POUR}PourOption`).classList.add("selected")
-		if (DROPPER_POUR == "default") $(`#${UI.selectedElement.pour? "pour" : "single"}PourOption`).classList.add("selectedYellow")
+		if (UI.selectedElement !== undefined && DROPPER_POUR == "default") $(`#${UI.selectedElement.pour? "pour" : "single"}PourOption`).classList.add("selectedYellow")
 	}
 	updateDropperPour()
 	
@@ -744,11 +744,13 @@ UIstarted = true
 		const newElement = SpaceTode.global.elements[name]
 		const oldElement = UI.selectedElement
 		
-		const oldId = oldElement.name + idEnd
-		const oldButton = $("#" + oldId)
-		
-		if (oldElement && oldButton) {
-			oldButton.classList.remove("selected")
+		if (oldElement !== undefined) {
+			const oldId = oldElement.name + idEnd
+			const oldButton = $("#" + oldId)
+			
+			if (oldElement && oldButton) {
+				oldButton.classList.remove("selected")
+			}
 		}
 		
 		if (newElement) {
