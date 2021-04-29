@@ -1,5 +1,117 @@
 SpaceTode`
 
+element GameOfLife {
+	category "Video"
+	colour "brown"
+
+	// Globals
+	symbol D GameOfLife.Dead
+	symbol A GameOfLife.Dead
+
+	// Setup: Fill up the universe
+	all(xyz.directions) @_ => @$
+	
+	// Then become a dead space
+	@ => D
+
+	element Dead {
+		opacity 0
+		colour "black"
+		data tally 0
+		category "Video"
+
+		// Reset tally
+		keep r (self) => self.tally = 0
+		action @ => r
+
+		// Count alive neighbours
+		keep a (self) => self.tally++
+		action @A => .a
+		action A@ => .a
+		action {
+			 @     a
+			A  => .
+		}
+		action {
+			@     a
+			 A =>  .
+		}
+		action {
+			A  => .
+			 @     a
+		}
+		action {
+			 A =>  .
+			@     a
+		}
+
+		action {
+			A => .
+			@    a
+		}
+		action {
+			@    a
+			A => .
+		}
+
+		// Live!
+		given l (self) => self.tally >= 1 && self.tally <= 3
+		l => A
+	}
+
+	element Alive {
+		category "Video"
+		prop override true
+		data tally 0
+		colour "grey"
+
+		// Reset tally
+		keep r (self) => self.tally = 0
+		action @ => r
+
+		// Count alive neighbours
+		keep a (self) => self.tally++
+		action @A => .a
+		action A@ => .a
+		action {
+			 @     a
+			A  => .
+		}
+		action {
+			@     a
+			 A =>  .
+		}
+		action {
+			A  => .
+			 @     a
+		}
+		action {
+			 A =>  .
+			@     a
+		}
+
+		action {
+			A => .
+			@    a
+		}
+		action {
+			@    a
+			A => .
+		}
+
+		// Survive
+		given s (self) => self.tally >= 3 && self.tally <= 5
+		s => .
+
+		// Die
+		@ => D
+
+	}
+
+
+
+}
+
 
 element SpreadWater {
 	category "Video"

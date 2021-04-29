@@ -394,6 +394,10 @@ UIstarted = true
 	
 	const addElementToUI = (element, name = element.name) => {
 		if (element.hidden) return
+
+		for (const subElement of element.elements) {
+			addElementToUI(subElement, name + "__" + subElement.name)
+		}
 		
 		const searchItemButton = makeElementButton(element, name)
 		const searchItems = $("#searchItems")
@@ -514,6 +518,7 @@ UIstarted = true
 			e.classList.remove("selectedYellow")
 		})
 		$(`#${DROPPER_OVERRIDE}OverrideOption`).classList.add("selected")
+		if (UI.selectedElement.override !== undefined) DROPPER_OVERRIDE = UI.selectedElement.as(Boolean)
 	}
 	updateDropperOverride()
 	
@@ -601,6 +606,12 @@ UIstarted = true
 		paused = !paused
 		updatePauseUI()
 	})
+
+	const getElementByFullName = (fullName, target = SpaceTode.global.elements) => {
+		const [head, ...tail] = fullName.split("__")
+		if (tail.length === 0) return target[fullName]
+		return getElementByFullName(tail.join("__"), target[head])
+	}
 	
 	const updateSearch = () => {
 		let query = $("#searchBar").value.as(LowerCase)
@@ -615,7 +626,7 @@ UIstarted = true
 		for (const elementButton of $$("#searchItems > .elementButton")) {
 			const id = elementButton.id
 			const name = id.slice(0, id.length - "Button".length)
-			const element = SpaceTode.global.elements[name]
+			const element = getElementByFullName(name)
 			let index = name.as(LowerCase).indexOf(query)
 			if (query == "") index = 0
 			
@@ -741,7 +752,7 @@ UIstarted = true
 		const idEnd = "Button"
 		
 		const name = newId.slice(0, newId.length - idEnd.length)
-		const newElement = SpaceTode.global.elements[name]
+		const newElement = getElementByFullName(name)
 		const oldElement = UI.selectedElement
 		
 		const oldId = oldElement.name + idEnd
@@ -763,6 +774,8 @@ UIstarted = true
 			DROPPER_ARGS_SOURCE = ""
 			DROPPER_ARGS_NEEDS_EVAL = true
 		}
+
+		updateDropperOverride()
 		
 	})
 	
