@@ -56,6 +56,7 @@ let DROPPER_OVERRIDE = false
 	DROPPER.tryDrop = (position) => {
 	
 		if (!UIstarted && !Mouse.down && Touches.length == 0) return
+		if (UI.selectedElement === undefined) return false
 		if (UI.clicking) return
 		
 		if (position == undefined) {
@@ -105,7 +106,7 @@ let DROPPER_OVERRIDE = false
 			down = true
 		}
 		
-		if (!((DROPPER_POUR == "default" && UI.selectedElement.pour) || DROPPER_POUR == "pour")) {
+		if (!(DROPPER_POUR == "default" && UI.selectedElement.pour) || DROPPER_POUR == "pour") {
 			if (!position) return
 			if (down && !previousDown) {
 				const x = Math.round(position.x)
@@ -218,6 +219,7 @@ let DROPPER_OVERRIDE = false
 	let dropperShadowReady = [false].repeated(9)
 	const dropAtom = (x, y, z, yOffset = 0, justShow = false, shadowNumber = 0, yOverride = Math.floor(DROPPER_HEIGHT)) => {
 		if (!UI) return
+		if (UI.selectedElement === undefined) return
 		const atomType = UI.selectedElement
 		const dropStart = MAX_Y - yOverride
 		let alteredY = dropStart + yOffset
