@@ -6,7 +6,11 @@ element Sand {
 	category "Sandbox"
 	prop state SOLID
 	prop temperature ROOM
-	
+	prop states () => ({
+		[HOT]: Glass,
+	})
+
+	mimic(Temperature)
 	mimic(Powder)
 }
 
@@ -194,13 +198,22 @@ element Laser {
 	category "Sandbox"
 	
 	symbol L Laser
+	symbol G Glass
+	given n (element, selfElement) => (element.state === undefined || element.state < GAS) && element !== Glass
 	@ => _
-	.    @
+	n    @
+	n    L
+	
+	@ => _
+	n    @
+	
+	@ => _
+	_    @
+	
+	@ => _
+	G    .
 	.    L
-	
-	@ => _
-	.    @
-	
+
 	@ => _
 }
 
@@ -234,7 +247,7 @@ element Acid {
 	mimic(Temperature)
 	
 	symbol S Steam
-	given n (element, selfElement) => (element.state === undefined || element.state < GAS) && element !== Void && element !== Empty && element !== selfElement && element !== Slime
+	given n (element, selfElement) => (element.state === undefined || element.state < GAS) && element !== Void && element !== Empty && element !== selfElement && element !== Slime && element !== Glass
 	n => S
 	@    _
 	
@@ -374,6 +387,27 @@ element Cardboard {
 		S    @
 	}
 }
+
+element Glass {
+	colour "Darkgray"
+	emissive "Darkgray"
+	opacity 0.1
+	prop state SOLID
+	prop temperature ROOM
+	prop stickiness 1.0
+	data stuck false
+	category "Sandbox"
+	mimic(Sticky)
+	mimic(Solid)
+	
+	symbol G new Glass
+	
+	@ => @
+	_    G
+	G    G
+	
+}
+
 
 `
 
