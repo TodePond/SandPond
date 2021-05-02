@@ -130,7 +130,7 @@ element Carrot {
 element Plant {
 	colour "green"
 	emissive "green"
-	category "Sandbox"
+	category "Life"
 	prop state SOLID
 	prop temperature ROOM
 	prop food PLANT
