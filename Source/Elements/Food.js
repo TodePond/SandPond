@@ -127,6 +127,25 @@ element Carrot {
 	}
 }
 
+element Plant {
+	colour "green"
+	emissive "green"
+	category "Life"
+	prop state SOLID
+	prop temperature ROOM
+	prop food PLANT
+	mimic(Powder)
+	
+	maybe(1/50) {
+	
+		any(xyz.directions) {
+			@ => @
+			_    $
+		}
+	}
+	
+}
+
 element Cheese {
 	colour "#fcc203"
 	emissive "#fc4e03"
