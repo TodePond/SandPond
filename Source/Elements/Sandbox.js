@@ -424,7 +424,7 @@ element Charcoal {
 
 element FlamingCharcoal {
 	colour "#2e362d"
-	emissive "2e362d"
+	emissive "#2e362d"
 	category "Sandbox"
 	prop state SOLID
 	prop temperature HOT
