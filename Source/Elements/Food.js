@@ -134,7 +134,12 @@ element Plant {
 	prop state SOLID
 	prop temperature ROOM
 	prop food PLANT
+	prop states () => ({
+		[HOT]: [Charcoal, 0.12]
+	})
+		
 	mimic(Powder)
+	mimic(Temperature)
 	
 	maybe(1/50) {
 	
