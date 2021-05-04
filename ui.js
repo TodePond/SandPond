@@ -392,6 +392,7 @@ UIstarted = true
 	document.head.appendChild(UI_STYLE)
 	document.body.appendChild(UI_ELEMENT)
 	
+	const hslBuffer = {}
 	const addElementToUI = (element, name = element.name) => {
 		if (element.hidden) return
 
@@ -403,11 +404,19 @@ UIstarted = true
 		const searchItems = $("#searchItems")
 		searchItems.appendChild(searchItemButton)
 		
+		let textColour = "black"
+		const colour = new THREE.Color(element.colour)
+
+		colour.getHSL(hslBuffer)
+		const {l} = hslBuffer
+		if (l < 0.4) textColour = "white"
+
 		const style = HTML `
 			<style>
 				
 				.${name}Button {
 					background-color: ${element.colour};
+					color: ${textColour};
 				}
 				
 				.${name}Button:hover {
