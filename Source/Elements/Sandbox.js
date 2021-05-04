@@ -198,7 +198,7 @@ element Laser {
 	category "Sandbox"
 	
 	symbol L Laser
-	symbol G 
+	symbol G Glass
 	given n (element, selfElement) => (element.state === undefined || element.state < GAS) && element !== Glass
 	@ => _
 	n    @
@@ -389,6 +389,8 @@ element Cardboard {
 }
 
 element Glass {
+	colour "Darkgray"
+	emissive "Darkgray"
 	opacity 0.1
 	prop state SOLID
 	prop temperature ROOM
@@ -413,7 +415,7 @@ element Charcoal {
 	prop state SOLID
 	prop temperature ROOM
 	prop states () => ({
-		[HOT]: [FlamingCharcoal, 0.12],
+		[HOT]: [FlamingCharcoal, 0.05],
 	})
 	
 	mimic(Temperature)
