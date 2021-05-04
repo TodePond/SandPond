@@ -389,8 +389,6 @@ element Cardboard {
 }
 
 element Glass {
-	colour "Darkgray"
-	emissive "Darkgray"
 	opacity 0.1
 	prop state SOLID
 	prop temperature ROOM
