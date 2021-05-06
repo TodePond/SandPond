@@ -15,7 +15,7 @@ element Sand {
 }
 
 element Water {
-	colour "lightblue"
+	colour "blahhh"
 	emissive "blue"
 	opacity 0.35
 	category "Sandbox"
