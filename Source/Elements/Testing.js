@@ -107,6 +107,33 @@ element Labyrinth {
 
 }
 
+element SparkLife {
+	colour "rgb(255, 255, 70)"
+	data countBuffer 0
+	
+	// Reset buffer
+	keep r (self) => self.countBuffer = 0
+	action @ => r
+
+	// Count neighbours
+	given c (element, Self, self) => {
+		if (element === Self) self.countBuffer++
+		return false
+	}
+
+	all(xyz.others) @c => ..
+
+	// Die
+	given d (self) => self.countBuffer >= 5 || self.countBuffer <= 2
+	d => _
+	
+	// Grow
+	origin g
+	given g (self) => self.countBuffer >= 0 && self.countBuffer <= Infinity
+	for(xyz.directions) g_ => .$
+
+}
+
 element GameOfLife {
 	category "Video"
 	colour "brown"
