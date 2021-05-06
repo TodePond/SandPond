@@ -1,5 +1,112 @@
 SpaceTode`
 
+element Crystal {
+	
+	colour "lightblue"
+	emissive "blue"
+
+	maybe(1/100) any(xz.directions) {
+		.....    $...$
+		..@.. => ..$..
+		.....    $...$
+	}
+		
+	
+
+}
+
+element Brancher {
+
+	@ => _
+	_    @
+
+	symbol G Brancher.Grower
+	symbol S Sand
+
+	@ => G
+	*    .
+
+	@ => _
+
+	element Grower {
+
+		colour "rgb(70, 255, 128)"
+		colour "rgb(35, 200, 100)"
+
+		G => .
+		@    .
+
+		all(xz.directions) {
+			 G =>  .
+			@     .
+		}
+
+		maybe(0.3) any(xz.directions) {
+			_@_ => $.$
+		}
+		
+		/*maybe(0.3) any(xz.directions) {
+			_ _ => $ $
+			 @      .
+		}*/
+
+		/*any(xz.directions) {
+			 _ =>  $
+			@     .
+		}*/
+
+		maybe(1/20) {
+			_ => $
+			@    .
+		}
+
+	}
+
+}
+
+element Labyrinth {
+	
+	data countBuffer 0
+
+	// Reset buffer
+	keep r (self) => self.countBuffer = 0
+	action @ => r
+
+	// Count neighbours
+	given c (element, Self, self) => {
+		if (element === Self) self.countBuffer++
+		return true
+	}
+
+	action {
+		ccc    ...
+		c@c => ...
+		ccc    ...
+	}
+
+	pov(right) action {
+		ccc    ...
+		c@c => ...
+		ccc    ...
+	}
+
+	pov(top) action {
+		ccc    ...
+		c@c => ...
+		ccc    ...
+	}
+
+	// Die
+	given d (self) => self.countBuffer > 4
+	d => _
+	
+	// Grow
+	origin g
+	given g (self) => self.countBuffer === 2
+	for(xyz.directions) g_ => .$
+
+}
+
 element GameOfLife {
 	category "Video"
 	colour "brown"
@@ -138,6 +245,8 @@ element SpreadWater {
 	keep N (self) => self.direction = Math.floor(Math.random() * 4)
 	@ => N
 }
+
+
 
 element MomentumSand {
 	category "Video"
