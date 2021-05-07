@@ -432,6 +432,8 @@ const ELEMENT = {}
 		const behave = behaveMaker()
 		//print(otherScopeProperties)
 		const shaderColours = makeShaderColours(colour, emissive, opacity)
+		colour = shaderColours.colour
+		emissive = shaderColours.emissive
 		const constructorCode = JAVASCRIPT.makeConstructorCode(name, data, args, visible, ...shaderColours)
 		const element = JS(constructorCode)(...data, ...args)
 		
@@ -465,8 +467,17 @@ const ELEMENT = {}
 	// Private //
 	//=========//
 	const makeShaderColours = (colour, emissive, opacity) => {
-		const colourColour = new THREE.Color(colour)
-		const emissiveColour = new THREE.Color(emissive)
+		let colourColour = new THREE.Color(colour)
+		let emissiveColour = new THREE.Color(emissive)
+
+		if (!colourColour.hasOwnProperty("r")) {
+			colourColour = new THREE.Color("red")
+			colour = "red"
+		}
+		if (!emissiveColour.hasOwnProperty("r")) {
+			emissiveColour = new THREE.Color("red")
+			emissive = "red"
+		}
 		
 		const shaderColour = {
 			r: colourColour.r * 255,
@@ -481,7 +492,7 @@ const ELEMENT = {}
 			b: emissiveColour.b * 255,
 		}
 		
-		return {shaderColour, shaderEmissive, shaderOpacity}
+		return {shaderColour, shaderEmissive, shaderOpacity, colour, emissive}
 		
 	}
 	
@@ -507,7 +518,7 @@ const INSTRUCTION = {}
 INSTRUCTION.TYPE = {}
 INSTRUCTION.make = (name, generate = () => { throw new Error(`[SpaceTode] The ${name} instruction is not supported yet`) }) => ({name, generate})
 
-{
+;{
 	
 	INSTRUCTION.TYPE.MIMIC = INSTRUCTION.make("Mimic", (template, targetGetter, instructions, spotMods = [], chunkMods = [], symmetry, symmetryId, forSymmId, char, diagramId, isAll) => {
 		const target = targetGetter()
