@@ -235,7 +235,7 @@ UIstarted = true
 				overflow-y: scroll;
 				-ms-overflow-style: none;
 				scrollbar-width: none;
-				max-height: calc(100vh - 70px - 26px - 10px);
+				max-height: calc(100vh - 70px - 10px);
 			}
 
 			#elements > .menu {
