@@ -189,6 +189,7 @@ UIstarted = true
 				-ms-overflow-style: none;
 				tab-size: 4;
 				max-width: calc(100vw - 32px);
+				user-select: text;
 			}
 			
 			#sourceBox::-webkit-scrollbar {
@@ -275,7 +276,7 @@ UIstarted = true
 						<div class="heading box clickable sourceType selected" id="todeSplatSource"><div class="label">SpaceTode</div></div>
 						<div class="heading box clickable sourceType" id="javaScriptSource"><div class="label">JavaScript</div></div>
 					</div>
-					<pre id="sourceBox"></pre>
+					<pre id="sourceBox" class="clickable"></pre>
 				</div>
 			
 				<div id="elements" class="minimised">
