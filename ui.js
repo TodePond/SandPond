@@ -188,6 +188,7 @@ UIstarted = true
 				scrollbar-width: none;
 				-ms-overflow-style: none;
 				tab-size: 4;
+				max-width: calc(100vw - 32px);
 			}
 			
 			#sourceBox::-webkit-scrollbar {
@@ -561,9 +562,18 @@ UIstarted = true
 	updateDropperSlider()
 	updateDropperHeightSlider()
 	
+	$("#sourceBox").on.mouseenter(function() {
+		if (this.scrollHeight <= this.clientHeight) return
+		orbit.enableZoom = false
+	})
+	
+	$("#sourceBox").on.mouseleave(() => {
+		orbit.enableZoom = true
+	}) 
+
 	on.wheel(e => {
 
-		if (!$("#source").classList.contains("minimised")) {
+		if ($("#sourceBox").matches(":hover")) {
 			orbit.enableZoom = false
 			return
 		}
@@ -594,10 +604,10 @@ UIstarted = true
 	})
 	
 	on.keyup(e => {
-		if (!$("#source").classList.contains("minimised")) {
+		/*if (!$("#source").classList.contains("minimised")) {
 			orbit.enableZoom = false
 			return
-		}
+		}*/
 		if (!Keyboard.Alt && !Keyboard.Shift) orbit.enableZoom = true
 	})
 	
@@ -854,10 +864,10 @@ UIstarted = true
 			const name = id.slice(0, id.length - "Heading".length)
 			const window = windowContainer.$("#" + name)
 			if (window) window.classList.add("minimised")
-			if (oldHeading.id == "sourceHeading") {
+			/*if (oldHeading.id == "sourceHeading") {
 				orbit.enableZoom = true
 				//orbit.mouseButtons.MIDDLE = THREE.MOUSE.PAN
-			}
+			}*/
 		}
 		
 		if (newHeading) {
@@ -865,10 +875,10 @@ UIstarted = true
 			const name = id.slice(0, id.length - "Heading".length)
 			const window = windowContainer.$("#" + name)
 			if (window) window.classList.remove("minimised")
-			if (newHeading.id == "sourceHeading") {
+			/*if (newHeading.id == "sourceHeading") {
 				orbit.enableZoom = false
 				//orbit.mouseButtons.MIDDLE = undefined
-			}
+			}*/
 		}
 		
 	})
