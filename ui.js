@@ -194,8 +194,7 @@ UIstarted = true
 			#sourceBox::-webkit-scrollbar {
 				display: none;
 			}
-			
-			
+
 			.sourceType > .label {
 				font-size: 15px;
 			}
@@ -228,6 +227,30 @@ UIstarted = true
 			.sliderContainer {
 				display: flex;
 				align-items: center;
+			}
+
+			.elementList {
+				width: 85px;
+				overflow-y: scroll;
+				-ms-overflow-style: none;
+				scrollbar-width: none;
+				max-height: calc(100vh - 70px - 26px - 10px);
+			}
+
+			#elements > .menu {
+				max-width: 100vw;
+				overflow-x: scroll;
+				-ms-overflow-style: none;
+				scrollbar-width: none;
+			}
+			
+			
+			#elements .menu::-webkit-scrollbar {
+				display: none;
+			}
+			
+			.elementList::-webkit-scrollbar {
+				display: none;
 			}
 			
 		</style>
@@ -569,7 +592,25 @@ UIstarted = true
 	
 	$("#sourceBox").on.mouseleave(() => {
 		orbit.enableZoom = true
-	}) 
+	})
+	
+	$(".elementList").on.mouseenter(function() {
+		if (this.scrollHeight <= this.clientHeight) return
+		orbit.enableZoom = false
+	})
+	
+	$(".elementList").on.mouseleave(() => {
+		orbit.enableZoom = true
+	})
+	
+	$("#elements > .menu").on.mouseenter(function() {
+		if (this.scrollWidth <= this.clientWidth) return
+		orbit.enableZoom = false
+	})
+	
+	$("#elements > .menu").on.mouseleave(() => {
+		orbit.enableZoom = true
+	})
 
 	on.wheel(e => {
 
