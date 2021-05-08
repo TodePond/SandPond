@@ -481,29 +481,29 @@ UIstarted = true
 	// Events //
 	//========//
 	on.keydown(e => {
+
+		if (e.key == "Shift") {
+			orbit.enableZoom = false
+		}
+		else if (e.key == "Alt") {
+			orbit.enableZoom = false
+			e.preventDefault()
+		}
+
 		const searchBar = $("#searchBar")
-		if (!searchBar.classList.contains("minimised")) {
-			searchBar.focus()
+		const argsBar = $("#argsBar")
+		if (document.activeElement === searchBar || document.activeElement === argsBar) {
+			return
 		}
-		else if (!$("#dropper").classList.contains("minimised")) {
-			
+		
+		if (e.key == " ") {
+			paused = !paused
+			updatePauseUI()
 		}
-		else {
-			if (e.key == " ") {
-				paused = !paused
-				updatePauseUI()
-			}
-			else if (e.key == "ArrowRight") {
-				stepCount++
-			}
-			else if (e.key == "Shift") {
-				orbit.enableZoom = false
-			}
-			else if (e.key == "Alt") {
-				orbit.enableZoom = false
-				e.preventDefault()
-			}
+		else if (e.key == "ArrowRight") {
+			stepCount++
 		}
+
 	})
 	
 	const updateDropperPour = () => {
@@ -562,6 +562,7 @@ UIstarted = true
 	updateDropperHeightSlider()
 	
 	on.wheel(e => {
+
 		if (!$("#source").classList.contains("minimised")) {
 			orbit.enableZoom = false
 			return
