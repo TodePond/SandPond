@@ -342,7 +342,7 @@ element Mouse {
 	}
 }
 
-element _Rabbit {
+element Rabbit {
 	category "Life"
 	colour "white"
 	emissive "grey"
@@ -360,20 +360,20 @@ element _Rabbit {
 	// Global Symbols //
 	//================//
 	// Rabbit
-	given R (element, atom, self) => element === _Rabbit && atom.id === self.id
-	change R (self) => new _Rabbit(self.id)
+	given R (element, atom, self) => element === Rabbit && atom.id === self.id
+	change R (self) => new Rabbit(self.id)
 	
 	// Rabbit Ears
-	given E (element, atom, self) => element === _Rabbit.Ear && atom.id === self.id
-	change E (self) => new _Rabbit.Ear(self.id)
+	given E (element, atom, self) => element === Rabbit.Ear && atom.id === self.id
+	change E (self) => new Rabbit.Ear(self.id)
 	
 	// Stretch
-	given r (element, atom, self) => element === _Rabbit.Stretch && atom.id === self.id
-	change r (self) => new _Rabbit.Stretch(self.id)
+	given r (element, atom, self) => element === Rabbit.Stretch && atom.id === self.id
+	change r (self) => new Rabbit.Stretch(self.id)
 	
 	// Stretch Ears
-	given e (element, atom, self) => element === _Rabbit.Stretch.Ear && atom.id === self.id
-	change e (self) => new _Rabbit.Stretch.Ear(self.id)
+	given e (element, atom, self) => element === Rabbit.Stretch.Ear && atom.id === self.id
+	change e (self) => new Rabbit.Stretch.Ear(self.id)
 	
 	//======//
 	// Init //
@@ -437,7 +437,7 @@ element _Rabbit {
 	//======//
 	{
 		// If I'm currently stretching, catch up with (or wait for) the stretch
-		given g (element, atom, self) => element === _Rabbit.Stretch && atom.id === self.id && atom.grown
+		given g (element, atom, self) => element === Rabbit.Stretch && atom.id === self.id && atom.grown
 		for(xz.rotations) {
 			 g =>  @
 			@     _
@@ -477,7 +477,7 @@ element _Rabbit {
 			if (t > 3) t -= 4
 			//self.jumpRemaining--
 			//self.jumpRemaining = 5
-			return new _Rabbit.Stretch(self.id, t)
+			return new Rabbit.Stretch(self.id, t)
 		}
 		for(xz.rotations) {
 			 n     n
@@ -518,7 +518,7 @@ element _Rabbit {
 	// Injured //
 	//=========//
 	{
-		given m (element, atom, self) => (element === _Rabbit.Stretch.Ear || element === _Rabbit.Ear) && atom.id === self.id
+		given m (element, atom, self) => (element === Rabbit.Stretch.Ear || element === Rabbit.Ear) && atom.id === self.id
 		for(xz.rotations) {
 			m m    . .
 			m@m => ...
@@ -546,7 +546,7 @@ element _Rabbit {
 	// Sub-Elements //
 	//==============//
 	element Ear {
-		category "Life"
+		//category "Life"
 		colour "white"
 		emissive "grey"
 		prop state SOLID
@@ -556,7 +556,7 @@ element _Rabbit {
 		arg part
 		
 		// Catch up with my stretch
-		given g (element, atom, self) => element === _Rabbit.Stretch.Ear && atom.id === self.id
+		given g (element, atom, self) => element === Rabbit.Stretch.Ear && atom.id === self.id
 		for(xz.rotations) {
 			 g     @
 			@  => _
@@ -588,7 +588,7 @@ element _Rabbit {
 			
 			origin G
 			given G (self) => self.grown
-			given m (element, atom, self) => (element === _Rabbit.Stretch.Ear || element === _Rabbit.Ear) && atom.id === self.id
+			given m (element, atom, self) => (element === Rabbit.Stretch.Ear || element === Rabbit.Ear) && atom.id === self.id
 			for(xz.rotations) {
 				m m    . .
 				mGm => ...
@@ -655,10 +655,10 @@ element Ant {
 	
 }
 
-element Rabbit {
+element OldRabbit {
 	colour "white"
 	emissive "grey"
-	category "Life"
+	//category "Life"
 	prop state SOLID
 	prop temperature BODY
 	prop food MEAT
@@ -673,7 +673,7 @@ element Rabbit {
 		prop temperature BODY
 		prop food MEAT
 		
-		given R (element, atom, self) => element === Rabbit && atom.id === self.id
+		given R (element, atom, self) => element === OldRabbit && atom.id === self.id
 		@R => ..
 		R@ => ..
 		
@@ -693,7 +693,7 @@ element Rabbit {
 	
 	// Grow body
 	change P (self, atom) => {
-		const part = new Rabbit.Part(self.id)
+		const part = new OldRabbit.Part(self.id)
 		part.colour = self.colour
 		part.emissive = self.emissive
 		return part
@@ -708,7 +708,7 @@ element Rabbit {
 	@     .
 	
 	// Die because can't grow
-	given n (element, atom, self) => element !== Rabbit.Part || atom.id !== self.id
+	given n (element, atom, self) => element !== OldRabbit.Part || atom.id !== self.id
 	n  => .
 	 @     _
 	 _     .
@@ -724,7 +724,7 @@ element Rabbit {
 	 _     .
 	
 	// Fall down
-	given P (element, atom, self) => element === Rabbit.Part && atom.id === self.id
+	given P (element, atom, self) => element === OldRabbit.Part && atom.id === self.id
 	P P    _ _
 	P@P => P_P
 	___    P@P
@@ -738,8 +738,8 @@ element Rabbit {
 		@C => .C
 		
 		// Breed
-		given R (element, atom, self) => (element === Rabbit || element === Rabbit.Part) && self.id !== atom.id
-		change B () => new Rabbit()
+		given R (element, atom, self) => (element === OldRabbit || element === OldRabbit.Part) && self.id !== atom.id
+		change B () => new OldRabbit()
 		maybe(1/15) {
 			@_R => .B.
 			@R_ => ..B

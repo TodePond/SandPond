@@ -354,7 +354,7 @@ element SwapWallUp {
 
 element Gravifloor {
 	colour "brown"
-	category "T2Tile"
+	//category "T2Tile"
 	//default true
 	
 	symbol G Gravifloor.Grower
@@ -439,7 +439,7 @@ element Gravifloor {
 element RainbowRabbit {
 	colour "white"
 	emissive "grey"
-	category "T2Tile"
+	//category "Rainbow"
 	data id
 	arg hue
 	
@@ -545,7 +545,7 @@ element RainbowRabbit {
 }
 
 element Pulse {
-	category "T2Tile"
+	//category "T2Tile"
 	//default true
 	colour "brown"
 	
@@ -581,7 +581,7 @@ element Pulse {
 }
 
 element Gravifull {
-	category "T2Tile"
+	//category "T2Tile"
 	colour "pink"
 	emissive "red"
 	//default true
@@ -679,7 +679,7 @@ element Gravifull {
 element Sandee {
 	colour "#ffcc00"
 	emissive "#ffa34d"
-	category "T2Tile"
+	//category "T2Tile"
 	prop state SOLID
 	prop temperature ROOM
 	
@@ -690,7 +690,7 @@ element Wateree {
 	colour "lightblue"
 	emissive "blue"
 	opacity 0.35
-	category "T2Tile"
+	//category "T2Tile"
 	prop state LIQUID
 	prop temperature COOL
 	

@@ -135,7 +135,7 @@ element SparkLife {
 }
 
 element GameOfLife {
-	category "Video"
+	//category "Video"
 	colour "brown"
 
 	// Globals
@@ -152,7 +152,7 @@ element GameOfLife {
 		opacity 0
 		colour "black"
 		data tally 0
-		category "Video"
+		//category "Video"
 
 		// Reset tally
 		keep r (self) => self.tally = 0
@@ -194,7 +194,7 @@ element GameOfLife {
 	}
 
 	element Alive {
-		category "Video"
+		//category "Video"
 		prop override true
 		data tally 0
 		colour "grey"
@@ -248,7 +248,7 @@ element GameOfLife {
 
 
 element SpreadWater {
-	category "Video"
+	//category "Video"
 	data direction 0
 	colour "lightblue"
 	emissive "blue"
@@ -276,7 +276,7 @@ element SpreadWater {
 
 
 element MomentumSand {
-	category "Video"
+	//category "Video"
 	emissive "#ffa34d"
 	colour "#fc0"
 	data movement 0

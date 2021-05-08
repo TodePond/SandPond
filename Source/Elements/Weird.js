@@ -1,7 +1,7 @@
 SpaceTode`
 
 element RainbowSand {
-	category "Video"
+	//category "Rainbow"
 	
 	data ready false
 	given i (self) => !self.ready
@@ -28,7 +28,7 @@ element RainbowSand {
 }
 
 element RainglowSand {
-	category "Video"
+	//category "Rainbow"
 	
 	prop colours {
 		const arr = []
@@ -72,7 +72,7 @@ element RainglowSand {
 element Glooper {
 
 	colour "rgb(110, 120, 200)"
-	category "T2Tile"
+	//category "T2Tile"
 	
 	arg direction "down"
 	arg directionTime 0
@@ -160,7 +160,7 @@ element Glooper {
 element AntiGlooper {
 	
 	colour "rgb(200, 120, 110)"
-	category "T2Tile"
+	//category "T2Tile"
 	
 	arg direction "down"
 	arg directionTime 0
@@ -179,7 +179,7 @@ element AntiGlooper {
 element GloopGridder {
 	
 	colour "rgb(50, 150, 50)"
-	category "T2Tile"
+	//category "T2Tile"
 	
 	arg timer 300
 	symbol S Glooper
@@ -204,7 +204,7 @@ element UpSignal {
 		atom.direction = "up"
 		atom.directionTime = time
 	}
-	category "T2Tile"
+	//category "T2Tile"
 	
 	@ => _
 	_    @
@@ -223,7 +223,7 @@ element DownSignal {
 		atom.direction = "down"
 		atom.directionTime = time
 	}
-	category "T2Tile"
+	//category "T2Tile"
 	
 	@ => _
 	_    @

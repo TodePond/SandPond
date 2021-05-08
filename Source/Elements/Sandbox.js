@@ -269,7 +269,7 @@ element Acid {
 
 element Cloud any(xz.rotations) {
 	
-	category "Sandbox"
+	category "Structure"
 	arg rain Water
 	arg chance 1/100
 	arg birthday
@@ -423,7 +423,7 @@ element Charcoal {
 element FlamingCharcoal {
 	colour "#2e362d"
 	emissive "#2e362d"
-	category "Sandbox"
+	//category "Sandbox"
 	prop state SOLID
 	prop temperature HOT
 	prop states () => ({
