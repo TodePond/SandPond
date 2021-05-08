@@ -873,8 +873,11 @@ UIstarted = true
 	})
 	
 	$("#searchHeading").on.click(function() {
-		$("#searchBar").classList.toggle("minimised")
-		this.classList.toggle("selected")
+		$("#searchBar").classList.remove("minimised")
+		this.classList.add("selected")
+		for (const el of $$(".menu > .heading")) {
+			if (el !== this) el.classList.remove("selected")
+		}
 		updateSearch()
 	})
 	
@@ -882,6 +885,8 @@ UIstarted = true
 		$$(".category").forEach(category => {
 			if (category != this) category.classList.remove("selected")
 		})
+		$("#searchBar").classList.add("minimised")
+		$("#searchHeading").classList.remove("selected")
 		this.classList.toggle("selected")
 		updateSearch()
 	})
