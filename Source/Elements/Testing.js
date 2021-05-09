@@ -140,7 +140,7 @@ element GameOfLife {
 
 	// Globals
 	symbol D GameOfLife.Dead
-	symbol A GameOfLife.Dead
+	symbol A GameOfLife.Alive
 
 	// Setup: Fill up the universe
 	all(xyz.directions) @_ => @$
@@ -150,6 +150,7 @@ element GameOfLife {
 
 	element Dead {
 		opacity 0
+		//visible false
 		colour "black"
 		data tally 0
 		//category "Video"
@@ -159,37 +160,20 @@ element GameOfLife {
 		action @ => r
 
 		// Count alive neighbours
-		keep a (self) => self.tally++
-		action @A => .a
-		action A@ => .a
-		action {
-			 @     a
-			A  => .
+		given a (self, element) => {
+			if (element === GameOfLife.Alive) {
+				self.tally++
+			}
+			return false
 		}
 		action {
-			@     a
-			 A =>  .
-		}
-		action {
-			A  => .
-			 @     a
-		}
-		action {
-			 A =>  .
-			@     a
-		}
-
-		action {
-			A => .
-			@    a
-		}
-		action {
-			@    a
-			A => .
+			aaa    ...
+			a@a => ...
+			aaa    ...
 		}
 
 		// Live!
-		given l (self) => self.tally >= 1 && self.tally <= 3
+		given l (self) => self.tally === 3
 		l => A
 	}
 
@@ -204,45 +188,26 @@ element GameOfLife {
 		action @ => r
 
 		// Count alive neighbours
-		keep a (self) => self.tally++
-		action @A => .a
-		action A@ => .a
-		action {
-			 @     a
-			A  => .
+		given a (self, element) => {
+			if (element === GameOfLife.Alive) {
+				self.tally++
+			}
+			return false
 		}
 		action {
-			@     a
-			 A =>  .
-		}
-		action {
-			A  => .
-			 @     a
-		}
-		action {
-			 A =>  .
-			@     a
-		}
-
-		action {
-			A => .
-			@    a
-		}
-		action {
-			@    a
-			A => .
+			aaa    ...
+			a@a => ...
+			aaa    ...
 		}
 
 		// Survive
-		given s (self) => self.tally >= 3 && self.tally <= 5
+		given s (self) => self.tally >= 2 && self.tally <= 3
 		s => .
 
 		// Die
 		@ => D
 
 	}
-
-
 
 }
 
