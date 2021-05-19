@@ -24,6 +24,5 @@ Or [download](https://github.com/l2wilson94/SandPond/archive/main.zip) it and op
 
 ## Make your own element
 Elements are written in the [SpaceTode language](https://github.com/l2wilson94/SpaceTode).<br>
-[This guide](https://github.com/l2wilson94/SandPond/wiki/Making-your-first-element) shows you how to make your first element.<br>
-To learn more, check out the [SpaceTode Documentation](https://github.com/l2wilson94/SandPond/wiki/%5BSpaceTode%5D-Documentation) on the [wiki](https://github.com/l2wilson94/SandPond/wiki/).<br>
+To learn more, check out the [SpaceTode Documentation](https://l2wilson94.gitbook.io/spacetode).<br>
 Or check out the examples in the [Elements](https://github.com/l2wilson94/SandPond/tree/main/Source/Elements) folder.
