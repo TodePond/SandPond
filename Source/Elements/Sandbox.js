@@ -450,6 +450,8 @@ element WaterCompress {
 
 	colour "rgb(70, 128, 255)"
 
+	default true
+
 	maybe(1/2) @ => R
 	@ => L
 
@@ -484,7 +486,7 @@ element WaterCompress {
 	}
 	
 	element Left {
-		colour "rgb(70, 128, 255)"
+		colour "rgb(224, 224, 224)"
 		
 		@ => _
 		_    @
@@ -550,89 +552,544 @@ element WaterCompress {
 }
 
 element WaterLine {
-	colour "rgb(0, 70, 255)"
+	colour "rgb(224, 224, 224)"
+	category "Line"
+	default true
 
-	symbol D WaterLine.LineDown
-	symbol U WaterLine.LineUp
-	symbol S WaterLine.Splash
-	symbol B WaterLine.Body
+	symbol S WaterLine.Surface
 
-	given L (element) => element === WaterLine.LineUp || element === WaterLine.LineDown
-	given n (element) => element !== WaterLine.LineUp && element !== WaterLine.LineDown
-	given l (element) => element === WaterLine.LineUp || element === WaterLine.LineDown || element === Empty
-	
-	element LineDown {
+	symbol X WaterLine.Rain
+	symbol T WaterLine.WaveTip
+	symbol W WaterLine.WaveWake
 
-		category "Line"
-		colour "rgb(255, 255, 255)"
+	given N (element) => element !== WaterLine.Surface && element !== WaterLine.WaveTip && element !== WaterLine.WaveWake
 
-		LlL => .@.
-		 @      _
-		 
-		 @      _
-		LlL => .@.
+	@ => S
 
-		for(x) {		 
-			 @L =>  _.
-			Ll     .@
+	given n (element) => element === Void || element === Empty || element === WaterLine.Rain || element === Wall
 
-			  n      .
-			 @n =>  _.
-			Ll     .@
-		}
 
-		for(x) {
-			
-			@U => U.
+	element Surface {
+		colour "rgb(70, 128, 255)"
+
+		n     .
+		n@ => .T
+		n     .
 		
-			 U     .
-			@  => U
-
-			 n     .
-			@n => U.
-			 n     .
-
+		pov(back) {
+			n     .
+			n@ => .T
+			n     .
 		}
+
+	}
+	given s (element) => element === WaterLine.WaveWake || element === WaterLine.Surface
+
+	given e (element) => element === Empty || element === WaterLine.Rain
+
+	element WaveTip {
+		colour "rgb(224, 224, 224)"
+		
+
+
+		// Move right
+		{
+			origin r
+			given r (self) => self.direction > 0
+			
+			origin l
+			given l (self) => self.direction < 0
+			
+
+			given t (element) => element === WaterLine.WaveTip
+			select t (atom) => atom
+			change t (selected) => selected
+
+			rt => t@
+			 
+			 t =>  @
+			r     t
+			
+			r     t
+			 t =>  @
+
+			re     W@
+			 s  =>  X
+			  N      .
+
+			  N      .
+			 s  =>  _
+			re     W@
+
+			rs     W@
+			 s  =>  X
+			  N      .
+
+			  N      .
+			 s  =>  _
+			rs     W@
+
+			rs => W@
+			
+			 s =>  @
+			r     W
+
+			r     W
+			 s =>  @
+			
+			
+			r => W
+			s    @
+			
+			s    @
+			r => W
+
+			pov(back) {
+				
+				lt => t@
+			 
+				 t =>  @
+				l     t
+				
+				l     t
+				 t =>  @
+
+				le     W@
+				 s  =>  X
+				  N      .
+
+				  N      .
+				 s  =>  _
+				le     W@
+				
+
+				ls     W@
+				 s  =>  X
+				  N      .
+
+				  N      .
+				 s  =>  _
+				ls     W@
+
+				ls => W@
+				
+				 s =>  @
+				l     W
+
+				l     W
+				 s =>  @
+				
+				l => W
+				s    @
+				
+				s    @
+				l => W
+			}
+		}
+		{
+			data direction 0
+			
+			origin d
+			check d (self) => self.direction === 0
+
+			
+			origin D
+			given D (self) => self.direction !== 0
+
+			given L (element, self) => {
+				if (element !== WaterLine.Surface && element !== WaterLine.WaveTip && element !== WaterLine.WaveWake) {
+					return true
+				}
+			}
+			given R (element, self) => {
+				if (element !== WaterLine.Surface && element !== WaterLine.WaveTip && element !== WaterLine.WaveWake) {
+					return true
+				}
+			}
+			keep L (self) => self.direction = -1
+			keep R (self) => self.direction = 1
+
+			given f (element, self) => {
+				if (element !== WaterLine.Surface && element !== WaterLine.WaveTip && element !== WaterLine.WaveWake) {
+					return element === Empty || element === WaterLine.Rain
+				}
+			}
+			
+
+			R     .
+			RD => .W
+			f     @
+
+			pov(back) {
+				L     .
+				LD => .S
+				f     @
+			}
+			
+			R     .
+			RD => .S
+			R     .
+
+			pov(back) {
+				L     .
+				LD => .W
+				L     .
+			}
+
+			action {
+				R     .
+				Rd => .R
+				R     .
+			}
+			
+			pov(back) action {
+				L     .
+				Ld => .L
+				L     .
+			}
+
+			d => W
+		}
+
+
 	}
 
-	element LineUp {
-		colour "rgb(70, 128, 255)"
-
-		LlL => .@.
-		 @      _
+	element WaveWake {
+		colour "rgb(0, 100, 255)"
+		
+		NNN   ...
+		 s =>  _
+		 @     .
 		 
-		 @      _
-		LlL => .@.
+		 @     .
+		 s =>  X
+		NNN   ...
 
-		for(x) {
-			Ll     .@
-			 @L =>  _.
+		@ => .
+		_    X
 
-			Ll     .@
-			 @n =>  _.
-			  n      .
-		}
+		maybe(0.02) @ => S
 
-		for(x) {
-			@D => D.
-
-			@  => D
-			 D     .
-
-			 n     .
-			@n => D.
-			 n     .
-		}
 	}
 
-	element Splash {
-		colour "rgb(70, 128, 255)"
-	}
-
-	element Body {
+	element Rain {
 		colour "rgb(0, 70, 255)"
+		@ => .
+		_    X
+
+		@ => .
+		s    X
+
+		@ => .
+		T    X
+
+		X => .
+		@    .
+
+		s => .
+		@    .
+
+		T => .
+		@    .
+
+		_ => S
+		@    .
+
+
+		@ => _
+
 	}
+
+	element RainAlt {
+		default true
+		colour "rgb(0, 70, 255)"
+		@ => _
+		_    X
+
+		@ => _
+		s    X
+
+		@ => _
+		T    X
+
+		/*X => .
+		@    .
+
+		s => .
+		@    .
+
+		T => .
+		@    .*/
+
+		_ => S
+		@    .
+
+		any(x) @_ => _@
+
+	}
+
+
 
 }
+
+element WaterVolume {
+	colour "rgb(224, 224, 224)"
+	category "Line"
+	default true
+
+	symbol S WaterVolume.Surface
+
+	symbol X WaterVolume.Rain
+	symbol T WaterVolume.WaveTip
+	symbol W WaterVolume.WaveWake
+
+	given N (element) => element !== WaterVolume.Surface && element !== WaterVolume.WaveTip && element !== WaterVolume.WaveWake
+
+	@ => S
+
+	given n (element) => element === Void || element === Empty || element === WaterVolume.Rain || element === Wall
+
+
+	element Surface {
+		colour "rgb(70, 128, 255)"
+
+		pov(back) {
+			n     .
+			n@ => .T
+			n     .
+		}
+
+		n     .
+		n@ => .T
+		n     .
+		
+
+	}
+	given s (element) => element === WaterVolume.WaveWake || element === WaterVolume.Surface
+
+	given e (element) => element === Empty || element === WaterVolume.Rain
+
+	element WaveTip {
+		colour "rgb(224, 224, 224)"
+		
+
+
+		// Move right
+		{
+			origin r
+			given r (self) => self.direction > 0
+			
+			origin l
+			given l (self) => self.direction < 0
+			
+
+			given t (element) => element === WaterVolume.WaveTip
+			select t (atom) => atom
+			change t (selected) => {
+				if (Math.random() < 0.01) return new WaterVolume.WaveWake()
+				return selected
+			}
+
+			rt => t@
+			 
+			 t =>  @
+			r     t
+			
+			r     t
+			 t =>  @
+
+			re     W@
+			 s  =>  X
+			  N      .
+
+			  N      .
+			 s  =>  _
+			re     W@
+
+			rs     W@
+			 s  =>  X
+			  N      .
+
+			  N      .
+			 s  =>  _
+			rs     W@
+
+			rs => W@
+			
+			 s =>  @
+			r     W
+
+			r     W
+			 s =>  @
+			
+			
+			r => W
+			s    @
+			
+			s    @
+			r => W
+
+			pov(back) {
+				
+				lt => t@
+			 
+				 t =>  @
+				l     t
+			
+				l     t
+				 t =>  @
+
+				le     W@
+				 s  =>  X
+				  N      .
+
+				  N      .
+				 s  =>  _
+				le     W@
+
+				ls     W@
+				 s  =>  X
+				  N      .
+
+				  N      .
+				 s  =>  _
+				ls     W@
+
+				ls => W@
+			
+				 s =>  @
+				l     W
+
+				l     W
+				 s =>  @
+			
+			
+				l => W
+				s    @
+			
+				s    @
+				l => W
+			}
+		}
+		{
+			data direction 0
+			
+			origin d
+			check d (self) => self.direction === 0
+
+			
+			origin D
+			given D (self) => self.direction !== 0
+
+			given L (element, self) => {
+				if (element !== WaterVolume.Surface && element !== WaterVolume.WaveTip && element !== WaterVolume.WaveWake) {
+					return true
+				}
+			}
+			given R (element, self) => {
+				if (element !== WaterVolume.Surface && element !== WaterVolume.WaveTip && element !== WaterVolume.WaveWake) {
+					return true
+				}
+			}
+			keep L (self) => self.direction = -1
+			keep R (self) => self.direction = 1
+
+			given f (element, self) => {
+				if (element !== WaterVolume.Surface && element !== WaterVolume.WaveTip && element !== WaterVolume.WaveWake) {
+					return element === WaterVolume.Rain
+				}
+			}
+			
+
+			pov(back) {
+				L     .
+				LD => .W
+				f     @
+			}
+
+			R     .
+			RD => .W
+			f     @
+			
+			pov(back) {
+				L     .
+				LD => .W
+				L     .
+			}
+
+			R     .
+			RD => .W
+			R     .
+
+			pov(back) action {
+				L     .
+				Ld => .L
+				L     .
+			}
+
+			action {
+				R     .
+				Rd => .R
+				R     .
+			}
+
+			d => W
+		}
+
+
+	}
+
+	element WaveWake {
+		colour "rgb(0, 100, 255)"
+		
+		NNN   ...
+		 s =>  _
+		 @     .
+		 
+		 @     .
+		 s =>  X
+		NNN   ...
+
+		@ => .
+		_    X
+
+		maybe(0.04) @ => S
+
+	}
+
+	element Rain {
+		default true
+		colour "rgb(0, 70, 255)"
+		@ => _
+		_    X
+
+		@ => _
+		s    X
+
+		@ => _
+		T    X
+
+		/*X => .
+		@    .
+
+		s => .
+		@    .
+
+		T => .
+		@    .*/
+
+		_ => S
+		@    .
+
+		any(x) @_ => _@
+
+	}
+
+
+
+}
+
+
+
 
 `
