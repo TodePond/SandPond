@@ -833,22 +833,22 @@ element WaterLine {
 }
 
 element WaterVolume {
+	default true
 	colour "rgb(224, 224, 224)"
 	category "Line"
 	default true
 
 	symbol S WaterVolume.Surface
-
+	symbol w Wall
 	symbol X WaterVolume.Rain
 	symbol T WaterVolume.WaveTip
 	symbol W WaterVolume.WaveWake
 
 	given N (element) => element !== WaterVolume.Surface && element !== WaterVolume.WaveTip && element !== WaterVolume.WaveWake
 
-	@ => S
+	@ => X
 
 	given n (element) => element === Void || element === Empty || element === WaterVolume.Rain || element === Wall
-
 
 	element Surface {
 		colour "rgb(70, 128, 255)"
@@ -863,11 +863,33 @@ element WaterVolume {
 		n@ => .T
 		n     .
 		
+		w    .
+		@ => _
+		
+		*    .
+		@ => _
+
+		@ => .
+		S    .
+
+		@ => .
+		X    .
+		
+		@ => .
+		T    .
+		
+		@ => .
+		W    .
+
+		@ => _
 
 	}
+	
 	given s (element) => element === WaterVolume.WaveWake || element === WaterVolume.Surface
 
 	given e (element) => element === Empty || element === WaterVolume.Rain
+	select e (atom) => atom
+	change e (selected) => selected
 
 	element WaveTip {
 		colour "rgb(224, 224, 224)"
@@ -1047,36 +1069,47 @@ element WaterVolume {
 		 @     .
 		 
 		 @     .
-		 s =>  X
+		 s =>  _
 		NNN   ...
 
-		@ => .
-		_    X
+		NNN   ...
+		 @ =>  _
+		 _     X
 
 		maybe(0.04) @ => S
+
+		w    .
+		@ => _
+		
+		*    .
+		@ => _
+		
+		@ => .
+		S    .
+
+		@ => .
+		X    .
+		
+		@ => .
+		T    .
+		
+		@ => .
+		W    .
+
+		@ =>  _
 
 	}
 
 	element Rain {
-		default true
 		colour "rgb(0, 70, 255)"
 		@ => _
 		_    X
 
-		@ => _
+		@ => S
 		s    X
 
-		@ => _
+		@ => T
 		T    X
-
-		/*X => .
-		@    .
-
-		s => .
-		@    .
-
-		T => .
-		@    .*/
 
 		_ => S
 		@    .
