@@ -1,7 +1,7 @@
 SpaceTode`
 
 element Wall {
-
+	
 }
 
 element WaterMinimal {
@@ -324,7 +324,7 @@ element WaterDoubleTransfer {
 	symbol R WaterDoubleTransfer.Right
 	symbol L WaterDoubleTransfer.Left
 
-	prop max 50
+	prop max 200
 
 	origin t
 	check t (self) => self.timer-- < 0
