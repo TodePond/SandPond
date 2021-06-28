@@ -92,10 +92,12 @@ Reflect.defineProperty(Array.prototype, "trim", {
 	value() {
 		if (this.length == 0) return this
 		const lastIndex = this.length-1
-		if (this[lastIndex] === undefined) {
-			this.length = this.length-1
-			return this.trim()
+		let newLength = this.length
+		for (let i = this.length-1; i >= 0; i++) {
+			if (this[i] !== undefined) break
+			undefinedTailLength--
 		}
+		this.length = newLength
 		return this
 	}
 })
