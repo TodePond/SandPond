@@ -2015,7 +2015,7 @@ const JAVASCRIPT = {}
 	//===========//
 	// SpaceTode //
 	//===========//
-	function SpaceTode([source]) {
+	SpaceTode = ([source]) => {
 	
 		resetIndentInfo()
 	
