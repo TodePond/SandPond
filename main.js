@@ -54,13 +54,13 @@ orbit.enableDamping = true
 orbit.screenSpacePanning = D2_MODE
 orbit.panSpeed = 1.8
 orbit.target.set(0, MAX_Y/2 * ATOM_SIZE, 0)
-on.process(() => {
+/*on.process(() => {
 	orbit.update()
 	//screen.position.set(-camera.position.x, 0, -camera.position.z)
 	//screen.lookAt(camera)
 	//screen.rotateY(Math.PI/2)
 	//screen.rotateX(Math.PI/2)
-})
+})*/
 
 stage.start()
 
@@ -109,7 +109,8 @@ on.mousedown(() => {
 	else if (listenToMouse == 0) listenToMouse = 1
 })
 const middleOfWorld = new THREE.Vector3(0, 0, 0)
-on.process(() => {
+stage.process = (() => {
+	orbit.update()
 	const touchPosition3D = stage.getTouchPosition3D(0, (mesh) => mesh == floor)
 	if (touchPosition3D != undefined) {
 		DROPPER.tryDrop(touchPosition3D)
@@ -149,6 +150,7 @@ on.process(() => {
 	else {
 		DROPPER.tryDrop(undefined)
 	}
+	processWorld()
 })
 
 function getHeightAtPosition(position) {
@@ -163,7 +165,7 @@ let currentTrack = true
 	
 if (RANDOM === "shuffle") {
 	let time = 0
-	on.process(() => {
+	processWorld = (() => {
 		if (paused) {
 			if (stepCount <= 0) return
 			stepCount--
@@ -180,7 +182,7 @@ if (RANDOM === "shuffle") {
 }
 else if (RANDOM === "pure") {
 	let time = 0
-	on.process(() => {
+	processWorld = (() => {
 		if (paused) {
 			if (stepCount <= 0) return
 			stepCount--
@@ -197,7 +199,7 @@ else if (RANDOM === "pure") {
 else if (RANDOM === "track") {
 
 	let time = 0
-	on.process(() => {
+	processWorld = (() => {
 		if (paused === true) {
 			if (stepCount <= 0) return
 			stepCount--
@@ -230,7 +232,7 @@ else if (RANDOM === "firing") {
 		eventCount = Math.floor(eventCount * floatEventRatio)
 	}
 	
-	on.process(() => {
+	processWorld = (() => {
 		if (paused === true) {
 			if (stepCount <= 0) return
 			stepCount--

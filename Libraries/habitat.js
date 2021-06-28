@@ -1332,7 +1332,7 @@ Reflect.defineProperty(Set.prototype, "length", {
 		}
 		
 		process(tickTime) {
-			this.fireEvent("process", {tickTime})
+			//this.fireEvent("process", {tickTime})
 		}
 		
 		resize() {
