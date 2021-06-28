@@ -92,8 +92,8 @@ Reflect.defineProperty(Array.prototype, "trim", {
 	value() {
 		if (this.length == 0) return this
 		const lastIndex = this.length-1
-		if (this[lastIndex] == undefined) {
-			this.splice(-1, 1)
+		if (this[lastIndex] === undefined) {
+			this.length = this.length-1
 			return this.trim()
 		}
 		return this
