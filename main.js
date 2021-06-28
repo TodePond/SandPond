@@ -155,7 +155,7 @@ function getHeightAtPosition(position) {
 	print(position)
 }
 
-let paused = false
+paused = false
 let stepCount = 0
 let shuffleCounter = 0
 

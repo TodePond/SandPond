@@ -4,6 +4,7 @@
 //====//
 const UI = {}
 UIstarted = true
+paused = false
 
 {
 	//=========//

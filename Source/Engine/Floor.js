@@ -23,7 +23,7 @@
 		noFloorMaterial,
 	]
 	
-	function makeFloor(FLOOR_TYPE, width, depth) {
+	makeFloor = (FLOOR_TYPE, width, depth) => {
 		const floorGeometry = new THREE.BoxGeometry(width, ATOM_SIZE, depth)
 		const floor = new THREE.Mesh(floorGeometry, FLOOR_TYPE == "floor"? floorMaterials : noFloorMaterials)
 		floor.position.set(0, -1 * ATOM_SIZE, 0)
@@ -32,7 +32,7 @@
 		return floor
 	}
 	
-	function make2DFloor(FLOOR_TYPE, width, height) {
+	make2DFloor = (FLOOR_TYPE, width, height) => {
 		const floorGeometry = new THREE.BoxGeometry(width, height, ATOM_SIZE)
 		const floor = new THREE.Mesh(floorGeometry, floorMaterials)
 		floor.position.set(0, height / 2, -1 * ATOM_SIZE)
