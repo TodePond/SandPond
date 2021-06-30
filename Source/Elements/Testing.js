@@ -1,5 +1,75 @@
 SpaceTode`
 
+element Rainblock {
+
+	// Setup
+	{
+		data init false
+		given i (self) => !self.init
+		keep i (self, origin) => {
+			self.init = true
+			const hue = Math.floor(Math.random() * 360)
+			const colour = new THREE.Color("hsl("+hue+", 100%, 50%)")
+			self.colour.r = Math.round(colour.r * 255)
+			self.colour.g = Math.round(colour.g * 255)
+			self.colour.b = Math.round(colour.b * 255)
+			self.emissive.r = Math.round(colour.r * 255)
+			self.emissive.g = Math.round(colour.g * 255)
+			self.emissive.b = Math.round(colour.b * 255)
+			SPACE.update(origin)
+		}
+		i => i
+	}
+
+	// Move
+	{
+		given R (self, element, atom) => element === Rainblock && atom.colour.r > self.colour.r
+		select R (atom) => atom
+		change R (selected) => selected
+		@R => R@
+
+		
+		/*given r (self, element, atom) => element === Rainblock && atom.colour.r < self.colour.r
+		select r (atom) => atom
+		change r (selected) => selected
+		r@ => @r*/
+
+		pov(right) {
+			given G (self, element, atom) => element === Rainblock && atom.colour.g > self.colour.g
+			select G (atom) => atom
+			change G (selected) => selected
+			@G => G@
+
+			
+			/*given g (self, element, atom) => element === Rainblock && atom.colour.g < self.colour.g
+			select g (atom) => atom
+			change g (selected) => selected
+			g@ => @g*/
+		}
+
+		given B (self, element, atom) => element === Rainblock && atom.colour.b > self.colour.b
+		select B (atom) => atom
+		change B (selected) => selected
+		B => @
+		@    B
+
+		
+		/*given b (self, element, atom) => element === Rainblock && atom.colour.b < self.colour.b
+		select b (atom) => atom
+		change b (selected) => selected
+		@ => b
+		b    @*/
+
+		/*@ => _
+		_    @*/
+
+		any(xyz.directions) {
+			@_ => _@
+		}
+	}
+
+}
+
 element Crystal {
 	
 	colour "lightblue"
