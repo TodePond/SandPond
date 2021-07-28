@@ -3,11 +3,9 @@
 # SandPond
 SandPond is an engine for atoms that follow spatial rules.
 
-💡 It's heavily inspired by Dave Ackley's [T2 Tile Project](https://t2tile.org/).
+It's heavily inspired by Dave Ackley's [T2 Tile Project](https://t2tile.org/).
 
-🎥 For more info, check out the [SandPond Saga](https://youtube.com/c/TodePond) video series.
-
-🐸 To support this project, please consider joining the [secret club of Froggy Heroes](https://patreon.com/todepond).
+For more info, check out the [SandPond Saga](https://youtube.com/c/TodePond) video series.
 
 ## Rules
 Atoms follow simple rules, like this one:
