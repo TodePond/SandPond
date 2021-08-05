@@ -1318,7 +1318,7 @@ Reflect.defineProperty(Set.prototype, "length", {
 		
 		start() {
 			this.render()
-			//this.renderer.setAnimationLoop(this.o.render)
+			this.renderer.setAnimationLoop(this.o.render)
 		}
 		
 		render(timeStampMilliseconds) {
@@ -1330,7 +1330,7 @@ Reflect.defineProperty(Set.prototype, "length", {
 			this.draw()
 			
 			this.previousTimeStamp = timeStamp
-			setTimeout(() => this.render())
+			//setTimeout(() => this.render())
 		}
 		
 		process(tickTime) {
