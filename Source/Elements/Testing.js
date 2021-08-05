@@ -70,7 +70,7 @@ element Rainblock {
 
 }
 
-element Crystal {
+element CrystalOld {
 	
 	colour "lightblue"
 	emissive "blue"

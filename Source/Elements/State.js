@@ -141,7 +141,7 @@ element Sticky {
 		action @r => .r
 	}
 	
-	all(xyz.shifts) {
+	/*all(xyz.shifts) {
 		action {
 			 s =>  s
 			@     .
@@ -150,7 +150,7 @@ element Sticky {
 			 r =>  r
 			@     .
 		}
-	}
+	}*/
 	
 	// Stuck!
 	given S (self, time, Self) => {

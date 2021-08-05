@@ -697,9 +697,68 @@ element Wateree {
 	mimic(Gravifull.Worker)
 }
 
- 
-  
+element Huegene {
+	colour "white"
+	arg hue
+	data coloured false
+	opacity 0.05
+
+	// Cache hue RGB values
+	given i () => !hueStepsInit
+	keep i () => initHueStuff()
+	action i => i
+
+	// Pick the default hue if I haven't got one
+	given h (self) => self.hue === undefined
+	keep h (self) => self.hue = Math.round(HUE_DEFAULT)
+	action h => h
+
+	// Colour myself in with the correct RGB values
+	given c (self) => !self.coloured
+	keep c (origin, self) => {
+		const offset = self.hue*3
+		self.colour.r = HUE_RGBS[offset]
+		self.colour.g = HUE_RGBS[offset+1]
+		self.colour.b = HUE_RGBS[offset+2]
+		self.emissive.r = self.colour.r
+		self.emissive.g = self.colour.g
+		self.emissive.b = self.colour.b
+		SPACE.update(origin)
+		self.coloured = false
+	}
+	action c => c
+
+	// Mutate
+	change + (self) => new Huegene(hueWrap(self.hue + 1))
+	change - (self) => new Huegene(hueWrap(self.hue - 1))
+	any(xyz.rotations) {
+		maybe(0.5) @_ => .+
+		@_ => .-
+	}
+
+}
 `
+
+let hueStepsInit = false
+let HUE_STEPS = 50
+let HUE_DEFAULT = Math.round(3 * HUE_STEPS / 4)
+let HUE_RGBS = new Uint8Array(HUE_STEPS * 3)
+const initHueStuff = () => {
+	for (let i = 0; i < HUE_STEPS; i++) {
+		const colour = new THREE.Color()
+		colour.setHSL(i / HUE_STEPS, 0.9, 0.4)
+		HUE_RGBS[i*3] = Math.floor(colour.r * 255)
+		HUE_RGBS[i*3 + 1] = Math.floor(colour.g * 255)
+		HUE_RGBS[i*3 + 2] = Math.floor(colour.b * 255)
+	}
+	hueStepsInit = true
+}
+
+const hueWrap = (n) => {
+	if (n >= HUE_STEPS) return hueWrap(n - HUE_STEPS)
+	if (n < 0) return hueWrap(n + HUE_STEPS)
+	return n
+}
 
 
 

@@ -14,6 +14,21 @@ element Sand {
 	mimic(Powder)
 }
 
+/*element Salt {
+	default true
+	colour "white"
+	emissive "grey"
+	category "Sandbox"
+	prop state SOLID
+	prop temperature ROOM
+	prop states () => ({
+		[HOT]: Glass,
+	})
+
+	mimic(Temperature)
+	mimic(Powder)
+}*/
+
 element Water {
 	colour "lightblue"
 	emissive "blue"
@@ -199,7 +214,7 @@ element Laser {
 	
 	symbol L Laser
 	symbol G Glass
-	given n (element, selfElement) => (element.state === undefined || element.state < GAS) && element !== Glass
+	given n (element, selfElement) => (element.state === undefined || element.state < GAS) && element !== Glass && element !== Void
 	@ => _
 	n    @
 	n    L
@@ -453,6 +468,59 @@ element Ash {
 	mimic(Temperature)
 	mimic(Powder)
 }
+
+element Crystal {
+	colour "pink"
+	emissive "purple"
+	//category "Sandbox"
+	opacity 0.3
+	
+	data fuel
+
+	given n (element, Self) => element !== Self
+
+	given D (element) => element.state > SOLID && element.state !== EFFECT
+	select D (atom) => atom
+	change D (selected) => selected
+
+	
+	given g (element) => element.state <= SOLID
+
+
+
+	$ => .
+	@    .
+	g    .
+
+	all(xz.directions) {
+		 $ =>  .
+		@     .
+		g     .
+	}
+
+	maybe(0.3) any(xz.directions) {
+		_@_ => $.$
+	}
+
+	maybe(1/20) {
+		_ => $
+		@    .
+	}
+	
+	/*all(xz.directions) {
+		@   => .
+		 $      .
+		 
+		@$ => ..
+		 $     .
+	}*/
+
+	/*@ => ?
+	?    @*/
+
+}
+
+
 
 `
 
