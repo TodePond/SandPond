@@ -702,6 +702,7 @@ element Huegene {
 	arg hue
 	data coloured false
 	opacity 0.05
+	category "T2Tile"
 
 	// Cache hue RGB values
 	given i () => !hueStepsInit
