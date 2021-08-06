@@ -91,13 +91,24 @@ Reflect.defineProperty(Array.prototype, "trimmed", {
 Reflect.defineProperty(Array.prototype, "trim", {
 	value() {
 		if (this.length == 0) return this
-		const lastIndex = this.length-1
-		let newLength = this.length
-		for (let i = this.length-1; i >= 0; i++) {
-			if (this[i] !== undefined) break
-			undefinedTailLength--
+		let start = this.length - 1
+		let end = 0
+		for (let i = 0; i < this.length; i++) {
+			const value = this[i]
+			if (value !== undefined) {
+				start = i
+				break
+			}
 		}
-		this.length = newLength
+		for (let i = this.length - 1; i >= 0; i--) {
+			const value = this[i]
+			if (value !== undefined) {
+				end = i + 1
+				break
+			}
+		}
+		this.splice(end)
+		this.splice(0, start)
 		return this
 	}
 })
