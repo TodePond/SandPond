@@ -701,7 +701,64 @@ element Huegene {
 	colour "white"
 	arg hue
 	data coloured false
-	opacity 0.05
+	opacity 0.1
+	category "T2Tile"
+	//default true
+
+	// Cache hue RGB values
+	given i () => !hueStepsInit
+	keep i () => initHueStuff()
+	action i => i
+
+	// Pick the default hue if I haven't got one
+	given h (self) => self.hue === undefined
+	keep h (self) => self.hue = Math.round(HUE_DEFAULT)
+	action h => h
+
+	// Colour myself in with the correct RGB values
+	given c (self) => !self.coloured
+	keep c (origin, self) => {
+		const offset = self.hue*3
+		self.colour.r = HUE_RGBS[offset]
+		self.colour.g = HUE_RGBS[offset+1]
+		self.colour.b = HUE_RGBS[offset+2]
+		self.emissive.r = self.colour.r
+		self.emissive.g = self.colour.g
+		self.emissive.b = self.colour.b
+		SPACE.update(origin)
+		self.coloured = true
+	}
+	action c => c
+
+	// Mutate
+	arg energy 1.0
+	given e (self) => self.energy >= 1.0
+	origin e
+	change + (self) => {
+		const mutation = Math.random() < 0.5? 1 : -1
+		self.energy = 0.5
+		return new Huegene(hueWrap(self.hue + mutation), 0.5)
+	}
+	any(xyz.rotations) {
+		e_ => .+
+	}
+
+	// Photosynethesise
+	keep e (self) => {
+		self.energy += 0.1
+		if (self.energy > 1.0) self.energy = 1.0
+	}
+	@ => e
+
+}
+
+
+element HuegeneEater {
+	colour "white"
+	arg hue
+	arg energy 1.0
+	data coloured false
+	//opacity 0.05
 	category "T2Tile"
 
 	// Cache hue RGB values
@@ -728,16 +785,51 @@ element Huegene {
 		self.coloured = false
 	}
 	action c => c
-
-	// Mutate
-	change + (self) => new Huegene(hueWrap(self.hue + 1))
-	change - (self) => new Huegene(hueWrap(self.hue - 1))
-	any(xyz.rotations) {
-		maybe(0.5) @_ => .+
-		@_ => .-
+	//default true
+	// Eat / Move / Reproduce
+	given H (element, atom, self) => {
+		if (element !== Huegene) return false
+		const diff = Math.min( Math.abs((self.hue - atom.hue)/ HUE_STEPS), Math.abs((self.hue-HUE_STEPS - atom.hue)/ HUE_STEPS) )
+		return Math.random() > diff*3
+	}
+	given R (element, atom, self) => {
+		if (element !== Empty) return false
+		if (self.energy < 1.0) return false
+		return true
+	}
+	given M (element, atom, self) => {
+		self.energy -= 0.1
+		if (element !== Empty) return false
+		if (self.energy <= 0.0) return false
+		return true
+	}
+	change E (atom, self) => {
+		self.energy += atom.energy * 0.5
+		if (self.energy > 1.0) self.energy = 1.0
+		return self
+	}
+	change R (atom, self) => {
+		const mutation = Math.random() < 0.5? 1 : -1
+		self.energy = 0.5
+		return new HuegeneEater(hueWrap(self.hue + mutation), 0.5)
+	}
+	change M (self) => {
+		return self
+	}
+	any(xyz.directions) {
+		@H => _E
+		@R => .R
+		@M => _M
 	}
 
+	given D (self) => self.energy <= 0.0
+	D => _
+
+	//@ => _
+
+
 }
+
 `
 
 let hueStepsInit = false

@@ -1,5 +1,72 @@
 SpaceTode`
 
+element SquishSand {
+
+	colour "#ffcc00"
+	emissive "#ffa34d"
+	symbol D SquishSand.Double
+	symbol S SquishSand.Single
+	@ => D
+
+	element Double {
+		//default true
+		//category "Structure"
+		colour "#ffa34d"
+		emissive "#ffa34d"
+
+		@ => _
+		_    @
+
+		 @  =>  _
+		_ _    S S
+
+		@  => _
+		 _     @
+		
+		 @ =>  _
+		_     @
+
+		_ => S
+		@    S
+
+	}
+
+	element Single {
+		colour "#ffcc00"
+		emissive "#ffa34d"
+
+		@ => _
+		_    @
+
+		_    .
+		@ => _
+		$    D
+
+		@ => D
+		D    @
+
+		 @  =>  .
+		_ _    . .
+		
+		 @  =>  .
+		$ $    . .
+
+		@  => D
+		 D     @
+		
+		 @ =>  D
+		D     @
+
+		@  => _
+		 _     @
+		
+		 @ =>  _
+		_     @
+
+	}
+
+}
+
 element Rainblock {
 
 	// Setup
