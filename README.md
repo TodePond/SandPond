@@ -1,7 +1,7 @@
 <img align="right" height="100" src="http://todepond.com/IMG/SandPond@0.25x.png">
 
 # SandPond
-SandPond is an engine for atoms that follow spatial rules.<br>
+SandPond is an engine for cells that follow spatial rules.<br>
 It's heavily inspired by Dave Ackley's [T2 Tile Project](https://t2tile.org/).
 
 **For more info, check out the [SandPond Saga](https://youtube.com/c/TodePond) video series.**
