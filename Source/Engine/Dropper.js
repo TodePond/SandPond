@@ -31,7 +31,7 @@ let DROPPER_OVERRIDE = false
 	let down
 	
 	const dropperShadowMaterial = new THREE.MeshLambertMaterial({
-		transparent: true,
+		transparent: false,
 		opacity: 0.5,
 		//flatShading: true,
 		side: THREE.DoubleSide,

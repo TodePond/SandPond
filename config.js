@@ -17,6 +17,7 @@ const SHUFFLE_MODE = urlParams.has("shuffle")
 const FIRING_MODE = urlParams.has("firing")
 const MEDIUM_MODE = urlParams.has("medium")
 const RIDICULOUS_MODE = urlParams.has("ridiculous")
+const NO_SECRET_MODE = urlParams.has("nosecret")
 
 const DARK_MODE = urlParams.has("dark")
 

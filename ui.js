@@ -6,6 +6,28 @@ const UI = {}
 UIstarted = true
 paused = false
 
+const secretMessageDelay = 1500
+let secretMessageTimer = 0
+
+if (!NO_SECRET_MODE) {
+	setTimeout(() => console.log("Are you tinkering with SandPond?"), secretMessageTimer += secretMessageDelay)
+	setTimeout(() => console.log("Congratulations, you've gained access to the semi-secret TodePond discord!"), secretMessageTimer += secretMessageDelay)
+	setTimeout(() => console.log("Here's the link: https://discord.gg/AYDXBVPAzz"), secretMessageTimer += secretMessageDelay)
+	setTimeout(() => console.log("This message will self-destruct in 10..."), secretMessageTimer += secretMessageDelay)
+	setTimeout(() => console.log("9..."), secretMessageTimer += secretMessageDelay)
+	setTimeout(() => console.log("8..."), secretMessageTimer += secretMessageDelay)
+	setTimeout(() => console.log("7..."), secretMessageTimer += secretMessageDelay)
+	setTimeout(() => console.log("6..."), secretMessageTimer += secretMessageDelay)
+	setTimeout(() => console.log("5..."), secretMessageTimer += secretMessageDelay)
+	setTimeout(() => console.log("4..."), secretMessageTimer += secretMessageDelay)
+	setTimeout(() => console.log("3..."), secretMessageTimer += secretMessageDelay)
+	setTimeout(() => console.log("2..."), secretMessageTimer += secretMessageDelay)
+	setTimeout(() => console.log("1..."), secretMessageTimer += secretMessageDelay)
+	setTimeout(() => console.log("0..."), secretMessageTimer += secretMessageDelay)
+	setTimeout(() => console.log("RIBBIT"), secretMessageTimer += secretMessageDelay)
+	setTimeout(() => console.clear(), secretMessageTimer += secretMessageDelay)
+}
+
 {
 	//=========//
 	// Globals //
