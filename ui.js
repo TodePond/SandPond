@@ -12,6 +12,12 @@ let secretMessageTimer = 0
 if (!NO_SECRET_MODE) {
 	setTimeout(() => console.log("Are you tinkering with SandPond?"), secretMessageTimer += secretMessageDelay)
 	setTimeout(() => console.log("Congratulations, you've gained access to the semi-secret TodePond discord!"), secretMessageTimer += secretMessageDelay)
+
+	// Woah, woah, you can't just come snooping in the source code for secrets!
+	// I'm just kidding - your curiosity has earned you entry into the semi-secret TodePond discord server
+	// Congratulations!
+	// https://discord.gg/AYDXBVPAzz
+
 	setTimeout(() => console.log("Here's the link: https://discord.gg/AYDXBVPAzz"), secretMessageTimer += secretMessageDelay)
 	setTimeout(() => console.log("This message will self-destruct in 10..."), secretMessageTimer += secretMessageDelay)
 	setTimeout(() => console.log("9..."), secretMessageTimer += secretMessageDelay)
