@@ -6,7 +6,7 @@ const UI = {}
 UIstarted = true
 paused = false
 
-const secretMessageDelay = 1500
+const secretMessageDelay = 1300
 let secretMessageTimer = 0
 
 if (!NO_SECRET_MODE) {
@@ -26,12 +26,40 @@ if (!NO_SECRET_MODE) {
 	setTimeout(() => console.log("6..."), secretMessageTimer += secretMessageDelay)
 	setTimeout(() => console.log("5..."), secretMessageTimer += secretMessageDelay)
 	setTimeout(() => console.log("4..."), secretMessageTimer += secretMessageDelay)
+	const nosecreturl = window.location.href.includes("&")? `${window.location.href}&nosecret` : `${window.location.href}?nosecret`
+	setTimeout(() => console.log(`By the way, you can disable this secret message by clicking this link:\n${nosecreturl}`), secretMessageTimer)
 	setTimeout(() => console.log("3..."), secretMessageTimer += secretMessageDelay)
 	setTimeout(() => console.log("2..."), secretMessageTimer += secretMessageDelay)
 	setTimeout(() => console.log("1..."), secretMessageTimer += secretMessageDelay)
 	setTimeout(() => console.log("0..."), secretMessageTimer += secretMessageDelay)
-	setTimeout(() => console.log("RIBBIT"), secretMessageTimer += secretMessageDelay)
+	setTimeout(() => console.log("RIBBIT!"), secretMessageTimer += secretMessageDelay)
 	setTimeout(() => console.clear(), secretMessageTimer += secretMessageDelay)
+
+	
+	const secretHasAlreadyBeenRevealed = localStorage.getItem("SandPondsecretHasAlreadyBeenRevealed")
+
+	let secretScore = 0
+	const tickSecret = () => {
+		secretScore++
+		if (secretScore === 9999) {
+			localStorage.setItem("SandPondsecretHasAlreadyBeenRevealed", "true")
+
+			// WOAH WOAH! You can't come snooping in the source code for secrets!!
+			// I'm just kidding :)
+			// For your curiosity, you WIN entry to the semi-secret TodePond discord server: https://discord.gg/AYDXBVPAzz
+
+			if (confirm(`Congratulations! You have been using SandPond for ${secretScore} frames!\nAs a reward, you have won entry into the semi-secret TodePond discord server!\n\nDo you accept this (one-time-only) prize?`)) {
+				window.location.href='https://discord.gg/AYDXBVPAzz';
+			}
+		}
+		requestAnimationFrame(tickSecret)
+		
+	}
+
+	if (secretHasAlreadyBeenRevealed !== "true") {
+		requestAnimationFrame(tickSecret)
+	}
+
 }
 
 {
