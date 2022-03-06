@@ -41,7 +41,7 @@ if (!NO_SECRET_MODE) {
 	let secretScore = 0
 	const tickSecret = () => {
 		secretScore++
-		if (secretScore === 9999) {
+		if (secretScore === Infinity) {
 			localStorage.setItem("SandPondsecretHasAlreadyBeenRevealed", "true")
 
 			// WOAH WOAH! You can't come snooping in the source code for secrets!!
