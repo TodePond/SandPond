@@ -10,6 +10,9 @@ const secretMessageDelay = 1300
 let secretMessageTimer = 0
 
 if (!NO_SECRET_MODE) {
+	
+	/*
+	
 	setTimeout(() => console.log("Are you tinkering with SandPond?"), secretMessageTimer += secretMessageDelay)
 	setTimeout(() => console.log("Congratulations, you've gained access to the semi-secret TodePond discord!"), secretMessageTimer += secretMessageDelay)
 
@@ -35,6 +38,7 @@ if (!NO_SECRET_MODE) {
 	setTimeout(() => console.log("RIBBIT!"), secretMessageTimer += secretMessageDelay)
 	setTimeout(() => console.clear(), secretMessageTimer += secretMessageDelay)
 
+	*/
 	
 	const secretHasAlreadyBeenRevealed = localStorage.getItem("SandPondsecretHasAlreadyBeenRevealed")
 
