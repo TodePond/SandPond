@@ -2,7 +2,7 @@
 
 # SandPond
 SandPond is an engine for cells that follow spatial rules.<br>
-It's heavily inspired by Dave Ackley's [T2 Tile Project](https://t2tile.org/).
+It's heavily inspired by Dave Ackley's [T2 Tile Project](https://t2tile.com/).
 
 **For more info, check out the [SandPond Saga](https://youtube.com/c/TodePond) video series.**
 
