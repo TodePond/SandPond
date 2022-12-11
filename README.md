@@ -1,4 +1,4 @@
-<img align="right" height="100" src="http://todepond.com/IMG/SandPond@0.25x.png">
+<img align="right" height="100" src="http://img.todepond.com/IMG/SandPond@0.25x.png">
 
 # SandPond
 SandPond is an engine for cells that follow spatial rules.<br>
