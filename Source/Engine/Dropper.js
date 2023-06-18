@@ -217,11 +217,14 @@ let DROPPER_OVERRIDE = false
 	//=========//
 	// This function is the messy result of adding one line of code every two weeks without much thought
 	let dropperShadowReady = [false].repeated(9)
+	
+	let shouldDropFromTop = false
+	
 	const dropAtom = (x, y, z, yOffset = 0, justShow = false, shadowNumber = 0, yOverride = Math.floor(DROPPER_HEIGHT)) => {
 		if (!UI) return
 		if (UI.selectedElement === undefined) return
 		const atomType = UI.selectedElement
-		const dropStart = MAX_Y - yOverride
+		const dropStart = (shouldDropFromTop) ? MAX_Y : MAX_Y - yOverride;
 		let alteredY = dropStart + yOffset
 		let alteredZ = z
 		if (D2_MODE) alteredY = y
@@ -258,4 +261,12 @@ let DROPPER_OVERRIDE = false
 		}
 	}
 	
+	// This function is the pondering result of adding one line of code and then two more to toggle a boolean
+	function dropAtomCall(x, y, z){
+		shouldDropFromTop = true
+		
+		dropAtom(x, y, z)
+		
+		shouldDropFromTop = false
+	}
 }
