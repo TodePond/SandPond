@@ -1,6 +1,6 @@
 //carelessly constructed by davidsover d:
 {
-	let globalGridLoadState = {arr: [], y: -1};
+	let globalGridLoadState = {arr: {}, y: -1};
 	
 	function loadWorldGridFromArray(arr, y){
 		if (arr != undefined){
@@ -15,23 +15,33 @@
 			globalGridLoadState.y = y;
 		}
 		
+		let highestY = 0;
+		
 		let didDrop = false;
-		for (let i in arr[y]){
-			dropAtomCall(arr[y][i][0], y, arr[y][i][1]);
+		for (let element in arr){
+			for (let i in arr[element][y]){
+				dropAtomCall(arr[element][y][i][0], y, arr[element][y][i][1], element);
+				
+				didDrop = true;
+			}
 			
-			didDrop = true;
+			if (highestY < arr[element].length - 1){
+				highestY = arr[element].length - 1;
+			}
 		}
 		
 		globalGridLoadState.y++;
 		
-		if (globalGridLoadState.y < arr.length){
+		if (globalGridLoadState.y <= highestY){
 			let timeoutLength = (didDrop) ? 50 : 1;
 			
 			setTimeout(loadWorldGridFromArray, timeoutLength);
 		}
 	}
 	
-	function saveWorldGridAsArray(){
+	function saveWorldGridAsArray(isElementless){
+		let elements = {};
+		
 		let arr = [];
 		
 		for (let i in world.grid){
@@ -40,19 +50,27 @@
 				for (let k in world.grid[i][j]){
 					if (world.grid[i][j][k].atom.visible){
 						arr[i].push([Number(j), Number(k)]);
+						
+						let elementName = world.grid[i][j][k].atom.element.name;
+						
+						if (elements[elementName] == undefined){
+							elements[elementName] = [];
+						}
+						
+						if (elements[elementName][i] == undefined){
+							elements[elementName][i] = [];
+						}
+						
+						elements[elementName][i].push([Number(j), Number(k)]);
 					}
 				}
 			}
 		}
-		return arr;
+		return (isElementless) ? arr : elements;
 	}
 	
-	function saveWorldGridToInput(isBottomOnly){
-		if (isBottomOnly){
-			document.getElementById("saveId").value = "[" + JSON.stringify(saveWorldGridAsArray()[0]) + "]";
-		} else{
-			document.getElementById("saveId").value = JSON.stringify(saveWorldGridAsArray());
-		}
+	function saveWorldGridToInput(){
+		document.getElementById("saveId").value = JSON.stringify(saveWorldGridAsArray());
 	}
 	
 	

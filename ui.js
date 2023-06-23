@@ -278,9 +278,8 @@ let secretMessageTimer = 0
 			<div class="windowContainer">
 				
 				<div id="save" class="minimised">
-					Save: <button onclick="copyWorldGridSave()">Copy</button><input id="saveId"></input> <button onclick="saveWorldGridToInput(false)">Save</button> <button onclick="saveWorldGridToInput(true)">Save Bottom Layer</button><br><br>
-					Load: <input id="loadId"></input> <button onclick="loadWorldGrid()">Load</button><br><br>
-					(note: this only saves the shape of the world, the currently selected element is used for the loading)
+					Save: <button onclick="copyWorldGridSave()">Copy</button><input id="saveId"></input> <button onclick="saveWorldGridToInput()">Save</button><br><br>
+					Load: <input id="loadId"></input> <button onclick="loadWorldGrid()">Load</button>
 				</div>
 				
 				<div id="source" class="minimised">
