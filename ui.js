@@ -271,11 +271,17 @@ let secretMessageTimer = 0
 				<div class="heading box clickable" id="modeHeading"><div class="label">Mode</div></div>
 				<div class="heading box clickable" id="controlsHeading"><div class="label">Controls</div></div>
 				<div class="heading box clickable" id="sourceHeading"><div class="label">Source</div></div>
+				<div class="heading box clickable" id="saveHeading"><div class="label">Save</div></div>
 				<!--<div class="heading box clickable" id="configHeading"><div class="label">Config</div></div>-->
 			</div>
 			
 			<div class="windowContainer">
-			
+				
+				<div id="save" class="minimised">
+					Save: <button onclick="copyWorldGridSave()">Copy</button><input id="saveId"></input> <button onclick="saveWorldGridToInput()">Save</button><br><br>
+					Load: <input id="loadId"></input> <button onclick="loadWorldGrid()">Load</button>
+				</div>
+				
 				<div id="source" class="minimised">
 					<div class="menu">
 						<div class="heading box clickable sourceType selected" id="todeSplatSource"><div class="label">SpaceTode</div></div>

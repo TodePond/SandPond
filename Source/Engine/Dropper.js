@@ -217,17 +217,21 @@ let DROPPER_OVERRIDE = false
 	//=========//
 	// This function is the messy result of adding one line of code every two weeks without much thought
 	let dropperShadowReady = [false].repeated(9)
+	
+	let dropAtomArgs = {shouldDropFromTop: false, elementName: undefined};
+	
 	const dropAtom = (x, y, z, yOffset = 0, justShow = false, shadowNumber = 0, yOverride = Math.floor(DROPPER_HEIGHT)) => {
 		if (!UI) return
 		if (UI.selectedElement === undefined) return
-		const atomType = UI.selectedElement
-		const dropStart = MAX_Y - yOverride
+		const atomType = (dropAtomArgs.elementName != undefined) ? SpaceTode.global.elements[dropAtomArgs.elementName] : UI.selectedElement;
+		const dropStart = (dropAtomArgs.shouldDropFromTop) ? MAX_Y : MAX_Y - yOverride;
 		let alteredY = dropStart + yOffset
 		let alteredZ = z
 		if (D2_MODE) alteredY = y
 		if (D2_MODE) alteredZ = 0
 		if (D1_MODE) alteredY = 0
 		const space = WORLD.selectSpace(world, x, alteredY, alteredZ)
+		
 		if (space.atom.element == Void) {
 			if (justShow) dropperShadow[shadowNumber].visible = false
 			return
@@ -258,4 +262,12 @@ let DROPPER_OVERRIDE = false
 		}
 	}
 	
+	// This function is the pondering result of adding one line of code and then two more to change an object array
+	function dropAtomCall(x, y, z, elementName){
+		dropAtomArgs = {shouldDropFromTop: true, elementName: elementName};
+		
+		dropAtom(x, y, z);
+		
+		dropAtomArgs = {shouldDropFromTop: false, elementName: undefined};
+	}
 }
