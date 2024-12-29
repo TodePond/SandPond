@@ -5,7 +5,7 @@ const DROPPER = {};
 let UIstarted = false;
 let DROPPER_LOCATION = "default";
 let DROPPER_SHADOW = true;
-let MAX_DROPPER = 0;
+let MAX_DROPPER = 2;
 let MAX_SHADOW = 21;
 
 let DROPPER_POUR = "default";
