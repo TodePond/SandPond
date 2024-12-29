@@ -3,10 +3,7 @@ SpaceTode`
 element TwoTwoTwoTwoOne {
 	emissive "rgb(255, 0,0)"
 	colour "rgb(255, 100, 100)"
-	default true
-
-  category "livestream"
-
+	category "Stream"
 	symbol 2 TwoTwoTwoTwoTwo
 
 	keep W () => {

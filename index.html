@@ -1,85 +1,85 @@
 <!DOCTYPE html>
 <head>
-	<title>SandPond</title>
-	<meta name="viewport" content="height=device-height, width=device-width, initial-scale=1.0, user-scalable=no">
-	<link rel="shortcut icon" href="Media/Images/favicon.png" />
-	<script src="Libraries/habitat.js"></script>
-	<script src="Libraries/eatlegacy.js"></script>
-	<script src="Libraries/spacetode.js"></script>
-	
-	<style>
-		
-		html, body {
-			margin: 0;
-			height: 100%;
-			overflow: hidden;
-		}
-		
-		@font-face {
-			font-family: UbuntuMono;
-			src: url("Media/Fonts/UbuntuMono-R.ttf")
-		}
-		
-		@font-face {
-			font-family: Rosario;
-			src: url("Media/Fonts/Rosario-Regular.ttf")
-		}
-		
-		#loading {
-			font-family: Rosario;
-			position: absolute;
-			left: 50vw;
-			transform: translateX(-50%);
-			top: 25vh;
-			text-align:center;
-		}
-		
-		#loading img {
-			width: 100px;
-		}
-	
-	</style>
+  <title>SandPond</title>
+  <meta
+    name="viewport"
+    content="height=device-height, width=device-width, initial-scale=1.0, user-scalable=no" />
+  <link rel="shortcut icon" href="Media/Images/favicon.png" />
+  <script src="Libraries/habitat.js"></script>
+  <script src="Libraries/eatlegacy.js"></script>
+  <script src="Libraries/spacetode.js"></script>
+
+  <style>
+    html,
+    body {
+      margin: 0;
+      height: 100%;
+      overflow: hidden;
+    }
+
+    @font-face {
+      font-family: UbuntuMono;
+      src: url("Media/Fonts/UbuntuMono-R.ttf");
+    }
+
+    @font-face {
+      font-family: Rosario;
+      src: url("Media/Fonts/Rosario-Regular.ttf");
+    }
+
+    #loading {
+      font-family: Rosario;
+      position: absolute;
+      left: 50vw;
+      transform: translateX(-50%);
+      top: 25vh;
+      text-align: center;
+    }
+
+    #loading img {
+      width: 100px;
+    }
+  </style>
 </head>
 
 <body>
+  <div id="loading">
+    <img src="Media/Images/RedTode.png" />
+    <p>Loading...</p>
+  </div>
 
-	<div id="loading">
-		<img src="Media/Images/RedTode.png">
-		<p>Loading...</p>
-	</div>
-	
-	<!-- URL Params -->
-	<script src="config.js"></script>
-	
-	<!-- Engine -->
-	<script src="Source/Engine/Dropper.js"></script>
-	<script src="Source/Engine/Floor.js"></script>
-	<script src="Source/Engine/Lighting.js"></script>
-	
-	<script src="Source/Engine/World.js"></script>
-	<script src="Source/Engine/Space.js"></script>
-	<script src="Source/Engine/Site.js"></script>
-	<script src="Source/Engine/Random.js"></script>
-	
-	<!-- Elements -->
-	<script src="Source/Elements/Globals.js"></script>
-	<script src="Source/Elements/State.js"></script>
-	<script src="Source/Elements/Temperature.js"></script>
-	
-	<script src="Source/Elements/Sandbox.js"></script>
-	<script src="Source/Elements/Explosive.js"></script>
-	<script src="Source/Elements/Smell.js"></script>
-	<script src="Source/Elements/Food.js"></script>
-	<script src="Source/Elements/Life.js"></script>
-	<script src="Source/Elements/T2Tile.js"></script>
-	<script src="Source/Elements/Clear.js"></script>
-	<script src="Source/Elements/Weird.js"></script>
-	<script src="Source/Elements/Testing.js"></script>
-	
-	<script src="CustomElements.js"></script>
-	
-	<!-- Main -->
-	<script src="main.js"></script>
-	<script src="ui.js"></script>
-	
+  <!-- URL Params -->
+  <script src="config.js"></script>
+
+  <!-- Engine -->
+  <script src="Source/Engine/Dropper.js"></script>
+  <script src="Source/Engine/Floor.js"></script>
+  <script src="Source/Engine/Lighting.js"></script>
+
+  <script src="Source/Engine/World.js"></script>
+  <script src="Source/Engine/Space.js"></script>
+  <script src="Source/Engine/Site.js"></script>
+  <script src="Source/Engine/Random.js"></script>
+
+  <!-- Elements -->
+  <script src="Source/Elements/Globals.js"></script>
+  <script src="Source/Elements/State.js"></script>
+  <script src="Source/Elements/Temperature.js"></script>
+
+  <script src="Source/Elements/Sandbox.js"></script>
+  <script src="Source/Elements/Explosive.js"></script>
+  <script src="Source/Elements/Smell.js"></script>
+  <script src="Source/Elements/Food.js"></script>
+  <script src="Source/Elements/Life.js"></script>
+  <script src="Source/Elements/T2Tile.js"></script>
+  <script src="Source/Elements/Clear.js"></script>
+  <script src="Source/Elements/Weird.js"></script>
+  <script src="Source/Elements/Testing.js"></script>
+  <script src="Source/Elements/TwoTwoTwoTwo.js"></script>
+
+  <script src="CustomElements.js"></script>
+
+  <!-- Main -->
+  <script src="main.js"></script>
+  <script src="ui.js"></script>
 </body>

@@ -2,35 +2,34 @@
 //====//
 // UI //
 //====//
-const UI = {}
-UIstarted = true
-paused = false
+const UI = {};
+UIstarted = true;
+paused = false;
 
-const secretMessageDelay = 1300
-let secretMessageTimer = 0
-
+const secretMessageDelay = 1300;
+let secretMessageTimer = 0;
 
 {
-	//=========//
-	// Globals //
-	//=========//
-	UI.selectedElement = window.Sand
-	UI.highlightedElement = undefined
-	UI.selectedSize = SIZE
-	UI.selectedShape = SHAPE
-	UI.selectedRandom = RANDOM
-	UI.selectedDark = DARK_MODE? "dark" : "nodark"
-	UI.selectedShadow = SHADOW_MODE? "shadow" : "noshadow"
-	UI.selectedDof = DOF_MODE? "dof" : "nodof"
-	UI.selectedDimensions = D1_MODE? "d1" : (D2_MODE? "d2" : "d3")
-	UI.selectedReality = VR_MODE? "vr" : "nonvr"
-	UI.selectedSource = "todeSplat"
-	UI.floorTypeOption = FLOOR_TYPE
-	
-	//======//
-	// HTML //
-	//======//
-	const UI_STYLE = HTML `
+  //=========//
+  // Globals //
+  //=========//
+  UI.selectedElement = window.Sand;
+  UI.highlightedElement = undefined;
+  UI.selectedSize = SIZE;
+  UI.selectedShape = SHAPE;
+  UI.selectedRandom = RANDOM;
+  UI.selectedDark = DARK_MODE ? "dark" : "nodark";
+  UI.selectedShadow = SHADOW_MODE ? "shadow" : "noshadow";
+  UI.selectedDof = DOF_MODE ? "dof" : "nodof";
+  UI.selectedDimensions = D1_MODE ? "d1" : D2_MODE ? "d2" : "d3";
+  UI.selectedReality = VR_MODE ? "vr" : "nonvr";
+  UI.selectedSource = "todeSplat";
+  UI.floorTypeOption = FLOOR_TYPE;
+
+  //======//
+  // HTML //
+  //======//
+  const UI_STYLE = HTML`
 		<style>
 			
 			body {
@@ -260,9 +259,9 @@ let secretMessageTimer = 0
 			}
 			
 		</style>
-	`
-	
-	const UI_ELEMENT = HTML `
+	`;
+
+  const UI_ELEMENT = HTML`
 		<div id="ui">
 		
 			<div id="menu" class="menu">
@@ -287,11 +286,6 @@ let secretMessageTimer = 0
 				<div id="elements" class="minimised">
 					<div class="menu">
 						<div class="heading box search clickable" id="searchHeading"><div class="label">&#8981;</div></div>
-						<!--<div class="category heading box clickable" id="sandboxHeading"><div class="label">Sandbox</div></div>
-						<div class="category heading box clickable" id="lifeHeading"><div class="label">Life</div></div>
-						<div class="category heading box clickable" id="playerHeading"><div class="label">Player</div></div>
-						<div class="category heading box clickable" id="t2tileHeading"><div class="label">T2Tile</div></div>
-						<div class="category heading box clickable" id="clearHeading"><div class="label">Clear</div></div>-->
 					</div>
 					<div id="search">
 						<input class="minimised clickable" type="text" id="searchBar">
@@ -399,49 +393,52 @@ let secretMessageTimer = 0
 			</div>
 			
 		</div>
-	`
-	
-	const makeElementButton = (element, name) => HTML `
+	`;
+
+  const makeElementButton = (element, name) => HTML`
 		<div id="${name}Button" class="${name}Button elementButton box vertical clickable"><div class="label">${name}</div></div>
-	`
-	
-	const updatePauseUI = () => {
-		if (!paused) $("#playPause > .label").innerHTML = "&#10074;&#10074;"
-		else $("#playPause > .label").innerHTML = "&#9658;"
-	}
-	
-	const updateSourceUI = () => {
-		if (!UI.selectedElement) return
-		const source = UI.selectedSource == "todeSplat"? UI.selectedElement.source : UI.selectedElement.behaveCode
-		$("#sourceBox").textContent = source
-	}
-	
-	//=======//
-	// Setup //
-	//=======//
-	document.head.appendChild(UI_STYLE)
-	document.body.appendChild(UI_ELEMENT)
-	
-	const hslBuffer = {}
-	const addElementToUI = (element, name = element.name) => {
-		if (element.hidden) return
+	`;
 
-		for (const subElement of element.elements) {
-			addElementToUI(subElement, name + "__" + subElement.name)
-		}
-		
-		const searchItemButton = makeElementButton(element, name)
-		const searchItems = $("#searchItems")
-		searchItems.appendChild(searchItemButton)
-		
-		let textColour = "black"
-		const colour = new THREE.Color(element.colour)
+  const updatePauseUI = () => {
+    if (!paused) $("#playPause > .label").innerHTML = "&#10074;&#10074;";
+    else $("#playPause > .label").innerHTML = "&#9658;";
+  };
 
-		colour.getHSL(hslBuffer)
-		const {l} = hslBuffer
-		if (l < 0.4) textColour = "white"
+  const updateSourceUI = () => {
+    if (!UI.selectedElement) return;
+    const source =
+      UI.selectedSource == "todeSplat"
+        ? UI.selectedElement.source
+        : UI.selectedElement.behaveCode;
+    $("#sourceBox").textContent = source;
+  };
 
-		const style = HTML `
+  //=======//
+  // Setup //
+  //=======//
+  document.head.appendChild(UI_STYLE);
+  document.body.appendChild(UI_ELEMENT);
+
+  const hslBuffer = {};
+  const addElementToUI = (element, name = element.name) => {
+    if (element.hidden) return;
+
+    for (const subElement of element.elements) {
+      addElementToUI(subElement, name + "__" + subElement.name);
+    }
+
+    const searchItemButton = makeElementButton(element, name);
+    const searchItems = $("#searchItems");
+    searchItems.appendChild(searchItemButton);
+
+    let textColour = "black";
+    const colour = new THREE.Color(element.colour);
+
+    colour.getHSL(hslBuffer);
+    const { l } = hslBuffer;
+    if (l < 0.4) textColour = "white";
+
+    const style = HTML`
 			<style>
 				
 				.${name}Button {
@@ -459,506 +456,519 @@ let secretMessageTimer = 0
 				}
 				
 			</style>
-		`
-		document.head.appendChild(style)
-		
-		if (element.default) {
-			UI.selectedElement = element
-		}
-		
-		for (const category of element.categories) {
-			const categoryElement = $(`#${category}Heading.category`)
-			if (!categoryElement) {
-				const newCategoryElement = HTML `<div class="category heading box clickable" id="${category}Heading"><div class="label">${category}</div></div>`
-				$("#elements > .menu").appendChild(newCategoryElement)
-				if (category == "Sandbox") newCategoryElement.classList.add("selected")
-			}
-		}
-		
-		for (const subElement of element.elements) {
-			if (subElement.default) UI.selectedElement = subElement
-		}
-	}
-	
-	for (const element of SpaceTode.global.elements) {
-		addElementToUI(element)
-	}
-	
-	updatePauseUI()
-	updateSourceUI()
-	
-	$(`#${UI.selectedSize}Option`).classList.add("selected")
-	$(`#${UI.selectedShape}Option`).classList.add("selected")
-	$(`#${UI.selectedRandom}Option`).classList.add("selected")
-	$(`#${UI.selectedDark}Option`).classList.add("selected")
-	$(`#${UI.selectedShadow}Option`).classList.add("selected")
-	$(`#${UI.selectedDof}Option`).classList.add("selected")
-	
-	if (UI.selectedDimensions == "d1") $("#d1Option").classList.add("selected")
-	else if (UI.selectedDimensions == "d2") $("#d2Option").classList.add("selected")
-	else if (UI.selectedDimensions == "d3") $("#d3Option").classList.add("selected")
-	
-	//if (UI.selectedReality == "vr") $("#vrOption").classList.add("selected")
-	//else if (UI.selectedReality == "nonvr") $("#nonvrOption").classList.add("selected")
-	
-	$(`#${UI.floorTypeOption}Option`).classList.add("selected")
-	if (UI.selectedElement) {
-		const button = $(`#${UI.selectedElement.name}Button`)
-		if (button) button.classList.add("selected")
-	}
-	
-	//========//
-	// Events //
-	//========//
-	on.keydown(e => {
+		`;
+    document.head.appendChild(style);
 
-		if (e.key == "Shift") {
-			orbit.enableZoom = false
-		}
-		else if (e.key == "Alt") {
-			orbit.enableZoom = false
-			e.preventDefault()
-		}
+    if (element.default) {
+      UI.selectedElement = element;
+    }
 
-		const searchBar = $("#searchBar")
-		const argsBar = $("#argsBar")
-		if (document.activeElement === searchBar || document.activeElement === argsBar) {
-			return
-		}
-		
-		if (e.key == " ") {
-			paused = !paused
-			updatePauseUI()
-		}
-		else if (e.key == "ArrowRight") {
-			stepCount++
-		}
+    for (const category of element.categories) {
+      const categoryElement = $(`#${category}Heading.category`);
+      if (!categoryElement) {
+        const newCategoryElement = HTML`<div class="category heading box clickable" id="${category}Heading"><div class="label">${category}</div></div>`;
+        $("#elements > .menu").appendChild(newCategoryElement);
+        if (category == "Sandbox") newCategoryElement.classList.add("selected");
+      }
+    }
 
-	})
-	
-	const updateDropperPour = () => {
-		$$(`.pourOption`).forEach(e => {
-			e.classList.remove("selected")
-			e.classList.remove("selectedYellow")
-		})
-		$(`#${DROPPER_POUR}PourOption`).classList.add("selected")
-		if (UI.selectedElement !== undefined && DROPPER_POUR == "default") $(`#${UI.selectedElement.pour? "pour" : "single"}PourOption`).classList.add("selectedYellow")
-	}
-	updateDropperPour()
-	
-	$$(".pourOption").on.click(function(){
-		DROPPER_POUR = this.id.slice(0, -"PourOption".length)
-		updateDropperPour()
-	})
-	
-	const updateDropperOverride = () => {
-		$$(`.overrideOption`).forEach(e => {
-			e.classList.remove("selected")
-			e.classList.remove("selectedYellow")
-		})
-		$(`#${DROPPER_OVERRIDE}OverrideOption`).classList.add("selected")
-		if (UI.selectedElement.override !== undefined) DROPPER_OVERRIDE = UI.selectedElement.as(Boolean)
-	}
-	updateDropperOverride()
-	
-	$$(".overrideOption").on.click(function(){
-		DROPPER_OVERRIDE = this.id.slice(0, -"OverrideOption".length)
-		updateDropperOverride()
-	})
-	
-	$("#dropperSizeSlider").on.input(e => {
-		MAX_DROPPER = e.target.value.as(Number)
-		DROPPER.refreshShadows()
-		updateDropperSlider()
-	})
-	
-	$("#dropperHeightSlider").on.input(e => {
-		DROPPER_HEIGHT = MAX_Y - e.target.value.as(Number)
-		updateDropperHeightSlider()
-	})
-	
-	const updateDropperSlider = () => {
-		$("#dropperSizeSlider").value = MAX_DROPPER
-		$("#dropperSizeSliderLabel").textContent = MAX_DROPPER
-	}
-	
-	const updateDropperHeightSlider = () => {
-		$("#dropperHeightSlider").max = MAX_Y - 0
-		$("#dropperHeightSlider").value = MAX_Y - DROPPER_HEIGHT
-		$("#dropperHeightSliderLabel").textContent = MAX_Y - DROPPER_HEIGHT
-	}
-	
-	updateDropperSlider()
-	updateDropperHeightSlider()
-	
-	$("#sourceBox").on.mouseenter(function() {
-		if (this.scrollHeight <= this.clientHeight) return
-		orbit.enableZoom = false
-	})
-	
-	$("#sourceBox").on.mouseleave(() => {
-		orbit.enableZoom = true
-	})
-	
-	$(".elementList").on.mouseenter(function() {
-		if (this.scrollHeight <= this.clientHeight) return
-		orbit.enableZoom = false
-	})
-	
-	$(".elementList").on.mouseleave(() => {
-		orbit.enableZoom = true
-	})
-	
-	$("#elements > .menu").on.mouseenter(function() {
-		if (this.scrollWidth <= this.clientWidth) return
-		orbit.enableZoom = false
-	})
-	
-	$("#elements > .menu").on.mouseleave(() => {
-		orbit.enableZoom = true
-	})
+    for (const subElement of element.elements) {
+      if (subElement.default) UI.selectedElement = subElement;
+    }
+  };
 
-	on.wheel(e => {
+  for (const element of SpaceTode.global.elements) {
+    addElementToUI(element);
+  }
 
-		if ($("#sourceBox").matches(":hover")) {
-			orbit.enableZoom = false
-			return
-		}
-		
-		if (Keyboard.Alt) {
-			if (e.deltaY > 0) {
-				DROPPER_HEIGHT++
-			}
-			else if (e.deltaY < 0) {
-				DROPPER_HEIGHT--
-			}
-			if (DROPPER_HEIGHT > MAX_Y) DROPPER_HEIGHT = MAX_Y
-			if (DROPPER_HEIGHT < 0) DROPPER_HEIGHT = 0
-			updateDropperHeightSlider()
-		}
-		if (Keyboard.Shift) {
-			if (e.deltaY < 0) {
-				MAX_DROPPER++
-				if (MAX_DROPPER > 10) MAX_DROPPER = 10
-			}
-			else if (e.deltaY > 0) {
-				MAX_DROPPER--
-				if (MAX_DROPPER < 0) MAX_DROPPER = 0
-				DROPPER.refreshShadows()
-			}
-			updateDropperSlider()
-		}
-	})
-	
-	on.keyup(e => {
-		/*if (!$("#source").classList.contains("minimised")) {
+  updatePauseUI();
+  updateSourceUI();
+
+  $(`#${UI.selectedSize}Option`).classList.add("selected");
+  $(`#${UI.selectedShape}Option`).classList.add("selected");
+  $(`#${UI.selectedRandom}Option`).classList.add("selected");
+  $(`#${UI.selectedDark}Option`).classList.add("selected");
+  $(`#${UI.selectedShadow}Option`).classList.add("selected");
+  $(`#${UI.selectedDof}Option`).classList.add("selected");
+
+  if (UI.selectedDimensions == "d1") $("#d1Option").classList.add("selected");
+  else if (UI.selectedDimensions == "d2")
+    $("#d2Option").classList.add("selected");
+  else if (UI.selectedDimensions == "d3")
+    $("#d3Option").classList.add("selected");
+
+  //if (UI.selectedReality == "vr") $("#vrOption").classList.add("selected")
+  //else if (UI.selectedReality == "nonvr") $("#nonvrOption").classList.add("selected")
+
+  $(`#${UI.floorTypeOption}Option`).classList.add("selected");
+  if (UI.selectedElement) {
+    const button = $(`#${UI.selectedElement.name}Button`);
+    if (button) button.classList.add("selected");
+  }
+
+  //========//
+  // Events //
+  //========//
+  on.keydown((e) => {
+    if (e.key == "Shift") {
+      orbit.enableZoom = false;
+    } else if (e.key == "Alt") {
+      orbit.enableZoom = false;
+      e.preventDefault();
+    }
+
+    const searchBar = $("#searchBar");
+    const argsBar = $("#argsBar");
+    if (
+      document.activeElement === searchBar ||
+      document.activeElement === argsBar
+    ) {
+      return;
+    }
+
+    if (e.key == " ") {
+      paused = !paused;
+      updatePauseUI();
+    } else if (e.key == "ArrowRight") {
+      stepCount++;
+    }
+  });
+
+  const updateDropperPour = () => {
+    $$(`.pourOption`).forEach((e) => {
+      e.classList.remove("selected");
+      e.classList.remove("selectedYellow");
+    });
+    $(`#${DROPPER_POUR}PourOption`).classList.add("selected");
+    if (UI.selectedElement !== undefined && DROPPER_POUR == "default")
+      $(
+        `#${UI.selectedElement.pour ? "pour" : "single"}PourOption`
+      ).classList.add("selectedYellow");
+  };
+  updateDropperPour();
+
+  $$(".pourOption").on.click(function () {
+    DROPPER_POUR = this.id.slice(0, -"PourOption".length);
+    updateDropperPour();
+  });
+
+  const updateDropperOverride = () => {
+    $$(`.overrideOption`).forEach((e) => {
+      e.classList.remove("selected");
+      e.classList.remove("selectedYellow");
+    });
+    $(`#${DROPPER_OVERRIDE}OverrideOption`).classList.add("selected");
+    if (UI.selectedElement.override !== undefined)
+      DROPPER_OVERRIDE = UI.selectedElement.as(Boolean);
+  };
+  updateDropperOverride();
+
+  $$(".overrideOption").on.click(function () {
+    DROPPER_OVERRIDE = this.id.slice(0, -"OverrideOption".length);
+    updateDropperOverride();
+  });
+
+  $("#dropperSizeSlider").on.input((e) => {
+    MAX_DROPPER = e.target.value.as(Number);
+    DROPPER.refreshShadows();
+    updateDropperSlider();
+  });
+
+  $("#dropperHeightSlider").on.input((e) => {
+    DROPPER_HEIGHT = MAX_Y - e.target.value.as(Number);
+    updateDropperHeightSlider();
+  });
+
+  const updateDropperSlider = () => {
+    $("#dropperSizeSlider").value = MAX_DROPPER;
+    $("#dropperSizeSliderLabel").textContent = MAX_DROPPER;
+  };
+
+  const updateDropperHeightSlider = () => {
+    $("#dropperHeightSlider").max = MAX_Y - 0;
+    $("#dropperHeightSlider").value = MAX_Y - DROPPER_HEIGHT;
+    $("#dropperHeightSliderLabel").textContent = MAX_Y - DROPPER_HEIGHT;
+  };
+
+  updateDropperSlider();
+  updateDropperHeightSlider();
+
+  $("#sourceBox").on.mouseenter(function () {
+    if (this.scrollHeight <= this.clientHeight) return;
+    orbit.enableZoom = false;
+  });
+
+  $("#sourceBox").on.mouseleave(() => {
+    orbit.enableZoom = true;
+  });
+
+  $(".elementList").on.mouseenter(function () {
+    if (this.scrollHeight <= this.clientHeight) return;
+    orbit.enableZoom = false;
+  });
+
+  $(".elementList").on.mouseleave(() => {
+    orbit.enableZoom = true;
+  });
+
+  $("#elements > .menu").on.mouseenter(function () {
+    if (this.scrollWidth <= this.clientWidth) return;
+    orbit.enableZoom = false;
+  });
+
+  $("#elements > .menu").on.mouseleave(() => {
+    orbit.enableZoom = true;
+  });
+
+  on.wheel((e) => {
+    if ($("#sourceBox").matches(":hover")) {
+      orbit.enableZoom = false;
+      return;
+    }
+
+    if (Keyboard.Alt) {
+      if (e.deltaY > 0) {
+        DROPPER_HEIGHT++;
+      } else if (e.deltaY < 0) {
+        DROPPER_HEIGHT--;
+      }
+      if (DROPPER_HEIGHT > MAX_Y) DROPPER_HEIGHT = MAX_Y;
+      if (DROPPER_HEIGHT < 0) DROPPER_HEIGHT = 0;
+      updateDropperHeightSlider();
+    }
+    if (Keyboard.Shift) {
+      if (e.deltaY < 0) {
+        MAX_DROPPER++;
+        if (MAX_DROPPER > 10) MAX_DROPPER = 10;
+      } else if (e.deltaY > 0) {
+        MAX_DROPPER--;
+        if (MAX_DROPPER < 0) MAX_DROPPER = 0;
+        DROPPER.refreshShadows();
+      }
+      updateDropperSlider();
+    }
+  });
+
+  on.keyup((e) => {
+    /*if (!$("#source").classList.contains("minimised")) {
 			orbit.enableZoom = false
 			return
 		}*/
-		if (!Keyboard.Alt && !Keyboard.Shift) orbit.enableZoom = true
-	})
-	
-	UI.clicking = false
-	$$(".clickable").on.mousedown(() => UI.clicking = true)
-	//$$(".clickable").onPassive.touchstart(() => UI.clicking = true)
-	on.mouseup(() => UI.clicking = false)
-	//on.touchend(() => UI.clicking = false)
-	//on.touchcancel(() => UI.clicking = false)
-	
-	$("#stepControl").on.click(() => {
-		stepCount++
-	})
-	
-	$("#playPause").on.click(() => {
-		paused = !paused
-		updatePauseUI()
-	})
+    if (!Keyboard.Alt && !Keyboard.Shift) orbit.enableZoom = true;
+  });
 
-	const getElementByFullName = (fullName, target = SpaceTode.global.elements) => {
-		const [head, ...tail] = fullName.split("__")
-		if (tail.length === 0) return target[fullName]
-		return getElementByFullName(tail.join("__"), target[head])
-	}
-	
-	const updateSearch = () => {
-		let query = $("#searchBar").value.as(LowerCase)
-		if ($("#searchBar").classList.contains("minimised")) query = ""
-		const categories = []
-		for (const category of $$(".category")) {
-			if (!category.classList.contains("selected")) continue
-			const categoryName = category.id.slice(0, category.id.length - "Heading".length)
-			categories.push(categoryName)
-		}
-		
-		for (const elementButton of $$("#searchItems > .elementButton")) {
-			const id = elementButton.id
-			const name = id.slice(0, id.length - "Button".length)
-			const element = getElementByFullName(name)
-			let index = name.as(LowerCase).indexOf(query)
-			if (query == "") index = 0
-			
-			elementButton.classList.add("minimised")
-			
-			if (index >= 0) {
-				if (categories.length == 0/* && $("#searchHeading").classList.contains("selected")*/) {
-					elementButton.classList.remove("minimised")
-				}
-				else if (categories.some(category => element.categories.includes(category))) {
-					elementButton.classList.remove("minimised")
-				}
-			}
-		}
-	}
-	
-	updateSearch()
-	
-	$("#searchBar").on.input(function() {
-		updateSearch()
-	})
-	
-	$("#argsBar").on.input(function(){
-		DROPPER_ARGS_NEEDS_EVAL = true
-		DROPPER_ARGS_SOURCE = this.value
-	})
-	
-	$("#modeGo").on.click(() => {
-		let params = ""
-		params += UI.selectedSize + "&"
-		params += UI.selectedShape + "&"
-		params += UI.selectedRandom + "&"
-		params += UI.selectedShadow + "&"
-		params += UI.selectedDof + "&"
-		params += UI.selectedDark + "&"
-		
-		if (UI.selectedDimensions == "d1") params += "1d&"
-		else if (UI.selectedDimensions == "d2") params += "2d&"
-		//if (UI.selectedReality == "nonvr") params += "nonvr&"
-		//else if (UI.selectedReality == "vr") params += "vr&"
-		params += UI.floorTypeOption
-		const baseUrl = `${window.location.protocol}//${window.location.host}${window.location.pathname}`
-		window.location = `${baseUrl}?${params}`
-	})
-	
-	$$(".sizeOption").on.click(function() {
-		for (const sizeOption of $$(".sizeOption")) sizeOption.classList.remove("selected")
-		this.classList.add("selected")
-		const id = this.id
-		const sizeName = id.slice(0, id.length - "Option".length)
-		UI.selectedSize = sizeName
-	})
-	
-	$$(".shapeOption").on.click(function() {
-		for (const shapeOption of $$(".shapeOption")) shapeOption.classList.remove("selected")
-		this.classList.add("selected")
-		const id = this.id
-		const sizeName = id.slice(0, id.length - "Option".length)
-		UI.selectedShape = sizeName
-	})
-	
-	$$(".randomOption").on.click(function() {
-		for (const randomOption of $$(".randomOption")) randomOption.classList.remove("selected")
-		this.classList.add("selected")
-		const id = this.id
-		const randomName = id.slice(0, id.length - "Option".length)
-		UI.selectedRandom = randomName
-	})
-	
-	$$(".darkOption").on.click(function() {
-		for (const darkOption of $$(".darkOption")) darkOption.classList.remove("selected")
-		this.classList.add("selected")
-		const id = this.id
-		const darkName = id.slice(0, id.length - "Option".length)
-		UI.selectedDark = darkName
-	})
-	
-	$$(".shadowTypeOption").on.click(function() {
-		for (const shadowTypeOption of $$(".shadowTypeOption")) shadowTypeOption.classList.remove("selected")
-		this.classList.add("selected")
-		const id = this.id
-		const shadowName = id.slice(0, id.length - "Option".length)
-		UI.selectedShadow = shadowName
-	})
-	
-	$$(".dofTypeOption").on.click(function() {
-		for (const dofTypeOption of $$(".dofTypeOption")) dofTypeOption.classList.remove("selected")
-		this.classList.add("selected")
-		const id = this.id
-		const dofTypeOption = id.slice(0, id.length - "Option".length)
-		UI.selectedDof = dofTypeOption
-	})
-	
-	$$(".dimensionOption").on.click(function() {
-		for (const dimensionOption of $$(".dimensionOption")) dimensionOption.classList.remove("selected")
-		this.classList.add("selected")
-		const id = this.id
-		const dimensionName = id.slice(0, id.length - "Option".length)
-		UI.selectedDimensions = dimensionName
-	})
-	
-	$$(".realityOption").on.click(function() {
-		for (const realityOption of $$(".realityOption")) realityOption.classList.remove("selected")
-		this.classList.add("selected")
-		const id = this.id
-		const realityName = id.slice(0, id.length - "Option".length)
-		UI.selectedReality = realityName
-	})
-	
-	$$(".floorTypeOption").on.click(function() {
-		for (const floorTypeOption of $$(".floorTypeOption")) floorTypeOption.classList.remove("selected")
-		this.classList.add("selected")
-		const id = this.id
-		const floorTypeOption = id.slice(0, id.length - "Option".length)
-		UI.floorTypeOption = floorTypeOption
-	})
-	
-	$$(".elementButton").on.click(function(e) {
-	
-		const newButton = this
-		const newId = newButton.id
-		
-		const idEnd = "Button"
-		
-		const name = newId.slice(0, newId.length - idEnd.length)
-		const newElement = getElementByFullName(name)
-		const oldElement = UI.selectedElement
-		
-		if (oldElement !== undefined) {
-			const oldId = oldElement.name + idEnd
-			const oldButton = $("#" + oldId)
-			
-			if (oldElement && oldButton) {
-				oldButton.classList.remove("selected")
-			}
-		}
-		
-		if (newElement) {
-			newButton.classList.add("selected")
-			UI.selectedElement = newElement
-			newButton.style.outline = ""
-			updateSourceUI()
-		}
-		
-		if (oldElement !== newElement) {
-			$("#argsBar").value = ""
-			DROPPER_ARGS_SOURCE = ""
-			DROPPER_ARGS_NEEDS_EVAL = true
-		}
+  UI.clicking = false;
+  $$(".clickable").on.mousedown(() => (UI.clicking = true));
+  //$$(".clickable").onPassive.touchstart(() => UI.clicking = true)
+  on.mouseup(() => (UI.clicking = false));
+  //on.touchend(() => UI.clicking = false)
+  //on.touchcancel(() => UI.clicking = false)
 
-		updateDropperOverride()
-		
-	})
-	
-	$$(".elementButton").on.mousedown(function(e) {
-		if (e.button != 2) return
-		
-		const newButton = this
-		const newId = newButton.id
-		const idEnd = "Button"
-		const name = newId.slice(0, newId.length - idEnd.length)
-		const newElement = SpaceTode.global.elements[name]
-		
-		const oldElement = UI.highlightedElement
-		if (oldElement) {
-			const oldId = oldElement.name + idEnd
-			const oldButton = $("#" + oldId)
-			oldButton.classList.remove("highlighted")
-		}
-		
-		if (newElement) {
-		
-			if (oldElement == newElement) {
-				UI.highlightedElement = undefined
-				
-				for (const space of spaces) {
-					const atom = space.atom
-					if (!atom) continue
-					atom.shaderOpacity = atom.element.shaderOpacity
-					SPACE.setAtom(space, atom)
-				}
-				return
-			}
-		
-			newButton.classList.add("highlighted")
-			UI.highlightedElement = newElement
-			
-			for (const space of spaces) {
-				const atom = space.atom
-				if (!atom) continue
-				if (atom.element == newElement) atom.shaderOpacity = 255
-				else atom.shaderOpacity = 0
-				
-				SPACE.setAtom(space, atom)
-			}
-		}
-	})
-	
-	$$(".menu > .heading").on.click(function() {
-	
-		const menu = this.parentElement
-		const menuContainer = menu.parentElement
-		const windowContainer = menuContainer.$(".windowContainer")
-		const oldHeading = menu.selectedHeading
-		const newHeading = oldHeading != this? this : undefined
-		
-		if (!windowContainer) return
-		
-		if (newHeading) newHeading.classList.add("selected")
-		if (oldHeading) oldHeading.classList.remove("selected")
-		menu.selectedHeading = newHeading
-		
-		if (oldHeading) {
-			const id = oldHeading.id
-			const name = id.slice(0, id.length - "Heading".length)
-			const window = windowContainer.$("#" + name)
-			if (window) window.classList.add("minimised")
-			/*if (oldHeading.id == "sourceHeading") {
+  $("#stepControl").on.click(() => {
+    stepCount++;
+  });
+
+  $("#playPause").on.click(() => {
+    paused = !paused;
+    updatePauseUI();
+  });
+
+  const getElementByFullName = (
+    fullName,
+    target = SpaceTode.global.elements
+  ) => {
+    const [head, ...tail] = fullName.split("__");
+    if (tail.length === 0) return target[fullName];
+    return getElementByFullName(tail.join("__"), target[head]);
+  };
+
+  const updateSearch = () => {
+    let query = $("#searchBar").value.as(LowerCase);
+    if ($("#searchBar").classList.contains("minimised")) query = "";
+    const categories = [];
+    for (const category of $$(".category")) {
+      if (!category.classList.contains("selected")) continue;
+      const categoryName = category.id.slice(
+        0,
+        category.id.length - "Heading".length
+      );
+      categories.push(categoryName);
+    }
+
+    for (const elementButton of $$("#searchItems > .elementButton")) {
+      const id = elementButton.id;
+      const name = id.slice(0, id.length - "Button".length);
+      const element = getElementByFullName(name);
+      let index = name.as(LowerCase).indexOf(query);
+      if (query == "") index = 0;
+
+      elementButton.classList.add("minimised");
+
+      if (index >= 0) {
+        if (
+          categories.length ==
+          0 /* && $("#searchHeading").classList.contains("selected")*/
+        ) {
+          elementButton.classList.remove("minimised");
+        } else if (
+          categories.some((category) => element.categories.includes(category))
+        ) {
+          elementButton.classList.remove("minimised");
+        }
+      }
+    }
+  };
+
+  updateSearch();
+
+  $("#searchBar").on.input(function () {
+    updateSearch();
+  });
+
+  $("#argsBar").on.input(function () {
+    DROPPER_ARGS_NEEDS_EVAL = true;
+    DROPPER_ARGS_SOURCE = this.value;
+  });
+
+  $("#modeGo").on.click(() => {
+    let params = "";
+    params += UI.selectedSize + "&";
+    params += UI.selectedShape + "&";
+    params += UI.selectedRandom + "&";
+    params += UI.selectedShadow + "&";
+    params += UI.selectedDof + "&";
+    params += UI.selectedDark + "&";
+
+    if (UI.selectedDimensions == "d1") params += "1d&";
+    else if (UI.selectedDimensions == "d2") params += "2d&";
+    //if (UI.selectedReality == "nonvr") params += "nonvr&"
+    //else if (UI.selectedReality == "vr") params += "vr&"
+    params += UI.floorTypeOption;
+    const baseUrl = `${window.location.protocol}//${window.location.host}${window.location.pathname}`;
+    window.location = `${baseUrl}?${params}`;
+  });
+
+  $$(".sizeOption").on.click(function () {
+    for (const sizeOption of $$(".sizeOption"))
+      sizeOption.classList.remove("selected");
+    this.classList.add("selected");
+    const id = this.id;
+    const sizeName = id.slice(0, id.length - "Option".length);
+    UI.selectedSize = sizeName;
+  });
+
+  $$(".shapeOption").on.click(function () {
+    for (const shapeOption of $$(".shapeOption"))
+      shapeOption.classList.remove("selected");
+    this.classList.add("selected");
+    const id = this.id;
+    const sizeName = id.slice(0, id.length - "Option".length);
+    UI.selectedShape = sizeName;
+  });
+
+  $$(".randomOption").on.click(function () {
+    for (const randomOption of $$(".randomOption"))
+      randomOption.classList.remove("selected");
+    this.classList.add("selected");
+    const id = this.id;
+    const randomName = id.slice(0, id.length - "Option".length);
+    UI.selectedRandom = randomName;
+  });
+
+  $$(".darkOption").on.click(function () {
+    for (const darkOption of $$(".darkOption"))
+      darkOption.classList.remove("selected");
+    this.classList.add("selected");
+    const id = this.id;
+    const darkName = id.slice(0, id.length - "Option".length);
+    UI.selectedDark = darkName;
+  });
+
+  $$(".shadowTypeOption").on.click(function () {
+    for (const shadowTypeOption of $$(".shadowTypeOption"))
+      shadowTypeOption.classList.remove("selected");
+    this.classList.add("selected");
+    const id = this.id;
+    const shadowName = id.slice(0, id.length - "Option".length);
+    UI.selectedShadow = shadowName;
+  });
+
+  $$(".dofTypeOption").on.click(function () {
+    for (const dofTypeOption of $$(".dofTypeOption"))
+      dofTypeOption.classList.remove("selected");
+    this.classList.add("selected");
+    const id = this.id;
+    const dofTypeOption = id.slice(0, id.length - "Option".length);
+    UI.selectedDof = dofTypeOption;
+  });
+
+  $$(".dimensionOption").on.click(function () {
+    for (const dimensionOption of $$(".dimensionOption"))
+      dimensionOption.classList.remove("selected");
+    this.classList.add("selected");
+    const id = this.id;
+    const dimensionName = id.slice(0, id.length - "Option".length);
+    UI.selectedDimensions = dimensionName;
+  });
+
+  $$(".realityOption").on.click(function () {
+    for (const realityOption of $$(".realityOption"))
+      realityOption.classList.remove("selected");
+    this.classList.add("selected");
+    const id = this.id;
+    const realityName = id.slice(0, id.length - "Option".length);
+    UI.selectedReality = realityName;
+  });
+
+  $$(".floorTypeOption").on.click(function () {
+    for (const floorTypeOption of $$(".floorTypeOption"))
+      floorTypeOption.classList.remove("selected");
+    this.classList.add("selected");
+    const id = this.id;
+    const floorTypeOption = id.slice(0, id.length - "Option".length);
+    UI.floorTypeOption = floorTypeOption;
+  });
+
+  $$(".elementButton").on.click(function (e) {
+    const newButton = this;
+    const newId = newButton.id;
+
+    const idEnd = "Button";
+
+    const name = newId.slice(0, newId.length - idEnd.length);
+    const newElement = getElementByFullName(name);
+    const oldElement = UI.selectedElement;
+
+    if (oldElement !== undefined) {
+      const oldId = oldElement.name + idEnd;
+      const oldButton = $("#" + oldId);
+
+      if (oldElement && oldButton) {
+        oldButton.classList.remove("selected");
+      }
+    }
+
+    if (newElement) {
+      newButton.classList.add("selected");
+      UI.selectedElement = newElement;
+      newButton.style.outline = "";
+      updateSourceUI();
+    }
+
+    if (oldElement !== newElement) {
+      $("#argsBar").value = "";
+      DROPPER_ARGS_SOURCE = "";
+      DROPPER_ARGS_NEEDS_EVAL = true;
+    }
+
+    updateDropperOverride();
+  });
+
+  $$(".elementButton").on.mousedown(function (e) {
+    if (e.button != 2) return;
+
+    const newButton = this;
+    const newId = newButton.id;
+    const idEnd = "Button";
+    const name = newId.slice(0, newId.length - idEnd.length);
+    const newElement = SpaceTode.global.elements[name];
+
+    const oldElement = UI.highlightedElement;
+    if (oldElement) {
+      const oldId = oldElement.name + idEnd;
+      const oldButton = $("#" + oldId);
+      oldButton.classList.remove("highlighted");
+    }
+
+    if (newElement) {
+      if (oldElement == newElement) {
+        UI.highlightedElement = undefined;
+
+        for (const space of spaces) {
+          const atom = space.atom;
+          if (!atom) continue;
+          atom.shaderOpacity = atom.element.shaderOpacity;
+          SPACE.setAtom(space, atom);
+        }
+        return;
+      }
+
+      newButton.classList.add("highlighted");
+      UI.highlightedElement = newElement;
+
+      for (const space of spaces) {
+        const atom = space.atom;
+        if (!atom) continue;
+        if (atom.element == newElement) atom.shaderOpacity = 255;
+        else atom.shaderOpacity = 0;
+
+        SPACE.setAtom(space, atom);
+      }
+    }
+  });
+
+  $$(".menu > .heading").on.click(function () {
+    const menu = this.parentElement;
+    const menuContainer = menu.parentElement;
+    const windowContainer = menuContainer.$(".windowContainer");
+    const oldHeading = menu.selectedHeading;
+    const newHeading = oldHeading != this ? this : undefined;
+
+    if (!windowContainer) return;
+
+    if (newHeading) newHeading.classList.add("selected");
+    if (oldHeading) oldHeading.classList.remove("selected");
+    menu.selectedHeading = newHeading;
+
+    if (oldHeading) {
+      const id = oldHeading.id;
+      const name = id.slice(0, id.length - "Heading".length);
+      const window = windowContainer.$("#" + name);
+      if (window) window.classList.add("minimised");
+      /*if (oldHeading.id == "sourceHeading") {
 				orbit.enableZoom = true
 				//orbit.mouseButtons.MIDDLE = THREE.MOUSE.PAN
 			}*/
-		}
-		
-		if (newHeading) {
-			const id = newHeading.id
-			const name = id.slice(0, id.length - "Heading".length)
-			const window = windowContainer.$("#" + name)
-			if (window) window.classList.remove("minimised")
-			/*if (newHeading.id == "sourceHeading") {
+    }
+
+    if (newHeading) {
+      const id = newHeading.id;
+      const name = id.slice(0, id.length - "Heading".length);
+      const window = windowContainer.$("#" + name);
+      if (window) window.classList.remove("minimised");
+      /*if (newHeading.id == "sourceHeading") {
 				orbit.enableZoom = false
 				//orbit.mouseButtons.MIDDLE = undefined
 			}*/
-		}
-		
-	})
-	
-	$("#searchHeading").on.click(function() {
-		$("#searchBar").classList.remove("minimised")
-		this.classList.add("selected")
-		for (const el of $$(".menu > .heading")) {
-			if (el !== this) el.classList.remove("selected")
-		}
-		updateSearch()
-	})
-	
-	$$(".category").on.click(function() {
-		$$(".category").forEach(category => {
-			if (category != this) category.classList.remove("selected")
-		})
-		$("#searchBar").classList.add("minimised")
-		$("#searchHeading").classList.remove("selected")
-		this.classList.toggle("selected")
-		updateSearch()
-	})
-	
-	$$(".sourceType").on.click(function() {
-		$$(".sourceType").forEach(category => {
-			category.classList.remove("selected")
-		})
-		this.classList.add("selected")
-		if (this.id == "javaScriptSource") UI.selectedSource = "javaScript"
-		else UI.selectedSource = "todeSplat"
-		updateSourceUI()
-	})
-	
-	
-}
+    }
+  });
 
+  $("#searchHeading").on.click(function () {
+    $("#searchBar").classList.remove("minimised");
+    this.classList.add("selected");
+    for (const el of $$(".menu > .heading")) {
+      if (el !== this) el.classList.remove("selected");
+    }
+    updateSearch();
+  });
+
+  $$(".category").on.click(function () {
+    $$(".category").forEach((category) => {
+      if (category != this) category.classList.remove("selected");
+    });
+    $("#searchBar").classList.add("minimised");
+    $("#searchHeading").classList.remove("selected");
+    this.classList.toggle("selected");
+    updateSearch();
+  });
+
+  $$(".sourceType").on.click(function () {
+    $$(".sourceType").forEach((category) => {
+      category.classList.remove("selected");
+    });
+    this.classList.add("selected");
+    if (this.id == "javaScriptSource") UI.selectedSource = "javaScript";
+    else UI.selectedSource = "todeSplat";
+    updateSourceUI();
+  });
+}

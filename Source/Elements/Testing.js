@@ -4,11 +4,12 @@ element SquishSand {
 
 	colour "#ffcc00"
 	emissive "#ffa34d"
+	category "Weird"
 	symbol D SquishSand.Double
 	symbol S SquishSand.Single
 	@ => D
 
-	element Double {
+	element Double any(xz) {
 		//default true
 		//category "Structure"
 		colour "#ffa34d"
@@ -31,7 +32,7 @@ element SquishSand {
 
 	}
 
-	element Single {
+	element Single any(xz) {
 		colour "#ffcc00"
 		emissive "#ffa34d"
 
@@ -68,6 +69,8 @@ element SquishSand {
 }
 
 element Rainblock {
+
+	category "Weird"
 
 	// Setup
 	{
@@ -139,6 +142,7 @@ element Rainblock {
 
 element CrystalOld {
 	
+	category "Weird"
 	colour "lightblue"
 	emissive "blue"
 
@@ -153,6 +157,7 @@ element CrystalOld {
 }
 
 element Brancher {
+	category "Weird"
 
 	@ => _
 	_    @
@@ -202,6 +207,7 @@ element Brancher {
 }
 
 element Labyrinth {
+	category "Weird"
 	
 	data countBuffer 0
 
@@ -245,6 +251,7 @@ element Labyrinth {
 }
 
 element SparkLife {
+	category "Weird"
 	colour "rgb(255, 255, 70)"
 	data countBuffer 0
 	
@@ -272,6 +279,7 @@ element SparkLife {
 }
 
 element GameOfLife {
+	category "Weird"
 	//category "Video"
 	colour "brown"
 
@@ -280,15 +288,17 @@ element GameOfLife {
 	symbol A GameOfLife.Alive
 
 	// Setup: Fill up the universe
-	all(xyz.directions) @_ => @$
+	all(xy.directions) @_ => @$
 	
-	// Then become a dead space
-	@ => D
+	// Then become a dead or alive space
+	maybe(0.9) @ => D
+	@ => A
 
 	element Dead {
-		opacity 0
+		opacity 1
 		//visible false
-		colour "black"
+		colour "white"
+		emissive "grey"
 		data tally 0
 		//category "Video"
 
@@ -319,6 +329,7 @@ element GameOfLife {
 		prop override true
 		data tally 0
 		colour "grey"
+		emissive "black"
 
 		// Reset tally
 		keep r (self) => self.tally = 0
@@ -350,11 +361,12 @@ element GameOfLife {
 
 
 element SpreadWater {
+	category "Weird"
 	//category "Video"
 	data direction 0
 	colour "lightblue"
 	emissive "blue"
-	opacity 0.25
+	opacity 1
 	
 	prop state LIQUID
 	prop temperature COOL
@@ -378,6 +390,7 @@ element SpreadWater {
 
 
 element MomentumSand {
+	category "Weird"
 	//category "Video"
 	emissive "#ffa34d"
 	colour "#fc0"
@@ -444,4 +457,4 @@ element MomentumSand {
 	
 }
 
-`
+`;
